@@ -115,3 +115,4 @@ TAGS
 /autoconf/compile
 /autoconf/config.*
 /autoconf/install-sh
+/build
