@@ -252,27 +252,6 @@
 #undef OF_DBG
 #endif
 
-#ifndef OF_DEFAULT
-#define OF_DEFAULT of_bin
-#endif
-
-extern const struct ofmt of_bin;
-extern const struct ofmt of_ith;
-extern const struct ofmt of_srec;
-extern const struct ofmt of_aout;
-extern const struct ofmt of_aoutb;
-extern const struct ofmt of_coff;
-extern const struct ofmt of_elf32;
-extern const struct ofmt of_elfx32;
-extern const struct ofmt of_elf64;
-extern const struct ofmt of_as86;
-extern const struct ofmt of_obj;
-extern const struct ofmt of_win32;
-extern const struct ofmt of_win64;
-extern const struct ofmt of_rdf2;
-extern const struct ofmt of_ieee;
-extern const struct ofmt of_macho32;
-extern const struct ofmt of_macho64;
 extern const struct ofmt of_dbg;
 
 #ifdef BUILD_DRIVERS_ARRAY      /* only if included from outform.c */
@@ -283,53 +262,6 @@ extern const struct ofmt of_dbg;
  */
 
 static const struct ofmt * const drivers[] = {
-#ifdef OF_BIN
-    &of_bin,
-    &of_ith,
-    &of_srec,
-#endif
-#ifdef OF_AOUT
-    &of_aout,
-#endif
-#ifdef OF_AOUTB
-    &of_aoutb,
-#endif
-#ifdef OF_COFF
-    &of_coff,
-#endif
-#ifdef OF_ELF32
-    &of_elf32,
-#endif
-#ifdef OF_ELF64
-    &of_elf64,
-#endif
-#ifdef OF_ELFX32
-    &of_elfx32,
-#endif
-#ifdef OF_AS86
-    &of_as86,
-#endif
-#ifdef OF_OBJ
-    &of_obj,
-#endif
-#ifdef OF_WIN32
-    &of_win32,
-#endif
-#ifdef OF_WIN64
-    &of_win64,
-#endif
-#ifdef OF_RDF2
-    &of_rdf2,
-#endif
-#ifdef OF_IEEE
-    &of_ieee,
-#endif
-#ifdef OF_MACHO32
-    &of_macho32,
-#endif
-#ifdef OF_MACHO64
-    &of_macho64,
-#endif
 #ifdef OF_DBG
     &of_dbg,
 #endif
@@ -337,24 +269,9 @@ static const struct ofmt * const drivers[] = {
     NULL
 };
 
-static const struct ofmt_alias ofmt_aliases[] = {
-#ifdef OF_ELF32
-    { "elf",  &of_elf32 },
-#endif
-#ifdef OF_MACHO32
-    { "macho", &of_macho32 },
-#endif
-#ifdef OF_WIN32
-    { "win",   &of_win32 },
-#endif
-    { NULL, NULL }
-};
-
 #endif /* BUILD_DRIVERS_ARRAY */
 
-const struct ofmt *ofmt_find(const char *name, const struct ofmt_alias **ofmt_alias);
 const struct dfmt *dfmt_find(const struct ofmt *, const char *);
-void ofmt_list(const struct ofmt *, FILE *);
 void dfmt_list(FILE *);
 extern const struct dfmt null_debug_form;
 

@@ -42,8 +42,6 @@
 #include "nasmlib.h"
 #include "nctype.h"
 #include "error.h"
-#include "saa.h"
-#include "raa.h"
 #include "floats.h"
 #include "stdscan.h"
 #include "insns.h"
@@ -73,7 +71,7 @@ struct forwrefinfo {            /* info held on forward refs. */
 const char *_progname;
 
 static void parse_cmdline(int, char **, int);
-static void assemble_file(const char *, struct strlist *);
+static void assemble_file(void);
 static bool skip_this_pass(errflags severity);
 static void usage(void);
 static void help(FILE *);
@@ -102,25 +100,14 @@ static bool abort_on_panic = ABORT_ON_PANIC;
 static bool keep_all;
 
 bool tasm_compatible_mode = false;
-enum pass_type _pass_type;
-const char * const _pass_types[] =
-{
-    "init", "preproc-only", "first", "optimize", "stabilize", "final"
-};
-int64_t _passn;
 int globalrel = 0;
 int globalbnd = 0;
-
-struct compile_time official_compile_time;
 
 const char *inname;
 const char *outname;
 static const char *listname;
 static const char *errname;
 
-static int64_t globallineno;    /* for forward-reference tracking */
-
-const struct ofmt *ofmt = &OF_DEFAULT;
 const struct ofmt_alias *ofmt_alias = NULL;
 const struct dfmt *dfmt;
 
@@ -143,21 +130,17 @@ static struct RAA *offsets;
 static struct SAA *forwrefs;    /* keep track of forward references */
 static const struct forwrefinfo *forwref;
 
-static struct strlist *include_path;
 static enum preproc_opt ppopt;
 
 #define OP_NORMAL           (1U << 0)
 #define OP_PREPROCESS       (1U << 1)
 #define OP_DEPEND           (1U << 2)
 
-static unsigned int operating_mode;
-
 /* Dependency flags */
 static bool depend_emit_phony = false;
 static bool depend_missing_ok = false;
 static const char *depend_target = NULL;
 static const char *depend_file = NULL;
-struct strlist *depend_list;
 
 static bool want_usage;
 static bool terminate_after_phase;
@@ -167,101 +150,6 @@ static char *quote_for_pmake(const char *str);
 static char *quote_for_wmake(const char *str);
 static char *(*quote_for_make)(const char *) = quote_for_pmake;
 
-/*
- * Execution limits that can be set via a command-line option or %pragma
- */
-
-/*
- * This is really unlimited; it would take far longer than the
- * current age of the universe for this limit to be reached even on
- * much faster CPUs than currently exist.
-*/
-#define LIMIT_MAX_VAL	(INT64_MAX >> 1)
-
-int64_t nasm_limit[LIMIT_MAX+1];
-
-struct limit_info {
-    const char *name;
-    const char *help;
-    int64_t default_val;
-};
-/* The order here must match enum nasm_limit in nasm.h */
-static const struct limit_info limit_info[LIMIT_MAX+1] = {
-    { "passes", "total number of passes", LIMIT_MAX_VAL },
-    { "stalled-passes", "number of passes without forward progress", 1000 },
-    { "macro-levels", "levels of macro expansion", 10000 },
-    { "macro-tokens", "tokens processed during single-lime macro expansion", 10000000 },
-    { "mmacros", "multi-line macros before final return", 100000 },
-    { "rep", "%rep count", 1000000 },
-    { "eval", "expression evaluation descent", 8192 },
-    { "lines", "total source lines processed", 2000000000 }
-};
-
-static void set_default_limits(void)
-{
-    int i;
-    size_t rl;
-    int64_t new_limit;
-
-    for (i = 0; i <= LIMIT_MAX; i++)
-        nasm_limit[i] = limit_info[i].default_val;
-
-    /*
-     * Try to set a sensible default value for the eval depth based
-     * on the limit of the stack size, if knowable...
-     */
-    rl = nasm_get_stack_size_limit();
-    new_limit = rl / (128 * sizeof(void *)); /* Sensible heuristic */
-    if (new_limit < nasm_limit[LIMIT_EVAL])
-        nasm_limit[LIMIT_EVAL] = new_limit;
-}
-
-enum directive_result
-nasm_set_limit(const char *limit, const char *valstr)
-{
-    int i;
-    int64_t val;
-    bool rn_error;
-    int errlevel;
-
-    if (!limit)
-        limit = "";
-    if (!valstr)
-        valstr = "";
-
-    for (i = 0; i <= LIMIT_MAX; i++) {
-        if (!nasm_stricmp(limit, limit_info[i].name))
-            break;
-    }
-    if (i > LIMIT_MAX) {
-        if (not_started())
-            errlevel = ERR_WARNING|WARN_OTHER|ERR_USAGE;
-        else
-            errlevel = ERR_WARNING|WARN_PRAGMA_UNKNOWN;
-        nasm_error(errlevel, "unknown limit: `%s'", limit);
-        return DIRR_ERROR;
-    }
-
-    if (!nasm_stricmp(valstr, "unlimited")) {
-        val = LIMIT_MAX_VAL;
-    } else {
-        val = readnum(valstr, &rn_error);
-        if (rn_error || val < 0) {
-            if (not_started())
-                errlevel = ERR_WARNING|WARN_OTHER|ERR_USAGE;
-            else
-                errlevel = ERR_WARNING|WARN_PRAGMA_BAD;
-            nasm_error(errlevel, "invalid limit value: `%s'", valstr);
-            return DIRR_ERROR;
-        }
-        if (val > LIMIT_MAX_VAL)
-            val = LIMIT_MAX_VAL;
-    }
-
-    nasm_limit[i] = val;
-    return DIRR_OK;
-}
-
 int64_t switch_segment(int32_t segment)
 {
     location.segment = segment;
@@ -269,7 +157,6 @@ int64_t switch_segment(int32_t segment)
         location.offset = absolute.offset;
         in_absolute = true;
     } else {
-        location.offset = raa_read(offsets, segment);
         in_absolute = false;
     }
     return location.offset;
@@ -279,8 +166,6 @@ static void set_curr_offs(int64_t l_off)
 {
         if (in_absolute)
             absolute.offset = l_off;
-        else
-            offsets = raa_write(offsets, location.segment, l_off);
 }
 
 static void increment_offset(int64_t delta)
@@ -293,66 +178,6 @@ static void increment_offset(int64_t delta)
 }
 
 /*
- * Define system-defined macros that are not part of
- * macros/standard.mac.
- */
-static void define_macros(void)
-{
-    const struct compile_time * const oct = &official_compile_time;
-    char temp[128];
-
-    if (oct->have_local) {
-        strftime(temp, sizeof temp, "__?DATE?__=\"%Y-%m-%d\"", &oct->local);
-        pp_pre_define(temp);
-        strftime(temp, sizeof temp, "__?DATE_NUM?__=%Y%m%d", &oct->local);
-        pp_pre_define(temp);
-        strftime(temp, sizeof temp, "__?TIME?__=\"%H:%M:%S\"", &oct->local);
-        pp_pre_define(temp);
-        strftime(temp, sizeof temp, "__?TIME_NUM?__=%H%M%S", &oct->local);
-        pp_pre_define(temp);
-    }
-
-    if (oct->have_gm) {
-        strftime(temp, sizeof temp, "__?UTC_DATE?__=\"%Y-%m-%d\"", &oct->gm);
-        pp_pre_define(temp);
-        strftime(temp, sizeof temp, "__?UTC_DATE_NUM?__=%Y%m%d", &oct->gm);
-        pp_pre_define(temp);
-        strftime(temp, sizeof temp, "__?UTC_TIME?__=\"%H:%M:%S\"", &oct->gm);
-        pp_pre_define(temp);
-        strftime(temp, sizeof temp, "__?UTC_TIME_NUM?__=%H%M%S", &oct->gm);
-        pp_pre_define(temp);
-    }
-
-    if (oct->have_posix) {
-        snprintf(temp, sizeof temp, "__?POSIX_TIME?__=%"PRId64, oct->posix);
-        pp_pre_define(temp);
-    }
-
-    /*
-     * In case if output format is defined by alias
-     * we have to put shortname of the alias itself here
-     * otherwise ABI backward compatibility gets broken.
-     */
-    snprintf(temp, sizeof(temp), "__?OUTPUT_FORMAT?__=%s",
-             ofmt_alias ? ofmt_alias->shortname : ofmt->shortname);
-    pp_pre_define(temp);
-
-    /*
-     * Output-format specific macros.
-     */
-    if (ofmt->stdmac)
-        pp_extra_stdmac(ofmt->stdmac);
-
-    /*
-     * Debug format, if any
-     */
-    if (dfmt != &null_debug_form) {
-        snprintf(temp, sizeof(temp), "__?DEBUG_FORMAT?__=%s", dfmt->shortname);
-        pp_pre_define(temp);
-    }
-}
-
-/*
  * Initialize the preprocessor, set up the include path, and define
  * the system-included macros.  This is called between passes 1 and 2
  * of parsing the command options; ofmt and dfmt are defined at this
@@ -361,12 +186,6 @@ static void define_macros(void)
  * Command-line specified preprocessor directives (-p, -d, -u,
  * --pragma, --before) are processed after this function.
  */
-static void preproc_init(struct strlist *ipath)
-{
-    pp_init(ppopt);
-    define_macros();
-    pp_include_path(ipath);
-}
 
 static void emit_dependencies(struct strlist *list)
 {
@@ -482,272 +301,51 @@ quote:
     return nasm_quote(fn, &len);
 }
 
-static void timestamp(void)
+int main(int argc, char *argv[])
 {
-    struct compile_time * const oct = &official_compile_time;
-    const struct tm *tp, *best_gm;
-
-    time(&oct->t);
-
-    best_gm = NULL;
-
-    tp = localtime(&oct->t);
-    if (tp) {
-        oct->local = *tp;
-        best_gm = &oct->local;
-        oct->have_local = true;
-    }
-
-    tp = gmtime(&oct->t);
-    if (tp) {
-        oct->gm = *tp;
-        best_gm = &oct->gm;
-        oct->have_gm = true;
-        if (!oct->have_local)
-            oct->local = oct->gm;
-    } else {
-        oct->gm = oct->local;
-    }
-
-    if (best_gm) {
-        oct->posix = make_posix_time(best_gm);
-        oct->have_posix = true;
-    }
-}
-
-int main(int argc, char **argv)
-{
-    /* Do these as early as possible */
-    error_file = stderr;
+  error_file = stderr;
     _progname = argv[0];
-    if (!_progname || !_progname[0])
-        _progname = "nasm";
+  if (!_progname || !_progname[0])
+      _progname = "nasm";
 
-    timestamp();
+  iflag_set_default_cpu(&cpu);
+  iflag_set_default_cpu(&cmd_cpu);
 
-    iflag_set_default_cpu(&cpu);
-    iflag_set_default_cpu(&cmd_cpu);
+  parse_cmdline(argc, argv, 1);
+  if (terminate_after_phase) {
+      if (want_usage)
+          usage();
+      return 1;
+  }
 
-    set_default_limits();
+  /* At this point we have ofmt and the name of the desired debug format */
+  if (!using_debug_info) {
+      /* No debug info, redirect to the null backend (empty stubs) */
+      dfmt = &null_debug_form;
+  }
 
-    include_path = strlist_alloc(true);
+  parse_cmdline(argc, argv, 2);
+  if (terminate_after_phase) {
+      if (want_usage)
+          usage();
+      return 1;
+  }
 
-    _pass_type = PASS_INIT;
-    _passn = 0;
+  /* Save away the default state of warnings */
+  init_warnings();
 
-    want_usage = terminate_after_phase = false;
+  dfmt->init();
 
-    nasm_ctype_init();
-    src_init();
+  assemble_file();
 
-    /*
-     * We must call init_labels() before the command line parsing,
-     * because we may be setting prefixes/suffixes from the command
-     * line.
-     */
-    init_labels();
+  if (want_usage)
+      usage();
 
-    offsets = raa_init();
-    forwrefs = saa_init((int32_t)sizeof(struct forwrefinfo));
+  eval_cleanup();
+  stdscan_cleanup();
+  src_free();
 
-    operating_mode = OP_NORMAL;
-
-    parse_cmdline(argc, argv, 1);
-    if (terminate_after_phase) {
-        if (want_usage)
-            usage();
-        return 1;
-    }
-
-    /* At this point we have ofmt and the name of the desired debug format */
-    if (!using_debug_info) {
-        /* No debug info, redirect to the null backend (empty stubs) */
-        dfmt = &null_debug_form;
-    } else if (!debug_format) {
-        /* Default debug format for this backend */
-        dfmt = ofmt->default_dfmt;
-    } else {
-        dfmt = dfmt_find(ofmt, debug_format);
-        if (!dfmt) {
-            nasm_fatalf(ERR_USAGE, "unrecognized debug format `%s' for output format `%s'",
-                       debug_format, ofmt->shortname);
-        }
-    }
-
-    /* Have we enabled TASM mode? */
-    if (tasm_compatible_mode) {
-        ppopt |= PP_TASM;
-        nasm_ctype_tasm_mode();
-    }
-    preproc_init(include_path);
-
-    parse_cmdline(argc, argv, 2);
-    if (terminate_after_phase) {
-        if (want_usage)
-            usage();
-        return 1;
-    }
-
-    /* Save away the default state of warnings */
-    init_warnings();
-
-    /* Dependency filename if we are also doing other things */
-    if (!depend_file && (operating_mode & ~OP_DEPEND)) {
-        if (outname)
-            depend_file = nasm_strcat(outname, ".d");
-        else
-            depend_file = filename_set_extension(inname, ".d");
-    }
-
-    /*
-     * If no output file name provided and this
-     * is preprocess mode, we're perfectly
-     * fine to output into stdout.
-     */
-    if (!outname && !(operating_mode & OP_PREPROCESS)) {
-        outname = filename_set_extension(inname, ofmt->extension);
-        if (!strcmp(outname, inname)) {
-            outname = "nasm.out";
-            nasm_warn(WARN_OTHER, "default output file same as input, using `%s' for output\n", outname);
-        }
-    }
-
-    depend_list = (operating_mode & OP_DEPEND) ? strlist_alloc(true) : NULL;
-
-    if (!depend_target)
-        depend_target = quote_for_make(outname);
-
-    if (!(operating_mode & (OP_PREPROCESS|OP_NORMAL))) {
-            char *line;
-
-            if (depend_missing_ok)
-                pp_include_path(NULL);    /* "assume generated" */
-
-            pp_reset(inname, PP_DEPS, depend_list);
-            ofile = NULL;
-            while ((line = pp_getline()))
-                nasm_free(line);
-            pp_cleanup_pass();
-            reset_warnings();
-    } else if (operating_mode & OP_PREPROCESS) {
-            char *line;
-            const char *file_name = NULL;
-            char *quoted_file_name = nasm_quote_filename(file_name);
-            int32_t linnum  = 0;
-            int32_t lineinc = 0;
-            FILE *out;
-
-            if (outname) {
-                ofile = nasm_open_write(outname, NF_TEXT);
-                if (!ofile)
-                    nasm_fatal("unable to open output file `%s'", outname);
-                out = ofile;
-            } else {
-                ofile = NULL;
-                out = stdout;
-            }
-
-            location.known = false;
-
-            _pass_type = PASS_PREPROC;
-            pp_reset(inname, PP_PREPROC, depend_list);
-
-            while ((line = pp_getline())) {
-                /*
-                 * We generate %line directives if needed for later programs
-                 */
-                struct src_location where = src_where();
-                if (file_name != where.filename) {
-                    file_name = where.filename;
-                    linnum = -1; /* Force a new %line statement */
-                    lineinc = file_name ? 1 : 0;
-                    nasm_free(quoted_file_name);
-                    quoted_file_name = nasm_quote_filename(file_name);
-                } else if (lineinc) {
-                    if (linnum + lineinc == where.lineno) {
-                        /* Add one blank line to account for increment */
-                        fputc('\n', out);
-                        linnum += lineinc;
-                    } else if (linnum - lineinc == where.lineno) {
-                        /*
-                         * Standing still, probably a macro. Set increment
-                         * to zero.
-                         */
-                        lineinc = 0;
-                    }
-                } else {
-                    /* lineinc == 0 */
-                    if (linnum + 1 == where.lineno)
-                        lineinc = 1;
-                }
-
-                /* Skip blank lines if we will need a %line anyway */
-                if (linnum == -1 && !line[0])
-                    continue;
-
-                if (linnum != where.lineno) {
-                    fprintf(out, "%%line %"PRId32"%+"PRId32" %s\n",
-                            where.lineno, lineinc, quoted_file_name);
-                }
-                linnum = where.lineno + lineinc;
-
-                fputs(line, out);
-                fputc('\n', out);
-            }
-
-            nasm_free(quoted_file_name);
-
-            pp_cleanup_pass();
-            reset_warnings();
-            if (ofile)
-                fclose(ofile);
-            if (ofile && terminate_after_phase && !keep_all)
-                remove(outname);
-            ofile = NULL;
-    }
-
-    if (operating_mode & OP_NORMAL) {
-        ofile = nasm_open_write(outname, (ofmt->flags & OFMT_TEXT) ? NF_TEXT : NF_BINARY);
-        if (!ofile)
-            nasm_fatal("unable to open output file `%s'", outname);
-
-        ofmt->init();
-        dfmt->init();
-
-        assemble_file(inname, depend_list);
-
-        if (!terminate_after_phase) {
-            ofmt->cleanup();
-            cleanup_labels();
-            fflush(ofile);
-            if (ferror(ofile))
-                nasm_nonfatal("write error on output file `%s'", outname);
-        }
-
-        if (ofile) {
-            fclose(ofile);
-            if (terminate_after_phase && !keep_all)
-                remove(outname);
-            ofile = NULL;
-        }
-    }
-
-    pp_cleanup_session();
-
-    if (depend_list && !terminate_after_phase)
-        emit_dependencies(depend_list);
-
-    if (want_usage)
-        usage();
-
-    raa_free(offsets);
-    saa_free(forwrefs);
-    eval_cleanup();
-    stdscan_cleanup();
-    src_free();
-    strlist_free(&include_path);
-
-    return terminate_after_phase;
+  return terminate_after_phase;
 }
 
 /*
@@ -938,7 +536,6 @@ enum text_options {
     OPT_INCLUDE,
     OPT_PRAGMA,
     OPT_BEFORE,
-    OPT_LIMIT,
     OPT_KEEP_ALL,
     OPT_NO_LINE,
     OPT_DEBUG,
@@ -970,7 +567,6 @@ static const struct textargs textopts[] = {
     {"include",  OPT_INCLUDE, ARG_YES, 0},
     {"pragma",   OPT_PRAGMA,  ARG_YES, 0},
     {"before",   OPT_BEFORE,  ARG_YES, 0},
-    {"limit-",   OPT_LIMIT,   ARG_YES, 0},
     {"keep-all", OPT_KEEP_ALL, ARG_NO, 0},
     {"no-line",  OPT_NO_LINE, ARG_NO, 0},
     {"debug",    OPT_DEBUG, ARG_MAYBE, 0},
@@ -1010,15 +606,6 @@ static bool process_arg(char *p, char *q, int pass)
         case 'o':       /* output file */
             if (pass == 2)
                 copy_filename(&outname, param, "output");
-            break;
-
-        case 'f':       /* output format */
-            if (pass == 1) {
-                ofmt = ofmt_find(param, &ofmt_alias);
-                if (!ofmt) {
-                    nasm_fatalf(ERR_USAGE, "unrecognised output format `%s' - use -hf for a list", param);
-                }
-            }
             break;
 
         case 'O':       /* Optimization level */
@@ -1064,30 +651,6 @@ static bool process_arg(char *p, char *q, int pass)
                         optimizing.level = MAX_OPTIMIZE;
                 }
             }
-            break;
-
-        case 'p':       /* pre-include */
-        case 'P':
-            if (pass == 2)
-                pp_pre_include(param);
-            break;
-
-        case 'd':       /* pre-define */
-        case 'D':
-            if (pass == 2)
-                pp_pre_define(param);
-            break;
-
-        case 'u':       /* un-define */
-        case 'U':
-            if (pass == 2)
-                pp_pre_undefine(param);
-            break;
-
-        case 'i':       /* include search path */
-        case 'I':
-            if (pass == 1)
-                strlist_add(include_path, param);
             break;
 
         case 'l':       /* listing file */
@@ -1153,12 +716,6 @@ static bool process_arg(char *p, char *q, int pass)
             show_version();
             break;
 
-        case 'e':       /* preprocess only */
-        case 'E':
-            if (pass == 1)
-                operating_mode = OP_PREPROCESS;
-            break;
-
         case 'a':       /* assemble only - don't preprocess */
             if (pass == 1)
                 ppopt |= PP_TRIVIAL;
@@ -1187,22 +744,8 @@ static bool process_arg(char *p, char *q, int pass)
                 }
             } else {
                 switch (p[2]) {
-                case 0:
-                    operating_mode = OP_DEPEND;
-                    break;
-                case 'G':
-                    operating_mode = OP_DEPEND;
-                    depend_missing_ok = true;
-                    break;
                 case 'P':
                     depend_emit_phony = true;
-                    break;
-                case 'D':
-                    operating_mode |= OP_DEPEND;
-                    if (q && (q[0] != '-' || q[1] == '\0')) {
-                        depend_file = q;
-                        advance = true;
-                    }
                     break;
                 case 'F':
                     depend_file = q;
@@ -1309,22 +852,6 @@ static bool process_arg(char *p, char *q, int pass)
                 case OPT_MANGLE:
                     if (pass == 2)
                         set_label_mangle(tx->pvt, param);
-                    break;
-                case OPT_INCLUDE:
-                    if (pass == 2)
-                        pp_pre_include(q);
-                    break;
-                case OPT_PRAGMA:
-                    if (pass == 2)
-                        pp_pre_command("%pragma", param);
-                    break;
-                case OPT_BEFORE:
-                    if (pass == 2)
-                        pp_pre_command(NULL, param);
-                    break;
-                case OPT_LIMIT:
-                    if (pass == 1)
-                        nasm_set_limit(p+olen, param);
                     break;
                 case OPT_KEEP_ALL:
                     keep_all = true;
@@ -1544,40 +1071,6 @@ static void parse_cmdline(int argc, char **argv, int pass)
     }
 }
 
-static void forward_refs(insn *instruction)
-{
-    int i;
-    struct forwrefinfo *fwinf;
-
-    instruction->forw_ref = false;
-
-    if (!optimizing.level)
-        return;                 /* For -O0 don't bother */
-
-    if (!forwref)
-        return;
-
-    if (forwref->lineno != globallineno)
-        return;
-
-    instruction->forw_ref = true;
-    do {
-        instruction->oprs[forwref->operand].opflags |= OPFLAG_FORWARD;
-        forwref = saa_rstruct(forwrefs);
-    } while (forwref && forwref->lineno == globallineno);
-
-    if (!pass_first())
-        return;
-
-    for (i = 0; i < instruction->operands; i++) {
-        if (instruction->oprs[i].opflags & OPFLAG_FORWARD) {
-            fwinf = saa_wstruct(forwrefs);
-            fwinf->lineno = globallineno;
-            fwinf->operand = i;
-        }
-    }
-}
-
 static void process_insn(insn *instruction)
 {
     int32_t n;
@@ -1627,10 +1120,10 @@ static void process_insn(insn *instruction)
     }
 }
 
-static void assemble_file(const char *fname, struct strlist *depend_list)
+static void assemble_file()
 {
     char *line;
-    insn output_ins;
+//    insn output_ins;
     uint64_t prev_offset_changed;
     int64_t stall_count = 0; /* Make sure we make forward progress... */
 
@@ -1656,21 +1149,6 @@ static void assemble_file(const char *fname, struct strlist *depend_list)
         /* Remove the list file in case we die before the output pass */
         remove(listname);
     }
-
-    while (!terminate_after_phase && !pass_final()) {
-        _passn++;
-        switch (pass_type()) {
-        case PASS_INIT:
-            _pass_type = PASS_FIRST;
-            break;
-        case PASS_OPT:
-            if (global_offset_changed)
-                break;          /* One more optimization pass */
-            /* fall through */
-        default:
-            _pass_type++;
-            break;
-        }
 
         global_offset_changed = 0;
 
@@ -1703,45 +1181,55 @@ static void assemble_file(const char *fname, struct strlist *depend_list)
         }
 
         in_absolute = false;
-        if (!pass_first()) {
-            saa_rewind(forwrefs);
-            forwref = saa_rstruct(forwrefs);
-            raa_free(offsets);
-            offsets = raa_init();
-        }
         location.segment = NO_SEG;
         location.offset  = 0;
         if (pass_first())
             location.known = true;
-        ofmt->reset();
-        switch_segment(ofmt->section(NULL, &globalbits));
-        pp_reset(fname, PP_NORMAL, pass_final() ? depend_list : NULL);
 
-        globallineno = 0;
-
-        while ((line = pp_getline())) {
-            if (++globallineno > nasm_limit[LIMIT_LINES])
-                nasm_fatal("overall line count exceeds the maximum %"PRId64"\n",
-                           nasm_limit[LIMIT_LINES]);
-
-            /*
-             * Here we parse our directives; this is not handled by the
-             * main parser.
-             */
-            if (process_directives(line))
-                goto end_of_line; /* Just do final cleanup */
-
+  /* mov ax,4 */
+  insn output_ins =
+  {
+    .label = 0x0,
+    .prefixes = {0, 0, 0, 0, 0, 0, 0},
+    .opcode = I_MOV,
+    .condition = C_none,
+    .operands = 2,
+    .addr_size = 32,
+    .oprs = {
+      {.type = 17180393733, .disp_size = 0, .basereg = R_AX, .indexreg = R_none, .scale = 0, 
+      .hintbase = 0, .hinttype = EAH_NOHINT, .segment = -1, .offset = 0, .wrt = -1, .eaflags = 0, .opflags = 0, 
+      .decoflags = 0},
+      {.type = 7864322, .disp_size = 0, .basereg = R_none, .indexreg = R_none, .scale = 0, .hintbase = 0, 
+      .hinttype = EAH_NOHINT, .segment = -1, .offset = 4, .wrt = -1, .eaflags = 0, .opflags = 0, .decoflags = 0},
+      {.type = 0, .disp_size = 0, .basereg = R_none, .indexreg = R_none, .scale = 0, .hintbase = 0,
+      .hinttype = EAH_NOHINT, .segment = -1, .offset = 0, .wrt = -1, .eaflags = 0, .opflags = 0, .decoflags = 0},
+      {.type = 0, .disp_size = 0, 
+      .basereg = R_zero, .indexreg = R_AH, .scale = 0, .hintbase = 1433524224, .hinttype = 21845, .segment = 2007385088, 
+      .offset = 140737488346032, .wrt = 1432088262, .eaflags = 21845, .opflags = 1432502559, .decoflags = 21845},
+      {
+      .type = 0, .disp_size = 1432504795, .basereg = R_CR0, .indexreg = 1432502606, .scale = 16, .hintbase = -9200, 
+      .hinttype = 32767, .segment = 1432225456, .offset = 201863454064, .wrt = 1432702944, .eaflags = 21845, 
+      .opflags = 1433502432, .decoflags = 21845}
+    },
+    .eops = 0x0,
+    .eops_float = 1844422398,
+    .times = 1,
+    .forw_ref = false,
+    .rex_done = false,
+    .rex = 0,
+    .vexreg = 14,
+    .vex_cm = 0,
+    .vex_wlp = 0,
+    .evex_p = "\000\000",
+    .evex_tuple = 1433518784,
+    .evex_rm = 0,
+    .evex_brerop = -1
+  };
             /* Not a directive, or even something that starts with [ */
-            parse_line(line, &output_ins);
-            forward_refs(&output_ins);
             process_insn(&output_ins);
-            cleanup_insn(&output_ins);
 
         end_of_line:
             nasm_free(line);
-        }                       /* end while (line = pp_getline... */
-
-        pp_cleanup_pass();
 
         /* We better not be having an error hold still... */
         nasm_assert(!errhold_stack);
@@ -1760,17 +1248,6 @@ static void assemble_file(const char *fname, struct strlist *depend_list)
                     stall_count++;
                 }
 
-                if (stall_count > nasm_limit[LIMIT_STALLED] ||
-                    pass_count() >= nasm_limit[LIMIT_PASSES]) {
-                    /* No convergence, almost certainly dead */
-                    nasm_nonfatalf(ERR_UNDEAD,
-                                   "unable to find valid values for all labels "
-                                   "after %"PRId64" passes; "
-                                   "stalled for %"PRId64", giving up.",
-                                   pass_count(), stall_count);
-                    nasm_nonfatalf(ERR_UNDEAD,
-                               "Possible causes: recursive EQUs, macro abuse.");
-                }
                 break;
 
             case PASS_STAB:
@@ -1797,7 +1274,6 @@ static void assemble_file(const char *fname, struct strlist *depend_list)
         }
 
         reset_warnings();
-    }
 
     if (opt_verbose_info && pass_final()) {
         /*  -On and -Ov switches */
@@ -1873,9 +1349,6 @@ static bool is_suppressed(errflags severity)
 
     if (!(warning_state[warn_index(severity)] & WARN_ST_ENABLED))
         return true;
-
-    if (!(severity & ERR_PP_LISTMACRO))
-        return pp_suppress_error(severity);
 
     return false;
 }
@@ -2106,9 +1579,6 @@ void nasm_verror(errflags severity, const char *fmt, va_list args)
      */
     if (skip_this_pass(severity))
         return;
-
-    if (!(severity & (ERR_HERE|ERR_PP_LISTMACRO)))
-        pp_error_list_macros(severity);
 }
 
 /*
@@ -2249,7 +1719,6 @@ static void help(FILE *out)
         "\n"
         "    -f format     select output file format\n"
         , out);
-    ofmt_list(ofmt, out);
     fputs(
         "\n"
         "    -g            generate debugging information\n"
@@ -2341,15 +1810,4 @@ static void help(FILE *out)
         "\n"
         "   --limit-X val  set execution limit X\n"
         , out);
-
-
-    for (i = 0; i <= LIMIT_MAX; i++) {
-        fprintf(out, "       %-20s %s [",
-                limit_info[i].name, limit_info[i].help);
-        if (nasm_limit[i] < LIMIT_MAX_VAL) {
-            fprintf(out, "%"PRId64"]\n", nasm_limit[i]);
-        } else {
-            fputs("unlimited]\n", out);
-        }
-    }
 }

@@ -55,10 +55,6 @@ struct src_location_stack *_src_error = &_src_top;
 
 static struct hash_table filename_hash;
 
-void src_init(void)
-{
-}
-
 void src_free(void)
 {
     hash_free_all(&filename_hash, false);

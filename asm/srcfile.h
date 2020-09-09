@@ -70,7 +70,6 @@ extern struct src_location_stack _src_top;
 extern struct src_location_stack *_src_bottom;
 extern struct src_location_stack *_src_error;
 
-void src_init(void);
 void src_free(void);
 const char *src_set_fname(const char *newname);
 static inline const char *src_get_fname(void)

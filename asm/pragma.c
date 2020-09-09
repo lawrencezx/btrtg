@@ -365,5 +365,5 @@ static enum directive_result debug_pragma(const struct pragma *pragma)
  */
 static enum directive_result limit_pragma(const struct pragma *pragma)
 {
-    return nasm_set_limit(pragma->opname, pragma->tail);
+    return DIRR_OK;
 }

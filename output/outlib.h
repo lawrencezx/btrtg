@@ -38,7 +38,6 @@
 #include "nasm.h"
 #include "error.h"
 #include "hashtbl.h"
-#include "saa.h"
 #include "rbtree.h"
 
 uint64_t realsize(enum out_type type, uint64_t size);
@@ -171,12 +170,6 @@ struct ol_sym {
     struct ol_loc p;            /* Symbol position ("where") */
     struct ol_loc v;            /* Symbol value ("what") */
 };
-
-/*
- * Operations
- */
-void ol_init(void);
-void ol_cleanup(void);
 
 /* Convert offs:seg to a location structure */
 extern void

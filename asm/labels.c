@@ -161,8 +161,6 @@ static void out_symdef(union label *lptr)
         case LBL_GLOBAL:
         case LBL_REQUIRED:
         case LBL_COMMON:
-            if (lptr->defn.special)
-                ofmt->symdef(lptr->defn.mangled, 0, 0, 3, lptr->defn.special);
             break;
         default:
             break;
@@ -201,10 +199,6 @@ static void out_symdef(union label *lptr)
 
     /* Might be necessary for a backend symbol */
     mangle_label_name(lptr);
-
-    ofmt->symdef(lptr->defn.mangled, lptr->defn.segment,
-                 backend_offset, backend_type,
-                 lptr->defn.special);
 
     /*
      * NASM special symbols are not passed to the debug format; none
@@ -352,9 +346,6 @@ handle_herelabel(union label *lptr, int32_t *segment, int64_t *offset)
 {
     int32_t oldseg;
 
-    if (likely(!ofmt->herelabel))
-        return;
-
     if (unlikely(location.segment == NO_SEG))
         return;
 
@@ -366,8 +357,6 @@ handle_herelabel(union label *lptr, int32_t *segment, int64_t *offset)
         bool copyoffset = false;
 
         nasm_assert(lptr->defn.mangled);
-        newseg = ofmt->herelabel(lptr->defn.mangled, lptr->defn.type,
-                                 oldseg, &lptr->defn.subsection, &copyoffset);
         if (likely(newseg == oldseg))
             return;
 

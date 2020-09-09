@@ -48,7 +48,6 @@
 #include "preproc.h"
 #include "eval.h"
 #include "assemble.h"
-#include "outform.h"
 #include "listing.h"
 #include "labels.h"
 #include "iflag.h"

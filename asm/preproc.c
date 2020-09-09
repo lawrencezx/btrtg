@@ -7300,11 +7300,6 @@ void pp_cleanup_session(void)
     ipath_list = NULL;
 }
 
-void pp_include_path(struct strlist *list)
-{
-    ipath_list = list;
-}
-
 void pp_pre_include(char *fname)
 {
     Token *inc, *space, *name;

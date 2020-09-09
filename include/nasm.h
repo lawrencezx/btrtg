@@ -65,14 +65,6 @@ struct compile_time {
     struct tm local;
     struct tm gm;
 };
-extern struct compile_time official_compile_time;
-
-/* POSIX timestamp if and only if we are not a reproducible build */
-extern bool reproducible;
-static inline int64_t posix_timestamp(void)
-{
-    return reproducible ? 0 : official_compile_time.posix;
-}
 
 #define NO_SEG  INT32_C(-1)     /* null segment value */
 #define SEG_ABS 0x40000000L     /* mask for far-absolute segments */
@@ -466,9 +458,6 @@ void pp_pre_include(char *fname);
 
 /* Add a command from the command line */
 void pp_pre_command(const char *what, char *str);
-
-/* Include path from command line */
-void pp_include_path(struct strlist *ipath);
 
 /* Unwind the macro stack when printing an error message */
 void pp_error_list_macros(errflags severity);
@@ -1404,11 +1393,11 @@ extern const char * const _pass_types[];
 extern enum pass_type _pass_type;
 static inline enum pass_type pass_type(void)
 {
-    return _pass_type;
+    return PASS_FINAL;
 }
 static inline const char *pass_type_name(void)
 {
-    return _pass_types[_pass_type];
+    return "final";
 }
 /* True during initialization, no code read yet */
 static inline bool not_started(void)
@@ -1441,10 +1430,9 @@ static inline bool pass_final_or_preproc(void)
  * first pass is 1, and then it is simply increasing numbers until we are
  * done.
  */
-extern int64_t _passn;           /* Actual pass number */
 static inline int64_t pass_count(void)
 {
-    return _passn;
+    return 1;
 }
 
 extern struct optimization optimizing;

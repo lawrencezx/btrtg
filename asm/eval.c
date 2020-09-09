@@ -234,7 +234,7 @@ static expr *segment_part(expr * e)
                       " is already a segment base");
         return NULL;
     } else {
-        int32_t base = ofmt->segbase(seg + 1);
+        int32_t base = 0;
 
         begintemp();
         addtotemp((base == NO_SEG ? EXPR_UNKNOWN : EXPR_SEGBASE + base),
@@ -823,10 +823,10 @@ static expr *expr6(void)
     bool rn_warn;
     const char *scope;
 
-    if (++deadman > nasm_limit[LIMIT_EVAL]) {
-        nasm_nonfatal("expression too long");
-        return NULL;
-    }
+//    if (++deadman > nasm_limit[LIMIT_EVAL]) {
+//        nasm_nonfatal("expression too long");
+//        return NULL;
+//    }
 
     switch (tt) {
     case '-':

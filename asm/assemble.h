@@ -45,6 +45,38 @@ extern iflag_t cpu;
 extern bool in_absolute;        /* Are we in an absolute segment? */
 extern struct location absolute;
 
+enum match_result {
+    /*
+     * Matching errors.  These should be sorted so that more specific
+     * errors come later in the sequence.
+     */
+    MERR_INVALOP,
+    MERR_OPSIZEMISSING,
+    MERR_OPSIZEMISMATCH,
+    MERR_BRNOTHERE,
+    MERR_BRNUMMISMATCH,
+    MERR_MASKNOTHERE,
+    MERR_DECONOTHERE,
+    MERR_BADCPU,
+    MERR_BADMODE,
+    MERR_BADHLE,
+    MERR_ENCMISMATCH,
+    MERR_BADBND,
+    MERR_BADREPNE,
+    MERR_REGSETSIZE,
+    MERR_REGSET,
+    /*
+     * Matching success; the conditional ones first
+     */
+    MOK_JUMP,		/* Matching OK but needs jmp_match() */
+    MOK_GOOD		/* Matching unconditionally OK */
+};
+
+void gencode(struct out_data *data, insn *ins);
+enum match_result find_match(const struct itemplate **tempp,
+                                    insn *instruction,
+                                    int32_t segment, int64_t offset, int bits);
+
 int64_t insn_size(int32_t segment, int64_t offset, int bits, insn *instruction);
 int64_t assemble(int32_t segment, int64_t offset, int bits, insn *instruction);
 

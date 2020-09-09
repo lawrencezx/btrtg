@@ -108,11 +108,6 @@ void nasm_do_legacy_output(const struct out_data *data)
         tsegment = twrt = NO_SEG;
         type = OUT_RAWDATA;
         dptr = zero_buffer;
-        while (size > ZERO_BUF_SIZE) {
-            ofmt->legacy_output(data->segment, dptr, type,
-                                ZERO_BUF_SIZE, tsegment, twrt);
-            size -= ZERO_BUF_SIZE;
-        }
         break;
 
     default:
@@ -120,5 +115,4 @@ void nasm_do_legacy_output(const struct out_data *data)
         break;
     }
 
-    ofmt->legacy_output(data->segment, dptr, type, size, tsegment, twrt);
 }

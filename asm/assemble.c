@@ -188,33 +188,6 @@
 #include "listing.h"
 #include "dbginfo.h"
 
-enum match_result {
-    /*
-     * Matching errors.  These should be sorted so that more specific
-     * errors come later in the sequence.
-     */
-    MERR_INVALOP,
-    MERR_OPSIZEMISSING,
-    MERR_OPSIZEMISMATCH,
-    MERR_BRNOTHERE,
-    MERR_BRNUMMISMATCH,
-    MERR_MASKNOTHERE,
-    MERR_DECONOTHERE,
-    MERR_BADCPU,
-    MERR_BADMODE,
-    MERR_BADHLE,
-    MERR_ENCMISMATCH,
-    MERR_BADBND,
-    MERR_BADREPNE,
-    MERR_REGSETSIZE,
-    MERR_REGSET,
-    /*
-     * Matching success; the conditional ones first
-     */
-    MOK_JUMP,		/* Matching OK but needs jmp_match() */
-    MOK_GOOD		/* Matching unconditionally OK */
-};
-
 typedef struct {
     enum ea_type type;            /* what kind of EA is this? */
     int sib_present;              /* is a SIB byte necessary? */
@@ -233,10 +206,6 @@ typedef struct {
 static int64_t calcsize(int32_t, int64_t, int, insn *,
                         const struct itemplate *);
 static int emit_prefix(struct out_data *data, const int bits, insn *ins);
-static void gencode(struct out_data *data, insn *ins);
-static enum match_result find_match(const struct itemplate **tempp,
-                                    insn *instruction,
-                                    int32_t segment, int64_t offset, int bits);
 static enum match_result matches(const struct itemplate *, insn *, int bits);
 static opflags_t regflag(const operand *);
 static int32_t regval(const operand *);
@@ -321,17 +290,6 @@ static void warn_overflow_out(int64_t data, int size, enum out_flags flags)
  */
 static void debug_macro_out(const struct out_data *data)
 {
-    struct debug_macro_addr *addr;
-    uint64_t start = data->offset;
-    uint64_t end  = start + data->size;
-
-    addr = debug_macro_get_addr(data->segment);
-    while (addr) {
-        if (!addr->len)
-            addr->start = start;
-        addr->len = end - addr->start;
-        addr = addr->up;
-    }
 }
 
 /*
@@ -386,20 +344,6 @@ static void out(struct out_data *data)
     address:
         nasm_assert(data->size <= 8);
         asize = data->size;
-        amax = ofmt->maxbits >> 3; /* Maximum address size in bytes */
-        if (!(ofmt->flags & OFMT_KEEP_ADDR) &&
-            data->tsegment == fixseg &&
-            data->twrt == NO_SEG) {
-            if (asize >= (size_t)(data->bits >> 3)) {
-                 /* Support address space wrapping for low-bit modes */
-                data->flags &= ~OUT_SIGNMASK;
-            }
-            warn_overflow_out(addrval, asize, data->flags);
-            xdata.q = cpu_to_le64(addrval);
-            data->data = xdata.b;
-            data->type = OUT_RAWDATA;
-            asize = amax = 0;   /* No longer an address */
-        }
         break;
 
     case OUT_SEGMENT:
@@ -430,8 +374,7 @@ static void out(struct out_data *data)
 
     if (asize > amax) {
         if (data->type == OUT_RELADDR || (data->flags & OUT_SIGNED)) {
-            nasm_nonfatal("%u-bit signed relocation unsupported by output format %s",
-                          (unsigned int)(asize << 3), ofmt->shortname);
+          ;
         } else {
             /*!
              *!zext-reloc [on] relocation zero-extended to match output format
@@ -447,22 +390,7 @@ static void out(struct out_data *data)
         zeropad = data->size - amax;
         data->size = amax;
     }
-    lfmt->output(data);
-
-    if (likely(data->segment != NO_SEG)) {
-        /*
-         * Collect macro-related information for the debugger, if applicable
-         */
-        if (debug_current_macro)
-            debug_macro_out(data);
-
-        ofmt->output(data);
-    } else {
-        /* Outputting to ABSOLUTE section - only reserve is permitted */
-        if (data->type != OUT_RESERVE)
-            nasm_nonfatal("attempt to assemble code in [ABSOLUTE] space");
-        /* No need to push to the backend */
-    }
+    //lfmt->output(data);
 
     data->offset  += data->size;
     data->insoffs += data->size;
@@ -470,11 +398,13 @@ static void out(struct out_data *data)
     if (zeropad) {
         data->type     = OUT_ZERODATA;
         data->size     = zeropad;
-        lfmt->output(data);
-        ofmt->output(data);
+        //lfmt->output(data);
         data->offset  += zeropad;
         data->insoffs += zeropad;
         data->size    += zeropad;  /* Restore original size value */
+    }
+    for (int i = 0; i < (int)data->size; ++i) {
+        printf("0x%02x ", *((uint8_t*)data->data + i));
     }
 }
 
@@ -511,7 +441,7 @@ static void out_segment(struct out_data *data, const struct operand *opx)
     data->flags     = OUT_UNSIGNED;
     data->size      = 2;
     data->toffset   = opx->offset;
-    data->tsegment  = ofmt->segbase(opx->segment | 1);
+    data->tsegment  = 0;
     data->twrt      = opx->wrt;
     out(data);
 }
@@ -959,6 +889,7 @@ int64_t assemble(int32_t segment, int64_t start, int bits, insn *instruction)
             instruction->times = 1; /* Avoid repeated error messages */
         }
     }
+    printf("\n");
     return data.offset - start;
 }
 
@@ -1867,7 +1798,7 @@ static int emit_prefix(struct out_data *data, const int bits, insn *ins)
     return bytes;
 }
 
-static void gencode(struct out_data *data, insn *ins)
+void gencode(struct out_data *data, insn *ins)
 {
     uint8_t c;
     uint8_t bytes[4];
@@ -2371,7 +2302,7 @@ static int op_evexflags(const operand * o, int mask, uint8_t byte)
     return evexflags(val, o->decoflags, mask, byte);
 }
 
-static enum match_result find_match(const struct itemplate **tempp,
+enum match_result find_match(const struct itemplate **tempp,
                                     insn *instruction,
                                     int32_t segment, int64_t offset, int bits)
 {
