@@ -344,6 +344,10 @@ static void out(struct out_data *data)
     address:
         nasm_assert(data->size <= 8);
         asize = data->size;
+        xdata.q = cpu_to_le64(addrval);
+        data->data = xdata.b;
+        data->type = OUT_RAWDATA;
+        asize = amax = 0;
         break;
 
     case OUT_SEGMENT:
