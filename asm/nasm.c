@@ -125,11 +125,6 @@ struct location location;
 bool in_absolute;                 /* Flag we are in ABSOLUTE seg */
 struct location absolute;         /* Segment/offset inside ABSOLUTE */
 
-static struct RAA *offsets;
-
-static struct SAA *forwrefs;    /* keep track of forward references */
-static const struct forwrefinfo *forwref;
-
 static enum preproc_opt ppopt;
 
 #define OP_NORMAL           (1U << 0)
@@ -138,7 +133,6 @@ static enum preproc_opt ppopt;
 
 /* Dependency flags */
 static bool depend_emit_phony = false;
-static bool depend_missing_ok = false;
 static const char *depend_target = NULL;
 static const char *depend_file = NULL;
 
@@ -175,130 +169,6 @@ static void increment_offset(int64_t delta)
 
     location.offset += delta;
     set_curr_offs(location.offset);
-}
-
-/*
- * Initialize the preprocessor, set up the include path, and define
- * the system-included macros.  This is called between passes 1 and 2
- * of parsing the command options; ofmt and dfmt are defined at this
- * point.
- *
- * Command-line specified preprocessor directives (-p, -d, -u,
- * --pragma, --before) are processed after this function.
- */
-
-static void emit_dependencies(struct strlist *list)
-{
-    FILE *deps;
-    int linepos, len;
-    bool wmake = (quote_for_make == quote_for_wmake);
-    const char *wrapstr, *nulltarget;
-    const struct strlist_entry *l;
-
-    if (!list)
-        return;
-
-    wrapstr = wmake ? " &\n " : " \\\n ";
-    nulltarget = wmake ? "\t%null\n" : "";
-
-    if (depend_file && strcmp(depend_file, "-")) {
-        deps = nasm_open_write(depend_file, NF_TEXT);
-        if (!deps) {
-            nasm_nonfatal("unable to write dependency file `%s'", depend_file);
-            return;
-        }
-    } else {
-        deps = stdout;
-    }
-
-    linepos = fprintf(deps, "%s :", depend_target);
-    strlist_for_each(l, list) {
-        char *file = quote_for_make(l->str);
-        len = strlen(file);
-        if (linepos + len > 62 && linepos > 1) {
-            fputs(wrapstr, deps);
-            linepos = 1;
-        }
-        fprintf(deps, " %s", file);
-        linepos += len+1;
-        nasm_free(file);
-    }
-    fputs("\n\n", deps);
-
-    strlist_for_each(l, list) {
-        if (depend_emit_phony) {
-            char *file = quote_for_make(l->str);
-            fprintf(deps, "%s :\n%s\n", file, nulltarget);
-            nasm_free(file);
-        }
-    }
-
-    strlist_free(&list);
-
-    if (deps != stdout)
-        fclose(deps);
-}
-
-/* Convert a struct tm to a POSIX-style time constant */
-static int64_t make_posix_time(const struct tm *tm)
-{
-    int64_t t;
-    int64_t y = tm->tm_year;
-
-    /* See IEEE 1003.1:2004, section 4.14 */
-
-    t = (y-70)*365 + (y-69)/4 - (y-1)/100 + (y+299)/400;
-    t += tm->tm_yday;
-    t *= 24;
-    t += tm->tm_hour;
-    t *= 60;
-    t += tm->tm_min;
-    t *= 60;
-    t += tm->tm_sec;
-
-    return t;
-}
-
-/*
- * Quote a filename string if and only if it is necessary.
- * It is considered necessary if any one of these is true:
- * 1. The filename contains control characters;
- * 2. The filename starts or ends with a space or quote mark;
- * 3. The filename contains more than one space in a row;
- * 4. The filename is empty.
- *
- * The filename is returned in a newly allocated buffer.
- */
-static char *nasm_quote_filename(const char *fn)
-{
-    const unsigned char *p =
-        (const unsigned char *)fn;
-    size_t len;
-
-    if (!p || !*p)
-        return nasm_strdup("\"\"");
-
-    if (*p <= ' ' || nasm_isquote(*p)) {
-        goto quote;
-    } else {
-        unsigned char cutoff = ' ';
-
-        while (*p) {
-            if (*p < cutoff)
-                goto quote;
-            cutoff = ' ' + (*p == ' ');
-            p++;
-        }
-        if (p[-1] <= ' ' || nasm_isquote(p[-1]))
-            goto quote;
-    }
-
-    /* Quoting not necessary */
-    return nasm_strdup(fn);
-
-quote:
-    len = strlen(fn);
-    return nasm_quote(fn, &len);
 }
 
 int main(int argc, char *argv[])
@@ -1122,8 +992,6 @@ static void process_insn(insn *instruction)
 
 static void assemble_file()
 {
-    char *line;
-//    insn output_ins;
     uint64_t prev_offset_changed;
     int64_t stall_count = 0; /* Make sure we make forward progress... */
 
@@ -1227,9 +1095,6 @@ static void assemble_file()
   };
             /* Not a directive, or even something that starts with [ */
             process_insn(&output_ins);
-
-        end_of_line:
-            nasm_free(line);
 
         /* We better not be having an error hold still... */
         nasm_assert(!errhold_stack);

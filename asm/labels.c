@@ -152,7 +152,7 @@ static bool initialized = false;
 static void out_symdef(union label *lptr)
 {
     int backend_type;
-    int64_t backend_offset;
+//    int64_t backend_offset;
 
     /* Backend-defined special segments are passed to symdef immediately */
     if (pass_final()) {
@@ -185,15 +185,15 @@ static void out_symdef(union label *lptr)
     case LBL_GLOBAL:
     case LBL_REQUIRED:
         backend_type = 1;
-        backend_offset = lptr->defn.offset;
+//        backend_offset = lptr->defn.offset;
         break;
     case LBL_COMMON:
         backend_type = 2;
-        backend_offset = lptr->defn.size;
+//        backend_offset = lptr->defn.size;
         break;
     default:
         backend_type = 0;
-        backend_offset = lptr->defn.offset;
+//        backend_offset = lptr->defn.offset;
         break;
     }
 
@@ -341,37 +341,6 @@ static const char *mangle_label_name(union label *lptr)
     return lptr->defn.mangled;
 }
 
-static void
-handle_herelabel(union label *lptr, int32_t *segment, int64_t *offset)
-{
-    int32_t oldseg;
-
-    if (unlikely(location.segment == NO_SEG))
-        return;
-
-    oldseg = *segment;
-
-    if (oldseg == location.segment && *offset == location.offset) {
-        /* This label is defined at this location */
-        int32_t newseg;
-        bool copyoffset = false;
-
-        nasm_assert(lptr->defn.mangled);
-        if (likely(newseg == oldseg))
-            return;
-
-        *segment = newseg;
-        if (copyoffset) {
-            /* Maintain the offset from the old to the new segment */
-            switch_segment(newseg);
-            location.offset = *offset;
-        } else {
-            /* Keep a separate offset for the new segment */
-            *offset = switch_segment(newseg);
-        }
-    }
-}
-
 static bool declare_label_lptr(union label *lptr,
                                enum label_type type, const char *special)
 {
@@ -471,7 +440,6 @@ void define_label(const char *label, int32_t segment,
          * will probably error out further down.)
          */
         mangle_label_name(lptr);
-        handle_herelabel(lptr, &segment, &offset);
     }
 
     if (ismagic(label) && lptr->defn.type == LBL_LOCAL)

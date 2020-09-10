@@ -57,46 +57,46 @@
 
 void nasm_do_legacy_output(const struct out_data *data)
 {
-    const void *dptr = data->data;
-    enum out_type type = data->type;
+//    const void *dptr = data->data;
+//    enum out_type type = data->type;
     int32_t tsegment = data->tsegment;
     int32_t twrt = data->twrt;
-    uint64_t size = data->size;
+//    uint64_t size = data->size;
 
     switch (data->type) {
     case OUT_RELADDR:
         switch (data->size) {
         case 1:
-            type = OUT_REL1ADR;
+//            type = OUT_REL1ADR;
             break;
         case 2:
-            type = OUT_REL2ADR;
+//            type = OUT_REL2ADR;
             break;
         case 4:
-            type = OUT_REL4ADR;
+//            type = OUT_REL4ADR;
             break;
         case 8:
-            type = OUT_REL8ADR;
+//            type = OUT_REL8ADR;
             break;
         default:
             panic();
             break;
         }
 
-        dptr = &data->toffset;
-        size = data->relbase - data->offset;
+//        dptr = &data->toffset;
+//        size = data->relbase - data->offset;
         break;
 
     case OUT_SEGMENT:
-        type = OUT_ADDRESS;
-        dptr = zero_buffer;
-        size = (data->flags & OUT_SIGNED) ? -data->size : data->size;
+//        type = OUT_ADDRESS;
+//        dptr = zero_buffer;
+//        size = (data->flags & OUT_SIGNED) ? -data->size : data->size;
         tsegment |= 1;
         break;
 
     case OUT_ADDRESS:
-        dptr = &data->toffset;
-        size = (data->flags & OUT_SIGNED) ? -data->size : data->size;
+//        dptr = &data->toffset;
+//        size = (data->flags & OUT_SIGNED) ? -data->size : data->size;
         break;
 
     case OUT_RAWDATA:
@@ -106,8 +106,8 @@ void nasm_do_legacy_output(const struct out_data *data)
 
     case OUT_ZERODATA:
         tsegment = twrt = NO_SEG;
-        type = OUT_RAWDATA;
-        dptr = zero_buffer;
+//        type = OUT_RAWDATA;
+//        dptr = zero_buffer;
         break;
 
     default:

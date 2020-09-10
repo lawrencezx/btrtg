@@ -50,7 +50,6 @@
 static enum directive_result ignore_pragma(const struct pragma *pragma);
 static enum directive_result output_pragma(const struct pragma *pragma);
 static enum directive_result debug_pragma(const struct pragma *pragma);
-static enum directive_result limit_pragma(const struct pragma *pragma);
 
 /*
  * Handle [pragma] directives.  [pragma] is generally produced by
@@ -88,7 +87,6 @@ static enum directive_result limit_pragma(const struct pragma *pragma);
 static struct pragma_facility global_pragmas[] =
 {
     { "asm",		NULL },
-    { "limit",          limit_pragma },
     { "list",		list_pragma },
     { "file",		NULL },
     { "input",		NULL },
@@ -358,12 +356,4 @@ static enum directive_result debug_pragma(const struct pragma *pragma)
 
     return search_pragma_list(dfmt->pragmas, dfmt->shortname,
                               &debug_pragma_def, pragma);
-}
-
-/*
- * %pragma limit to set resource limits
- */
-static enum directive_result limit_pragma(const struct pragma *pragma)
-{
-    return DIRR_OK;
 }

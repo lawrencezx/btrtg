@@ -270,28 +270,6 @@ static void warn_overflow_const(int64_t data, int size)
         warn_overflow(size);
 }
 
-static void warn_overflow_out(int64_t data, int size, enum out_flags flags)
-{
-    bool err;
-
-    if (flags & OUT_SIGNED)
-        err = overflow_signed(data, size);
-    else if (flags & OUT_UNSIGNED)
-        err = overflow_unsigned(data, size);
-    else
-        err = overflow_general(data, size);
-
-    if (err)
-        warn_overflow(size);
-}
-
-/*
- * Collect macro-related debug information, if applicable.
- */
-static void debug_macro_out(const struct out_data *data)
-{
-}
-
 /*
  * This routine wrappers the real output format's output routine,
  * in order to pass a copy of the data off to the listing file
@@ -321,7 +299,6 @@ static void out(struct out_data *data)
     size_t asize, amax;
     uint64_t zeropad = 0;
     int64_t addrval;
-    int32_t fixseg;             /* Segment for which to produce fixed data */
 
     if (!data->size)
         return;                 /* Nothing to do */
@@ -333,12 +310,10 @@ static void out(struct out_data *data)
     switch (data->type) {
     case OUT_ADDRESS:
         addrval = data->toffset;
-        fixseg = NO_SEG;        /* Absolute address is fixed data */
         goto address;
 
     case OUT_RELADDR:
         addrval = data->toffset - data->relbase;
-        fixseg = data->segment; /* Our own segment is fixed data */
         goto address;
 
     address:
