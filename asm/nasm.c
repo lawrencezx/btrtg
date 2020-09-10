@@ -116,7 +116,7 @@ FILE *error_file;               /* Where to write error messages */
 FILE *ofile = NULL;
 struct optimization optimizing =
     { MAX_OPTIMIZE, OPTIM_ALL_ENABLED }; /* number of optimization passes to take */
-static int cmd_sb = 16;    /* by default */
+static int cmd_sb = 32;    /* by default */
 
 iflag_t cpu;
 static iflag_t cmd_cpu;
@@ -1190,7 +1190,7 @@ static void assemble_file()
   insn output_ins =
   {
     .label = 0x0,
-    .prefixes = {0, 0, 0, 0, 0, 0, 0},
+    .prefixes = {0, 0, 0, 0, 254, 0, 0},
     .opcode = I_MOV,
     .condition = C_none,
     .operands = 2,
