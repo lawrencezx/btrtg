@@ -151,7 +151,7 @@ static bool initialized = false;
  */
 static void out_symdef(union label *lptr)
 {
-    int backend_type;
+//    int backend_type;
 //    int64_t backend_offset;
 
     /* Backend-defined special segments are passed to symdef immediately */
@@ -184,32 +184,21 @@ static void out_symdef(union label *lptr)
         /* fall through */
     case LBL_GLOBAL:
     case LBL_REQUIRED:
-        backend_type = 1;
+//        backend_type = 1;
 //        backend_offset = lptr->defn.offset;
         break;
     case LBL_COMMON:
-        backend_type = 2;
+//        backend_type = 2;
 //        backend_offset = lptr->defn.size;
         break;
     default:
-        backend_type = 0;
+//        backend_type = 0;
 //        backend_offset = lptr->defn.offset;
         break;
     }
 
     /* Might be necessary for a backend symbol */
     mangle_label_name(lptr);
-
-    /*
-     * NASM special symbols are not passed to the debug format; none
-     * of the current backends want to see them.
-     */
-    if (lptr->defn.type == LBL_SPECIAL || lptr->defn.type == LBL_BACKEND)
-        return;
-
-    dfmt->debug_deflabel(lptr->defn.mangled, lptr->defn.segment,
-                         lptr->defn.offset, backend_type,
-                         lptr->defn.special);
 }
 
 /*

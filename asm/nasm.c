@@ -50,7 +50,6 @@
 #include "eval.h"
 #include "assemble.h"
 #include "labels.h"
-#include "outform.h"
 #include "listing.h"
 #include "iflag.h"
 #include "quote.h"
@@ -90,8 +89,7 @@ static struct nasm_errhold *errhold_stack;
 
 unsigned int debug_nasm;        /* Debugging messages? */
 
-static bool using_debug_info, opt_verbose_info;
-static const char *debug_format;
+static bool opt_verbose_info;
 
 #ifndef ABORT_ON_PANIC
 # define ABORT_ON_PANIC 0
@@ -103,17 +101,13 @@ bool tasm_compatible_mode = false;
 int globalrel = 0;
 int globalbnd = 0;
 
-const char *inname;
-const char *outname;
 static const char *listname;
 static const char *errname;
 
 const struct ofmt_alias *ofmt_alias = NULL;
-const struct dfmt *dfmt;
 
 FILE *error_file;               /* Where to write error messages */
 
-FILE *ofile = NULL;
 struct optimization optimizing =
     { MAX_OPTIMIZE, OPTIM_ALL_ENABLED }; /* number of optimization passes to take */
 static int cmd_sb = 32;    /* by default */
@@ -188,12 +182,6 @@ int main(int argc, char *argv[])
       return 1;
   }
 
-  /* At this point we have ofmt and the name of the desired debug format */
-  if (!using_debug_info) {
-      /* No debug info, redirect to the null backend (empty stubs) */
-      dfmt = &null_debug_form;
-  }
-
   parse_cmdline(argc, argv, 2);
   if (terminate_after_phase) {
       if (want_usage)
@@ -203,8 +191,6 @@ int main(int argc, char *argv[])
 
   /* Save away the default state of warnings */
   init_warnings();
-
-  dfmt->init();
 
   assemble_file();
 
@@ -473,11 +459,6 @@ static bool process_arg(char *p, char *q, int pass)
                 error_file = stdout;
             break;
 
-        case 'o':       /* output file */
-            if (pass == 2)
-                copy_filename(&outname, param, "output");
-            break;
-
         case 'O':       /* Optimization level */
             if (pass == 1) {
                 int opt;
@@ -540,13 +521,6 @@ static bool process_arg(char *p, char *q, int pass)
                 copy_filename(&errname, param, "error");
             break;
 
-        case 'F':       /* specify debug format */
-            if (pass == 1) {
-                using_debug_info = true;
-                debug_format = param;
-            }
-            break;
-
         case 'X':       /* specify error reporting format */
             if (pass == 1) {
                 if (!nasm_stricmp("vc", param) || !nasm_stricmp("msvc", param) || !nasm_stricmp("ms", param))
@@ -558,23 +532,9 @@ static bool process_arg(char *p, char *q, int pass)
             }
             break;
 
-        case 'g':
-            if (pass == 1) {
-                using_debug_info = true;
-                if (p[2])
-                    debug_format = nasm_skip_spaces(p + 2);
-            }
-            break;
-
         case 'h':
             help(stdout);
             exit(0);    /* never need usage message here */
-            break;
-
-        case 'y':
-            /* legacy option */
-            dfmt_list(stdout);
-            exit(0);
             break;
 
         case 't':
@@ -752,9 +712,6 @@ static bool process_arg(char *p, char *q, int pass)
             nasm_nonfatalf(ERR_USAGE, "unrecognised option `-%c'", p[1]);
             break;
         }
-    } else if (pass == 2) {
-        /* In theory we could allow multiple input files... */
-        copy_filename(&inname, p, "input");
     }
 
     return advance;
@@ -923,14 +880,6 @@ static void parse_cmdline(int argc, char **argv, int pass)
      */
     if (pass != 2)
         return;
-
-    if (!inname)
-        nasm_fatalf(ERR_USAGE, "no input file specified");
-    else if ((errname && !strcmp(inname, errname)) ||
-             (outname && !strcmp(inname, outname)) ||
-             (listname &&  !strcmp(inname, listname))  ||
-             (depend_file && !strcmp(inname, depend_file)))
-        nasm_fatalf(ERR_USAGE, "will not overwrite input file");
 
     if (errname) {
         error_file = nasm_open_write(errname, NF_TEXT);
@@ -1262,13 +1211,6 @@ static fatal_func die_hard(errflags true_type, errflags severity)
     if (true_type == ERR_PANIC && abort_on_panic)
         abort();
 
-    if (ofile) {
-        fclose(ofile);
-        if (!keep_all)
-            remove(outname);
-        ofile = NULL;
-    }
-
     if (severity & ERR_USAGE)
         usage();
 
@@ -1291,10 +1233,7 @@ static struct src_location error_where(errflags severity)
         where = src_where_error();
 
         if (!where.filename) {
-            where.filename =
-            inname && inname[0] ? inname :
-                outname && outname[0] ? outname :
-                NULL;
+            where.filename = NULL;
             where.lineno = 0;
         }
     }
@@ -1590,7 +1529,6 @@ static void help(FILE *out)
         "    -F format     select a debugging format (output format dependent)\n"
         "    -gformat      same as -g -F format\n"
         , out);
-    dfmt_list(out);
     fputs(
         "\n"
         "    -l listfile   write listing to a list file\n"

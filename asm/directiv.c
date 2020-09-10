@@ -200,7 +200,7 @@ static enum directive parse_directive_line(char **directive, char **value)
 bool process_directives(char *directive)
 {
     enum directive d;
-    char *value, *p, *q, *special;
+    char *value, *q, *special;
     struct tokenval tokval;
     bool bad_param = false;
     enum label_type type;
@@ -216,37 +216,15 @@ bool process_directives(char *directive)
 	break;
 
     default:			/* It's a backend-specific directive */
-        switch (ofmt->directive(d, value)) {
-        case DIRR_UNKNOWN:
-            goto unknown;
-        case DIRR_OK:
-        case DIRR_ERROR:
-            break;
-        case DIRR_BADPARAM:
-            bad_param = true;
-            break;
-        default:
-            panic();
-        }
         break;
 
     case D_unknown:
-    unknown:
         nasm_nonfatal("unrecognized directive [%s]", directive);
         break;
 
     case D_SEGMENT:         /* [SEGMENT n] */
     case D_SECTION:
     {
-	int sb = globalbits;
-        int32_t seg = ofmt->section(value, &sb);
-
-        if (seg == NO_SEG) {
-            nasm_nonfatal("segment name `%s' not recognized", value);
-        } else {
-            globalbits = sb;
-            switch_segment(seg);
-        }
         break;
     }
 
@@ -274,10 +252,6 @@ bool process_directives(char *directive)
 		    nasm_nonfatal("absurdly large segment alignment `%s' (2^%d)",
 				  value, ilog2_64(align));
                 }
-
-                /* callee should be able to handle all details */
-                if (location.segment != NO_SEG)
-                    ofmt->sectalign(location.segment, align);
             }
         }
         break;
@@ -388,42 +362,6 @@ bool process_directives(char *directive)
         in_absolute = true;
         location.segment = NO_SEG;
         location.offset = absolute.offset;
-        break;
-    }
-
-    case D_DEBUG:           /* [DEBUG] */
-    {
-        bool badid, overlong;
-	char debugid[128];
-
-        p = value;
-        q = debugid;
-        badid = overlong = false;
-        if (!nasm_isidstart(*p)) {
-            badid = true;
-        } else {
-            while (*p && !nasm_isspace(*p)) {
-                if (q >= debugid + sizeof debugid - 1) {
-                    overlong = true;
-                    break;
-                }
-                if (!nasm_isidchar(*p))
-                    badid = true;
-                *q++ = *p++;
-            }
-            *q = 0;
-        }
-        if (badid) {
-            nasm_nonfatal("identifier expected after DEBUG");
-            break;
-        }
-        if (overlong) {
-            nasm_nonfatal("DEBUG identifier too long");
-            break;
-        }
-        p = nasm_skip_spaces(p);
-        if (pass_final())
-            dfmt->debug_directive(debugid, p);
         break;
     }
 

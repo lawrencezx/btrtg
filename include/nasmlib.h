@@ -251,11 +251,6 @@ int64_t readstrnum(char *str, int length, bool *warn);
 int32_t seg_alloc(void);
 
 /*
- * Add/replace or remove an extension to the end of a filename
- */
-const char *filename_set_extension(const char *inname, const char *extension);
-
-/*
  * Utility macros...
  *
  * This is a useful #define which I keep meaning to use more often:

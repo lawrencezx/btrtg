@@ -11,7 +11,6 @@ include_directories(${srcdir}
                     ${srcdir}/include
                     ${srcdir}/x86
                     ${srcdir}/asm
-                    ${srcdir}/output
                     ${srcdir}/config)
 
 # @OUTPUT: generate dependencies
@@ -78,7 +77,7 @@ add_custom_command(OUTPUT ${GEN_TARS}
   COMMAND ${RUNPERL} ${srcdir}/nasmlib/perfhash.pl h ${srcdir}/asm/directiv.dat ${srcdir}/asm/directiv.h
   COMMAND ${RUNPERL} ${srcdir}/nasmlib/perfhash.pl c ${srcdir}/asm/directiv.dat ${srcdir}/asm/directbl.c
 
-  COMMAND ${RUNPERL} ${srcdir}/macros/macros.pl ${srcdir}/version.mac ${srcdir}/macros/*.mac ${srcdir}/output/*.mac ${srcdir})
+  COMMAND ${RUNPERL} ${srcdir}/macros/macros.pl ${srcdir}/version.mac ${srcdir}/macros/*.mac ${srcdir})
 
 
 # @target: perlreq, nasmlib dependencies
@@ -90,8 +89,7 @@ file(GLOB LIB_SRCS stdlib/*.c
                    common/*.c
                    x86/*.c
                    asm/*.c
-                   macros/*.c
-                   output/*.c)
+                   macros/*.c)
 add_library(nasmlib STATIC ${LIB_SRCS})
 add_dependencies(nasmlib perlreq)
 

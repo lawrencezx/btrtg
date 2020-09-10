@@ -111,7 +111,6 @@ print OUT "\n";
 print OUT "#include \"tables.h\"\n";
 print OUT "#include \"nasmlib.h\"\n";
 print OUT "#include \"hashtbl.h\"\n";
-print OUT "#include \"outform.h\"\n";
 print OUT "\n";
 
 my $name = undef;

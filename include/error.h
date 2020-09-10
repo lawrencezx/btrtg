@@ -145,18 +145,4 @@ void nasm_error_hold_pop(errhold hold, bool issue);
 /* Should be included from within error.h only */
 #include "warnings.h"
 
-/* By defining MAX_DEBUG, we can compile out messages entirely */
-#ifndef MAX_DEBUG
-# define MAX_DEBUG (~0U)
-#endif
-
-/* Debug level checks */
-static inline bool debug_level(unsigned int level)
-{
-    extern unsigned int debug_nasm;
-    if (is_constant(level) && level > MAX_DEBUG)
-        return false;
-    return unlikely(level <= debug_nasm);
-}
-
 #endif /* NASM_ERROR_H */

@@ -47,10 +47,6 @@
 #include "error.h"
 #include "listing.h"
 
-static enum directive_result ignore_pragma(const struct pragma *pragma);
-static enum directive_result output_pragma(const struct pragma *pragma);
-static enum directive_result debug_pragma(const struct pragma *pragma);
-
 /*
  * Handle [pragma] directives.  [pragma] is generally produced by
  * the %pragma preprocessor directive, which simply passes on any
@@ -72,7 +68,6 @@ static enum directive_result debug_pragma(const struct pragma *pragma);
  * file		- generic file handling
  * input	- input file handling
  * output	- backend-independent output handling
- * debug	- backend-independent debug handling
  * ignore	- dummy pragma (can be used to "comment out")
  *
  * This function should generally not error out if it doesn't understand
@@ -90,9 +85,6 @@ static struct pragma_facility global_pragmas[] =
     { "list",		list_pragma },
     { "file",		NULL },
     { "input",		NULL },
-    { "output",		output_pragma },
-    { "debug",	        debug_pragma },
-    { "ignore",		ignore_pragma },
 
     /* This will never actually get this far... */
     { "preproc",	NULL }, /* Handled in the preprocessor by necessity */
@@ -283,77 +275,4 @@ void process_pragma(char *str)
         if (search_pragma_list(NULL, NULL, pf, &pragma) != DIRR_UNKNOWN)
             return;
     }
-
-    /* Is it an output pragma? */
-    if (output_pragma(&pragma) != DIRR_UNKNOWN)
-        return;
-
-    /* Is it a debug pragma */
-    if (debug_pragma(&pragma) != DIRR_UNKNOWN)
-        return;
-
-    /*
-     * Note: it would be nice to warn for an unknown namespace,
-     * but in order to do so we need to walk *ALL* the backends
-     * in order to make sure we aren't dealing with a pragma that
-     * is for another backend.  On the other hand, that could
-     * also be a warning with a separate warning flag.
-     *
-     * Leave this for the future, however, the warning classes are
-     * already defined for future compatibility.
-     */
-}
-
-/* %pragma ignore */
-static enum directive_result ignore_pragma(const struct pragma *pragma)
-{
-    (void)pragma;
-    return DIRR_OK;             /* Even for D_none! */
-}
-
-/*
- * Process output and debug pragmas, by either list name or generic
- * name. Note that the output/debug format list can hook the default
- * names if they so choose.
- */
-static enum directive_result output_pragma_common(const struct pragma *);
-static enum directive_result output_pragma(const struct pragma *pragma)
-{
-    static const struct pragma_facility
-        output_pragma_def = { "output", output_pragma_common };
-
-    return search_pragma_list(ofmt->pragmas, ofmt->shortname,
-                              &output_pragma_def, pragma);
-}
-
-/* Generic pragmas that apply to all output backends */
-static enum directive_result output_pragma_common(const struct pragma *pragma)
-{
-    switch (pragma->opcode) {
-    case D_PREFIX:
-    case D_GPREFIX:
-        set_label_mangle(LM_GPREFIX, pragma->tail);
-        return DIRR_OK;
-    case D_SUFFIX:
-    case D_GSUFFIX:
-        set_label_mangle(LM_GSUFFIX, pragma->tail);
-        return DIRR_OK;
-    case D_LPREFIX:
-        set_label_mangle(LM_LPREFIX, pragma->tail);
-        return DIRR_OK;
-    case D_LSUFFIX:
-        set_label_mangle(LM_LSUFFIX, pragma->tail);
-        return DIRR_OK;
-    default:
-        return DIRR_UNKNOWN;
-    }
-}
-
-static enum directive_result debug_pragma(const struct pragma *pragma)
-{
-    static const struct pragma_facility
-        debug_pragma_def = { "debug", NULL };
-
-    return search_pragma_list(dfmt->pragmas, dfmt->shortname,
-                              &debug_pragma_def, pragma);
 }

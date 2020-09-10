@@ -288,10 +288,6 @@ static void warn_overflow_const(int64_t data, int size)
  */
 static void out(struct out_data *data)
 {
-    static struct last_debug_info {
-        struct src_location where;
-        int32_t segment;
-    } dbg;
     union {
         uint8_t b[8];
         uint64_t q;
@@ -334,21 +330,6 @@ static void out(struct out_data *data)
     default:
         asize = amax = 0;       /* Not an address */
         break;
-    }
-
-    /*
-     * If the source location or output segment has changed,
-     * let the debug backend know. Some backends really don't
-     * like being given a NULL filename as can happen if we
-     * use -Lb and expand a macro, so filter out that case.
-     */
-    data->where = src_where();
-    if (data->where.filename &&
-        (!src_location_same(data->where, dbg.where) |
-         (data->segment != dbg.segment))) {
-        dbg.where   = data->where;
-        dbg.segment = data->segment;
-        dfmt->linenum(dbg.where.filename, dbg.where.lineno, data->segment);
     }
 
     if (asize > amax) {
@@ -872,103 +853,6 @@ int64_t assemble(int32_t segment, int64_t start, int bits, insn *instruction)
     return data.offset - start;
 }
 
-static int32_t eops_typeinfo(const extop *e)
-{
-    int32_t typeinfo = 0;
-
-    while (e) {
-        switch (e->type) {
-        case EOT_NOTHING:
-            break;
-
-        case EOT_EXTOP:
-            typeinfo |= eops_typeinfo(e->val.subexpr);
-            break;
-
-        case EOT_DB_FLOAT:
-            switch (e->elem) {
-            case  1: typeinfo |= TY_BYTE;  break;
-            case  2: typeinfo |= TY_WORD;  break;
-            case  4: typeinfo |= TY_FLOAT; break;
-            case  8: typeinfo |= TY_QWORD; break; /* double? */
-            case 10: typeinfo |= TY_TBYTE; break; /* long double? */
-            case 16: typeinfo |= TY_YWORD; break;
-            case 32: typeinfo |= TY_ZWORD; break;
-            default: break;
-            }
-            break;
-
-        default:
-            switch (e->elem) {
-            case  1: typeinfo |= TY_BYTE;  break;
-            case  2: typeinfo |= TY_WORD;  break;
-            case  4: typeinfo |= TY_DWORD; break;
-            case  8: typeinfo |= TY_QWORD; break;
-            case 10: typeinfo |= TY_TBYTE; break;
-            case 16: typeinfo |= TY_YWORD; break;
-            case 32: typeinfo |= TY_ZWORD; break;
-            default: break;
-            }
-            break;
-        }
-        e = e->next;
-    }
-
-    return typeinfo;
-}
-
-static inline void debug_set_db_type(insn *instruction)
-{
-
-    int32_t typeinfo = TYS_ELEMENTS(instruction->operands);
-
-    typeinfo |= eops_typeinfo(instruction->eops);
-    dfmt->debug_typevalue(typeinfo);
-}
-
-static void debug_set_type(insn *instruction)
-{
-    int32_t typeinfo;
-
-    if (opcode_is_resb(instruction->opcode)) {
-        typeinfo = TYS_ELEMENTS(instruction->oprs[0].offset);
-
-        switch (instruction->opcode) {
-        case I_RESB:
-            typeinfo |= TY_BYTE;
-            break;
-        case I_RESW:
-            typeinfo |= TY_WORD;
-            break;
-        case I_RESD:
-            typeinfo |= TY_DWORD;
-            break;
-        case I_RESQ:
-            typeinfo |= TY_QWORD;
-            break;
-        case I_REST:
-            typeinfo |= TY_TBYTE;
-            break;
-        case I_RESO:
-            typeinfo |= TY_OWORD;
-            break;
-        case I_RESY:
-            typeinfo |= TY_YWORD;
-            break;
-        case I_RESZ:
-            typeinfo |= TY_ZWORD;
-            break;
-        default:
-            panic();
-        }
-    } else {
-        typeinfo = TY_LABEL;
-    }
-
-    dfmt->debug_typevalue(typeinfo);
-}
-
-
 /* Proecess an EQU directive */
 static void define_equ(insn * instruction)
 {
@@ -1046,7 +930,6 @@ int64_t insn_size(int32_t segment, int64_t offset, int bits, insn *instruction)
         return 0;
     } else if (opcode_is_db(instruction->opcode)) {
         isize = len_extops(instruction->eops);
-        debug_set_db_type(instruction);
         return isize;
     } else if (instruction->opcode == I_INCBIN) {
         const extop *e = instruction->eops;
@@ -1088,7 +971,6 @@ int64_t insn_size(int32_t segment, int64_t offset, int bits, insn *instruction)
             return -1;              /* No match */
 
         isize = calcsize(segment, offset, bits, instruction, temp);
-        debug_set_type(instruction);
         isize = merge_resb(instruction, isize);
 
         return isize;
