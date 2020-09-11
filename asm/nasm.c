@@ -1495,7 +1495,7 @@ static void help(FILE *out)
     int i;
 
     fprintf(out,
-            "Usage: %s [-@ response_file] [options...] [--] filename\n"
+            "Usage: %s [-@ response_file] [options...] [--]\n"
             "       %s -v (or --v)\n",
             _progname, _progname);
     fputs(
@@ -1506,7 +1506,6 @@ static void help(FILE *out)
         "    -v (or --v)   print the NASM version number and exit\n"
         "    -@ file       response file; one command line option per line\n"
         "\n"
-        "    -o outfile    write output to outfile\n"
         "    --keep-all    output files will not be removed even if an error happens\n"
         "\n"
         "    -Xformat      specifiy error reporting format (gnu or vc)\n"
@@ -1521,13 +1520,6 @@ static void help(FILE *out)
         "    -MQ file      dependency target name (quoted)\n"
         "    -MP           emit phony targets\n"
         "\n"
-        "    -f format     select output file format\n"
-        , out);
-    fputs(
-        "\n"
-        "    -g            generate debugging information\n"
-        "    -F format     select a debugging format (output format dependent)\n"
-        "    -gformat      same as -g -F format\n"
         , out);
     fputs(
         "\n"

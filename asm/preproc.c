@@ -75,7 +75,6 @@
 #include "tokens.h"
 #include "tables.h"
 #include "listing.h"
-#include "dbginfo.h"
 
 /*
  * Preprocessor execution options that can be controlled by %pragma or

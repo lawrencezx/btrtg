@@ -186,7 +186,6 @@
 #include "tables.h"
 #include "disp8.h"
 #include "listing.h"
-#include "dbginfo.h"
 
 typedef struct {
     enum ea_type type;            /* what kind of EA is this? */
