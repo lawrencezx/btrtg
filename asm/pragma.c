@@ -82,7 +82,6 @@
 static struct pragma_facility global_pragmas[] =
 {
     { "asm",		NULL },
-    { "list",		list_pragma },
     { "file",		NULL },
     { "input",		NULL },
 
@@ -180,29 +179,6 @@ search_pragma_list(const struct pragma_facility *list,
 found_it:
     switch (rv) {
     case DIRR_UNKNOWN:
-        switch (pragma.opcode) {
-        case D_none:
-            /*!
-             *!pragma-bad [off] malformed %pragma
-             *!=bad-pragma
-             *!  warns about a malformed or otherwise unparsable
-             *!  \c{%pragma} directive.
-             */
-            nasm_warn(ERR_PASS2|WARN_PRAGMA_BAD,
-                       "empty %%pragma %s", pragma.facility_name);
-            break;
-        default:
-            /*!
-             *!pragma-unknown [off] unknown %pragma facility or directive
-             *!=unknown-pragma
-             *!  warns about an unknown \c{%pragma} directive.
-             *!  This is not yet implemented for most cases.
-             */
-            nasm_warn(ERR_PASS2|WARN_PRAGMA_UNKNOWN,
-                       "unknown %%pragma %s %s",
-                       pragma.facility_name, pragma.opname);
-            break;
-        }
         rv = DIRR_ERROR;        /* Already printed an error message */
         break;
 
@@ -257,10 +233,6 @@ void process_pragma(char *str)
     }
 
     pragma.opname = nasm_get_word(p, &p);
-    if (!pragma.opname)
-        pragma.opcode = D_none;
-    else
-        pragma.opcode = directive_find(pragma.opname);
 
     pragma.tail = nasm_trim_spaces(p);
 

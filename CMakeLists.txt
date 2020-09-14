@@ -37,14 +37,7 @@ SET(GEN_TARS
   ${srcdir}/include/warnings.h
   ${srcdir}/asm/warnings.c
   ${srcdir}/asm/tokhash.c
-  ${srcdir}/asm/tokens.h
-  ${srcdir}/asm/pptok.h
-  ${srcdir}/asm/pptok.c
-  ${srcdir}/asm/pptok.ph
-  ${srcdir}/asm/directiv.h
-  ${srcdir}/asm/directbl.c
-
-  ${srcdir}/macros/macros.c)
+  ${srcdir}/asm/tokens.h)
 
 add_custom_command(OUTPUT ${GEN_TARS}
   COMMAND ${RUNPERL} ${srcdir}/version.pl h < ${srcdir}/version > ${srcdir}/version.h
@@ -70,14 +63,7 @@ add_custom_command(OUTPUT ${GEN_TARS}
   COMMAND ${RUNPERL} ${srcdir}/asm/warnings.pl c ${srcdir}/asm/warnings.c ${srcdir}
   COMMAND ${RUNPERL} ${srcdir}/asm/warnings.pl h ${srcdir}/include/warnings.h ${srcdir}
   COMMAND ${RUNPERL} ${srcdir}/asm/tokhash.pl c ${srcdir}/x86/insns.dat ${srcdir}/x86/regs.dat ${srcdir}/asm/tokens.dat > ${srcdir}/asm/tokhash.c
-  COMMAND ${RUNPERL} ${srcdir}/asm/tokhash.pl h ${srcdir}/x86/insns.dat ${srcdir}/x86/regs.dat ${srcdir}/asm/tokens.dat > ${srcdir}/asm/tokens.h
-  COMMAND ${RUNPERL} ${srcdir}/asm/pptok.pl h ${srcdir}/asm/pptok.dat ${srcdir}/asm/pptok.h
-  COMMAND ${RUNPERL} ${srcdir}/asm/pptok.pl c ${srcdir}/asm/pptok.dat ${srcdir}/asm/pptok.c
-  COMMAND ${RUNPERL} ${srcdir}/asm/pptok.pl ph ${srcdir}/asm/pptok.dat ${srcdir}/asm/pptok.ph
-  COMMAND ${RUNPERL} ${srcdir}/nasmlib/perfhash.pl h ${srcdir}/asm/directiv.dat ${srcdir}/asm/directiv.h
-  COMMAND ${RUNPERL} ${srcdir}/nasmlib/perfhash.pl c ${srcdir}/asm/directiv.dat ${srcdir}/asm/directbl.c
-
-  COMMAND ${RUNPERL} ${srcdir}/macros/macros.pl ${srcdir}/version.mac ${srcdir}/macros/*.mac ${srcdir})
+  COMMAND ${RUNPERL} ${srcdir}/asm/tokhash.pl h ${srcdir}/x86/insns.dat ${srcdir}/x86/regs.dat ${srcdir}/asm/tokens.dat > ${srcdir}/asm/tokens.h)
 
 
 # @target: perlreq, nasmlib dependencies
@@ -88,8 +74,7 @@ file(GLOB LIB_SRCS stdlib/*.c
                    nasmlib/*.c
                    common/*.c
                    x86/*.c
-                   asm/*.c
-                   macros/*.c)
+                   asm/*.c)
 add_library(nasmlib STATIC ${LIB_SRCS})
 add_dependencies(nasmlib perlreq)
 

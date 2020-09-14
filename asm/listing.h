@@ -190,7 +190,4 @@ static inline pure_func bool list_active(void)
     return (active_list_options & 1);
 }
 
-/* Pragma handler */
-enum directive_result list_pragma(const struct pragma *);
-
 #endif

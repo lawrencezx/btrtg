@@ -45,9 +45,7 @@
 #include "nasmlib.h"
 #include "nctype.h"
 #include "strlist.h"
-#include "preproc.h"
 #include "insnsi.h"     /* For enum opcode */
-#include "directiv.h"   /* For enum directive */
 #include "labels.h"     /* For enum mangle_index, enum label_type */
 #include "opflags.h"
 #include "regs.h"
@@ -399,74 +397,6 @@ typedef expr *(*evalfunc)(scanner sc, void *scprivate,
 #define EXPR_WRT        (EXPR_REG_END+3)
 #define EXPR_RDSAE      (EXPR_REG_END+4)
 #define EXPR_SEGBASE    (EXPR_REG_END+5)
-
-/*
- * preprocessors ought to look like this:
- */
-
-enum preproc_mode {
-    PP_NORMAL,                  /* Assembly */
-    PP_DEPS,                    /* Dependencies only */
-    PP_PREPROC                  /* Preprocessing only */
-};
-
-enum preproc_opt {
-    PP_TRIVIAL  = 1,            /* Only %line or # directives */
-    PP_NOLINE   = 2,            /* Ignore %line and # directives */
-    PP_TASM     = 4             /* TASM compatibility hacks */
-};
-
-/*
- * Called once at the very start of assembly.
- */
-void pp_init(enum preproc_opt opt);
-
-/*
- * Called at the start of a pass; given a file name, the number
- * of the pass, an error reporting function, an evaluator
- * function, and a listing generator to talk to.
- */
-void pp_reset(const char *file, enum preproc_mode mode,
-              struct strlist *deplist);
-
-/*
- * Called to fetch a line of preprocessed source. The line
- * returned has been malloc'ed, and so should be freed after
- * use.
- */
-char *pp_getline(void);
-
-/* Called at the end of each pass. */
-void pp_cleanup_pass(void);
-
-/*
- * Called at the end of the assembly session,
- * after cleanup_pass() has been called for the
- * last pass.
- */
-void pp_cleanup_session(void);
-
-/* Additional macros specific to output format */
-void pp_extra_stdmac(macros_t *macros);
-
-/* Early definitions and undefinitions for macros */
-void pp_pre_define(char *definition);
-void pp_pre_undefine(char *definition);
-
-/* Include file from command line */
-void pp_pre_include(char *fname);
-
-/* Add a command from the command line */
-void pp_pre_command(const char *what, char *str);
-
-/* Unwind the macro stack when printing an error message */
-void pp_error_list_macros(errflags severity);
-
-/* Return true if an error message should be suppressed */
-bool pp_suppress_error(errflags severity);
-
-/* List of dependency files */
-extern struct strlist *depend_list;
 
 /*
  * inline function to skip past an identifier; returns the first character past
@@ -821,7 +751,6 @@ struct pragma {
     const char *facility_name;  /* Facility name exactly as entered by user */
     const char *opname;         /* First word after the facility name */
     const char *tail;           /* Anything after the operation */
-    enum directive opcode;     /* Operation as a D_ directives constant */
 };
 
 /*

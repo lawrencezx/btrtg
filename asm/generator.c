@@ -45,7 +45,6 @@
 #include "floats.h"
 #include "stdscan.h"
 #include "insns.h"
-#include "preproc.h"
 #include "parser.h"
 #include "eval.h"
 #include "assemble.h"

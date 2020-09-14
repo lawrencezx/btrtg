@@ -45,7 +45,6 @@
 #include "floats.h"
 #include "stdscan.h"
 #include "insns.h"
-#include "preproc.h"
 #include "parser.h"
 #include "eval.h"
 #include "assemble.h"
@@ -61,8 +60,6 @@ const char *_progname;
 static void parse_cmdline(int, char **, int);
 static void usage(void);
 static void help(FILE *);
-
-static enum preproc_opt ppopt;
 
 #define OP_NORMAL           (1U << 0)
 #define OP_PREPROCESS       (1U << 1)
@@ -408,11 +405,6 @@ static bool process_arg(char *p, char *q, int pass)
             show_version();
             break;
 
-        case 'a':       /* assemble only - don't preprocess */
-            if (pass == 1)
-                ppopt |= PP_TRIVIAL;
-            break;
-
         case 'w':
         case 'W':
             if (pass == 2)
@@ -541,9 +533,6 @@ static bool process_arg(char *p, char *q, int pass)
                 case OPT_MANGLE:
                     if (pass == 2)
                         set_label_mangle(tx->pvt, param);
-                    break;
-                case OPT_NO_LINE:
-                    ppopt |= PP_NOLINE;
                     break;
                 case OPT_REPRODUCIBLE:
                     reproducible = true;

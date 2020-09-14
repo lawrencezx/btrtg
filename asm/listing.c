@@ -364,43 +364,6 @@ static void list_set_offset(uint64_t offset)
     listoffset = offset;
 }
 
-static void list_update_options(const char *str)
-{
-    bool state = true;
-    unsigned char c;
-    uint64_t mask;
-
-    while ((c = *str++)) {
-        switch (c) {
-        case '+':
-            state = true;
-            break;
-        case '-':
-            state = false;
-            break;
-        default:
-            mask = list_option_mask(c);
-            if (state)
-                list_options |= mask;
-            else
-                list_options &= ~mask;
-            break;
-        }
-    }
-}
-
-enum directive_result list_pragma(const struct pragma *pragma)
-{
-    switch (pragma->opcode) {
-    case D_OPTIONS:
-        list_update_options(pragma->tail);
-        return DIRR_OK;
-
-    default:
-        return DIRR_UNKNOWN;
-    }
-}
-
 static const struct lfmt nasm_list = {
     list_init,
     list_cleanup,
