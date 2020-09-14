@@ -47,27 +47,6 @@
 ; subheaders in the NASM documentation.
 ;
 
-;# Special instructions (pseudo-ops)
-; These MUST be first in this file and must maintain the pattern of
-; Dx by size, RESx by size, and INCBIN in that order.
-DB		ignore				ignore						ignore
-DW		ignore				ignore						ignore
-DD		ignore				ignore						ignore
-DQ		ignore				ignore						ignore
-DT		ignore				ignore						ignore
-DO		ignore				ignore						ignore
-DY		ignore				ignore						ignore
-DZ		ignore				ignore						ignore
-RESB		imm				[	resb]					8086
-RESW		imm				[	resb]					8086
-RESD		imm				[	resb]					8086
-RESQ		imm				[	resb]					8086
-REST		imm				[	resb]					8086
-RESO		imm				[	resb]					8086
-RESY		imm				[	resb]					8086
-RESZ		imm				[	resb]					8086
-INCBIN		ignore				ignore						ignore
-
 ;# Conventional instructions
 AAA		void				[	37]					8086,NOLONG
 AAD		void				[	d5 0a]					8086,NOLONG

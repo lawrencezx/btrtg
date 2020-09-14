@@ -263,12 +263,6 @@ static void warn_overflow(int size)
                size_name(size));
 }
 
-static void warn_overflow_const(int64_t data, int size)
-{
-    if (overflow_general(data, size))
-        warn_overflow(size);
-}
-
 /*
  * This routine wrappers the real output format's output routine,
  * in order to pass a copy of the data off to the listing file
@@ -520,76 +514,6 @@ static inline size_t pad_bytes(size_t len, size_t align)
     return partial ? align - partial : 0;
 }
 
-static void out_eops(struct out_data *data, const extop *e)
-{
-    while (e) {
-        size_t dup = e->dup;
-
-        switch (e->type) {
-        case EOT_NOTHING:
-            break;
-
-        case EOT_EXTOP:
-            while (dup--)
-                out_eops(data, e->val.subexpr);
-            break;
-
-        case EOT_DB_NUMBER:
-            if (e->elem > 8) {
-                nasm_nonfatal("integer supplied as %d-bit data",
-                              e->elem << 3);
-            } else {
-                while (dup--) {
-                    data->insoffs = 0;
-                    data->inslen = data->size = e->elem;
-                    data->tsegment = e->val.num.segment;
-                    data->toffset  = e->val.num.offset;
-                    data->twrt = e->val.num.wrt;
-                    data->relbase = 0;
-                    if (e->val.num.segment != NO_SEG &&
-                        (e->val.num.segment & 1)) {
-                        data->type  = OUT_SEGMENT;
-                        data->flags = OUT_UNSIGNED;
-                    } else {
-                        data->type = e->val.num.relative
-                            ? OUT_RELADDR : OUT_ADDRESS;
-                        data->flags = OUT_WRAP;
-                    }
-                    out(data);
-                }
-            }
-            break;
-
-        case EOT_DB_FLOAT:
-        case EOT_DB_STRING:
-        case EOT_DB_STRING_FREE:
-        {
-            size_t pad, len;
-
-            pad = pad_bytes(e->val.string.len, e->elem);
-            len = e->val.string.len + pad;
-
-            while (dup--) {
-                data->insoffs = 0;
-                data->inslen = len;
-                out_rawdata(data, e->val.string.data, e->val.string.len);
-                if (pad)
-                    out_rawdata(data, zero_buffer, pad);
-            }
-            break;
-        }
-
-        case EOT_DB_RESERVE:
-            data->insoffs = 0;
-            data->inslen = dup * e->elem;
-            out_reserve(data, data->inslen);
-            break;
-        }
-
-        e = e->next;
-    }
-}
-
 /* This is totally just a wild guess what is reasonable... */
 #define INCBIN_MAX_BUF (ZERO_BUF_SIZE * 16)
 
@@ -608,243 +532,123 @@ int64_t assemble(int32_t segment, int64_t start, int bits, insn *instruction)
     data.itemp = NULL;
     data.bits = bits;
 
-    if (opcode_is_db(instruction->opcode)) {
-        out_eops(&data, instruction->eops);
-    } else if (instruction->opcode == I_INCBIN) {
-        const char *fname = instruction->eops->val.string.data;
-        FILE *fp;
-        size_t t = instruction->times; /* INCBIN handles TIMES by itself */
-        off_t base = 0;
-        off_t len;
-        const void *map = NULL;
-        char *buf = NULL;
-        size_t blk = 0;         /* Buffered I/O block size */
-        size_t m = 0;           /* Bytes last read */
+    /* Check to see if we need an address-size prefix */
+    add_asp(instruction, bits);
 
-        if (!t)
-            goto done;
+    m = find_match(&temp, instruction, data.segment, data.offset, bits);
 
-        fp = nasm_open_read(fname, NF_BINARY|NF_FORMAP);
-        if (!fp) {
-            nasm_nonfatal("`incbin': unable to open file `%s'",
-                          fname);
-            goto done;
-        }
+    if (m == MOK_GOOD) {
+        /* Matches! */
+        if (unlikely(itemp_has(temp, IF_OBSOLETE))) {
+            errflags warning;
+            const char *whathappened;
+            const char *validity;
+            bool never = itemp_has(temp, IF_NEVER);
 
-        len = nasm_file_size(fp);
-
-        if (len == (off_t)-1) {
-            nasm_nonfatal("`incbin': unable to get length of file `%s'",
-                          fname);
-            goto close_done;
-        }
-
-        if (instruction->eops->next) {
-            base = instruction->eops->next->val.num.offset;
-            if (base >= len) {
-                len = 0;
-            } else {
-                len -= base;
-                if (instruction->eops->next->next &&
-                    len > (off_t)instruction->eops->next->next->val.num.offset)
-                    len = (off_t)instruction->eops->next->next->val.num.offset;
-            }
-        }
-
-        lfmt->set_offset(data.offset);
-        lfmt->uplevel(LIST_INCBIN, len);
-
-        if (!len)
-            goto end_incbin;
-
-        /* Try to map file data */
-        map = nasm_map_file(fp, base, len);
-        if (!map) {
-            blk = len < (off_t)INCBIN_MAX_BUF ? (size_t)len : INCBIN_MAX_BUF;
-            buf = nasm_malloc(blk);
-        }
-
-        while (t--) {
             /*
-             * Consider these irrelevant for INCBIN, since it is fully
-             * possible that these might be (way) bigger than an int
-             * can hold; there is, however, no reason to widen these
-             * types just for INCBIN.  data.inslen == 0 signals to the
-             * backend that these fields are meaningless, if at all
-             * needed.
+             * If IF_OBSOLETE is set, warn the user. Different
+             * warning classes for "obsolete but valid for this
+             * specific CPU" and "obsolete and gone."
+             *
+             *!obsolete-removed [on] instruction obsolete and removed on the target CPU
+             *!  warns for an instruction which has been removed
+             *!  from the architecture, and is no longer included
+             *!  in the CPU definition given in the \c{[CPU]}
+             *!  directive, for example \c{POP CS}, the opcode for
+             *!  which, \c{0Fh}, instead is an opcode prefix on
+             *!  CPUs newer than the first generation 8086.
+             *
+             *!obsolete-nop [on] instruction obsolete and is a noop on the target CPU
+             *!  warns for an instruction which has been removed
+             *!  from the architecture, but has been architecturally
+             *!  defined to be a noop for future CPUs.
+             *
+             *!obsolete-valid [on] instruction obsolete but valid on the target CPU
+             *!  warns for an instruction which has been removed
+             *!  from the architecture, but is still valid on the
+             *!  specific CPU given in the \c{CPU} directive. Code
+             *!  using these instructions is most likely not
+             *!  forward compatible.
              */
-            data.insoffs = 0;
-            data.inslen = 0;
 
-            if (map) {
-                out_rawdata(&data, map, len);
-            } else if ((off_t)m == len) {
-                out_rawdata(&data, buf, len);
+            whathappened = never ? "never implemented" : "obsolete";
+
+            if (!never && !iflag_cmp_cpu_level(&insns_flags[temp->iflag_idx], &cpu)) {
+                warning = WARN_OBSOLETE_VALID;
+                validity = "but valid on";
+            } else if (itemp_has(temp, IF_NOP)) {
+                warning = WARN_OBSOLETE_NOP;
+                validity = "and is a noop on";
             } else {
-                off_t l = len;
-
-                if (fseeko(fp, base, SEEK_SET) < 0 || ferror(fp)) {
-                    nasm_nonfatal("`incbin': unable to seek on file `%s'",
-                                  fname);
-                    goto end_incbin;
-                }
-                while (l > 0) {
-                    m = fread(buf, 1, l < (off_t)blk ? (size_t)l : blk, fp);
-                    if (!m || feof(fp)) {
-                        /*
-                         * This shouldn't happen unless the file
-                         * actually changes while we are reading
-                         * it.
-                         */
-                        nasm_nonfatal("`incbin': unexpected EOF while"
-                                      " reading file `%s'", fname);
-                        goto end_incbin;
-                    }
-                    out_rawdata(&data, buf, m);
-                    l -= m;
-                }
+                warning = WARN_OBSOLETE_REMOVED;
+                validity = never ? "and invalid on" : "and removed from";
             }
+
+            nasm_warn(warning, "instruction %s %s the target CPU",
+                      whathappened, validity);
         }
-    end_incbin:
-        lfmt->downlevel(LIST_INCBIN);
-        if (instruction->times > 1) {
-            lfmt->uplevel(LIST_TIMES, instruction->times);
-            lfmt->downlevel(LIST_TIMES);
-        }
-        if (ferror(fp)) {
-            nasm_nonfatal("`incbin': error while"
-                          " reading file `%s'", fname);
-        }
-    close_done:
-        if (buf)
-            nasm_free(buf);
-        if (map)
-            nasm_unmap_file(map, len);
-        fclose(fp);
-    done:
-        instruction->times = 1; /* Tell the upper layer not to iterate */
-        ;
+
+        data.itemp = temp;
+        data.bits = bits;
+        data.insoffs = 0;
+
+        data.inslen = calcsize(data.segment, data.offset,
+                               bits, instruction, temp);
+        nasm_assert(data.inslen >= 0);
+        data.inslen = merge_resb(instruction, data.inslen);
+
+        gencode(&data, instruction);
+        nasm_assert(data.insoffs == data.inslen);
     } else {
-        /* "Real" instruction */
-
-        /* Check to see if we need an address-size prefix */
-        add_asp(instruction, bits);
-
-        m = find_match(&temp, instruction, data.segment, data.offset, bits);
-
-        if (m == MOK_GOOD) {
-            /* Matches! */
-            if (unlikely(itemp_has(temp, IF_OBSOLETE))) {
-                errflags warning;
-                const char *whathappened;
-                const char *validity;
-                bool never = itemp_has(temp, IF_NEVER);
-
-                /*
-                 * If IF_OBSOLETE is set, warn the user. Different
-                 * warning classes for "obsolete but valid for this
-                 * specific CPU" and "obsolete and gone."
-                 *
-                 *!obsolete-removed [on] instruction obsolete and removed on the target CPU
-                 *!  warns for an instruction which has been removed
-                 *!  from the architecture, and is no longer included
-                 *!  in the CPU definition given in the \c{[CPU]}
-                 *!  directive, for example \c{POP CS}, the opcode for
-                 *!  which, \c{0Fh}, instead is an opcode prefix on
-                 *!  CPUs newer than the first generation 8086.
-                 *
-                 *!obsolete-nop [on] instruction obsolete and is a noop on the target CPU
-                 *!  warns for an instruction which has been removed
-                 *!  from the architecture, but has been architecturally
-                 *!  defined to be a noop for future CPUs.
-                 *
-                 *!obsolete-valid [on] instruction obsolete but valid on the target CPU
-                 *!  warns for an instruction which has been removed
-                 *!  from the architecture, but is still valid on the
-                 *!  specific CPU given in the \c{CPU} directive. Code
-                 *!  using these instructions is most likely not
-                 *!  forward compatible.
-                 */
-
-                whathappened = never ? "never implemented" : "obsolete";
-
-                if (!never && !iflag_cmp_cpu_level(&insns_flags[temp->iflag_idx], &cpu)) {
-                    warning = WARN_OBSOLETE_VALID;
-                    validity = "but valid on";
-                } else if (itemp_has(temp, IF_NOP)) {
-                    warning = WARN_OBSOLETE_NOP;
-                    validity = "and is a noop on";
-                } else {
-                    warning = WARN_OBSOLETE_REMOVED;
-                    validity = never ? "and invalid on" : "and removed from";
-                }
-
-                nasm_warn(warning, "instruction %s %s the target CPU",
-                          whathappened, validity);
-            }
-
-            data.itemp = temp;
-            data.bits = bits;
-            data.insoffs = 0;
-
-            data.inslen = calcsize(data.segment, data.offset,
-                                   bits, instruction, temp);
-            nasm_assert(data.inslen >= 0);
-            data.inslen = merge_resb(instruction, data.inslen);
-
-            gencode(&data, instruction);
-            nasm_assert(data.insoffs == data.inslen);
-        } else {
-            /* No match */
-            switch (m) {
-            case MERR_OPSIZEMISSING:
-                nasm_nonfatal("operation size not specified");
-                break;
-            case MERR_OPSIZEMISMATCH:
-                nasm_nonfatal("mismatch in operand sizes");
-                break;
-            case MERR_BRNOTHERE:
-                nasm_nonfatal("broadcast not permitted on this operand");
-                break;
-            case MERR_BRNUMMISMATCH:
-                nasm_nonfatal("mismatch in the number of broadcasting elements");
-                break;
-            case MERR_MASKNOTHERE:
-                nasm_nonfatal("mask not permitted on this operand");
-                break;
-            case MERR_DECONOTHERE:
-                nasm_nonfatal("unsupported mode decorator for instruction");
-                break;
-            case MERR_BADCPU:
-                nasm_nonfatal("no instruction for this cpu level");
-                break;
-            case MERR_BADMODE:
-                nasm_nonfatal("instruction not supported in %d-bit mode", bits);
-                break;
-            case MERR_ENCMISMATCH:
-                nasm_nonfatal("specific encoding scheme not available");
-                break;
-            case MERR_BADBND:
-                nasm_nonfatal("bnd prefix is not allowed");
-                break;
-            case MERR_BADREPNE:
-                nasm_nonfatal("%s prefix is not allowed",
-                              (has_prefix(instruction, PPS_REP, P_REPNE) ?
-                               "repne" : "repnz"));
-                break;
-            case MERR_REGSETSIZE:
-                nasm_nonfatal("invalid register set size");
-                break;
-            case MERR_REGSET:
-                nasm_nonfatal("register set not valid for operand");
-                break;
-            default:
-                nasm_nonfatal("invalid combination of opcode and operands");
-                break;
-            }
-
-            instruction->times = 1; /* Avoid repeated error messages */
+        /* No match */
+        switch (m) {
+        case MERR_OPSIZEMISSING:
+            nasm_nonfatal("operation size not specified");
+            break;
+        case MERR_OPSIZEMISMATCH:
+            nasm_nonfatal("mismatch in operand sizes");
+            break;
+        case MERR_BRNOTHERE:
+            nasm_nonfatal("broadcast not permitted on this operand");
+            break;
+        case MERR_BRNUMMISMATCH:
+            nasm_nonfatal("mismatch in the number of broadcasting elements");
+            break;
+        case MERR_MASKNOTHERE:
+            nasm_nonfatal("mask not permitted on this operand");
+            break;
+        case MERR_DECONOTHERE:
+            nasm_nonfatal("unsupported mode decorator for instruction");
+            break;
+        case MERR_BADCPU:
+            nasm_nonfatal("no instruction for this cpu level");
+            break;
+        case MERR_BADMODE:
+            nasm_nonfatal("instruction not supported in %d-bit mode", bits);
+            break;
+        case MERR_ENCMISMATCH:
+            nasm_nonfatal("specific encoding scheme not available");
+            break;
+        case MERR_BADBND:
+            nasm_nonfatal("bnd prefix is not allowed");
+            break;
+        case MERR_BADREPNE:
+            nasm_nonfatal("%s prefix is not allowed",
+                          (has_prefix(instruction, PPS_REP, P_REPNE) ?
+                           "repne" : "repnz"));
+            break;
+        case MERR_REGSETSIZE:
+            nasm_nonfatal("invalid register set size");
+            break;
+        case MERR_REGSET:
+            nasm_nonfatal("register set not valid for operand");
+            break;
+        default:
+            nasm_nonfatal("invalid combination of opcode and operands");
+            break;
         }
+
+        instruction->times = 1; /* Avoid repeated error messages */
     }
     printf("\n");
     return data.offset - start;
@@ -877,43 +681,6 @@ static void define_equ(insn * instruction)
     }
 }
 
-static int64_t len_extops(const extop *e)
-{
-    int64_t isize = 0;
-    size_t pad;
-
-    while (e) {
-        switch (e->type) {
-        case EOT_NOTHING:
-            break;
-
-        case EOT_EXTOP:
-            isize += e->dup * len_extops(e->val.subexpr);
-            break;
-
-        case EOT_DB_STRING:
-        case EOT_DB_STRING_FREE:
-        case EOT_DB_FLOAT:
-            pad = pad_bytes(e->val.string.len, e->elem);
-            isize += e->dup * (e->val.string.len + pad);
-            break;
-
-        case EOT_DB_NUMBER:
-            warn_overflow_const(e->val.num.offset, e->elem);
-            isize += e->dup * e->elem;
-            break;
-
-        case EOT_DB_RESERVE:
-            isize += e->dup;
-            break;
-        }
-
-        e = e->next;
-    }
-
-    return isize;
-}
-
 int64_t insn_size(int32_t segment, int64_t offset, int bits, insn *instruction)
 {
     const struct itemplate *temp;
@@ -925,38 +692,6 @@ int64_t insn_size(int32_t segment, int64_t offset, int bits, insn *instruction)
     } else if (instruction->opcode == I_EQU) {
         define_equ(instruction);
         return 0;
-    } else if (opcode_is_db(instruction->opcode)) {
-        isize = len_extops(instruction->eops);
-        return isize;
-    } else if (instruction->opcode == I_INCBIN) {
-        const extop *e = instruction->eops;
-        const char *fname = e->val.string.data;
-        off_t len;
-
-        len = nasm_file_size_by_path(fname);
-        if (len == (off_t)-1) {
-            nasm_nonfatal("`incbin': unable to get length of file `%s'",
-                          fname);
-            return 0;
-        }
-
-        e = e->next;
-        if (e) {
-            if (len <= (off_t)e->val.num.offset) {
-                len = 0;
-            } else {
-                len -= e->val.num.offset;
-                e = e->next;
-                if (e && len > (off_t)e->val.num.offset) {
-                    len = (off_t)e->val.num.offset;
-                }
-            }
-        }
-
-        len *= instruction->times;
-        instruction->times = 1; /* Tell the upper layer to not iterate */
-
-        return len;
     } else {
         /* Normal instruction, or RESx */
 
