@@ -468,9 +468,6 @@ bool pp_suppress_error(errflags severity);
 /* List of dependency files */
 extern struct strlist *depend_list;
 
-/* TASM mode changes some properties */
-extern bool tasm_compatible_mode;
-
 /*
  * inline function to skip past an identifier; returns the first character past
  * the identifier if valid, otherwise NULL.
@@ -1045,20 +1042,6 @@ enum decorator_tokens {
 /*
  * Global modes
  */
-
-/*
- * flag to disable optimizations selectively
- * this is useful to turn-off certain optimizations
- */
-enum optimization_disable_flag {
-    OPTIM_ALL_ENABLED       = 0,
-    OPTIM_DISABLE_JMP_MATCH = 1
-};
-
-struct optimization {
-    int level;
-    int flag;
-};
 
 /*
  * Various types of compiler passes we may execute.

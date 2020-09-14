@@ -53,11 +53,6 @@
  */
 static bool islocal(const char *l)
 {
-    if (tasm_compatible_mode) {
-        if (l[0] == '@' && l[1] == '@')
-            return true;
-    }
-
     return (l[0] == '.' && l[1] != '.');
 }
 
@@ -76,11 +71,6 @@ static bool ismagic(const char *l)
  */
 static bool set_prevlabel(const char *l)
 {
-    if (tasm_compatible_mode) {
-        if (l[0] == '@' && l[1] == '@')
-            return false;
-    }
-
     return l[0] != '.';
 }
 

@@ -46,7 +46,6 @@
 /* --- From standard.mac via macros.pl: --- */
 
 /* macros.c */
-extern const unsigned char nasm_stdmac_tasm[];
 extern const unsigned char nasm_stdmac_nasm[];
 extern const unsigned char nasm_stdmac_version[];
 

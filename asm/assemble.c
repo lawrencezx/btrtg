@@ -463,9 +463,7 @@ static bool jmp_match(int32_t segment, int64_t offset, int bits,
 
     if (((c & ~1) != 0370) || (ins->oprs[0].type & STRICT))
         return false;
-    if (!optimizing.level || (optimizing.flag & OPTIM_DISABLE_JMP_MATCH))
-        return false;
-    if (optimizing.level < 0 && c == 0371)
+    if (c == 0371)
         return false;
 
     isize = calcsize(segment, offset, bits, ins, temp);
@@ -2290,12 +2288,6 @@ static enum match_result matches(const struct itemplate *itemp,
      */
     if (itemp->operands != instruction->operands)
         return MERR_INVALOP;
-
-    /*
-     * Is it legal?
-     */
-    if (!(optimizing.level > 0) && itemp_has(itemp, IF_OPT))
-	return MERR_INVALOP;
 
     /*
      * {evex} available?

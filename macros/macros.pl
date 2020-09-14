@@ -44,7 +44,6 @@ use bytes;
 my $fname;
 my $line = 0;
 my $index      = 0;
-my $tasm_count = 0;
 my @pname;
 
 # Default names for various bytes

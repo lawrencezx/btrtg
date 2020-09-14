@@ -33,15 +33,6 @@
 
 ; Standard macro set for NASM -*- nasm -*-
 
-; Macros to make NASM ignore some TASM directives
-STD: tasm
-    %idefine IDEAL
-    %idefine JUMPS
-    %idefine P386
-    %idefine P486
-    %idefine P586
-    %idefine END
-
 ; The normal standard macros
 STD: nasm
 

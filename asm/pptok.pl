@@ -63,9 +63,6 @@ while (defined($line = <IN>)) {
     } elsif ($line =~ /^\*(.*)$/) {
 	# Condition tail
 	push(@cond, $1);
-    } elsif ($line =~ /^\@(.*)$/) {
-	# TASM compatibility directive
-	push(@tasm, $1);
     }
 }
 close(IN);
@@ -75,7 +72,6 @@ close(IN);
 @cond   = sort @cond;
 @pptok  = sort @pptok;
 @ppitok = sort @ppitok;
-@tasm   = sort @tasm;
 
 # Generate the expanded list including conditionals.  The conditionals
 # are at the beginning, padded to a power of 2, with the inverses
@@ -266,63 +262,14 @@ if ($what eq 'c') {
     print OUT  "    return ix;\n";
     print OUT  "}\n";
 
-    my %tasmtokens = ();
-    foreach $pt (@tasm) {
-	# TASM compatiblity token
-	$nasmt = '%'.$pt;
-	if (!defined($tokens{$nasmt})) {
-	    die "$in: TASM compat token $pt does not have a ".
-		"corresponding $nasmt\n";
-	}
-	$tasmtokens{$pt} = $tokens{$nasmt};
-    }
-
-    @hashinfo = gen_perfect_hash(\%tasmtokens);
     if (!@hashinfo) {
 	die "$0: no hash found\n";
     }
-
-    # Paranoia...
-    verify_hash_table(\%tasmtokens, \@hashinfo);
 
     ($n, $sv, $g) = @hashinfo;
     die if ($n & ($n-1));
     $n <<= 1;
 
-    print OUT "\n\n/* TASM compatibility preprocessor token hash */\n";
-
-    print OUT "enum preproc_token pp_tasm_token_hash(const char *token)\n";
-    print OUT "{\n";
-    print OUT "    static const int16_t hashdata[$n] = {\n";
-    for ($i = 0; $i < $n; $i++) {
-	my $h = ${$g}[$i];
-	print OUT "        ", defined($h) ? $h : 'INVALID_HASH_ENTRY', ",\n";
-    }
-    print OUT "    };\n";
-    print OUT  "    uint32_t k1, k2;\n";
-    print OUT  "    uint64_t crc;\n";
-    # For correct overflow behavior, "ix" should be unsigned of the same
-    # width as the hash arrays.
-    print OUT  "    uint16_t ix;\n";
-    print OUT  "\n";
-
-    printf OUT "    crc = crc64i(UINT64_C(0x%08x%08x), token);\n",
-	$$sv[0], $$sv[1];
-    printf OUT "    k1 = ((uint32_t)crc & 0x%x) + 0;\n", $n-2;
-    printf OUT "    k2 = ((uint32_t)(crc >> 32) & 0x%x) + 1;\n", $n-2;
-    print  OUT "\n";
-    printf OUT "    ix = hashdata[k1] + hashdata[k2];\n", $n-1, $n-1;
-    # Comparing to pptok here is correct, because this hash produces
-    # an enum preproc_token value directly.
-    printf OUT "    if (ix >= %d)\n", scalar(@pptok);
-    print OUT  "        return PP_INVALID;\n";
-    print OUT  "\n";
-
-    print OUT  "    if (!pp_directives[ix] || nasm_stricmp(pp_directives[ix]+1, token))\n";
-    print OUT  "        return PP_INVALID;\n";
-    print OUT  "\n";
-    print OUT  "    return ix;\n";
-    print OUT  "}\n";
 }
 
 #

@@ -56,23 +56,11 @@
 #include "ver.h"
 #include "generator.h"
 
-/*
- * This is the maximum number of optimization passes to do.  If we ever
- * find a case where the optimizer doesn't naturally converge, we might
- * have to drop this value so the assembler doesn't appear to just hang.
- */
-#define MAX_OPTIMIZE (INT_MAX >> 1)
-
 const char *_progname;
 
 static void parse_cmdline(int, char **, int);
 static void usage(void);
 static void help(FILE *);
-
-bool tasm_compatible_mode = false;
-
-struct optimization optimizing =
-    { MAX_OPTIMIZE, OPTIM_ALL_ENABLED }; /* number of optimization passes to take */
 
 static enum preproc_opt ppopt;
 
@@ -404,45 +392,6 @@ static bool process_arg(char *p, char *q, int pass)
         }
 
         switch (p[1]) {
-        case 'O':       /* Optimization level */
-            if (pass == 1) {
-                int opt;
-
-                if (!*param) {
-                    /* Naked -O == -Ox */
-                    optimizing.level = MAX_OPTIMIZE;
-                } else {
-                    while (*param) {
-                        switch (*param) {
-                        case '0': case '1': case '2': case '3': case '4':
-                        case '5': case '6': case '7': case '8': case '9':
-                            opt = strtoul(param, &param, 10);
-
-                            /* -O0 -> optimizing.level == -1, 0.98 behaviour */
-                            /* -O1 -> optimizing.level == 0, 0.98.09 behaviour */
-                            if (opt < 2)
-                                optimizing.level = opt - 1;
-                            else
-                                optimizing.level = opt;
-                            break;
-
-                        case 'x':
-                            param++;
-                            optimizing.level = MAX_OPTIMIZE;
-                            break;
-
-                        default:
-                            nasm_fatal("unknown optimization option -O%c\n",
-                                       *param);
-                            break;
-                        }
-                    }
-                    if (optimizing.level > MAX_OPTIMIZE)
-                        optimizing.level = MAX_OPTIMIZE;
-                }
-            }
-            break;
-
         case 'L':        /* listing options */
             if (pass == 2) {
                 while (*param)
@@ -453,11 +402,6 @@ static bool process_arg(char *p, char *q, int pass)
         case 'h':
             help(stdout);
             exit(0);    /* never need usage message here */
-            break;
-
-        case 't':
-            if (pass == 1)
-                tasm_compatible_mode = true;
             break;
 
         case 'v':

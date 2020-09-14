@@ -6655,9 +6655,6 @@ static void pp_reset_stdmac(enum preproc_mode mode)
 
     pp_add_magic_stdmac();
 
-    if (tasm_compatible_mode)
-        pp_add_stdmac(nasm_stdmac_tasm);
-
     pp_add_stdmac(nasm_stdmac_nasm);
     pp_add_stdmac(nasm_stdmac_version);
 

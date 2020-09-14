@@ -119,9 +119,4 @@ static inline bool nasm_isquote(char x)
     return nasm_ctype(x, NCT_QUOTE);
 }
 
-static inline void nasm_ctype_tasm_mode(void)
-{
-    /* No differences at the present moment */
-}
-
 #endif /* NASM_NCTYPE_H */
