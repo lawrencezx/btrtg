@@ -39,20 +39,8 @@
 
 
 #include "nasm.h"
-#include "nasmlib.h"
-#include "nctype.h"
-#include "error.h"
-#include "floats.h"
-#include "stdscan.h"
-#include "insns.h"
-#include "parser.h"
-#include "eval.h"
 #include "assemble.h"
-#include "labels.h"
 #include "listing.h"
-#include "iflag.h"
-#include "quote.h"
-#include "ver.h"
 #include "generator.h"
 
 /*
@@ -142,8 +130,6 @@ void generator_init(void)
 
 void generator_exit(void)
 {
-  eval_cleanup();
-  stdscan_cleanup();
   src_free();
 }
 
