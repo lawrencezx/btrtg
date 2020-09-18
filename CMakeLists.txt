@@ -36,7 +36,7 @@ SET(GEN_TARS
 
   ${srcdir}/include/warnings.h
   ${srcdir}/asm/warnings.c
-  #  ${srcdir}/asm/tokhash.c
+  ${srcdir}/asm/tokhash.c
   ${srcdir}/asm/tokens.h)
 
 add_custom_command(OUTPUT ${GEN_TARS}
@@ -62,7 +62,7 @@ add_custom_command(OUTPUT ${GEN_TARS}
 
   COMMAND ${RUNPERL} ${srcdir}/asm/warnings.pl c ${srcdir}/asm/warnings.c ${srcdir}
   COMMAND ${RUNPERL} ${srcdir}/asm/warnings.pl h ${srcdir}/include/warnings.h ${srcdir}
-  #  COMMAND ${RUNPERL} ${srcdir}/asm/tokhash.pl c ${srcdir}/x86/insns.dat ${srcdir}/x86/regs.dat ${srcdir}/asm/tokens.dat > ${srcdir}/asm/tokhash.c
+  COMMAND ${RUNPERL} ${srcdir}/asm/tokhash.pl c ${srcdir}/x86/insns.dat ${srcdir}/x86/regs.dat ${srcdir}/asm/tokens.dat > ${srcdir}/asm/tokhash.c
   COMMAND ${RUNPERL} ${srcdir}/asm/tokhash.pl h ${srcdir}/x86/insns.dat ${srcdir}/x86/regs.dat ${srcdir}/asm/tokens.dat > ${srcdir}/asm/tokens.h)
 
 

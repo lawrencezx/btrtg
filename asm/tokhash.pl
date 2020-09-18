@@ -213,7 +213,7 @@ if ($output eq 'h') {
     print "#include \"nasm.h\"\n";
     print "#include \"hashtbl.h\"\n";
     print "#include \"insns.h\"\n";
-    print "#include \"stdscan.h\"\n";
+    print "#include \"buf2token.h\"\n";
     print "\n";
 
     # These somewhat odd sizes and ordering thereof are due to the

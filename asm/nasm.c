@@ -39,6 +39,7 @@
 
 
 #include "nasm.h"
+#include "insns.h"
 #include "listing.h"
 #include "ver.h"
 #include "generator.h"
@@ -88,47 +89,55 @@ int main(int argc, char *argv[])
 
   generator_init();
 
-  /* mov ax,4 */
-  insn output_ins =
+  /* mov rm16,imm */
+  insn_seed mov_seed =
   {
-    .label = 0x0,
-    .prefixes = {0, 0, 0, 0, 254, 0, 0},
-    .opcode = I_MOV,
-    .condition = C_none,
-    .operands = 2,
-    .addr_size = 32,
-    .oprs = {
-      {.type = 17180393733, .disp_size = 0, .basereg = R_AX, .indexreg = R_none, .scale = 0, 
-      .hintbase = 0, .hinttype = EAH_NOHINT, .segment = -1, .offset = 0, .wrt = -1, .eaflags = 0, .opflags = 0, 
-      .decoflags = 0},
-      {.type = 7864322, .disp_size = 0, .basereg = R_none, .indexreg = R_none, .scale = 0, .hintbase = 0, 
-      .hinttype = EAH_NOHINT, .segment = -1, .offset = 4, .wrt = -1, .eaflags = 0, .opflags = 0, .decoflags = 0},
-      {.type = 0, .disp_size = 0, .basereg = R_none, .indexreg = R_none, .scale = 0, .hintbase = 0,
-      .hinttype = EAH_NOHINT, .segment = -1, .offset = 0, .wrt = -1, .eaflags = 0, .opflags = 0, .decoflags = 0},
-      {.type = 0, .disp_size = 0, 
-      .basereg = R_zero, .indexreg = R_AH, .scale = 0, .hintbase = 1433524224, .hinttype = 21845, .segment = 2007385088, 
-      .offset = 140737488346032, .wrt = 1432088262, .eaflags = 21845, .opflags = 1432502559, .decoflags = 21845},
-      {
-      .type = 0, .disp_size = 1432504795, .basereg = R_CR0, .indexreg = 1432502606, .scale = 16, .hintbase = -9200, 
-      .hinttype = 32767, .segment = 1432225456, .offset = 201863454064, .wrt = 1432702944, .eaflags = 21845, 
-      .opflags = 1433502432, .decoflags = 21845}
-    },
-    .eops = 0x0,
-    .eops_float = 1844422398,
-    .times = 1,
-    .forw_ref = false,
-    .rex_done = false,
-    .rex = 0,
-    .vexreg = 14,
-    .vex_cm = 0,
-    .vex_wlp = 0,
-    .evex_p = "\000\000",
-    .evex_tuple = 1433518784,
-    .evex_rm = 0,
-    .evex_brerop = -1
+      .opcode = I_MOV,
+      .operands = 2,
+      .opd = {RM_GPR|BITS16,IMMEDIATE,0,0,0}
   };
+//  insn output_ins =
+//  {
+//    .label = 0x0,
+//    .prefixes = {0, 0, 0, 0, 254, 0, 0},
+//    .opcode = I_MOV,
+//    .condition = C_none,
+//    .operands = 2,
+//    .addr_size = 32,
+//    .oprs = {
+//      {.type = 17180393733, .disp_size = 0, .basereg = R_AX, .indexreg = R_none, .scale = 0, 
+//      .hintbase = 0, .hinttype = EAH_NOHINT, .segment = -1, .offset = 0, .wrt = -1, .eaflags = 0, .opflags = 0, 
+//      .decoflags = 0},
+//      {.type = 7864322, .disp_size = 0, .basereg = R_none, .indexreg = R_none, .scale = 0, .hintbase = 0, 
+//      .hinttype = EAH_NOHINT, .segment = -1, .offset = 4, .wrt = -1, .eaflags = 0, .opflags = 0, .decoflags = 0},
+//      {.type = 0, .disp_size = 0, .basereg = R_none, .indexreg = R_none, .scale = 0, .hintbase = 0,
+//      .hinttype = EAH_NOHINT, .segment = -1, .offset = 0, .wrt = -1, .eaflags = 0, .opflags = 0, .decoflags = 0},
+//      {.type = 0, .disp_size = 0, 
+//      .basereg = R_zero, .indexreg = R_AH, .scale = 0, .hintbase = 1433524224, .hinttype = 21845, .segment = 2007385088, 
+//      .offset = 140737488346032, .wrt = 1432088262, .eaflags = 21845, .opflags = 1432502559, .decoflags = 21845},
+//      {
+//      .type = 0, .disp_size = 1432504795, .basereg = R_CR0, .indexreg = 1432502606, .scale = 16, .hintbase = -9200, 
+//      .hinttype = 32767, .segment = 1432225456, .offset = 201863454064, .wrt = 1432702944, .eaflags = 21845, 
+//      .opflags = 1433502432, .decoflags = 21845}
+//    },
+//    .eops = 0x0,
+//    .eops_float = 1844422398,
+//    .times = 1,
+//    .forw_ref = false,
+//    .rex_done = false,
+//    .rex = 0,
+//    .vexreg = 14,
+//    .vex_cm = 0,
+//    .vex_wlp = 0,
+//    .evex_p = "\000\000",
+//    .evex_tuple = 1433518784,
+//    .evex_rm = 0,
+//    .evex_brerop = -1
+//  };
 
-  generate(&output_ins);
+  insn output_ins;
+
+  generate(&mov_seed, &output_ins);
 
   generator_exit();
 

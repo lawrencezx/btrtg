@@ -13,6 +13,12 @@
 #include "tokens.h"
 #include "iflag.h"
 
+typedef struct insn_seed {
+    enum opcode     opcode;
+    int             operands;
+    opflags_t       opd[MAX_OPERANDS];
+} insn_seed;
+
 /* if changed, ITEMPLATE_END should be also changed accordingly */
 struct itemplate {
     enum opcode     opcode;             /* the token, passed from "parser.c" */

@@ -41,7 +41,11 @@
 #include "nasm.h"
 #include "assemble.h"
 #include "listing.h"
+#include "insns.h"
+#include "nctype.h"
 #include "generator.h"
+#include "parser.h"
+#include "gendata.h"
 
 /*
  * This is the maximum number of optimization passes to do.  If we ever
@@ -126,6 +130,10 @@ void generator_init(void)
 
   /* Save away the default state of warnings */
   init_warnings();
+
+  gendata_init();
+
+  nasm_ctype_init();
 }
 
 void generator_exit(void)
@@ -182,7 +190,7 @@ static void process_insn(insn *instruction)
     }
 }
 
-void generate(insn *output_ins)
+void generate(insn_seed *seed, insn *output_ins)
 {
     uint64_t prev_offset_changed;
     int64_t stall_count = 0; /* Make sure we make forward progress... */
@@ -245,6 +253,7 @@ void generate(insn *output_ins)
         location.offset  = 0;
 
         /* Not a directive, or even something that starts with [ */
+        parse_insn_seed(seed, output_ins);
         process_insn(output_ins);
 
         /* We better not be having an error hold still... */
