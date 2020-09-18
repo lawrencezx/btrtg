@@ -1,6 +1,7 @@
 #include "compiler.h"
 
 #include "nasm.h"
+#include "nasmlib.h"
 #include "insns.h"
 #include "gendata.h"
 #include "error.h"
@@ -11,6 +12,15 @@
 #define random(x) (rand() % x)
 
 static char genbuf[20];
+
+static void data_copy(const char *src, char *dst, bool (*is_validchar)(char))
+{
+    const char* r = src;
+    while (is_validchar(*r))
+        r++;
+    memcpy(dst, src, r - src);
+    dst[r - src] = '\0';
+}
 
 /* Generate random 16-bit register. */
 static const char* random_reg16(void)
@@ -49,36 +59,28 @@ static const char* random_imm(void)
 void gen_op(enum opcode opcode, char *buffer)
 {
     const char* insn_name = nasm_insn_names[opcode];
-    const char* r = insn_name + 1;
-    while (nasm_isidchar(*r))
-        r++;
-
-    memcpy(buffer, insn_name, r - insn_name);
-    buffer[r - insn_name] = '\0';
+    data_copy(insn_name, buffer, nasm_isidchar);
 }
 
 /* Generate operand. */
 void gen_opnd(opflags_t operand, char *buffer)
 {
-    if (operand == (RM_GPR|BITS16)) {
-        const char* reg_name = random_reg16();
-        const char* r = reg_name + 1;
-        while (nasm_isidchar(*r))
-            r++;
-    
-        memcpy(buffer, reg_name, r - reg_name);
-        buffer[r - reg_name] = '\0';
-    } else if (operand == IMMEDIATE) {
-        const char* imm = random_imm();
-        const char* r = imm + 1;
-        while (nasm_isdigit(*r))
-            r++;
-    
-        memcpy(buffer, imm, r - imm);
-        buffer[r - imm] = '\0';
-    } else {
+    const char *opnd_src = NULL;
+    bool (*valid_func)(char) = NULL;
+    switch (operand) {
+    case (RM_GPR|BITS16):
+        opnd_src = random_reg16();
+        valid_func = nasm_isidchar;
+        break;
+    case IMMEDIATE:
+        opnd_src = random_imm();
+        valid_func = nasm_isdigit;
+        break;
+    default:
         nasm_nonfatal("unsupported operand type");
+        break;
     }
+    data_copy(opnd_src, buffer, valid_func);
 }
 
 void gendata_init(void)
