@@ -89,9 +89,7 @@ int main(int argc, char *argv[])
       return 1;
   }
 
-  while (true) {
-      test_mov();
-  }
+  test_MOV();
 
   if (want_usage)
       usage();

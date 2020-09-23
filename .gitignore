@@ -110,6 +110,8 @@ TAGS
 /x86/regs.c
 /x86/regs.h
 /x86/regvals.c
+/test/test.h
+/test/insns/*.c
 /patches/
 /autoconf/aclocal.m4
 /autoconf/compile
