@@ -38,7 +38,7 @@ void parse_insn_seed(insn_seed *seed, insn *result)
     result->opcode = tokval.t_integer;
     result->condition = tokval.t_inttwo;
 
-    for (opnum = 0; opnum < seed->operands; ++opnum) {
+    for (opnum = 0; seed->opd[opnum] !=0; ++opnum) {
         expr *value;
         bool mref = false;
 

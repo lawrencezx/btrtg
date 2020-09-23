@@ -15,7 +15,6 @@
 
 typedef struct insn_seed {
     enum opcode     opcode;
-    int             operands;
     opflags_t       opd[MAX_OPERANDS];
 } insn_seed;
 
