@@ -972,66 +972,6 @@ enum decorator_tokens {
  * Global modes
  */
 
-/*
- * Various types of compiler passes we may execute.
- * If these are changed, you need to also change _pass_types[]
- * in asm/nasm.c.
- */
-enum pass_type {
-    PASS_INIT,            /* Initialization, not doing anything yet */
-    PASS_PREPROC,         /* Preprocess-only mode (similar to PASS_FIRST) */
-    PASS_FIRST,           /* The very first pass over the code */
-    PASS_OPT,             /* Optimization pass */
-    PASS_STAB,            /* Stabilization pass (original pass 1) */
-    PASS_FINAL            /* Code generation pass (original pass 2) */
-};
-extern const char * const _pass_types[];
-extern enum pass_type _pass_type;
-static inline enum pass_type pass_type(void)
-{
-    return PASS_FINAL;
-}
-static inline const char *pass_type_name(void)
-{
-    return "final";
-}
-/* True during initialization, no code read yet */
-static inline bool not_started(void)
-{
-    return pass_type() == PASS_INIT;
-}
-/* True for the initial pass and setup (old "pass2 < 2") */
-static inline bool pass_first(void)
-{
-    return pass_type() <= PASS_FIRST;
-}
-/* At this point we better have stable definitions */
-static inline bool pass_stable(void)
-{
-    return pass_type() >= PASS_STAB;
-}
-/* True for the code generation pass only, (old "pass1 >= 2") */
-static inline bool pass_final(void)
-{
-    return pass_type() >= PASS_FINAL;
-}
-/* True for code generation *or* preprocess-only mode */
-static inline bool pass_final_or_preproc(void)
-{
-    return pass_type() >= PASS_FINAL || pass_type() == PASS_PREPROC;
-}
-
-/*
- * The actual pass number. 0 is used during initialization, the very
- * first pass is 1, and then it is simply increasing numbers until we are
- * done.
- */
-static inline int64_t pass_count(void)
-{
-    return 1;
-}
-
-extern struct optimization optimizing;
 extern int globalbits;          /* 16, 32 or 64-bit mode */
 extern int globalrel;           /* default to relative addressing? */
 extern int globalbnd;           /* default to using bnd prefix? */

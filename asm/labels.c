@@ -118,8 +118,6 @@ struct permts {                 /* permanent text storage */
 };
 #define PERMTS_HEADER offsetof(struct permts, data)
 
-uint64_t global_offset_changed;		/* counter for global offset changes */
-
 static struct hash_table ltab;          /* labels hash table */
 static union label *ldata;              /* all label data blocks */
 static union label *lfree;              /* labels free block */
@@ -145,28 +143,24 @@ static void out_symdef(union label *lptr)
 //    int64_t backend_offset;
 
     /* Backend-defined special segments are passed to symdef immediately */
-    if (pass_final()) {
-        /* Emit special fixups for globals and commons */
-        switch (lptr->defn.type) {
-        case LBL_GLOBAL:
-        case LBL_REQUIRED:
-        case LBL_COMMON:
-            break;
-        default:
-            break;
-        }
-        return;
+    /* Emit special fixups for globals and commons */
+    switch (lptr->defn.type) {
+    case LBL_GLOBAL:
+    case LBL_REQUIRED:
+    case LBL_COMMON:
+        break;
+    default:
+        break;
     }
+    return;
 
-    if (pass_type() != PASS_STAB && lptr->defn.type != LBL_BACKEND)
+    if (lptr->defn.type != LBL_BACKEND)
         return;
 
     /* Clean up this hack... */
     switch(lptr->defn.type) {
     case LBL_EXTERN:
-        /* If not seen in the previous or this pass, drop it */
-        if (lptr->defn.lastref < pass_count())
-            return;
+        return;
 
         /* Otherwise, promote to LBL_REQUIRED at this time */
         lptr->defn.type = LBL_REQUIRED;
@@ -249,7 +243,7 @@ enum label_type lookup_label(const char *label,
 
     lptr = find_label(label, false, NULL);
     if (lptr && lptr->defn.defined) {
-        int64_t lpass = pass_count() + 1;
+        int64_t lpass = 1;
 
         lptr->defn.lastref = lpass;
         *segment = lptr->defn.segment;
@@ -328,7 +322,7 @@ static bool declare_label_lptr(union label *lptr,
     if (special && !special[0])
         special = NULL;
 
-    if (oldtype == type || (!pass_stable() && oldtype == LBL_LOCAL) ||
+    if (oldtype == type || (oldtype == LBL_LOCAL) ||
         (oldtype == LBL_EXTERN && type == LBL_REQUIRED)) {
         lptr->defn.type = type;
 
@@ -384,12 +378,7 @@ void define_label(const char *label, int32_t segment,
     int64_t size;
     int64_t lpass, lastdef;
 
-    /*
-     * The backend may invoke this during initialization, at which
-     * pass_count() is zero, so add one so we never have a zero value
-     * for a defined variable.
-     */
-    lpass = pass_count() + 1;
+    lpass = 1;
 
     /*
      * Phase errors here can be one of two types: a new label appears,
@@ -438,7 +427,6 @@ void define_label(const char *label, int32_t segment,
         lptr->defn.segment != segment ||
         lptr->defn.offset != offset ||
         lptr->defn.size != size;
-    global_offset_changed += changed;
 
     if (lastdef == lpass) {
         int32_t saved_line = 0;
@@ -467,7 +455,7 @@ void define_label(const char *label, int32_t segment,
         src_set(lptr->defn.def_line, lptr->defn.def_file);
         nasm_error(noteflags, "info: label `%s' originally defined", lptr->defn.label);
         src_set(saved_line, saved_fname);
-    } else if (changed && pass_final() && lptr->defn.type != LBL_SPECIAL) {
+    } else if (changed && lptr->defn.type != LBL_SPECIAL) {
         /*!
          *!label-redef-late [err] label (re)defined during code generation
          *!  the value of a label changed during the final, code-generation

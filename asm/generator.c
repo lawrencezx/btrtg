@@ -66,10 +66,7 @@ struct error_format {
 
 static const struct error_format errfmt_gnu  = { ":", "",  ": "  };
 static const struct error_format *errfmt = &errfmt_gnu;
-static struct strlist *warn_list;
 static struct nasm_errhold *errhold_stack;
-
-static bool opt_verbose_info;
 
 #ifndef ABORT_ON_PANIC
 # define ABORT_ON_PANIC 0
@@ -139,7 +136,6 @@ void generator_exit(void)
 
 static void process_insn(insn *instruction)
 {
-    int32_t n;
     int64_t l;
 
     if (!instruction->times)
@@ -147,31 +143,14 @@ static void process_insn(insn *instruction)
 
     nasm_assert(instruction->times > 0);
 
-    /*
-     * NOTE: insn_size() can change instruction->times
-     * (usually to 1) when called.
-     */
-    if (!pass_final()) {
-        for (n = 1; n <= instruction->times; n++) {
-            l = insn_size(location.segment, location.offset,
-                          globalbits, instruction);
-            /* l == -1 -> invalid instruction */
-            if (l != -1)
-                increment_offset(l);
-        }
-    } else {
-        l = assemble(location.segment, location.offset,
-                     globalbits, instruction);
-                /* We can't get an invalid instruction here */
-        increment_offset(l);
-    }
+    l = assemble(location.segment, location.offset,
+                 globalbits, instruction);
+            /* We can't get an invalid instruction here */
+    increment_offset(l);
 }
 
 void generate(insn_seed *seed, insn *output_ins)
 {
-    uint64_t prev_offset_changed;
-    int64_t stall_count = 0; /* Make sure we make forward progress... */
-
     switch (cmd_sb) {
     case 16:
         break;
@@ -188,83 +167,21 @@ void generate(insn_seed *seed, insn *output_ins)
         break;
     }
 
-    prev_offset_changed = INT64_MAX;
+    globalbits = cmd_sb;  /* set 'bits' to command line default */
+    cpu = cmd_cpu;
 
-    global_offset_changed = 0;
+    in_absolute = false;
+    location.segment = NO_SEG;
+    location.offset  = 0;
 
-	/*
-	 * Create a warning buffer list unless we are in
-         * pass 2 (everything will be emitted immediately in pass 2.)
-	 */
-	if (warn_list) {
-            if (warn_list->nstr || pass_final())
-                strlist_free(&warn_list);
-        }
+    /* Not a directive, or even something that starts with [ */
+    parse_insn_seed(seed, output_ins);
+    process_insn(output_ins);
 
-	if (!pass_final() && !warn_list)
-            warn_list = strlist_alloc(false);
+    /* We better not be having an error hold still... */
+    nasm_assert(!errhold_stack);
 
-        globalbits = cmd_sb;  /* set 'bits' to command line default */
-        cpu = cmd_cpu;
-
-        in_absolute = false;
-        location.segment = NO_SEG;
-        location.offset  = 0;
-
-        /* Not a directive, or even something that starts with [ */
-        parse_insn_seed(seed, output_ins);
-        process_insn(output_ins);
-
-        /* We better not be having an error hold still... */
-        nasm_assert(!errhold_stack);
-
-        if (global_offset_changed) {
-            switch (pass_type()) {
-            case PASS_OPT:
-                /*
-                 * This is the only pass type that can be executed more
-                 * than once, and therefore has the ability to stall.
-                 */
-                if (global_offset_changed < prev_offset_changed) {
-                    prev_offset_changed = global_offset_changed;
-                    stall_count = 0;
-                } else {
-                    stall_count++;
-                }
-
-                break;
-
-            case PASS_STAB:
-                /*!
-                 *!phase [off] phase error during stabilization
-                 *!  warns about symbols having changed values during
-                 *!  the second-to-last assembly pass. This is not
-                 *!  inherently fatal, but may be a source of bugs.
-                 */
-                nasm_warn(WARN_PHASE|ERR_UNDEAD,
-                          "phase error during stabilization "
-                          "pass, hoping for the best");
-                break;
-
-            case PASS_FINAL:
-                nasm_nonfatalf(ERR_UNDEAD,
-                               "phase error during code generation pass");
-                break;
-
-            default:
-                /* This is normal, we'll keep going... */
-                break;
-            }
-        }
-
-        reset_warnings();
-
-    if (opt_verbose_info && pass_final()) {
-        /*  -On and -Ov switches */
-        nasm_info("assembly required 1+%"PRId64"+2 passes\n", pass_count()-3);
-    }
-
-    strlist_free(&warn_list);
+    reset_warnings();
 }
 
 /**
@@ -305,13 +222,7 @@ static bool skip_this_pass(errflags severity)
      */
     if (type == ERR_LISTMSG)
         return true;
-
-    /*
-     * This message not applicable unless it is the last pass we are going
-     * to execute; this can be either the final code-generation pass or
-     * the single pass executed in preproc-only mode.
-     */
-    return (severity & ERR_PASS2) && !pass_final_or_preproc();
+    return false;
 }
 
 /**
@@ -538,13 +449,6 @@ void nasm_verror(errflags severity, const char *fmt, va_list args)
     } else {
         nasm_issue_error(et);
     }
-
-    /*
-     * Don't do this before then, if we do, we lose messages in the list
-     * file, as the list file is only generated in the last pass.
-     */
-    if (skip_this_pass(severity))
-        return;
 }
 
 /*
@@ -589,28 +493,9 @@ static void nasm_issue_error(struct nasm_errtext *et)
             here = where.filename ? " here" : " in an unknown location";
         }
 
-        if (warn_list && true_type < ERR_NONFATAL) {
-            /*
-             * Buffer up warnings until we either get an error
-             * or we are on the code-generation pass.
-             */
-            strlist_printf(warn_list, "%s%s%s%s%s%s%s",
-                           file, linestr, errfmt->beforemsg,
-                           pfx, et->msg, here, warnsuf);
-        } else {
-            /*
-             * Actually output an error.  If we have buffered
-             * warnings, and this is a non-warning, output them now.
-             */
-            if (true_type >= ERR_NONFATAL && warn_list) {
-                strlist_write(warn_list, "\n", error_file);
-                strlist_free(&warn_list);
-            }
-
-            fprintf(error_file, "%s%s%s%s%s%s%s\n",
-                    file, linestr, errfmt->beforemsg,
-                    pfx, et->msg, here, warnsuf);
-        }
+        fprintf(error_file, "%s%s%s%s%s%s%s\n",
+                file, linestr, errfmt->beforemsg,
+                pfx, et->msg, here, warnsuf);
     }
 
     /* Are we recursing from error_list_macros? */

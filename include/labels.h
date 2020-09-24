@@ -73,7 +73,4 @@ void set_label_mangle(enum mangle_index which, const char *what);
 int init_labels(void);
 void cleanup_labels(void);
 const char *local_scope(const char *label);
-
-extern uint64_t global_offset_changed;
-
 #endif /* LABELS_H */

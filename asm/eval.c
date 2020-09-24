@@ -973,8 +973,7 @@ static expr *expr6(void)
                     scope = local_scope(tokval->t_charptr);
                     if (critical) {
                         nasm_nonfatal("symbol `%s%s' not defined%s",
-                                      scope,tokval->t_charptr,
-                                      pass_first() ? " before use" : "");
+                                      scope,tokval->t_charptr, "");
                         return NULL;
                     }
                     if (opflags)
