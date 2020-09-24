@@ -185,7 +185,6 @@
 #include "insns.h"
 #include "tables.h"
 #include "disp8.h"
-#include "listing.h"
 
 typedef struct {
     enum ea_type type;            /* what kind of EA is this? */
@@ -343,7 +342,6 @@ static void out(struct out_data *data)
         zeropad = data->size - amax;
         data->size = amax;
     }
-    //lfmt->output(data);
 
     data->offset  += data->size;
     data->insoffs += data->size;
@@ -351,7 +349,6 @@ static void out(struct out_data *data)
     if (zeropad) {
         data->type     = OUT_ZERODATA;
         data->size     = zeropad;
-        //lfmt->output(data);
         data->offset  += zeropad;
         data->insoffs += zeropad;
         data->size    += zeropad;  /* Restore original size value */

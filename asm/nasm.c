@@ -42,7 +42,6 @@
 
 #include "nasm.h"
 #include "insns.h"
-#include "listing.h"
 #include "ver.h"
 #include "test.h"
 
@@ -336,13 +335,6 @@ static bool process_arg(char *p, char *q, int pass)
         }
 
         switch (p[1]) {
-        case 'L':        /* listing options */
-            if (pass == 2) {
-                while (*param)
-                    list_options |= list_option_mask(*param++);
-            }
-            break;
-
         case 'h':
             help(stdout);
             exit(0);    /* never need usage message here */
@@ -708,18 +700,6 @@ static void help(FILE *out)
         "\n"
         , out);
     fputs(
-        "\n"
-        "    -l listfile   write listing to a list file\n"
-        "    -Lflags...    add optional information to the list file\n"
-        "       -Lb        show builtin macro packages (standard and %use)\n"
-        "       -Ld        show byte and repeat counts in decimal, not hex\n"
-        "       -Le        show the preprocessed output\n"
-        "       -Lf        ignore .nolist (force output)\n"
-        "       -Lm        show multi-line macro calls with expanded parmeters\n"
-        "       -Lp        output a list file every pass, in case of errors\n"
-        "       -Ls        show all single-line macro definitions\n"
-        "       -Lw        flush the output after every line (very slow!)\n"
-        "       -L+        enable all listing options except -Lw (very verbose!)\n"
         "\n"
         "    -Oflags...    optimize opcodes, immediates and branch offsets\n"
         "       -O0        no optimization\n"

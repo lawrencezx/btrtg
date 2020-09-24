@@ -40,7 +40,6 @@
 
 #include "nasm.h"
 #include "assemble.h"
-#include "listing.h"
 #include "insns.h"
 #include "nctype.h"
 #include "generator.h"
@@ -76,12 +75,9 @@ static bool opt_verbose_info;
 # define ABORT_ON_PANIC 0
 #endif
 static bool abort_on_panic = ABORT_ON_PANIC;
-static bool keep_all;
 
 int globalrel = 0;
 int globalbnd = 0;
-
-static const char *listname = "list.tmp";
 
 extern FILE *error_file;               /* Where to write error messages */
 
@@ -156,7 +152,6 @@ static void process_insn(insn *instruction)
      * (usually to 1) when called.
      */
     if (!pass_final()) {
-        int64_t start = location.offset;
         for (n = 1; n <= instruction->times; n++) {
             l = insn_size(location.segment, location.offset,
                           globalbits, instruction);
@@ -164,29 +159,11 @@ static void process_insn(insn *instruction)
             if (l != -1)
                 increment_offset(l);
         }
-        if (list_option('p')) {
-            struct out_data dummy;
-            memset(&dummy, 0, sizeof dummy);
-            dummy.type   = OUT_RAWDATA; /* Handled specially with .data NULL */
-            dummy.offset = start;
-            dummy.size   = location.offset - start;
-            lfmt->output(&dummy);
-        }
     } else {
         l = assemble(location.segment, location.offset,
                      globalbits, instruction);
                 /* We can't get an invalid instruction here */
         increment_offset(l);
-
-        if (instruction->times > 1) {
-            lfmt->uplevel(LIST_TIMES, instruction->times);
-            for (n = 2; n <= instruction->times; n++) {
-                l = assemble(location.segment, location.offset,
-                             globalbits, instruction);
-                increment_offset(l);
-            }
-            lfmt->downlevel(LIST_TIMES);
-        }
     }
 }
 
@@ -213,12 +190,7 @@ void generate(insn_seed *seed, insn *output_ins)
 
     prev_offset_changed = INT64_MAX;
 
-    if (listname && !keep_all) {
-        /* Remove the list file in case we die before the output pass */
-        remove(listname);
-    }
-
-        global_offset_changed = 0;
+    global_offset_changed = 0;
 
 	/*
 	 * Create a warning buffer list unless we are in
@@ -234,19 +206,6 @@ void generate(insn_seed *seed, insn *output_ins)
 
         globalbits = cmd_sb;  /* set 'bits' to command line default */
         cpu = cmd_cpu;
-        if (listname) {
-            if (pass_final() || list_on_every_pass()) {
-                lfmt->init(listname);
-            } else if (list_active()) {
-                /*
-                 * Looks like we used the list engine on a previous pass,
-                 * but now it is turned off, presumably via %pragma -p
-                 */
-                lfmt->cleanup();
-                if (!keep_all)
-                    remove(listname);
-            }
-        }
 
         in_absolute = false;
         location.segment = NO_SEG;
@@ -305,7 +264,6 @@ void generate(insn_seed *seed, insn *output_ins)
         nasm_info("assembly required 1+%"PRId64"+2 passes\n", pass_count()-3);
     }
 
-    lfmt->cleanup();
     strlist_free(&warn_list);
 }
 
@@ -658,24 +616,6 @@ static void nasm_issue_error(struct nasm_errtext *et)
     /* Are we recursing from error_list_macros? */
     if (severity & ERR_PP_LISTMACRO)
         goto done;
-
-    /*
-     * Don't suppress this with skip_this_pass(), or we don't get
-     * pass1 or preprocessor warnings in the list file
-     */
-    if (severity & ERR_HERE) {
-        if (where.lineno)
-            lfmt->error(severity, "%s%s at %s:%"PRId32"%s",
-                        pfx, et->msg, where.filename, where.lineno, warnsuf);
-        else if (where.filename)
-            lfmt->error(severity, "%s%s in file %s%s",
-                        pfx, et->msg, where.filename, warnsuf);
-        else
-            lfmt->error(severity, "%s%s in an unknown location%s",
-                        pfx, et->msg, warnsuf);
-    } else {
-        lfmt->error(severity, "%s%s%s", pfx, et->msg, warnsuf);
-    }
 
     if (skip_this_pass(severity))
         goto done;

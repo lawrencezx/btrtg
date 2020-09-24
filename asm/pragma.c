@@ -45,7 +45,6 @@
 #include "nasmlib.h"
 #include "assemble.h"
 #include "error.h"
-#include "listing.h"
 
 /*
  * Handle [pragma] directives.  [pragma] is generally produced by
