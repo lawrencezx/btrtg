@@ -11,7 +11,8 @@ include_directories(${srcdir}
                     ${srcdir}/include
                     ${srcdir}/x86
                     ${srcdir}/asm
-                    ${srcdir}/config)
+                    ${srcdir}/config
+                    ${srcdir}/disasm)
 
 # @OUTPUT: generate dependencies
 SET(GEN_TARS
@@ -74,7 +75,8 @@ file(GLOB LIB_SRCS stdlib/*.c
                    nasmlib/*.c
                    common/*.c
                    x86/*.c
-                   asm/*.c)
+                   asm/*.c
+                   disasm/*.c)
 add_library(nasmlib STATIC ${LIB_SRCS})
 add_dependencies(nasmlib perlreq)
 

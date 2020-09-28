@@ -195,6 +195,9 @@ typedef struct {
     int8_t disp8;                  /* compressed displacement for EVEX */
 } ea;
 
+extern char global_codebuf[MAX_INSLEN];
+extern uint8_t iglobal_codebuf;
+
 #define GEN_SIB(scale, index, base)                 \
         (((scale) << 6) | ((index) << 3) | ((base)))
 
@@ -354,7 +357,7 @@ static void out(struct out_data *data)
         data->size    += zeropad;  /* Restore original size value */
     }
     for (int i = 0; i < (int)data->size; ++i) {
-        printf("0x%02x ", *((uint8_t*)data->data + i));
+        global_codebuf[iglobal_codebuf++] = *((uint8_t*)data->data + i);
     }
 }
 
@@ -647,7 +650,6 @@ int64_t assemble(int32_t segment, int64_t start, int bits, insn *instruction)
 
         instruction->times = 1; /* Avoid repeated error messages */
     }
-    printf("\n");
     return data.offset - start;
 }
 

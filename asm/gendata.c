@@ -9,9 +9,9 @@
 #include "regdis.h"
 #include <string.h>
 
-#define random(x) (rand() % x)
-
 static char genbuf[20];
+
+#define random(x) (rand() % x)
 
 static void data_copy(const char *src, char *dst, bool (*is_validchar)(char))
 {

@@ -1,6 +1,6 @@
 /* ----------------------------------------------------------------------- *
  *   
- *   Copyright 1996-2020 The NASM Authors - All Rights Reserved
+ *   Copyright 1996-2009 The NASM Authors - All Rights Reserved
  *   See the file AUTHORS included with the NASM distribution for
  *   the specific copyright holders.
  *
@@ -31,50 +31,18 @@
  *
  * ----------------------------------------------------------------------- */
 
-#include "ver.h"
-#include "version.h"
-
-/* This is printed when entering nasm -v */
-const char nasm_version[] = NASM_VER;
-const char nasm_date[] = __DATE__;
-const char nasm_compile_options[] = ""
-#ifdef DEBUG
-    " with -DDEBUG"
-#endif
-    ;
-
-bool reproducible;              /* Reproducible output */
-
-/* These are used by some backends. For a reproducible build,
- * these cannot contain version numbers.
+/*
+ * disasm.h   header file for disasm.c
  */
-static const char * const _nasm_comment[2] =
-{
-    "The Netwide Assembler " NASM_VER,
-    "The Netwide Assembler"
-};
 
-static const char * const _nasm_signature[2] = {
-    "NASM " NASM_VER,
-    "NASM"
-};
+#ifndef NASM_DISASM_H
+#define NASM_DISASM_H
 
-const char *nasm_comment(void)
-{
-    return _nasm_comment[reproducible];
-}
+#include "iflag.h"
 
-size_t nasm_comment_len(void)
-{
-    return strlen(nasm_comment());
-}
+#define INSN_MAX 32             /* one instruction can't be longer than this */
 
-const char *nasm_signature(void)
-{
-    return _nasm_signature[reproducible];
-}
+int32_t disasm(uint8_t *data, int32_t data_size, char *output, int outbufsize, int segsize,
+               iflag_t *prefer);
 
-size_t nasm_signature_len(void)
-{
-    return strlen(nasm_signature());
-}
+#endif

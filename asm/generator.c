@@ -39,12 +39,14 @@
 
 
 #include "nasm.h"
+#include "options.h"
 #include "assemble.h"
 #include "insns.h"
 #include "nctype.h"
 #include "generator.h"
 #include "parser.h"
 #include "gendata.h"
+#include "disasm.h"
 
 /*
  * This is the maximum number of optimization passes to do.  If we ever
@@ -86,6 +88,9 @@ static iflag_t cmd_cpu;
 struct location location;
 bool in_absolute;                 /* Flag we are in ABSOLUTE seg */
 struct location absolute;         /* Segment/offset inside ABSOLUTE */
+
+char global_codebuf[MAX_INSLEN];
+uint8_t iglobal_codebuf;
 
 int64_t switch_segment(int32_t segment)
 {
@@ -167,6 +172,8 @@ void generate(insn_seed *seed, insn *output_ins)
         break;
     }
 
+    iglobal_codebuf = 0;
+
     globalbits = cmd_sb;  /* set 'bits' to command line default */
     cpu = cmd_cpu;
 
@@ -182,6 +189,14 @@ void generate(insn_seed *seed, insn *output_ins)
     nasm_assert(!errhold_stack);
 
     reset_warnings();
+
+    if (option_display_insn) {
+        char outbuf[256];
+        iflag_t prefer;
+        disasm((uint8_t *)global_codebuf, (int32_t)iglobal_codebuf, (char *)outbuf, sizeof(outbuf),
+                globalbits, &prefer);
+        printf("%s\n", outbuf);
+    }
 }
 
 /**
