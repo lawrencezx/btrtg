@@ -3,6 +3,6 @@
 
 void generator_init(void);
 void generator_exit(void);
-void generate(insn_seed *seed, insn *output_ins);
+uint32_t generate(insn_seed *seed, const char** buf);
 
 #endif

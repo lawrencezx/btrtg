@@ -90,7 +90,7 @@ bool in_absolute;                 /* Flag we are in ABSOLUTE seg */
 struct location absolute;         /* Segment/offset inside ABSOLUTE */
 
 char global_codebuf[MAX_INSLEN];
-uint8_t iglobal_codebuf;
+uint8_t global_codebuf_len;
 
 int64_t switch_segment(int32_t segment)
 {
@@ -154,8 +154,9 @@ static void process_insn(insn *instruction)
     increment_offset(l);
 }
 
-void generate(insn_seed *seed, insn *output_ins)
+uint32_t generate(insn_seed *seed, const char** buf)
 {
+    insn output_ins;
     switch (cmd_sb) {
     case 16:
         break;
@@ -172,7 +173,7 @@ void generate(insn_seed *seed, insn *output_ins)
         break;
     }
 
-    iglobal_codebuf = 0;
+    global_codebuf_len = 0;
 
     globalbits = cmd_sb;  /* set 'bits' to command line default */
     cpu = cmd_cpu;
@@ -182,8 +183,8 @@ void generate(insn_seed *seed, insn *output_ins)
     location.offset  = 0;
 
     /* Not a directive, or even something that starts with [ */
-    parse_insn_seed(seed, output_ins);
-    process_insn(output_ins);
+    parse_insn_seed(seed, &output_ins);
+    process_insn(&output_ins);
 
     /* We better not be having an error hold still... */
     nasm_assert(!errhold_stack);
@@ -193,10 +194,13 @@ void generate(insn_seed *seed, insn *output_ins)
     if (option_display_insn) {
         char outbuf[256];
         iflag_t prefer;
-        disasm((uint8_t *)global_codebuf, (int32_t)iglobal_codebuf, (char *)outbuf, sizeof(outbuf),
+        disasm((uint8_t *)global_codebuf, (int32_t)global_codebuf_len, (char *)outbuf, sizeof(outbuf),
                 globalbits, &prefer);
         printf("%s\n", outbuf);
     }
+
+    *buf = (const char*)global_codebuf;
+    return global_codebuf_len;
 }
 
 /**

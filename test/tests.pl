@@ -213,14 +213,14 @@ foreach $i (@opcodes, @opcodes_cc) {
 
     print A "void test_${i}(void)\n";
     print A "{\n";
-    print A "    insn output_ins;\n";
+    print A "    const char* buf;\n";
     print A "    generator_init();\n";
     print A "\n";
 
     $aname = "aa_$i";
     foreach $j (@$aname) {
         print A "    assign_arr5(${i}_seed.opd,", $j,")\n";
-        print A "    generate(&${i}_seed, &output_ins);\n";
+        print A "    generate(&${i}_seed, &buf);\n";
         print A "\n";
     }
 

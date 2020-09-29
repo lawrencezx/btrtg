@@ -196,7 +196,7 @@ typedef struct {
 } ea;
 
 extern char global_codebuf[MAX_INSLEN];
-extern uint8_t iglobal_codebuf;
+extern uint8_t global_codebuf_len;
 
 #define GEN_SIB(scale, index, base)                 \
         (((scale) << 6) | ((index) << 3) | ((base)))
@@ -357,7 +357,7 @@ static void out(struct out_data *data)
         data->size    += zeropad;  /* Restore original size value */
     }
     for (int i = 0; i < (int)data->size; ++i) {
-        global_codebuf[iglobal_codebuf++] = *((uint8_t*)data->data + i);
+        global_codebuf[global_codebuf_len++] = *((uint8_t*)data->data + i);
     }
 }
 
