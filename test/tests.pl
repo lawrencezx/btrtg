@@ -214,7 +214,7 @@ foreach $i (@opcodes, @opcodes_cc) {
     print A "void test_${i}(void)\n";
     print A "{\n";
     print A "    const char* buf;\n";
-    print A "    generator_init();\n";
+    print A "    generator_init(false);\n";
     print A "\n";
 
     $aname = "aa_$i";

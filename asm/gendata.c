@@ -9,9 +9,17 @@
 #include "regdis.h"
 #include <string.h>
 
+bool sequence = false;
 static char genbuf[20];
 
 #define random(x) (rand() % x)
+
+#define random_regi(opflag) random(get_opnd_num(opflag))
+#define sequence_regi(reg) sqi.reg##i
+#define new_reg(reg,opflag) (sequence ? \
+        nasm_reg_names[nasm_rd_##reg[sequence_regi(reg)] - EXPR_REG_START] : \
+        nasm_reg_names[nasm_rd_##reg[random_regi(opflag)] - EXPR_REG_START])
+#define new_opnd(opnd) (sequence ? sequence_##opnd() : random_##opnd())
 
 static void data_copy(const char *src, char *dst, bool (*is_validchar)(char))
 {
@@ -22,133 +30,47 @@ static void data_copy(const char *src, char *dst, bool (*is_validchar)(char))
     dst[r - src] = '\0';
 }
 
-/* Generate random segment register. */
-static const char* random_sreg(void)
+static int get_opnd_num(opflags_t operand)
 {
-    int sregi, n;
-    enum reg_enum sreg;
-    switch(globalbits) {
-    case 16:
+    int n = 0;
+    switch(operand) {
+    case REG_SREG:
+        n = (globalbits == 16) ? 4 :
+            (globalbits == 32) ? 6 :
+            (globalbits == 64) ? 8 : -1;
+        break;
+    case REG_CREG:
         n = 4;
         break;
-    case 32:
-        n = 6;
+    case REG_DREG:
+        n = (globalbits == 32) ? 8 :
+            (globalbits == 64) ? 16 : -1;
         break;
-    case 64:
+    case (REG_GPR|BITS8):
+    case (RM_GPR|BITS8):
         n = 8;
         break;
-    default:
-        panic();
-    }
-    sregi = random(n);
-    sreg = nasm_rd_sreg[sregi];
-    return nasm_reg_names[sreg - EXPR_REG_START];
-}
-
-/* Generate random control register. */
-static const char* random_creg(void)
-{
-    int cregi, n = 4;
-    enum reg_enum creg;
-    cregi = random(n);
-    creg = nasm_rd_creg[cregi];
-    return nasm_reg_names[creg - EXPR_REG_START];
-}
-
-/* Generate random debug register. */
-static const char* random_dreg(void)
-{
-    int dregi, n;
-    enum reg_enum dreg;
-    switch(globalbits) {
-    case 32:
-        n = 8;
+    case (REG_GPR|BITS16):
+    case (RM_GPR|BITS16):
+    case (REG_GPR|BITS32):
+    case (RM_GPR|BITS32):
+    case (REG_GPR|BITS64):
+    case (RM_GPR|BITS64):
+        n = (globalbits == 16 || globalbits == 32) ? 8 :
+            (globalbits == 64) ? 16 : -1;
         break;
-    case 64:
-        n = 16;
+    case IMMEDIATE:
+    case MEM_OFFS:
+        n = 14;
         break;
     default:
-        panic();
+        nasm_nonfatal("unsupported opnd type");
+        break;
     }
-    dregi = random(n);
-    dreg = nasm_rd_dreg[dregi];
-    return nasm_reg_names[dreg - EXPR_REG_START];
+    return n;
 }
 
-/* Generate random 16-bit register. */
-static const char* random_reg8(void)
-{
-    int regi, n = 8;
-    enum reg_enum reg;
-    regi = random(n);
-    reg = nasm_rd_reg8[regi];
-    return nasm_reg_names[reg - EXPR_REG_START];
-}
-
-/* Generate random 16-bit register. */
-static const char* random_reg16(void)
-{
-    int regi, n;
-    enum reg_enum reg;
-    switch(globalbits) {
-    case 16:
-    case 32:
-        n = 8;
-        break;
-    case 64:
-        n = 16;
-        break;
-    default:
-        panic();
-    }
-    regi = random(n);
-    reg = nasm_rd_reg16[regi];
-    return nasm_reg_names[reg - EXPR_REG_START];
-}
-
-/* Generate random 16-bit register. */
-static const char* random_reg32(void)
-{
-    int regi, n;
-    enum reg_enum reg;
-    switch(globalbits) {
-    case 16:
-    case 32:
-        n = 8;
-        break;
-    case 64:
-        n = 16;
-        break;
-    default:
-        panic();
-    }
-    regi = random(n);
-    reg = nasm_rd_reg32[regi];
-    return nasm_reg_names[reg - EXPR_REG_START];
-}
-
-/* Generate random 16-bit register. */
-static const char* random_reg64(void)
-{
-    int regi, n;
-    enum reg_enum reg;
-    switch(globalbits) {
-    case 16:
-    case 32:
-        n = 8;
-        break;
-    case 64:
-        n = 16;
-        break;
-    default:
-        panic();
-    }
-    regi = random(n);
-    reg = nasm_rd_reg64[regi];
-    return nasm_reg_names[reg - EXPR_REG_START];
-}
-
-/* Generate int type immediate.
+/* Generate int type immediate randomly.
  * If it's larger than the limmit (8/16-bits imm), the high significant bytes
  * will be wipped away while assembling.
  * TODO: support 64-bit immediate
@@ -156,6 +78,119 @@ static const char* random_reg64(void)
 static const char* random_imm(void)
 {
     int num = random(INT_MAX);
+    sprintf(genbuf, "%d", num);
+    return genbuf;
+}
+
+/* sequence_index:
+ *     A super index structure used to traverse all the operand combinations.
+ */
+struct sequence_index {
+    bool start;
+    int i;
+    int num;
+    int sregi;
+    int cregi;
+    int dregi;
+    int reg8i;
+    int reg16i;
+    int reg32i;
+    int reg64i;
+    int immi;
+} sqi;
+
+static int imms[14] =
+{
+  0x0,        0x1,        0x7f,
+  0x80,       0x7fff,     0x8000,
+  0x03030303, 0x44444444, 0x7fffffff,
+  0x80000000, 0x80000001, 0xcccccccc,
+  0xf5f5f5f5, 0xffffffff
+};
+
+static void sqi_init(void)
+{
+    sqi.start = false;
+    sqi.i = 0;
+    sqi.num = 0;
+    sqi.sregi = 0;
+    sqi.cregi = 0;
+    sqi.dregi = 0;
+    sqi.reg8i = 0;
+    sqi.reg16i = 0;
+    sqi.reg32i = 0;
+    sqi.reg64i = 0;
+    sqi.immi = 0;
+}
+
+static void sqi_set_opi(opflags_t operand, int i)
+{
+    switch(operand) {
+    case REG_SREG:
+        sqi.sregi = i;
+        break;
+    case REG_CREG:
+        sqi.cregi = i;
+        break;
+    case REG_DREG:
+        sqi.dregi = i;
+        break;
+    case (REG_GPR|BITS8):
+    case (RM_GPR|BITS8):
+        sqi.reg8i = i;
+        break;
+    case (REG_GPR|BITS16):
+    case (RM_GPR|BITS16):
+        sqi.reg16i = i;
+        break;
+    case (REG_GPR|BITS32):
+    case (RM_GPR|BITS32):
+        sqi.reg32i = i;
+        break;
+    case (REG_GPR|BITS64):
+    case (RM_GPR|BITS64):
+        sqi.reg64i = i;
+        break;
+    case IMMEDIATE:
+    case MEM_OFFS:
+        sqi.immi = i;
+        break;
+    default:
+        nasm_nonfatal("unsupported opnd type");
+        break;
+    }
+}
+
+bool sqi_inc(insn_seed *seed, int opnum)
+{
+    if (sequence) {
+        if (!sqi.start) {
+            sqi.start = true;
+            sqi.num = 1;
+            for (int i = 0; i < opnum; i++) {
+                sqi.num *= get_opnd_num(seed->opd[i]);
+            }
+        } else {
+            if (sqi.i >= sqi.num)
+                return false;
+            int seqi = sqi.i++;
+            for (int i = 0; i < opnum; i++) {
+                sqi_set_opi(seed->opd[i], seqi % get_opnd_num(seed->opd[i]));
+                seqi /= get_opnd_num(seed->opd[i]);
+            }
+        }
+    }
+    return true;
+}
+
+/* Generate int type immediate sequentially.
+ * If it's larger than the limmit (8/16-bits imm), the high significant bytes
+ * will be wipped away while assembling.
+ * TODO: support 64-bit immediate
+ */
+static const char* sequence_imm(void)
+{
+    int num = imms[sqi.immi];
     sprintf(genbuf, "%d", num);
     return genbuf;
 }
@@ -183,36 +218,36 @@ void gen_opnd(opflags_t operand, char *buffer)
         opnd_src = nasm_reg_names[R_EAX - EXPR_REG_START];
         break;
     case REG_SREG:
-        opnd_src = random_sreg();
+        opnd_src = new_reg(sreg, operand);
         break;
     case REG_CREG:
-        opnd_src = random_creg();
+        opnd_src = new_reg(creg, operand);
         break;
     case REG_DREG:
-        opnd_src = random_dreg();
+        opnd_src = new_reg(dreg, operand);
         break;
     case (REG_GPR|BITS8):
     case (RM_GPR|BITS8):
-        opnd_src = random_reg8();
+        opnd_src = new_reg(reg8, operand);
         break;
     case (REG_GPR|BITS16):
     case (RM_GPR|BITS16):
-        opnd_src = random_reg16();
+        opnd_src = new_reg(reg16, operand);
         break;
     case (REG_GPR|BITS32):
     case (RM_GPR|BITS32):
-        opnd_src = random_reg32();
+        opnd_src = new_reg(reg32, operand);
         break;
     case (REG_GPR|BITS64):
     case (RM_GPR|BITS64):
-        opnd_src = random_reg64();
+        opnd_src = new_reg(reg64, operand);
         break;
     case IMMEDIATE:
     case MEM_OFFS:
-        opnd_src = random_imm();
+        opnd_src = new_opnd(imm);
         break;
     default:
-        nasm_nonfatal("unsupported operand type");
+        nasm_nonfatal("unsupported opnd type");
         break;
     }
     if (operand == IMMEDIATE)
@@ -222,8 +257,12 @@ void gen_opnd(opflags_t operand, char *buffer)
     data_copy(opnd_src, buffer, valid_func);
 }
 
-void gendata_init(void)
+void gendata_init(bool set_sequence)
 {
-    srand((unsigned)time(NULL));
+    sequence = set_sequence;
+    if (set_sequence) {
+        sqi_init();
+    } else {
+        srand((unsigned)time(NULL));
+    }
 }
-

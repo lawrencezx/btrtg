@@ -13,7 +13,7 @@ static insn_seed MOV_seed =
 void test_MOV(void)
 {
     const char *buf;
-    generator_init();
+    generator_init(false);
 
 //    assign_arr5(MOV_seed.opd, MEMORY,REG_SREG,0,0,0);
 //    generate(&MOV_seed, &buf);

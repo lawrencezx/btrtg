@@ -19,9 +19,9 @@ static inline void init_operand(operand *op)
     op->wrt      = NO_SEG;
 }
 
-void parse_insn_seed(insn_seed *seed, insn *result)
+bool parse_insn_seed(insn_seed *seed, insn *result)
 {
-    int opnum;
+    int opnum = 0;
     char valbuf[20];
 
     memset(result->prefixes, P_none, sizeof(result->prefixes));
@@ -38,20 +38,26 @@ void parse_insn_seed(insn_seed *seed, insn *result)
     result->opcode = tokval.t_integer;
     result->condition = tokval.t_inttwo;
 
-    for (opnum = 0; seed->opd[opnum] !=0; ++opnum) {
+    while (opnum < MAX_OPERANDS && seed->opd[opnum] != 0)
+        opnum++;
+
+    if (!sqi_inc(seed, opnum))
+        return false;
+
+    for (int i = 0; i < opnum; ++i) {
         expr *value;
         bool mref = false;
 
-        operand *op = &result->oprs[opnum];
+        operand *op = &result->oprs[i];
 
         init_operand(op);
 
-        gen_opnd(seed->opd[opnum], (char *)valbuf);
+        gen_opnd(seed->opd[i], (char *)valbuf);
         buf2token(valbuf, &tokval);
 
         op->type = 0;
 
-    /* mref_more: */
+        /* mref_more: */
         if (mref) {
           /* TODO */
         }
@@ -90,9 +96,9 @@ void parse_insn_seed(insn_seed *seed, insn *result)
     while (opnum < MAX_OPERANDS)
         result->oprs[opnum++].type = 0;
 
-    return ;
+    return true;
 
 fail:
     /* TODO */
-    return ;
+    return true;
 }

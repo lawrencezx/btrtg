@@ -1,10 +1,10 @@
 #include "compiler.h"
 
-
 #include "nasm.h"
 #include "insns.h"
 #include "test.h"
 #include "options.h"
+#include "generator.h"
 
 const char *_progname;
 
@@ -26,7 +26,18 @@ int main(int argc, char *argv[])
     if (want_usage)
         usage();
 
-    test_MOV();
+    generator_init(true);
+    const char *buf;
+    static insn_seed MOV_seed =
+    {
+        .opcode = I_MOV
+    };
+    assign_arr5(MOV_seed.opd, REG_GPR|BITS16,REG_SREG,0,0,0);
+    while(generate(&MOV_seed, &buf)) {
+        ;
+    }
+    generator_exit();
+    //test_MOV();
 
     return 0;
 }
