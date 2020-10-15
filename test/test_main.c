@@ -33,7 +33,7 @@ int main(int argc, char *argv[])
         .opcode = I_MOV
     };
     assign_arr5(MOV_seed.opd, REG_GPR|BITS16,REG_SREG,0,0,0);
-    while(generate(&MOV_seed, &buf)) {
+    while(generate_bin(&MOV_seed, &buf)) {
         ;
     }
     generator_exit();

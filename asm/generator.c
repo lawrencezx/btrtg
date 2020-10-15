@@ -30,6 +30,7 @@ struct location absolute;           /* Segment/offset inside ABSOLUTE */
 insn output_ins;
 char global_codebuf[MAX_INSLEN];
 uint8_t global_codebuf_len;
+static char codestr[256];
 
 int64_t switch_segment(int32_t segment)
 {
@@ -112,7 +113,7 @@ static void process_insn(insn *instruction)
     increment_offset(l);
 }
 
-uint32_t generate(insn_seed *seed, const char** buf)
+uint32_t generate_bin(insn_seed *seed, const char** buf)
 {
     in_absolute = false;
     location.segment = NO_SEG;
@@ -136,4 +137,15 @@ uint32_t generate(insn_seed *seed, const char** buf)
 
     *buf = (const char*)global_codebuf;
     return global_codebuf_len;
+}
+
+const char* generate_str(insn_seed *seed)
+{
+    const char* buf;
+    if (generate_bin(seed, &buf) == 0)
+        return NULL;
+    iflag_t prefer;
+    disasm((uint8_t *)global_codebuf, (int32_t)global_codebuf_len, (char *)codestr, sizeof(codestr),
+            globalbits, &prefer);
+    return (const char*)codestr;
 }

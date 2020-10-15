@@ -220,7 +220,7 @@ foreach $i (@opcodes, @opcodes_cc) {
     $aname = "aa_$i";
     foreach $j (@$aname) {
         print A "    assign_arr5(${i}_seed.opd,", $j,")\n";
-        print A "    generate(&${i}_seed, &buf);\n";
+        print A "    generate_bin(&${i}_seed, &buf);\n";
         print A "\n";
     }
 

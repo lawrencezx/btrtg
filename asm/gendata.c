@@ -166,6 +166,7 @@ bool sqi_inc(insn_seed *seed, int opnum)
     if (sequence) {
         if (!sqi.start) {
             sqi.start = true;
+            sqi.i = 1;
             sqi.num = 1;
             for (int i = 0; i < opnum; i++) {
                 sqi.num *= get_opnd_num(seed->opd[i]);
