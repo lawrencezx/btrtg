@@ -16,11 +16,6 @@ include_directories(${srcdir}
 
 # @OUTPUT: generate dependencies
 SET(GEN_TARS
-  ${srcdir}/version.h
-  ${srcdir}/version.mac
-  ${srcdir}/version.sed
-  ${srcdir}/version.mak
-
   ${srcdir}/x86/iflag.c
   ${srcdir}/x86/iflaggen.h
   ${srcdir}/x86/insnsb.c
@@ -41,11 +36,6 @@ SET(GEN_TARS
   ${srcdir}/asm/tokens.h)
 
 add_custom_command(OUTPUT ${GEN_TARS}
-  COMMAND ${RUNPERL} ${srcdir}/version.pl h < ${srcdir}/version > ${srcdir}/version.h
-  COMMAND ${RUNPERL} ${srcdir}/version.pl mac < ${srcdir}/version > ${srcdir}/version.mac
-  COMMAND ${RUNPERL} ${srcdir}/version.pl sed < ${srcdir}/version > ${srcdir}/version.sed
-  COMMAND ${RUNPERL} ${srcdir}/version.pl make < ${srcdir}/version > ${srcdir}/version.mak
-
   COMMAND ${RUNPERL} ${srcdir}/x86/insns.pl -fc ${srcdir}/x86/insns.dat ${srcdir}/x86/iflag.c
   COMMAND ${RUNPERL} ${srcdir}/x86/insns.pl -fh ${srcdir}/x86/insns.dat ${srcdir}/x86/iflaggen.h
   COMMAND ${RUNPERL} ${srcdir}/x86/insns.pl -b ${srcdir}/x86/insns.dat ${srcdir}/x86/insnsb.c

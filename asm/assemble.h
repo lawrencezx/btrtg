@@ -80,7 +80,4 @@ enum match_result find_match(const struct itemplate **tempp,
 int64_t insn_size(int32_t segment, int64_t offset, int bits, insn *instruction);
 int64_t assemble(int32_t segment, int64_t offset, int bits, insn *instruction);
 
-bool process_directives(char *);
-void process_pragma(char *);
-
 #endif
