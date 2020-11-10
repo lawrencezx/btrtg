@@ -18,6 +18,13 @@ typedef struct insn_seed {
     opflags_t       opd[MAX_OPERANDS];
 } insn_seed;
 
+typedef struct const_insn_seed {
+    enum opcode     opcode;
+    int             operands;
+    bool            oprs_random[MAX_OPERANDS];
+    operand         oprs[MAX_OPERANDS];
+} const_insn_seed;
+
 /* if changed, ITEMPLATE_END should be also changed accordingly */
 struct itemplate {
     enum opcode     opcode;             /* the token, passed from "parser.c" */

@@ -7,9 +7,11 @@
 #include "insns.h"
 #include "nctype.h"
 #include "generator.h"
-#include "parser.h"
 #include "gendata.h"
 #include "disasm.h"
+#include "buf2token.h"
+#include "insns.h"
+#include "eval.h"
 
 bool global_sequence;
 
@@ -31,6 +33,8 @@ insn output_ins;
 char global_codebuf[MAX_INSLEN];
 uint8_t global_codebuf_len;
 static char codestr[256];
+
+static struct tokenval tokval;
 
 int64_t switch_segment(int32_t segment)
 {
@@ -91,6 +95,10 @@ void generator_init(bool set_sequence)
 
     globalbits = cmd_sb;  /* set 'bits' to command line default */
     cpu = cmd_cpu;
+
+    in_absolute = false;
+    location.segment = NO_SEG;
+    location.offset  = 0;
 }
 
 void generator_exit(void)
@@ -98,12 +106,14 @@ void generator_exit(void)
     src_free();
 }
 
-static void process_insn(insn *instruction)
+void insn_to_bin(insn *instruction, const char** buf)
 {
     int64_t l;
 
     if (!instruction->times)
         return;                 /* Nothing to do... */
+
+    global_codebuf_len = 0;
 
     nasm_assert(instruction->times > 0);
 
@@ -111,41 +121,195 @@ static void process_insn(insn *instruction)
                  globalbits, instruction);
     /* We can't get an invalid instruction here */
     increment_offset(l);
-}
-
-uint32_t generate_bin(insn_seed *seed, const char** buf)
-{
-    in_absolute = false;
-    location.segment = NO_SEG;
-    location.offset  = 0;
-    global_codebuf_len = 0;
-
-    /* Not a directive, or even something that starts with [ */
-    if (!parse_insn_seed(seed, &output_ins))
-        return 0;
-    process_insn(&output_ins);
-
-    reset_warnings();
-
-    if (option_display_insn) {
-        char outbuf[256];
-        iflag_t prefer;
-        disasm((uint8_t *)global_codebuf, (int32_t)global_codebuf_len, (char *)outbuf, sizeof(outbuf),
-                globalbits, &prefer);
-        printf("%s\n", outbuf);
-    }
 
     *buf = (const char*)global_codebuf;
-    return global_codebuf_len;
 }
 
-const char* generate_str(insn_seed *seed)
+void insn_to_asm(insn *instruction, const char** buf)
 {
-    const char* buf;
-    if (generate_bin(seed, &buf) == 0)
-        return NULL;
+    if (instruction == NULL)
+        return ;
+    const char* binbuf;
+    insn_to_bin(instruction, &binbuf);
+
     iflag_t prefer;
     disasm((uint8_t *)global_codebuf, (int32_t)global_codebuf_len, (char *)codestr, sizeof(codestr),
             globalbits, &prefer);
-    return (const char*)codestr;
+    *buf = (const char*)codestr;
+}
+
+static inline void init_operand(operand *op)
+{
+    memset(op, 0, sizeof *op);
+
+    op->basereg  = -1;
+    op->indexreg = -1;
+    op->segment  = NO_SEG;
+    op->wrt      = NO_SEG;
+}
+
+bool one_insn_gen(const insn_seed *seed, insn *result)
+{
+    int opnum = 0;
+    char valbuf[20];
+
+    memset(result->prefixes, P_none, sizeof(result->prefixes));
+    result->times       = 1;
+    result->label       = NULL;
+    result->eops        = NULL;
+    result->operands    = 0;
+    result->evex_rm     = 0;
+    result->evex_brerop = -1;
+
+    gen_op(seed->opcode, (char *)valbuf);
+    buf2token(valbuf, &tokval);
+
+    result->opcode = tokval.t_integer;
+    result->condition = tokval.t_inttwo;
+
+    while (opnum < MAX_OPERANDS && seed->opd[opnum] != 0)
+        opnum++;
+
+    if (!sqi_inc(seed, opnum))
+        return false;
+
+    for (int i = 0; i < opnum; ++i) {
+        expr *value;
+        bool mref = false;
+
+        operand *op = &result->oprs[i];
+
+        init_operand(op);
+
+        gen_opnd(seed->opd[i], (char *)valbuf, false);
+        buf2token(valbuf, &tokval);
+
+        op->type = 0;
+
+        /* mref_more: */
+        if (mref) {
+          /* TODO */
+        }
+
+        value = evaluate(NULL, NULL, &tokval,
+                         &op->opflags, false, NULL);
+
+        if (mref) {
+          /* TODO */
+        } else {
+            if (is_reloc(value)) {          /* it's immediate */
+                uint64_t n = reloc_value(value);
+
+                op->type       |= IMMEDIATE;
+                op->offset     = n;
+                op->segment    = reloc_seg(value);
+                op->wrt        = reloc_wrt(value);
+                op->opflags    |= is_self_relative(value) ? OPFLAG_RELATIVE : 0;
+            } else {                        /* it's a register */
+                if (value->type >= EXPR_SIMPLE || value->value != 1) {
+                    nasm_nonfatal("invalid operand type");
+                    goto fail;
+                }
+
+                op->type       &= TO;
+                op->type       |= REGISTER;
+                op->type       |= nasm_reg_flags[value->type];
+                op->basereg    = value->type;
+            }
+        }
+    }
+
+    result->operands = opnum; /* set operand count */
+
+    /* clear remaining operands */
+    while (opnum < MAX_OPERANDS)
+        result->oprs[opnum++].type = 0;
+
+    return true;
+
+fail:
+    /* TODO */
+    return true;
+}
+
+bool one_insn_gen_const(const const_insn_seed *const_seed, insn *result)
+{
+    int i;
+    char valbuf[20];
+
+    memset(result->prefixes, P_none, sizeof(result->prefixes));
+    result->times       = 1;
+    result->label       = NULL;
+    result->eops        = NULL;
+    result->operands    = 0;
+    result->evex_rm     = 0;
+    result->evex_brerop = -1;
+    result->operands = 2;
+
+    gen_op(const_seed->opcode, (char *)valbuf);
+    buf2token(valbuf, &tokval);
+
+    result->opcode = tokval.t_integer;
+    result->condition = tokval.t_inttwo;
+
+    for (i = 0; i < const_seed->operands; ++i) {
+        if (const_seed->oprs_random[i] == false) {
+            result->oprs[i] = const_seed->oprs[i];
+            continue;
+        }
+
+        expr *value;
+        bool mref = false;
+
+        operand *op = &result->oprs[i];
+
+        init_operand(op);
+
+        gen_opnd(const_seed->oprs[i].type, (char *)valbuf, const_seed->oprs_random[i]);
+        buf2token(valbuf, &tokval);
+
+        op->type = 0;
+
+        /* mref_more: */
+        if (mref) {
+          /* TODO */
+        }
+
+        value = evaluate(NULL, NULL, &tokval,
+                         &op->opflags, false, NULL);
+
+        if (mref) {
+          /* TODO */
+        } else {
+            if (is_reloc(value)) {          /* it's immediate */
+                uint64_t n = reloc_value(value);
+
+                op->type       |= IMMEDIATE;
+                op->offset     = n;
+                op->segment    = reloc_seg(value);
+                op->wrt        = reloc_wrt(value);
+                op->opflags    |= is_self_relative(value) ? OPFLAG_RELATIVE : 0;
+            } else {                        /* it's a register */
+                if (value->type >= EXPR_SIMPLE || value->value != 1) {
+                    nasm_nonfatal("invalid operand type");
+                    goto fail;
+                }
+
+                op->type       &= TO;
+                op->type       |= REGISTER;
+                op->type       |= nasm_reg_flags[value->type];
+                op->basereg    = value->type;
+            }
+        }
+    }
+
+    /* clear remaining operands */
+    while (i < MAX_OPERANDS)
+        result->oprs[i++].type = 0;
+
+    return true;
+
+fail:
+    /* TODO */
+    return true;
 }

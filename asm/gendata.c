@@ -16,10 +16,10 @@ static char genbuf[20];
 
 #define random_regi(opflag) random(get_opnd_num(opflag))
 #define sequence_regi(reg) sqi.reg##i
-#define new_reg(reg,opflag) (sequence ? \
+#define new_reg(reg,opflag) ((!force_random && sequence) ? \
         nasm_reg_names[nasm_rd_##reg[sequence_regi(reg)] - EXPR_REG_START] : \
         nasm_reg_names[nasm_rd_##reg[random_regi(opflag)] - EXPR_REG_START])
-#define new_opnd(opnd) (sequence ? sequence_##opnd() : random_##opnd())
+#define new_opnd(opnd) ((!force_random && sequence) ? sequence_##opnd() : random_##opnd())
 
 static void data_copy(const char *src, char *dst, bool (*is_validchar)(char))
 {
@@ -161,7 +161,7 @@ static void sqi_set_opi(opflags_t operand, int i)
     }
 }
 
-bool sqi_inc(insn_seed *seed, int opnum)
+bool sqi_inc(const insn_seed *seed, int opnum)
 {
     if (sequence) {
         if (!sqi.start) {
@@ -204,7 +204,7 @@ void gen_op(enum opcode opcode, char *buffer)
 }
 
 /* Generate operand. */
-void gen_opnd(opflags_t operand, char *buffer)
+void gen_opnd(opflags_t operand, char *buffer, bool force_random)
 {
     const char *opnd_src = NULL;
     bool (*valid_func)(char);

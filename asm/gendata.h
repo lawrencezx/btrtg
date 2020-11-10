@@ -3,7 +3,7 @@
 
 void gendata_init(bool set_sequence);
 void gen_op(enum opcode opcode, char *buffer);
-void gen_opnd(opflags_t operand, char *buffer);
-bool sqi_inc(insn_seed *seed, int opnum);
+void gen_opnd(opflags_t operand, char *buffer, bool force_random);
+bool sqi_inc(const insn_seed *seed, int opnum);
 
 #endif
