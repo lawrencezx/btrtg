@@ -6036,195 +6036,195 @@ TILEZERO	tmmreg				[r:	vex.128.f2.0f38.w0 49 /3r0]		AMXTILE,FUTURE,LONG
 
 ;# Systematic names for the hinting nop instructions
 ; These should be last in the file
-HINT_NOP0	rm16				[m:	o16 0f 18 /0]				P6,UNDOC
-HINT_NOP0	rm32				[m:	o32 0f 18 /0]				P6,UNDOC
-HINT_NOP0	rm64				[m:	o64 0f 18 /0]				X86_64,LONG,UNDOC
-HINT_NOP1	rm16				[m:	o16 0f 18 /1]				P6,UNDOC
-HINT_NOP1	rm32				[m:	o32 0f 18 /1]				P6,UNDOC
-HINT_NOP1	rm64				[m:	o64 0f 18 /1]				X86_64,LONG,UNDOC
-HINT_NOP2	rm16				[m:	o16 0f 18 /2]				P6,UNDOC
-HINT_NOP2	rm32				[m:	o32 0f 18 /2]				P6,UNDOC
-HINT_NOP2	rm64				[m:	o64 0f 18 /2]				X86_64,LONG,UNDOC
-HINT_NOP3	rm16				[m:	o16 0f 18 /3]				P6,UNDOC
-HINT_NOP3	rm32				[m:	o32 0f 18 /3]				P6,UNDOC
-HINT_NOP3	rm64				[m:	o64 0f 18 /3]				X86_64,LONG,UNDOC
-HINT_NOP4	rm16				[m:	o16 0f 18 /4]				P6,UNDOC
-HINT_NOP4	rm32				[m:	o32 0f 18 /4]				P6,UNDOC
-HINT_NOP4	rm64				[m:	o64 0f 18 /4]				X86_64,LONG,UNDOC
-HINT_NOP5	rm16				[m:	o16 0f 18 /5]				P6,UNDOC
-HINT_NOP5	rm32				[m:	o32 0f 18 /5]				P6,UNDOC
-HINT_NOP5	rm64				[m:	o64 0f 18 /5]				X86_64,LONG,UNDOC
-HINT_NOP6	rm16				[m:	o16 0f 18 /6]				P6,UNDOC
-HINT_NOP6	rm32				[m:	o32 0f 18 /6]				P6,UNDOC
-HINT_NOP6	rm64				[m:	o64 0f 18 /6]				X86_64,LONG,UNDOC
-HINT_NOP7	rm16				[m:	o16 0f 18 /7]				P6,UNDOC
-HINT_NOP7	rm32				[m:	o32 0f 18 /7]				P6,UNDOC
-HINT_NOP7	rm64				[m:	o64 0f 18 /7]				X86_64,LONG,UNDOC
-HINT_NOP8	rm16				[m:	o16 0f 19 /0]				P6,UNDOC
-HINT_NOP8	rm32				[m:	o32 0f 19 /0]				P6,UNDOC
-HINT_NOP8	rm64				[m:	o64 0f 19 /0]				X86_64,LONG,UNDOC
-HINT_NOP9	rm16				[m:	o16 0f 19 /1]				P6,UNDOC
-HINT_NOP9	rm32				[m:	o32 0f 19 /1]				P6,UNDOC
-HINT_NOP9	rm64				[m:	o64 0f 19 /1]				X86_64,LONG,UNDOC
-HINT_NOP10	rm16				[m:	o16 0f 19 /2]				P6,UNDOC
-HINT_NOP10	rm32				[m:	o32 0f 19 /2]				P6,UNDOC
-HINT_NOP10	rm64				[m:	o64 0f 19 /2]				X86_64,LONG,UNDOC
-HINT_NOP11	rm16				[m:	o16 0f 19 /3]				P6,UNDOC
-HINT_NOP11	rm32				[m:	o32 0f 19 /3]				P6,UNDOC
-HINT_NOP11	rm64				[m:	o64 0f 19 /3]				X86_64,LONG,UNDOC
-HINT_NOP12	rm16				[m:	o16 0f 19 /4]				P6,UNDOC
-HINT_NOP12	rm32				[m:	o32 0f 19 /4]				P6,UNDOC
-HINT_NOP12	rm64				[m:	o64 0f 19 /4]				X86_64,LONG,UNDOC
-HINT_NOP13	rm16				[m:	o16 0f 19 /5]				P6,UNDOC
-HINT_NOP13	rm32				[m:	o32 0f 19 /5]				P6,UNDOC
-HINT_NOP13	rm64				[m:	o64 0f 19 /5]				X86_64,LONG,UNDOC
-HINT_NOP14	rm16				[m:	o16 0f 19 /6]				P6,UNDOC
-HINT_NOP14	rm32				[m:	o32 0f 19 /6]				P6,UNDOC
-HINT_NOP14	rm64				[m:	o64 0f 19 /6]				X86_64,LONG,UNDOC
-HINT_NOP15	rm16				[m:	o16 0f 19 /7]				P6,UNDOC
-HINT_NOP15	rm32				[m:	o32 0f 19 /7]				P6,UNDOC
-HINT_NOP15	rm64				[m:	o64 0f 19 /7]				X86_64,LONG,UNDOC
-HINT_NOP16	rm16				[m:	o16 0f 1a /0]				P6,UNDOC
-HINT_NOP16	rm32				[m:	o32 0f 1a /0]				P6,UNDOC
-HINT_NOP16	rm64				[m:	o64 0f 1a /0]				X86_64,LONG,UNDOC
-HINT_NOP17	rm16				[m:	o16 0f 1a /1]				P6,UNDOC
-HINT_NOP17	rm32				[m:	o32 0f 1a /1]				P6,UNDOC
-HINT_NOP17	rm64				[m:	o64 0f 1a /1]				X86_64,LONG,UNDOC
-HINT_NOP18	rm16				[m:	o16 0f 1a /2]				P6,UNDOC
-HINT_NOP18	rm32				[m:	o32 0f 1a /2]				P6,UNDOC
-HINT_NOP18	rm64				[m:	o64 0f 1a /2]				X86_64,LONG,UNDOC
-HINT_NOP19	rm16				[m:	o16 0f 1a /3]				P6,UNDOC
-HINT_NOP19	rm32				[m:	o32 0f 1a /3]				P6,UNDOC
-HINT_NOP19	rm64				[m:	o64 0f 1a /3]				X86_64,LONG,UNDOC
-HINT_NOP20	rm16				[m:	o16 0f 1a /4]				P6,UNDOC
-HINT_NOP20	rm32				[m:	o32 0f 1a /4]				P6,UNDOC
-HINT_NOP20	rm64				[m:	o64 0f 1a /4]				X86_64,LONG,UNDOC
-HINT_NOP21	rm16				[m:	o16 0f 1a /5]				P6,UNDOC
-HINT_NOP21	rm32				[m:	o32 0f 1a /5]				P6,UNDOC
-HINT_NOP21	rm64				[m:	o64 0f 1a /5]				X86_64,LONG,UNDOC
-HINT_NOP22	rm16				[m:	o16 0f 1a /6]				P6,UNDOC
-HINT_NOP22	rm32				[m:	o32 0f 1a /6]				P6,UNDOC
-HINT_NOP22	rm64				[m:	o64 0f 1a /6]				X86_64,LONG,UNDOC
-HINT_NOP23	rm16				[m:	o16 0f 1a /7]				P6,UNDOC
-HINT_NOP23	rm32				[m:	o32 0f 1a /7]				P6,UNDOC
-HINT_NOP23	rm64				[m:	o64 0f 1a /7]				X86_64,LONG,UNDOC
-HINT_NOP24	rm16				[m:	o16 0f 1b /0]				P6,UNDOC
-HINT_NOP24	rm32				[m:	o32 0f 1b /0]				P6,UNDOC
-HINT_NOP24	rm64				[m:	o64 0f 1b /0]				X86_64,LONG,UNDOC
-HINT_NOP25	rm16				[m:	o16 0f 1b /1]				P6,UNDOC
-HINT_NOP25	rm32				[m:	o32 0f 1b /1]				P6,UNDOC
-HINT_NOP25	rm64				[m:	o64 0f 1b /1]				X86_64,LONG,UNDOC
-HINT_NOP26	rm16				[m:	o16 0f 1b /2]				P6,UNDOC
-HINT_NOP26	rm32				[m:	o32 0f 1b /2]				P6,UNDOC
-HINT_NOP26	rm64				[m:	o64 0f 1b /2]				X86_64,LONG,UNDOC
-HINT_NOP27	rm16				[m:	o16 0f 1b /3]				P6,UNDOC
-HINT_NOP27	rm32				[m:	o32 0f 1b /3]				P6,UNDOC
-HINT_NOP27	rm64				[m:	o64 0f 1b /3]				X86_64,LONG,UNDOC
-HINT_NOP28	rm16				[m:	o16 0f 1b /4]				P6,UNDOC
-HINT_NOP28	rm32				[m:	o32 0f 1b /4]				P6,UNDOC
-HINT_NOP28	rm64				[m:	o64 0f 1b /4]				X86_64,LONG,UNDOC
-HINT_NOP29	rm16				[m:	o16 0f 1b /5]				P6,UNDOC
-HINT_NOP29	rm32				[m:	o32 0f 1b /5]				P6,UNDOC
-HINT_NOP29	rm64				[m:	o64 0f 1b /5]				X86_64,LONG,UNDOC
-HINT_NOP30	rm16				[m:	o16 0f 1b /6]				P6,UNDOC
-HINT_NOP30	rm32				[m:	o32 0f 1b /6]				P6,UNDOC
-HINT_NOP30	rm64				[m:	o64 0f 1b /6]				X86_64,LONG,UNDOC
-HINT_NOP31	rm16				[m:	o16 0f 1b /7]				P6,UNDOC
-HINT_NOP31	rm32				[m:	o32 0f 1b /7]				P6,UNDOC
-HINT_NOP31	rm64				[m:	o64 0f 1b /7]				X86_64,LONG,UNDOC
-HINT_NOP32	rm16				[m:	o16 0f 1c /0]				P6,UNDOC
-HINT_NOP32	rm32				[m:	o32 0f 1c /0]				P6,UNDOC
-HINT_NOP32	rm64				[m:	o64 0f 1c /0]				X86_64,LONG,UNDOC
-HINT_NOP33	rm16				[m:	o16 0f 1c /1]				P6,UNDOC
-HINT_NOP33	rm32				[m:	o32 0f 1c /1]				P6,UNDOC
-HINT_NOP33	rm64				[m:	o64 0f 1c /1]				X86_64,LONG,UNDOC
-HINT_NOP34	rm16				[m:	o16 0f 1c /2]				P6,UNDOC
-HINT_NOP34	rm32				[m:	o32 0f 1c /2]				P6,UNDOC
-HINT_NOP34	rm64				[m:	o64 0f 1c /2]				X86_64,LONG,UNDOC
-HINT_NOP35	rm16				[m:	o16 0f 1c /3]				P6,UNDOC
-HINT_NOP35	rm32				[m:	o32 0f 1c /3]				P6,UNDOC
-HINT_NOP35	rm64				[m:	o64 0f 1c /3]				X86_64,LONG,UNDOC
-HINT_NOP36	rm16				[m:	o16 0f 1c /4]				P6,UNDOC
-HINT_NOP36	rm32				[m:	o32 0f 1c /4]				P6,UNDOC
-HINT_NOP36	rm64				[m:	o64 0f 1c /4]				X86_64,LONG,UNDOC
-HINT_NOP37	rm16				[m:	o16 0f 1c /5]				P6,UNDOC
-HINT_NOP37	rm32				[m:	o32 0f 1c /5]				P6,UNDOC
-HINT_NOP37	rm64				[m:	o64 0f 1c /5]				X86_64,LONG,UNDOC
-HINT_NOP38	rm16				[m:	o16 0f 1c /6]				P6,UNDOC
-HINT_NOP38	rm32				[m:	o32 0f 1c /6]				P6,UNDOC
-HINT_NOP38	rm64				[m:	o64 0f 1c /6]				X86_64,LONG,UNDOC
-HINT_NOP39	rm16				[m:	o16 0f 1c /7]				P6,UNDOC
-HINT_NOP39	rm32				[m:	o32 0f 1c /7]				P6,UNDOC
-HINT_NOP39	rm64				[m:	o64 0f 1c /7]				X86_64,LONG,UNDOC
-HINT_NOP40	rm16				[m:	o16 0f 1d /0]				P6,UNDOC
-HINT_NOP40	rm32				[m:	o32 0f 1d /0]				P6,UNDOC
-HINT_NOP40	rm64				[m:	o64 0f 1d /0]				X86_64,LONG,UNDOC
-HINT_NOP41	rm16				[m:	o16 0f 1d /1]				P6,UNDOC
-HINT_NOP41	rm32				[m:	o32 0f 1d /1]				P6,UNDOC
-HINT_NOP41	rm64				[m:	o64 0f 1d /1]				X86_64,LONG,UNDOC
-HINT_NOP42	rm16				[m:	o16 0f 1d /2]				P6,UNDOC
-HINT_NOP42	rm32				[m:	o32 0f 1d /2]				P6,UNDOC
-HINT_NOP42	rm64				[m:	o64 0f 1d /2]				X86_64,LONG,UNDOC
-HINT_NOP43	rm16				[m:	o16 0f 1d /3]				P6,UNDOC
-HINT_NOP43	rm32				[m:	o32 0f 1d /3]				P6,UNDOC
-HINT_NOP43	rm64				[m:	o64 0f 1d /3]				X86_64,LONG,UNDOC
-HINT_NOP44	rm16				[m:	o16 0f 1d /4]				P6,UNDOC
-HINT_NOP44	rm32				[m:	o32 0f 1d /4]				P6,UNDOC
-HINT_NOP44	rm64				[m:	o64 0f 1d /4]				X86_64,LONG,UNDOC
-HINT_NOP45	rm16				[m:	o16 0f 1d /5]				P6,UNDOC
-HINT_NOP45	rm32				[m:	o32 0f 1d /5]				P6,UNDOC
-HINT_NOP45	rm64				[m:	o64 0f 1d /5]				X86_64,LONG,UNDOC
-HINT_NOP46	rm16				[m:	o16 0f 1d /6]				P6,UNDOC
-HINT_NOP46	rm32				[m:	o32 0f 1d /6]				P6,UNDOC
-HINT_NOP46	rm64				[m:	o64 0f 1d /6]				X86_64,LONG,UNDOC
-HINT_NOP47	rm16				[m:	o16 0f 1d /7]				P6,UNDOC
-HINT_NOP47	rm32				[m:	o32 0f 1d /7]				P6,UNDOC
-HINT_NOP47	rm64				[m:	o64 0f 1d /7]				X86_64,LONG,UNDOC
-HINT_NOP48	rm16				[m:	o16 0f 1e /0]				P6,UNDOC
-HINT_NOP48	rm32				[m:	o32 0f 1e /0]				P6,UNDOC
-HINT_NOP48	rm64				[m:	o64 0f 1e /0]				X86_64,LONG,UNDOC
-HINT_NOP49	rm16				[m:	o16 0f 1e /1]				P6,UNDOC
-HINT_NOP49	rm32				[m:	o32 0f 1e /1]				P6,UNDOC
-HINT_NOP49	rm64				[m:	o64 0f 1e /1]				X86_64,LONG,UNDOC
-HINT_NOP50	rm16				[m:	o16 0f 1e /2]				P6,UNDOC
-HINT_NOP50	rm32				[m:	o32 0f 1e /2]				P6,UNDOC
-HINT_NOP50	rm64				[m:	o64 0f 1e /2]				X86_64,LONG,UNDOC
-HINT_NOP51	rm16				[m:	o16 0f 1e /3]				P6,UNDOC
-HINT_NOP51	rm32				[m:	o32 0f 1e /3]				P6,UNDOC
-HINT_NOP51	rm64				[m:	o64 0f 1e /3]				X86_64,LONG,UNDOC
-HINT_NOP52	rm16				[m:	o16 0f 1e /4]				P6,UNDOC
-HINT_NOP52	rm32				[m:	o32 0f 1e /4]				P6,UNDOC
-HINT_NOP52	rm64				[m:	o64 0f 1e /4]				X86_64,LONG,UNDOC
-HINT_NOP53	rm16				[m:	o16 0f 1e /5]				P6,UNDOC
-HINT_NOP53	rm32				[m:	o32 0f 1e /5]				P6,UNDOC
-HINT_NOP53	rm64				[m:	o64 0f 1e /5]				X86_64,LONG,UNDOC
-HINT_NOP54	rm16				[m:	o16 0f 1e /6]				P6,UNDOC
-HINT_NOP54	rm32				[m:	o32 0f 1e /6]				P6,UNDOC
-HINT_NOP54	rm64				[m:	o64 0f 1e /6]				X86_64,LONG,UNDOC
-HINT_NOP55	rm16				[m:	o16 0f 1e /7]				P6,UNDOC
-HINT_NOP55	rm32				[m:	o32 0f 1e /7]				P6,UNDOC
-HINT_NOP55	rm64				[m:	o64 0f 1e /7]				X86_64,LONG,UNDOC
-HINT_NOP56	rm16				[m:	o16 0f 1f /0]				P6,UNDOC
-HINT_NOP56	rm32				[m:	o32 0f 1f /0]				P6,UNDOC
-HINT_NOP56	rm64				[m:	o64 0f 1f /0]				X86_64,LONG,UNDOC
-HINT_NOP57	rm16				[m:	o16 0f 1f /1]				P6,UNDOC
-HINT_NOP57	rm32				[m:	o32 0f 1f /1]				P6,UNDOC
-HINT_NOP57	rm64				[m:	o64 0f 1f /1]				X86_64,LONG,UNDOC
-HINT_NOP58	rm16				[m:	o16 0f 1f /2]				P6,UNDOC
-HINT_NOP58	rm32				[m:	o32 0f 1f /2]				P6,UNDOC
-HINT_NOP58	rm64				[m:	o64 0f 1f /2]				X86_64,LONG,UNDOC
-HINT_NOP59	rm16				[m:	o16 0f 1f /3]				P6,UNDOC
-HINT_NOP59	rm32				[m:	o32 0f 1f /3]				P6,UNDOC
-HINT_NOP59	rm64				[m:	o64 0f 1f /3]				X86_64,LONG,UNDOC
-HINT_NOP60	rm16				[m:	o16 0f 1f /4]				P6,UNDOC
-HINT_NOP60	rm32				[m:	o32 0f 1f /4]				P6,UNDOC
-HINT_NOP60	rm64				[m:	o64 0f 1f /4]				X86_64,LONG,UNDOC
-HINT_NOP61	rm16				[m:	o16 0f 1f /5]				P6,UNDOC
-HINT_NOP61	rm32				[m:	o32 0f 1f /5]				P6,UNDOC
-HINT_NOP61	rm64				[m:	o64 0f 1f /5]				X86_64,LONG,UNDOC
-HINT_NOP62	rm16				[m:	o16 0f 1f /6]				P6,UNDOC
-HINT_NOP62	rm32				[m:	o32 0f 1f /6]				P6,UNDOC
-HINT_NOP62	rm64				[m:	o64 0f 1f /6]				X86_64,LONG,UNDOC
-HINT_NOP63	rm16				[m:	o16 0f 1f /7]				P6,UNDOC
-HINT_NOP63	rm32				[m:	o32 0f 1f /7]				P6,UNDOC
-HINT_NOP63	rm64				[m:	o64 0f 1f /7]				X86_64,LONG,UNDOC
+;## HINT_NOP0	rm16				[m:	o16 0f 18 /0]				P6,UNDOC
+;## HINT_NOP0	rm32				[m:	o32 0f 18 /0]				P6,UNDOC
+;## HINT_NOP0	rm64				[m:	o64 0f 18 /0]				X86_64,LONG,UNDOC
+;## HINT_NOP1	rm16				[m:	o16 0f 18 /1]				P6,UNDOC
+;## HINT_NOP1	rm32				[m:	o32 0f 18 /1]				P6,UNDOC
+;## HINT_NOP1	rm64				[m:	o64 0f 18 /1]				X86_64,LONG,UNDOC
+;## HINT_NOP2	rm16				[m:	o16 0f 18 /2]				P6,UNDOC
+;## HINT_NOP2	rm32				[m:	o32 0f 18 /2]				P6,UNDOC
+;## HINT_NOP2	rm64				[m:	o64 0f 18 /2]				X86_64,LONG,UNDOC
+;## HINT_NOP3	rm16				[m:	o16 0f 18 /3]				P6,UNDOC
+;## HINT_NOP3	rm32				[m:	o32 0f 18 /3]				P6,UNDOC
+;## HINT_NOP3	rm64				[m:	o64 0f 18 /3]				X86_64,LONG,UNDOC
+;## HINT_NOP4	rm16				[m:	o16 0f 18 /4]				P6,UNDOC
+;## HINT_NOP4	rm32				[m:	o32 0f 18 /4]				P6,UNDOC
+;## HINT_NOP4	rm64				[m:	o64 0f 18 /4]				X86_64,LONG,UNDOC
+;## HINT_NOP5	rm16				[m:	o16 0f 18 /5]				P6,UNDOC
+;## HINT_NOP5	rm32				[m:	o32 0f 18 /5]				P6,UNDOC
+;## HINT_NOP5	rm64				[m:	o64 0f 18 /5]				X86_64,LONG,UNDOC
+;## HINT_NOP6	rm16				[m:	o16 0f 18 /6]				P6,UNDOC
+;## HINT_NOP6	rm32				[m:	o32 0f 18 /6]				P6,UNDOC
+;## HINT_NOP6	rm64				[m:	o64 0f 18 /6]				X86_64,LONG,UNDOC
+;## HINT_NOP7	rm16				[m:	o16 0f 18 /7]				P6,UNDOC
+;## HINT_NOP7	rm32				[m:	o32 0f 18 /7]				P6,UNDOC
+;## HINT_NOP7	rm64				[m:	o64 0f 18 /7]				X86_64,LONG,UNDOC
+;## HINT_NOP8	rm16				[m:	o16 0f 19 /0]				P6,UNDOC
+;## HINT_NOP8	rm32				[m:	o32 0f 19 /0]				P6,UNDOC
+;## HINT_NOP8	rm64				[m:	o64 0f 19 /0]				X86_64,LONG,UNDOC
+;## HINT_NOP9	rm16				[m:	o16 0f 19 /1]				P6,UNDOC
+;## HINT_NOP9	rm32				[m:	o32 0f 19 /1]				P6,UNDOC
+;## HINT_NOP9	rm64				[m:	o64 0f 19 /1]				X86_64,LONG,UNDOC
+;## HINT_NOP10	rm16				[m:	o16 0f 19 /2]				P6,UNDOC
+;## HINT_NOP10	rm32				[m:	o32 0f 19 /2]				P6,UNDOC
+;## HINT_NOP10	rm64				[m:	o64 0f 19 /2]				X86_64,LONG,UNDOC
+;## HINT_NOP11	rm16				[m:	o16 0f 19 /3]				P6,UNDOC
+;## HINT_NOP11	rm32				[m:	o32 0f 19 /3]				P6,UNDOC
+;## HINT_NOP11	rm64				[m:	o64 0f 19 /3]				X86_64,LONG,UNDOC
+;## HINT_NOP12	rm16				[m:	o16 0f 19 /4]				P6,UNDOC
+;## HINT_NOP12	rm32				[m:	o32 0f 19 /4]				P6,UNDOC
+;## HINT_NOP12	rm64				[m:	o64 0f 19 /4]				X86_64,LONG,UNDOC
+;## HINT_NOP13	rm16				[m:	o16 0f 19 /5]				P6,UNDOC
+;## HINT_NOP13	rm32				[m:	o32 0f 19 /5]				P6,UNDOC
+;## HINT_NOP13	rm64				[m:	o64 0f 19 /5]				X86_64,LONG,UNDOC
+;## HINT_NOP14	rm16				[m:	o16 0f 19 /6]				P6,UNDOC
+;## HINT_NOP14	rm32				[m:	o32 0f 19 /6]				P6,UNDOC
+;## HINT_NOP14	rm64				[m:	o64 0f 19 /6]				X86_64,LONG,UNDOC
+;## HINT_NOP15	rm16				[m:	o16 0f 19 /7]				P6,UNDOC
+;## HINT_NOP15	rm32				[m:	o32 0f 19 /7]				P6,UNDOC
+;## HINT_NOP15	rm64				[m:	o64 0f 19 /7]				X86_64,LONG,UNDOC
+;## HINT_NOP16	rm16				[m:	o16 0f 1a /0]				P6,UNDOC
+;## HINT_NOP16	rm32				[m:	o32 0f 1a /0]				P6,UNDOC
+;## HINT_NOP16	rm64				[m:	o64 0f 1a /0]				X86_64,LONG,UNDOC
+;## HINT_NOP17	rm16				[m:	o16 0f 1a /1]				P6,UNDOC
+;## HINT_NOP17	rm32				[m:	o32 0f 1a /1]				P6,UNDOC
+;## HINT_NOP17	rm64				[m:	o64 0f 1a /1]				X86_64,LONG,UNDOC
+;## HINT_NOP18	rm16				[m:	o16 0f 1a /2]				P6,UNDOC
+;## HINT_NOP18	rm32				[m:	o32 0f 1a /2]				P6,UNDOC
+;## HINT_NOP18	rm64				[m:	o64 0f 1a /2]				X86_64,LONG,UNDOC
+;## HINT_NOP19	rm16				[m:	o16 0f 1a /3]				P6,UNDOC
+;## HINT_NOP19	rm32				[m:	o32 0f 1a /3]				P6,UNDOC
+;## HINT_NOP19	rm64				[m:	o64 0f 1a /3]				X86_64,LONG,UNDOC
+;## HINT_NOP20	rm16				[m:	o16 0f 1a /4]				P6,UNDOC
+;## HINT_NOP20	rm32				[m:	o32 0f 1a /4]				P6,UNDOC
+;## HINT_NOP20	rm64				[m:	o64 0f 1a /4]				X86_64,LONG,UNDOC
+;## HINT_NOP21	rm16				[m:	o16 0f 1a /5]				P6,UNDOC
+;## HINT_NOP21	rm32				[m:	o32 0f 1a /5]				P6,UNDOC
+;## HINT_NOP21	rm64				[m:	o64 0f 1a /5]				X86_64,LONG,UNDOC
+;## HINT_NOP22	rm16				[m:	o16 0f 1a /6]				P6,UNDOC
+;## HINT_NOP22	rm32				[m:	o32 0f 1a /6]				P6,UNDOC
+;## HINT_NOP22	rm64				[m:	o64 0f 1a /6]				X86_64,LONG,UNDOC
+;## HINT_NOP23	rm16				[m:	o16 0f 1a /7]				P6,UNDOC
+;## HINT_NOP23	rm32				[m:	o32 0f 1a /7]				P6,UNDOC
+;## HINT_NOP23	rm64				[m:	o64 0f 1a /7]				X86_64,LONG,UNDOC
+;## HINT_NOP24	rm16				[m:	o16 0f 1b /0]				P6,UNDOC
+;## HINT_NOP24	rm32				[m:	o32 0f 1b /0]				P6,UNDOC
+;## HINT_NOP24	rm64				[m:	o64 0f 1b /0]				X86_64,LONG,UNDOC
+;## HINT_NOP25	rm16				[m:	o16 0f 1b /1]				P6,UNDOC
+;## HINT_NOP25	rm32				[m:	o32 0f 1b /1]				P6,UNDOC
+;## HINT_NOP25	rm64				[m:	o64 0f 1b /1]				X86_64,LONG,UNDOC
+;## HINT_NOP26	rm16				[m:	o16 0f 1b /2]				P6,UNDOC
+;## HINT_NOP26	rm32				[m:	o32 0f 1b /2]				P6,UNDOC
+;## HINT_NOP26	rm64				[m:	o64 0f 1b /2]				X86_64,LONG,UNDOC
+;## HINT_NOP27	rm16				[m:	o16 0f 1b /3]				P6,UNDOC
+;## HINT_NOP27	rm32				[m:	o32 0f 1b /3]				P6,UNDOC
+;## HINT_NOP27	rm64				[m:	o64 0f 1b /3]				X86_64,LONG,UNDOC
+;## HINT_NOP28	rm16				[m:	o16 0f 1b /4]				P6,UNDOC
+;## HINT_NOP28	rm32				[m:	o32 0f 1b /4]				P6,UNDOC
+;## HINT_NOP28	rm64				[m:	o64 0f 1b /4]				X86_64,LONG,UNDOC
+;## HINT_NOP29	rm16				[m:	o16 0f 1b /5]				P6,UNDOC
+;## HINT_NOP29	rm32				[m:	o32 0f 1b /5]				P6,UNDOC
+;## HINT_NOP29	rm64				[m:	o64 0f 1b /5]				X86_64,LONG,UNDOC
+;## HINT_NOP30	rm16				[m:	o16 0f 1b /6]				P6,UNDOC
+;## HINT_NOP30	rm32				[m:	o32 0f 1b /6]				P6,UNDOC
+;## HINT_NOP30	rm64				[m:	o64 0f 1b /6]				X86_64,LONG,UNDOC
+;## HINT_NOP31	rm16				[m:	o16 0f 1b /7]				P6,UNDOC
+;## HINT_NOP31	rm32				[m:	o32 0f 1b /7]				P6,UNDOC
+;## HINT_NOP31	rm64				[m:	o64 0f 1b /7]				X86_64,LONG,UNDOC
+;## HINT_NOP32	rm16				[m:	o16 0f 1c /0]				P6,UNDOC
+;## HINT_NOP32	rm32				[m:	o32 0f 1c /0]				P6,UNDOC
+;## HINT_NOP32	rm64				[m:	o64 0f 1c /0]				X86_64,LONG,UNDOC
+;## HINT_NOP33	rm16				[m:	o16 0f 1c /1]				P6,UNDOC
+;## HINT_NOP33	rm32				[m:	o32 0f 1c /1]				P6,UNDOC
+;## HINT_NOP33	rm64				[m:	o64 0f 1c /1]				X86_64,LONG,UNDOC
+;## HINT_NOP34	rm16				[m:	o16 0f 1c /2]				P6,UNDOC
+;## HINT_NOP34	rm32				[m:	o32 0f 1c /2]				P6,UNDOC
+;## HINT_NOP34	rm64				[m:	o64 0f 1c /2]				X86_64,LONG,UNDOC
+;## HINT_NOP35	rm16				[m:	o16 0f 1c /3]				P6,UNDOC
+;## HINT_NOP35	rm32				[m:	o32 0f 1c /3]				P6,UNDOC
+;## HINT_NOP35	rm64				[m:	o64 0f 1c /3]				X86_64,LONG,UNDOC
+;## HINT_NOP36	rm16				[m:	o16 0f 1c /4]				P6,UNDOC
+;## HINT_NOP36	rm32				[m:	o32 0f 1c /4]				P6,UNDOC
+;## HINT_NOP36	rm64				[m:	o64 0f 1c /4]				X86_64,LONG,UNDOC
+;## HINT_NOP37	rm16				[m:	o16 0f 1c /5]				P6,UNDOC
+;## HINT_NOP37	rm32				[m:	o32 0f 1c /5]				P6,UNDOC
+;## HINT_NOP37	rm64				[m:	o64 0f 1c /5]				X86_64,LONG,UNDOC
+;## HINT_NOP38	rm16				[m:	o16 0f 1c /6]				P6,UNDOC
+;## HINT_NOP38	rm32				[m:	o32 0f 1c /6]				P6,UNDOC
+;## HINT_NOP38	rm64				[m:	o64 0f 1c /6]				X86_64,LONG,UNDOC
+;## HINT_NOP39	rm16				[m:	o16 0f 1c /7]				P6,UNDOC
+;## HINT_NOP39	rm32				[m:	o32 0f 1c /7]				P6,UNDOC
+;## HINT_NOP39	rm64				[m:	o64 0f 1c /7]				X86_64,LONG,UNDOC
+;## HINT_NOP40	rm16				[m:	o16 0f 1d /0]				P6,UNDOC
+;## HINT_NOP40	rm32				[m:	o32 0f 1d /0]				P6,UNDOC
+;## HINT_NOP40	rm64				[m:	o64 0f 1d /0]				X86_64,LONG,UNDOC
+;## HINT_NOP41	rm16				[m:	o16 0f 1d /1]				P6,UNDOC
+;## HINT_NOP41	rm32				[m:	o32 0f 1d /1]				P6,UNDOC
+;## HINT_NOP41	rm64				[m:	o64 0f 1d /1]				X86_64,LONG,UNDOC
+;## HINT_NOP42	rm16				[m:	o16 0f 1d /2]				P6,UNDOC
+;## HINT_NOP42	rm32				[m:	o32 0f 1d /2]				P6,UNDOC
+;## HINT_NOP42	rm64				[m:	o64 0f 1d /2]				X86_64,LONG,UNDOC
+;## HINT_NOP43	rm16				[m:	o16 0f 1d /3]				P6,UNDOC
+;## HINT_NOP43	rm32				[m:	o32 0f 1d /3]				P6,UNDOC
+;## HINT_NOP43	rm64				[m:	o64 0f 1d /3]				X86_64,LONG,UNDOC
+;## HINT_NOP44	rm16				[m:	o16 0f 1d /4]				P6,UNDOC
+;## HINT_NOP44	rm32				[m:	o32 0f 1d /4]				P6,UNDOC
+;## HINT_NOP44	rm64				[m:	o64 0f 1d /4]				X86_64,LONG,UNDOC
+;## HINT_NOP45	rm16				[m:	o16 0f 1d /5]				P6,UNDOC
+;## HINT_NOP45	rm32				[m:	o32 0f 1d /5]				P6,UNDOC
+;## HINT_NOP45	rm64				[m:	o64 0f 1d /5]				X86_64,LONG,UNDOC
+;## HINT_NOP46	rm16				[m:	o16 0f 1d /6]				P6,UNDOC
+;## HINT_NOP46	rm32				[m:	o32 0f 1d /6]				P6,UNDOC
+;## HINT_NOP46	rm64				[m:	o64 0f 1d /6]				X86_64,LONG,UNDOC
+;## HINT_NOP47	rm16				[m:	o16 0f 1d /7]				P6,UNDOC
+;## HINT_NOP47	rm32				[m:	o32 0f 1d /7]				P6,UNDOC
+;## HINT_NOP47	rm64				[m:	o64 0f 1d /7]				X86_64,LONG,UNDOC
+;## HINT_NOP48	rm16				[m:	o16 0f 1e /0]				P6,UNDOC
+;## HINT_NOP48	rm32				[m:	o32 0f 1e /0]				P6,UNDOC
+;## HINT_NOP48	rm64				[m:	o64 0f 1e /0]				X86_64,LONG,UNDOC
+;## HINT_NOP49	rm16				[m:	o16 0f 1e /1]				P6,UNDOC
+;## HINT_NOP49	rm32				[m:	o32 0f 1e /1]				P6,UNDOC
+;## HINT_NOP49	rm64				[m:	o64 0f 1e /1]				X86_64,LONG,UNDOC
+;## HINT_NOP50	rm16				[m:	o16 0f 1e /2]				P6,UNDOC
+;## HINT_NOP50	rm32				[m:	o32 0f 1e /2]				P6,UNDOC
+;## HINT_NOP50	rm64				[m:	o64 0f 1e /2]				X86_64,LONG,UNDOC
+;## HINT_NOP51	rm16				[m:	o16 0f 1e /3]				P6,UNDOC
+;## HINT_NOP51	rm32				[m:	o32 0f 1e /3]				P6,UNDOC
+;## HINT_NOP51	rm64				[m:	o64 0f 1e /3]				X86_64,LONG,UNDOC
+;## HINT_NOP52	rm16				[m:	o16 0f 1e /4]				P6,UNDOC
+;## HINT_NOP52	rm32				[m:	o32 0f 1e /4]				P6,UNDOC
+;## HINT_NOP52	rm64				[m:	o64 0f 1e /4]				X86_64,LONG,UNDOC
+;## HINT_NOP53	rm16				[m:	o16 0f 1e /5]				P6,UNDOC
+;## HINT_NOP53	rm32				[m:	o32 0f 1e /5]				P6,UNDOC
+;## HINT_NOP53	rm64				[m:	o64 0f 1e /5]				X86_64,LONG,UNDOC
+;## HINT_NOP54	rm16				[m:	o16 0f 1e /6]				P6,UNDOC
+;## HINT_NOP54	rm32				[m:	o32 0f 1e /6]				P6,UNDOC
+;## HINT_NOP54	rm64				[m:	o64 0f 1e /6]				X86_64,LONG,UNDOC
+;## HINT_NOP55	rm16				[m:	o16 0f 1e /7]				P6,UNDOC
+;## HINT_NOP55	rm32				[m:	o32 0f 1e /7]				P6,UNDOC
+;## HINT_NOP55	rm64				[m:	o64 0f 1e /7]				X86_64,LONG,UNDOC
+;## HINT_NOP56	rm16				[m:	o16 0f 1f /0]				P6,UNDOC
+;## HINT_NOP56	rm32				[m:	o32 0f 1f /0]				P6,UNDOC
+;## HINT_NOP56	rm64				[m:	o64 0f 1f /0]				X86_64,LONG,UNDOC
+;## HINT_NOP57	rm16				[m:	o16 0f 1f /1]				P6,UNDOC
+;## HINT_NOP57	rm32				[m:	o32 0f 1f /1]				P6,UNDOC
+;## HINT_NOP57	rm64				[m:	o64 0f 1f /1]				X86_64,LONG,UNDOC
+;## HINT_NOP58	rm16				[m:	o16 0f 1f /2]				P6,UNDOC
+;## HINT_NOP58	rm32				[m:	o32 0f 1f /2]				P6,UNDOC
+;## HINT_NOP58	rm64				[m:	o64 0f 1f /2]				X86_64,LONG,UNDOC
+;## HINT_NOP59	rm16				[m:	o16 0f 1f /3]				P6,UNDOC
+;## HINT_NOP59	rm32				[m:	o32 0f 1f /3]				P6,UNDOC
+;## HINT_NOP59	rm64				[m:	o64 0f 1f /3]				X86_64,LONG,UNDOC
+;## HINT_NOP60	rm16				[m:	o16 0f 1f /4]				P6,UNDOC
+;## HINT_NOP60	rm32				[m:	o32 0f 1f /4]				P6,UNDOC
+;## HINT_NOP60	rm64				[m:	o64 0f 1f /4]				X86_64,LONG,UNDOC
+;## HINT_NOP61	rm16				[m:	o16 0f 1f /5]				P6,UNDOC
+;## HINT_NOP61	rm32				[m:	o32 0f 1f /5]				P6,UNDOC
+;## HINT_NOP61	rm64				[m:	o64 0f 1f /5]				X86_64,LONG,UNDOC
+;## HINT_NOP62	rm16				[m:	o16 0f 1f /6]				P6,UNDOC
+;## HINT_NOP62	rm32				[m:	o32 0f 1f /6]				P6,UNDOC
+;## HINT_NOP62	rm64				[m:	o64 0f 1f /6]				X86_64,LONG,UNDOC
+;## HINT_NOP63	rm16				[m:	o16 0f 1f /7]				P6,UNDOC
+;## HINT_NOP63	rm32				[m:	o32 0f 1f /7]				P6,UNDOC
+;## HINT_NOP63	rm64				[m:	o64 0f 1f /7]				X86_64,LONG,UNDOC
