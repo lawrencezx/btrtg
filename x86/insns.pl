@@ -38,6 +38,7 @@
 # Parse insns.dat and produce generated source code files
 
 require 'x86/insns-iflags.ph';
+require 'insnfilter.ph';
 
 # Opcode prefixes which need their own opcode tables
 # LONGER PREFIXES FIRST!
@@ -101,6 +102,10 @@ while (<F>) {
     }
     @fields = ($1, $2, $3, $4);
     @field_list = ([@fields, 0]);
+
+    if (insnfilter($_) == 1) {
+        next;
+    }
 
     if ($fields[1] =~ /\*/) {
         # This instruction has relaxed form(s)

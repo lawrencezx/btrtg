@@ -39,6 +39,7 @@
 #
 
 require 'phash.ph';
+require 'insnfilter.ph';
 
 my($output, $insns_dat, $regs_dat, $tokens_dat) = @ARGV;
 
@@ -57,6 +58,11 @@ my($output, $insns_dat, $regs_dat, $tokens_dat) = @ARGV;
 #
 open(ID, '<', $insns_dat) or die "$0: cannot open $insns_dat: $!\n";
 while (defined($line = <ID>)) {
+    next if ($line =~ /^\s*(\;.*|)$/ );   # comments or blank lines
+
+    if (insnfilter($line) == 1) {
+        next;
+    }
     if ($line =~ /^([\?\@A-Z0-9_]+)(|cc)\s/) {
 	$insn = $1.$2;
 	($token = $1) =~ tr/A-Z/a-z/;
