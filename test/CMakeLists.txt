@@ -1,5 +1,0 @@
-file(GLOB_RECURSE TEST_SRCS *.c)
-include_directories(${srcdir}/test)
-SET(CMAKE_C_FLAGS "-g -O2 -std=c17 -ggdb3 -O0 -fno-omit-frame-pointer -fwrapv -U__STRICT_ANSI__ -fno-common -Werror=attributes -ffunction-sections -fdata-sections -fvisibility=hidden -Wall -W -pedantic -Wno-long-long -Wno-stringop-truncation -Wno-shift-negative-value -Werror=implicit -Werror=missing-braces -Werror=return-type -Werror=trigraphs -Werror=pointer-arith -Werror=missing-prototypes -Werror=missing-declarations -Werror=comment -Werror=vla -DHAVE_CONFIG_H ")
-add_executable(test ${TEST_SRCS})
-target_link_libraries(test nasmlib)

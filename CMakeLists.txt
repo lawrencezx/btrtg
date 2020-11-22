@@ -71,5 +71,4 @@ file(GLOB LIB_SRCS stdlib/*.c
 add_library(nasmlib STATIC ${LIB_SRCS})
 add_dependencies(nasmlib perlreq)
 
-# @executable: nasm
-#add_subdirectory(test)
+add_subdirectory(unit-tests)

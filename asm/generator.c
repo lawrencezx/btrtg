@@ -2,7 +2,6 @@
 
 
 #include "nasm.h"
-#include "options.h"
 #include "assemble.h"
 #include "insns.h"
 #include "nctype.h"
