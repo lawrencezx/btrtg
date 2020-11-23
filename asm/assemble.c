@@ -653,33 +653,6 @@ int64_t assemble(int32_t segment, int64_t start, int bits, insn *instruction)
     return data.offset - start;
 }
 
-/* Proecess an EQU directive */
-static void define_equ(insn * instruction)
-{
-    if (!instruction->label) {
-        nasm_nonfatal("EQU not preceded by label");
-    } else if (instruction->operands == 1 &&
-               (instruction->oprs[0].type & IMMEDIATE) &&
-               instruction->oprs[0].wrt == NO_SEG) {
-        define_label(instruction->label,
-                     instruction->oprs[0].segment,
-                     instruction->oprs[0].offset, false);
-    } else if (instruction->operands == 2
-               && (instruction->oprs[0].type & IMMEDIATE)
-               && (instruction->oprs[0].type & COLON)
-               && instruction->oprs[0].segment == NO_SEG
-               && instruction->oprs[0].wrt == NO_SEG
-               && (instruction->oprs[1].type & IMMEDIATE)
-               && instruction->oprs[1].segment == NO_SEG
-               && instruction->oprs[1].wrt == NO_SEG) {
-        define_label(instruction->label,
-                     instruction->oprs[0].offset | SEG_ABS,
-                     instruction->oprs[1].offset, false);
-    } else {
-        nasm_nonfatal("bad syntax for EQU");
-    }
-}
-
 int64_t insn_size(int32_t segment, int64_t offset, int bits, insn *instruction)
 {
     const struct itemplate *temp;
@@ -687,9 +660,6 @@ int64_t insn_size(int32_t segment, int64_t offset, int bits, insn *instruction)
     int64_t isize = 0;
 
     if (instruction->opcode == I_none) {
-        return 0;
-    } else if (instruction->opcode == I_EQU) {
-        define_equ(instruction);
         return 0;
     } else {
         /* Normal instruction, or RESx */
