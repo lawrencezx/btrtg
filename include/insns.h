@@ -1,7 +1,4 @@
-/* insns.h   header file for insns.c
- *
- * The Netwide Assembler is copyright (C) 1996 Simon Tatham and
- * Julian Hall. All rights reserved. The software is
+/* insns.h   header file for insns.c  The Netwide Assembler is copyright (C) 1996 Simon Tatham and Julian Hall. All rights reserved. The software is
  * redistributable under the license given in the file "LICENSE"
  * distributed in the NASM archive.
  */
@@ -12,6 +9,16 @@
 #include "nasm.h"
 #include "tokens.h"
 #include "iflag.h"
+
+typedef uint64_t srcdestflags_t;
+#define OPSRC       0x1
+#define OPDEST      0x2
+
+typedef struct operand_seed {
+    enum opcode     opcode;
+    opflags_t       opndflags;
+    srcdestflags_t  srcdestflags;
+} operand_seed;
 
 typedef struct insn_seed {
     enum opcode     opcode;

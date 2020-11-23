@@ -11,6 +11,7 @@
 #include "buf2token.h"
 #include "insns.h"
 #include "eval.h"
+#include "operand.h"
 
 bool global_sequence;
 
@@ -160,7 +161,7 @@ bool one_insn_gen(const insn_seed *seed, insn *result)
     result->evex_rm     = 0;
     result->evex_brerop = -1;
 
-    gen_op(seed->opcode, (char *)valbuf);
+    gen_opcode(seed->opcode, (char *)valbuf);
     buf2token(valbuf, &tokval);
 
     result->opcode = tokval.t_integer;
@@ -175,12 +176,16 @@ bool one_insn_gen(const insn_seed *seed, insn *result)
     for (int i = 0; i < opnum; ++i) {
         expr *value;
         bool mref = false;
+        operand *op;
+        operand_seed opnd_seed;
 
-        operand *op = &result->oprs[i];
-
+        op = &result->oprs[i];
         init_operand(op);
 
-        gen_opnd(seed->opd[i], (char *)valbuf, false);
+        opnd_seed.opcode = seed->opcode;
+        opnd_seed.opndflags = seed->opd[i];
+        opnd_seed.srcdestflags = calSrcDestFlags(seed->opcode, i, opnum);
+        gen_operand(&opnd_seed, (char *)valbuf, false);
         buf2token(valbuf, &tokval);
 
         op->type = 0;
@@ -245,7 +250,7 @@ bool one_insn_gen_const(const const_insn_seed *const_seed, insn *result)
     result->evex_brerop = -1;
     result->operands = 2;
 
-    gen_op(const_seed->opcode, (char *)valbuf);
+    gen_opcode(const_seed->opcode, (char *)valbuf);
     buf2token(valbuf, &tokval);
 
     result->opcode = tokval.t_integer;
@@ -259,12 +264,16 @@ bool one_insn_gen_const(const const_insn_seed *const_seed, insn *result)
 
         expr *value;
         bool mref = false;
+        operand *op;
+        operand_seed opnd_seed;
 
-        operand *op = &result->oprs[i];
-
+        op = &result->oprs[i];
         init_operand(op);
 
-        gen_opnd(const_seed->oprs[i].type, (char *)valbuf, const_seed->oprs_random[i]);
+        opnd_seed.opcode = const_seed->opcode;
+        opnd_seed.opndflags = const_seed->oprs[i].type;
+        opnd_seed.srcdestflags = calSrcDestFlags(const_seed->opcode, i, const_seed->operands);
+        gen_operand(&opnd_seed, (char *)valbuf, const_seed->oprs_random[i]);
         buf2token(valbuf, &tokval);
 
         op->type = 0;

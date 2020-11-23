@@ -7,7 +7,7 @@
 #include "opflags.h"
 #include "insn-test.h"
 
-static void insn_gen_opnd_initialize(const operand *opnd_seed, insnlist_t *instlist)
+static void insn_gen_operand_initialize(const operand *opnd_seed, insnlist_t *instlist)
 {
     opflags_t opnd_type;
     const_insn_seed const_seed;
@@ -45,7 +45,7 @@ void gsp(const insn_seed *seed, const struct ofmt *ofmt)
     //    one_insn_gen(seed, &new_inst);
         insnlist_insert_head(instlist, &new_inst);
         for (int i = 0; i < new_inst.operands; i++) {
-            insn_gen_opnd_initialize(&new_inst.oprs[i], instlist);
+            insn_gen_operand_initialize(&new_inst.oprs[i], instlist);
         }
     }
     insnlist_output(instlist, ofmt);

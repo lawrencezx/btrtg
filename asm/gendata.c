@@ -197,17 +197,20 @@ static const char* sequence_imm(void)
 }
 
 /* Generate instruction opcode. */
-void gen_op(enum opcode opcode, char *buffer)
+void gen_opcode(enum opcode opcode, char *buffer)
 {
     const char* insn_name = nasm_insn_names[opcode];
     data_copy(insn_name, buffer, nasm_isidchar);
 }
 
 /* Generate operand. */
-void gen_opnd(opflags_t operand, char *buffer, bool force_random)
+void gen_operand(operand_seed *opnd_seed, char *buffer, bool force_random)
 {
     const char *opnd_src = NULL;
     bool (*valid_func)(char);
+    opflags_t operand;
+
+    operand = opnd_seed->opndflags;
     switch (operand) {
     case REG_AL:
         opnd_src = nasm_reg_names[R_AL - EXPR_REG_START];
