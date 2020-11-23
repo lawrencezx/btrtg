@@ -346,8 +346,8 @@ DIV		rm64				[m:	o64 f7 /6]				X86_64,LONG
 DMINT		void				[	0f 39]					P6,CYRIX
 EMMS		void				[	0f 77]					PENT,MMX
 ENTER		imm,imm				[ij:	c8 iw ib,u]				186
-EQU		imm				ignore						8086
-EQU		imm:imm				ignore						8086
+;## EQU		imm				ignore						8086
+;## EQU		imm:imm				ignore						8086
 F2XM1		void				[	d9 f0]					8086,FPU
 FABS		void				[	d9 e1]					8086,FPU
 FADD		mem32				[m:	d8 /0]					8086,FPU
@@ -434,8 +434,8 @@ FEMMS		void				[	0f 0e]					PENT,3DNOW
 FENI		void				[	wait db e0]				8086,FPU
 FFREE		fpureg				[r:	dd c0+r]				8086,FPU
 FFREE		void				[	dd c1]					8086,FPU
-FFREEP		fpureg				[r:	df c0+r]				286,FPU,UNDOC
-FFREEP		void				[	df c1]					286,FPU,UNDOC
+;## FFREEP		fpureg				[r:	df c0+r]				286,FPU,UNDOC
+;## FFREEP		void				[	df c1]					286,FPU,UNDOC
 FIADD		mem32				[m:	da /0]					8086,FPU
 FIADD		mem16				[m:	de /0]					8086,FPU
 FICOM		mem32				[m:	da /2]					8086,FPU
@@ -1286,7 +1286,7 @@ SLDT		reg32				[m:	o32 0f 00 /0]				386
 SLDT		reg64				[m:	o64nw 0f 00 /0]				X86_64,LONG,ND
 SLDT		reg64				[m:	o64 0f 00 /0]				X86_64,LONG
 SKINIT		void				[	0f 01 de]				X86_64,LONG
-SMI		void				[	f1]					386,UNDOC
+;## SMI		void				[	f1]					386,UNDOC
 SMINT		void				[	0f 38]					P6,CYRIX,ND
 ; Older Cyrix chips had this; they had to move due to conflict with MMX
 SMINTOLD	void				[	0f 7e]					486,CYRIX,ND,OBSOLETE
@@ -1377,39 +1377,39 @@ TEST		rm64,imm			[mi:	o64 f7 /0 id,s]				X86_64,LONG,SM
 TEST		mem,imm8			[mi:	f6 /0 ib]				8086,SM
 TEST		mem,imm16			[mi:	o16 f7 /0 iw]				8086,SM
 TEST		mem,imm32			[mi:	o32 f7 /0 id]				386,SM
-UD0		void				[	0f ff]					186,OBSOLETE
-UD0		reg16,rm16			[rm:	o16 0f ff /r]				186
-UD0		reg32,rm32			[rm:	o32 0f ff /r]				186
-UD0		reg64,rm64			[rm:	o64 0f ff /r]				186
-UD1		reg16,rm16			[rm:	o16 0f b9 /r]				186
-UD1		reg32,rm32			[rm:	o32 0f b9 /r]				186
-UD1		reg64,rm64			[rm:	o64 0f b9 /r]				186
-UD1		void				[	0f b9]					186,ND
-UD2B		void				[	0f b9]					186,ND
-UD2B		reg16,rm16			[rm:	o16 0f b9 /r]				186,ND
-UD2B		reg32,rm32			[rm:	o32 0f b9 /r]				186,ND
-UD2B		reg64,rm64			[rm:	o64 0f b9 /r]				186,ND
+;## UD0		void				[	0f ff]					186,OBSOLETE
+;## UD0		reg16,rm16			[rm:	o16 0f ff /r]				186
+;## UD0		reg32,rm32			[rm:	o32 0f ff /r]				186
+;## UD0		reg64,rm64			[rm:	o64 0f ff /r]				186
+;## UD1		reg16,rm16			[rm:	o16 0f b9 /r]				186
+;## UD1		reg32,rm32			[rm:	o32 0f b9 /r]				186
+;## UD1		reg64,rm64			[rm:	o64 0f b9 /r]				186
+;## UD1		void				[	0f b9]					186,ND
+;## UD2B		void				[	0f b9]					186,ND
+;## UD2B		reg16,rm16			[rm:	o16 0f b9 /r]				186,ND
+;## UD2B		reg32,rm32			[rm:	o32 0f b9 /r]				186,ND
+;## UD2B		reg64,rm64			[rm:	o64 0f b9 /r]				186,ND
 UD2		void				[	0f 0b]					186
-UD2A		void				[	0f 0b]					186,ND
-UMOV		mem,reg8			[mr:	np 0f 10 /r]				386,UNDOC,SM,ND
-UMOV		reg8,reg8			[mr:	np 0f 10 /r]				386,UNDOC,ND
-UMOV		mem,reg16			[mr:	np o16 0f 11 /r]			386,UNDOC,SM,ND
-UMOV		reg16,reg16			[mr:	np o16 0f 11 /r]			386,UNDOC,ND
-UMOV		mem,reg32			[mr:	np o32 0f 11 /r]			386,UNDOC,SM,ND
-UMOV		reg32,reg32			[mr:	np o32 0f 11 /r]			386,UNDOC,ND
-UMOV		reg8,mem			[rm:	np 0f 12 /r]				386,UNDOC,SM,ND
-UMOV		reg8,reg8			[rm:	np 0f 12 /r]				386,UNDOC,ND
-UMOV		reg16,mem			[rm:	np o16 0f 13 /r]			386,UNDOC,SM,ND
-UMOV		reg16,reg16			[rm:	np o16 0f 13 /r]			386,UNDOC,ND
-UMOV		reg32,mem			[rm:	np o32 0f 13 /r]			386,UNDOC,SM,ND
-UMOV		reg32,reg32			[rm:	np o32 0f 13 /r]			386,UNDOC,ND
+;## UD2A		void				[	0f 0b]					186,ND
+;## UMOV		mem,reg8			[mr:	np 0f 10 /r]				386,UNDOC,SM,ND
+;## UMOV		reg8,reg8			[mr:	np 0f 10 /r]				386,UNDOC,ND
+;## UMOV		mem,reg16			[mr:	np o16 0f 11 /r]			386,UNDOC,SM,ND
+;## UMOV		reg16,reg16			[mr:	np o16 0f 11 /r]			386,UNDOC,ND
+;## UMOV		mem,reg32			[mr:	np o32 0f 11 /r]			386,UNDOC,SM,ND
+;## UMOV		reg32,reg32			[mr:	np o32 0f 11 /r]			386,UNDOC,ND
+;## UMOV		reg8,mem			[rm:	np 0f 12 /r]				386,UNDOC,SM,ND
+;## UMOV		reg8,reg8			[rm:	np 0f 12 /r]				386,UNDOC,ND
+;## UMOV		reg16,mem			[rm:	np o16 0f 13 /r]			386,UNDOC,SM,ND
+;## UMOV		reg16,reg16			[rm:	np o16 0f 13 /r]			386,UNDOC,ND
+;## UMOV		reg32,mem			[rm:	np o32 0f 13 /r]			386,UNDOC,SM,ND
+;## UMOV		reg32,reg32			[rm:	np o32 0f 13 /r]			386,UNDOC,ND
 VERR		mem				[m:	0f 00 /4]				286,PROT
 VERR		mem16				[m:	0f 00 /4]				286,PROT
 VERR		reg16				[m:	0f 00 /4]				286,PROT
 VERW		mem				[m:	0f 00 /5]				286,PROT
 VERW		mem16				[m:	0f 00 /5]				286,PROT
 VERW		reg16				[m:	0f 00 /5]				286,PROT
-FWAIT		void				[	wait]					8086
+;## FWAIT		void				[	wait]					8086
 WBINVD		void				[	0f 09]					486,PRIV
 WRSHR		rm32				[m:	o32 0f 37 /0]				P6,CYRIX,SMM
 WRMSR		void				[	0f 30]					PENT,PRIV
@@ -1533,14 +1533,14 @@ CMPUNORDPS	xmmreg,xmmrm128			[rm:	np 0f c2 /r 03]				KATMAI,SSE
 CMPUNORDSS	xmmreg,xmmrm32			[rm:	f3 0f c2 /r 03]				KATMAI,SSE
 ; CMPPS/CMPSS must come after the specific ops; that way the disassembler will find the
 ; specific ops first and only disassemble illegal ones as cmpps/cmpss.
-CMPPS		xmmreg,xmmrm128,imm8		[rmi:	np 0f c2 /r ib,u]			KATMAI,SSE
-CMPSS		xmmreg,xmmrm32,imm8		[rmi:	f3 0f c2 /r ib,u]			KATMAI,SSE
+;## CMPPS		xmmreg,xmmrm128,imm8		[rmi:	np 0f c2 /r ib,u]			KATMAI,SSE
+;## CMPSS		xmmreg,xmmrm32,imm8		[rmi:	f3 0f c2 /r ib,u]			KATMAI,SSE
 COMISS		xmmreg,xmmrm32			[rm:	np 0f 2f /r]				KATMAI,SSE
 CVTPI2PS	xmmreg,mmxrm64			[rm:	np 0f 2a /r]				KATMAI,SSE,MMX
 CVTPS2PI	mmxreg,xmmrm64			[rm:	np 0f 2d /r]				KATMAI,SSE,MMX
-CVTSI2SS	xmmreg,mem			[rm:	f3 0f 2a /r]				KATMAI,SSE,SD,AR1,ND
-CVTSI2SS	xmmreg,rm32			[rm:	f3 0f 2a /r]				KATMAI,SSE,SD,AR1
-CVTSI2SS	xmmreg,rm64			[rm:	o64 f3 0f 2a /r]			X86_64,LONG,SSE,SQ,AR1
+;## CVTSI2SS	xmmreg,mem			[rm:	f3 0f 2a /r]				KATMAI,SSE,SD,AR1,ND
+;## CVTSI2SS	xmmreg,rm32			[rm:	f3 0f 2a /r]				KATMAI,SSE,SD,AR1
+;## CVTSI2SS	xmmreg,rm64			[rm:	o64 f3 0f 2a /r]			X86_64,LONG,SSE,SQ,AR1
 CVTSS2SI	reg32,xmmreg			[rm:	f3 0f 2d /r]				KATMAI,SSE,SD,AR1
 CVTSS2SI	reg32,mem			[rm:	f3 0f 2d /r]				KATMAI,SSE,SD,AR1
 CVTSS2SI	reg64,xmmreg			[rm:	o64 f3 0f 2d /r]			X86_64,LONG,SSE,SD,AR1
@@ -1784,8 +1784,8 @@ CMPUNORDPD	xmmreg,xmmrm			[rm:	66 0f c2 /r 03]				WILLAMETTE,SSE2,SO
 CMPUNORDSD	xmmreg,xmmrm			[rm:	f2 0f c2 /r 03]				WILLAMETTE,SSE2,SQ
 ; CMPPD/CMPSD must come after the specific ops; that way the disassembler will find the
 ; specific ops first and only disassemble illegal ones as cmppd/cmpsd.
-CMPPD		xmmreg,xmmrm128,imm8		[rmi:	66 0f c2 /r ib,u]			WILLAMETTE,SSE2
-CMPSD		xmmreg,xmmrm128,imm8		[rmi:	f2 0f c2 /r ib,u]			WILLAMETTE,SSE2
+;## CMPPD		xmmreg,xmmrm128,imm8		[rmi:	66 0f c2 /r ib,u]			WILLAMETTE,SSE2
+;## CMPSD		xmmreg,xmmrm128,imm8		[rmi:	f2 0f c2 /r ib,u]			WILLAMETTE,SSE2
 COMISD		xmmreg,xmmrm64			[rm:	66 0f 2f /r]				WILLAMETTE,SSE2
 CVTDQ2PD	xmmreg,xmmrm			[rm:	f3 0f e6 /r]				WILLAMETTE,SSE2,SQ
 CVTDQ2PS	xmmreg,xmmrm			[rm:	np 0f 5b /r]				WILLAMETTE,SSE2,SO
@@ -3039,18 +3039,18 @@ XSHA256		void				[	mustrep 0f a6 d0]			PENT,CYRIX
 ; 2010-03-22 Quentin Neill <quentin.neill@amd.com>
 ;	     Sebastian Pop  <sebastian.pop@amd.com>
 ;
-LLWPCB		reg32				[m: xop.m9.w0.l0.p0 12 /0]			AMD,386
-LLWPCB		reg64				[m: xop.m9.w1.l0.p0 12 /0]			AMD,X86_64,LONG
-
-SLWPCB		reg32				[m: xop.m9.w0.l0.p0 12 /1]			AMD,386
-SLWPCB		reg64				[m: xop.m9.w1.l0.p0 12 /1]			AMD,X86_64,LONG
-
-LWPVAL		reg32,rm32,imm32		[vmi: xop.m10.w0.ndd.l0.p0 12 /1 id]		AMD,386
-LWPVAL		reg64,rm32,imm32		[vmi: xop.m10.w1.ndd.l0.p0 12 /1 id]		AMD,X86_64,LONG
-
-LWPINS		reg32,rm32,imm32		[vmi: xop.m10.w0.ndd.l0.p0 12 /0 id]		AMD,386
-LWPINS		reg64,rm32,imm32		[vmi: xop.m10.w1.ndd.l0.p0 12 /0 id]		AMD,X86_64,LONG
-
+;## LLWPCB		reg32				[m: xop.m9.w0.l0.p0 12 /0]			AMD,386
+;## LLWPCB		reg64				[m: xop.m9.w1.l0.p0 12 /0]			AMD,X86_64,LONG
+;## 
+;## SLWPCB		reg32				[m: xop.m9.w0.l0.p0 12 /1]			AMD,386
+;## SLWPCB		reg64				[m: xop.m9.w1.l0.p0 12 /1]			AMD,X86_64,LONG
+;## 
+;## LWPVAL		reg32,rm32,imm32		[vmi: xop.m10.w0.ndd.l0.p0 12 /1 id]		AMD,386
+;## LWPVAL		reg64,rm32,imm32		[vmi: xop.m10.w1.ndd.l0.p0 12 /1 id]		AMD,X86_64,LONG
+;## 
+;## LWPINS		reg32,rm32,imm32		[vmi: xop.m10.w0.ndd.l0.p0 12 /0 id]		AMD,386
+;## LWPINS		reg64,rm32,imm32		[vmi: xop.m10.w1.ndd.l0.p0 12 /0 id]		AMD,X86_64,LONG
+;## 
 ;# AMD XOP and FMA4 instructions (SSE5)
 ;
 ; based on pub number 43479 revision 3.04 dated November 2009
