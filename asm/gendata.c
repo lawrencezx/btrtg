@@ -30,10 +30,10 @@ static void data_copy(const char *src, char *dst, bool (*is_validchar)(char))
     dst[r - src] = '\0';
 }
 
-static int get_opnd_num(opflags_t operand)
+static int get_opnd_num(opflags_t opndflags)
 {
     int n = 0;
-    switch(operand) {
+    switch(opndflags) {
     case REG_SREG:
         n = (globalbits == 16) ? 4 :
             (globalbits == 32) ? 6 :
@@ -123,9 +123,9 @@ static void sqi_init(void)
     sqi.immi = 0;
 }
 
-static void sqi_set_opi(opflags_t operand, int i)
+static void sqi_set_opi(opflags_t opndflags, int i)
 {
-    switch(operand) {
+    switch(opndflags) {
     case REG_SREG:
         sqi.sregi = i;
         break;
@@ -208,10 +208,11 @@ void gen_operand(operand_seed *opnd_seed, char *buffer, bool force_random)
 {
     const char *opnd_src = NULL;
     bool (*valid_func)(char);
-    opflags_t operand;
+    opflags_t opndflags;
 
-    operand = opnd_seed->opndflags;
-    switch (operand) {
+    opndflags = opnd_seed->opndflags;
+    switch (opndflags) {
+    /* specific registers */
     case REG_AL:
         opnd_src = nasm_reg_names[R_AL - EXPR_REG_START];
         break;
@@ -221,30 +222,103 @@ void gen_operand(operand_seed *opnd_seed, char *buffer, bool force_random)
     case REG_EAX:
         opnd_src = nasm_reg_names[R_EAX - EXPR_REG_START];
         break;
-    case REG_SREG:
-        opnd_src = new_reg(sreg, operand);
+    case REG_CL:
+        opnd_src = nasm_reg_names[R_CL - EXPR_REG_START];
         break;
+    case REG_CX:
+        opnd_src = nasm_reg_names[R_CX - EXPR_REG_START];
+        break;
+    case REG_ECX:
+        opnd_src = nasm_reg_names[R_ECX - EXPR_REG_START];
+        break;
+    case REG_DX:
+        opnd_src = nasm_reg_names[R_DX - EXPR_REG_START];
+        break;
+
+    /* segment registers */
+    case REG_ES:
+        opnd_src = nasm_reg_names[R_ES - EXPR_REG_START];
+        break;
+    case REG_CS:
+        opnd_src = nasm_reg_names[R_CS - EXPR_REG_START];
+        break;
+    case REG_SS:
+        opnd_src = nasm_reg_names[R_SS - EXPR_REG_START];
+        break;
+    case REG_DS:
+        opnd_src = nasm_reg_names[R_DS - EXPR_REG_START];
+        break;
+    case REG_FS:
+        opnd_src = nasm_reg_names[R_FS - EXPR_REG_START];
+        break;
+    case REG_GS:
+        opnd_src = nasm_reg_names[R_GS - EXPR_REG_START];
+        break;
+
+    /* register class */
     case REG_CREG:
-        opnd_src = new_reg(creg, operand);
+        opnd_src = new_reg(creg, opndflags);
         break;
-    case REG_DREG:
-        opnd_src = new_reg(dreg, operand);
+    case REG_SREG:
+        opnd_src = new_reg(sreg, opndflags);
         break;
+
+//TODO:    /*special immediate values*/
+//TODO:    case UNITY:
+//TODO:        opnd_src = create_unity(opnd_seed->shiftbits);
+//TODO:        break;
+//TODO:
+//TODO:    /* special types of EAs */
+//TODO:    case MEM_OFFS:
+//TODO:
+//TODO:    /* immediate */
+//TODO:    case IMMEDIATE:
+//TODO:    case IMMEDIATE|BITS8:
+//TODO:    case IMMEDIATE|BITS16:
+//TODO:    case IMMEDIATE|BITS32:
+//TODO:    case IMMEDIATE|COLON:
+//TODO:    case IMMEDIATE|BITS16|COLON:
+//TODO:    case IMMEDIATE|BITS16|NEAR:
+//TODO:    case IMMEDIATE|BITS32|COLON:
+//TODO:    case IMMEDIATE|BITS32|NEAR:
+//TODO:    case IMMEDIATE|SHORT:
+//TODO:    case IMMEDIATE|NEAR:
+//TODO:
+//TODO:
+//TODO:    /* memory */
+//TODO:    case MEMORY:
+//TODO:    case MEMORY|BITS8:
+//TODO:    case MEMORY|BITS16:
+//TODO:    case MEMORY|BITS32:
+//TODO:    case MEMORY|FAR:
+//TODO:
+//TODO:    /* general purpose registers */
+//TODO:    case REG_REG|BITS8:
+//TODO:    case REG_REG|BITS16:
+//TODO:    case REG_REG|BITS32:
+//TODO:
+//TODO:
+//TODO:    /* r/m */
+//TODO:    case RM_GPR|BITS8:
+//TODO:    case RM_GPR|BITS16:
+//TODO:    case RM_GPR|BITS32:
+
+
     case (REG_GPR|BITS8):
     case (RM_GPR|BITS8):
-        opnd_src = new_reg(reg8, operand);
+        opnd_src = new_reg(reg8, opndflags);
         break;
     case (REG_GPR|BITS16):
     case (RM_GPR|BITS16):
-        opnd_src = new_reg(reg16, operand);
+        opnd_src = new_reg(reg16, opndflags);
         break;
     case (REG_GPR|BITS32):
     case (RM_GPR|BITS32):
-        opnd_src = new_reg(reg32, operand);
+        opnd_src = new_reg(reg32, opndflags);
         break;
     case (REG_GPR|BITS64):
     case (RM_GPR|BITS64):
-        opnd_src = new_reg(reg64, operand);
+        opnd_src = new_reg(reg64, opndflags);
         break;
     case IMMEDIATE:
     case MEM_OFFS:
@@ -254,7 +328,7 @@ void gen_operand(operand_seed *opnd_seed, char *buffer, bool force_random)
         nasm_nonfatal("unsupported opnd type");
         break;
     }
-    if (operand == IMMEDIATE)
+    if (opndflags == IMMEDIATE)
         valid_func = nasm_isdigit;
     else
         valid_func = nasm_isidchar;
