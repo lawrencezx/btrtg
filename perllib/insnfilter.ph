@@ -34,7 +34,9 @@ sub insnfilter($) {
 
         $extension_3dnow = "3DNOW";
         $extension_cyrix = "CYRIX";
+        $extension_obsolete = "OBSOLETE";
         if ((grep /^$extension_3dnow/, @features) != 0 ||
+            (grep /^$extension_obsolete/, @features) != 0 ||
             (grep /^$extension_cyrix/, @features) != 0) {
             return 1;
         }
