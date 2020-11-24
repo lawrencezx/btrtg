@@ -12,6 +12,9 @@
 #include "insns.h"
 #include "eval.h"
 #include "operand.h"
+#include "insnlist.h"
+#include "bseqi.h"
+#include "x86pg.h"
 
 bool global_sequence;
 
@@ -73,7 +76,10 @@ void generator_init(bool set_sequence)
     /* Save away the default state of warnings */
     init_warnings();
 
-    gendata_init(set_sequence);
+    init_x86pgstate();
+    X86PGState.seqMode = set_sequence;
+
+    gendata_init();
 
     nasm_ctype_init();
 
@@ -170,7 +176,7 @@ bool one_insn_gen(const insn_seed *seed, insn *result)
     while (opnum < MAX_OPERANDS && seed->opd[opnum] != 0)
         opnum++;
 
-    if (!sqi_inc(seed, opnum))
+    if (X86PGState.seqMode && !bseqi_inc(&X86PGState.bseqi, seed, opnum))
         return false;
 
     for (int i = 0; i < opnum; ++i) {
@@ -185,7 +191,7 @@ bool one_insn_gen(const insn_seed *seed, insn *result)
         opnd_seed.opcode = seed->opcode;
         opnd_seed.opndflags = seed->opd[i];
         opnd_seed.srcdestflags = calSrcDestFlags(seed->opcode, i, opnum);
-        gen_operand(&opnd_seed, (char *)valbuf, false);
+        gen_operand(&opnd_seed, (char *)valbuf);
         buf2token(valbuf, &tokval);
 
         op->type = 0;
@@ -273,7 +279,7 @@ bool one_insn_gen_const(const const_insn_seed *const_seed, insn *result)
         opnd_seed.opcode = const_seed->opcode;
         opnd_seed.opndflags = const_seed->oprs[i].type;
         opnd_seed.srcdestflags = calSrcDestFlags(const_seed->opcode, i, const_seed->operands);
-        gen_operand(&opnd_seed, (char *)valbuf, const_seed->oprs_random[i]);
+        gen_operand(&opnd_seed, (char *)valbuf);
         buf2token(valbuf, &tokval);
 
         op->type = 0;

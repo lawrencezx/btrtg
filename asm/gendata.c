@@ -8,271 +8,469 @@
 #include "gendata.h"
 #include "regdis.h"
 #include <string.h>
+#include "operand.h"
 
-bool sequence = false;
-static char genbuf[20];
-
-#define random(x) (rand() % x)
-
-#define random_regi(opflag) random(get_opnd_num(opflag))
-#define sequence_regi(reg) sqi.reg##i
-#define new_reg(reg,opflag) ((!force_random && sequence) ? \
-        nasm_reg_names[nasm_rd_##reg[sequence_regi(reg)] - EXPR_REG_START] : \
-        nasm_reg_names[nasm_rd_##reg[random_regi(opflag)] - EXPR_REG_START])
-#define new_opnd(opnd) ((!force_random && sequence) ? sequence_##opnd() : random_##opnd())
-
-static void data_copy(const char *src, char *dst, bool (*is_validchar)(char))
+srcdestflags_t calSrcDestFlags(enum opcode op, int opnum, int operands)
 {
-    const char* r = src;
-    while (is_validchar(*r))
-        r++;
-    memcpy(dst, src, r - src);
-    dst[r - src] = '\0';
-}
+    srcdestflags_t srcdestflags = 0;
 
-static int get_opnd_num(opflags_t opndflags)
-{
-    int n = 0;
-    switch(opndflags) {
-    case REG_SREG:
-        n = (globalbits == 16) ? 4 :
-            (globalbits == 32) ? 6 :
-            (globalbits == 64) ? 8 : -1;
+    switch (op) {
+    case I_AAD:
+    case I_AAM:
+    case I_BOUND:
+    case I_BT:
+    case I_BTC:
+    case I_BTR:
+    case I_BTS:
+    case I_CALL:
+    case I_CMP:
+    case I_DIV:
+    case I_ENTER:
+    case I_FBLD:
+    case I_FCOM:
+    case I_FCOMI:
+    case I_FCOMIP:
+    case I_FCOMP:
+    case I_FCOMPP:
+    case I_FICOM:
+    case I_FICOMP:
+    case I_FFREE:
+    case I_FILD:
+    case I_FLD:
+    case I_FLDCW:
+    case I_FLDENV:
+    case I_FRSTOR:
+    case I_FUCOM:
+    case I_FUCOMI:
+    case I_FUCOMIP:
+    case I_FUCOMP:
+    case I_FUCOMPP:
+    case I_IDIV:
+    case I_INT:
+    case I_INVLPG:
+    case I_JCXZ:
+    case I_JECXZ:
+    case I_JMP:
+    case I_LGDT:
+    case I_LIDT:
+    case I_LLDT:
+    case I_LMSW:
+    case I_LOOP:
+    case I_LOOPE:
+    case I_LOOPNE:
+    case I_LOOPNZ:
+    case I_LOOPZ:
+    case I_LTR:
+    case I_MUL:
+    case I_PUSH:
+    case I_TEST:
+    case I_VERR:
+    case I_VERW:
+    case I_COMISD:
+    case I_COMISS:
+    case I_UCOMISS:
+    case I_UCOMISD:
+    case I_Jcc:
+        srcdestflags = OPSRC;
         break;
-    case REG_CREG:
-        n = 4;
-        break;
-    case REG_DREG:
-        n = (globalbits == 32) ? 8 :
-            (globalbits == 64) ? 16 : -1;
-        break;
-    case (REG_GPR|BITS8):
-    case (RM_GPR|BITS8):
-        n = 8;
-        break;
-    case (REG_GPR|BITS16):
-    case (RM_GPR|BITS16):
-    case (REG_GPR|BITS32):
-    case (RM_GPR|BITS32):
-    case (REG_GPR|BITS64):
-    case (RM_GPR|BITS64):
-        n = (globalbits == 16 || globalbits == 32) ? 8 :
-            (globalbits == 64) ? 16 : -1;
-        break;
-    case IMMEDIATE:
-    case MEM_OFFS:
-        n = 14;
-        break;
-    default:
-        nasm_nonfatal("unsupported opnd type");
-        break;
-    }
-    return n;
-}
-
-/* Generate int type immediate randomly.
- * If it's larger than the limmit (8/16-bits imm), the high significant bytes
- * will be wipped away while assembling.
- * TODO: support 64-bit immediate
- */
-static const char* random_imm(void)
-{
-    int num = random(INT_MAX);
-    sprintf(genbuf, "%d", num);
-    return genbuf;
-}
-
-/* sequence_index:
- *     A super index structure used to traverse all the operand combinations.
- */
-struct sequence_index {
-    bool start;
-    int i;
-    int num;
-    int sregi;
-    int cregi;
-    int dregi;
-    int reg8i;
-    int reg16i;
-    int reg32i;
-    int reg64i;
-    int immi;
-} sqi;
-
-static int imms[14] =
-{
-  0x0,        0x1,        0x7f,
-  0x80,       0x7fff,     0x8000,
-  0x03030303, 0x44444444, 0x7fffffff,
-  0x80000000, 0x80000001, 0xcccccccc,
-  0xf5f5f5f5, 0xffffffff
-};
-
-static void sqi_init(void)
-{
-    sqi.start = false;
-    sqi.i = 0;
-    sqi.num = 0;
-    sqi.sregi = 0;
-    sqi.cregi = 0;
-    sqi.dregi = 0;
-    sqi.reg8i = 0;
-    sqi.reg16i = 0;
-    sqi.reg32i = 0;
-    sqi.reg64i = 0;
-    sqi.immi = 0;
-}
-
-static void sqi_set_opi(opflags_t opndflags, int i)
-{
-    switch(opndflags) {
-    case REG_SREG:
-        sqi.sregi = i;
-        break;
-    case REG_CREG:
-        sqi.cregi = i;
-        break;
-    case REG_DREG:
-        sqi.dregi = i;
-        break;
-    case (REG_GPR|BITS8):
-    case (RM_GPR|BITS8):
-        sqi.reg8i = i;
-        break;
-    case (REG_GPR|BITS16):
-    case (RM_GPR|BITS16):
-        sqi.reg16i = i;
-        break;
-    case (REG_GPR|BITS32):
-    case (RM_GPR|BITS32):
-        sqi.reg32i = i;
-        break;
-    case (REG_GPR|BITS64):
-    case (RM_GPR|BITS64):
-        sqi.reg64i = i;
-        break;
-    case IMMEDIATE:
-    case MEM_OFFS:
-        sqi.immi = i;
-        break;
-    default:
-        nasm_nonfatal("unsupported opnd type");
-        break;
-    }
-}
-
-bool sqi_inc(const insn_seed *seed, int opnum)
-{
-    if (sequence) {
-        if (!sqi.start) {
-            sqi.start = true;
-            sqi.i = 1;
-            sqi.num = 1;
-            for (int i = 0; i < opnum; i++) {
-                sqi.num *= get_opnd_num(seed->opd[i]);
+    case I_ADC:
+    case I_ADD:
+    case I_AND:
+    case I_BSF:
+    case I_BSR:
+    case I_CMPXCHG:
+    case I_CMPXCHG8B:
+    case I_OR:
+    case I_PACKSSDW:
+    case I_PACKSSWB:
+    case I_PACKUSWB:
+    case I_PADDB:
+    case I_PADDD:
+    case I_PADDSB:
+    case I_PADDSW:
+    case I_PADDUSB:
+    case I_PADDUSW:
+    case I_PADDW:
+    case I_PAND:
+    case I_PANDN:
+    case I_PMADDWD:
+    case I_PMULHW:
+    case I_PMULLW:
+    case I_POR:
+    case I_PSLLD:
+    case I_PSLLQ:
+    case I_PSLLW:
+    case I_PSRAD:
+    case I_PSRAW:
+    case I_PSRLD:
+    case I_PSRLQ:
+    case I_PSRLW:
+    case I_PSUBB:
+    case I_PSUBD:
+    case I_PSUBSB:
+    case I_PSUBSW:
+    case I_PSUBUSB:
+    case I_PSUBUSW:
+    case I_PSUBW:
+    case I_PUNPCKHBW:
+    case I_PUNPCKHDQ:
+    case I_PUNPCKHWD:
+    case I_PUNPCKHQDQ:
+    case I_PUNPCKLBW:
+    case I_PUNPCKLDQ:
+    case I_PUNPCKLWD:
+    case I_PUNPCKLQDQ:
+    case I_PXOR:
+    case I_RCL:
+    case I_RCR:
+    case I_ROL:
+    case I_ROR:
+    case I_SAL:
+    case I_SAR:
+    case I_SBB:
+    case I_SHL:
+    case I_SHLD:
+    case I_SHR:
+    case I_SHRD:
+    case I_XCHG:
+    case I_XOR:
+    case I_ADDPS:
+    case I_ADDSS:
+    case I_ANDNPS:
+    case I_ANDPS:
+    case I_CVTPI2PS:
+    case I_CVTPS2PI:
+    case I_CVTSS2SI:
+    case I_CVTTPS2PI:
+    case I_CVTTSS2SI:
+    case I_DIVPS:
+    case I_DIVSS:
+    case I_MAXPS:
+    case I_MAXSS:
+    case I_MINPS:
+    case I_MINSS:
+    case I_MULPS:
+    case I_MULSS:
+    case I_SUBPS:
+    case I_SUBSS:
+    case I_UNPCKHPS:
+    case I_UNPCKLPS:
+    case I_MASKMOVQ:
+    case I_MOVNTQ:
+    case I_PAVGB:
+    case I_PAVGW:
+    case I_PEXTRW:
+    case I_PINSRW:
+    case I_PMAXSW:
+    case I_PMAXUB:
+    case I_PMINSW:
+    case I_PMINUB:
+    case I_PMOVMSKB:
+    case I_PMULHUW:
+    case I_PSADBW:
+    case I_PSHUFW:
+    case I_MASKMOVDQU:
+    case I_PADDQ:
+    case I_PMULUDQ:
+    case I_PSHUFD:
+    case I_PSHUFHW:
+    case I_PSHUFLW:
+    case I_PSLLDQ:
+    case I_PSRLDQ:
+    case I_PSUBQ:
+    case I_ADDPD:
+    case I_ADDSD:
+    case I_ANDNPD:
+    case I_ANDPD:
+    case I_CVTDQ2PD:
+    case I_CVTDQ2PS:
+    case I_CVTPD2DQ:
+    case I_CVTPD2PI:
+    case I_CVTPD2PS:
+    case I_CVTPI2PD:
+    case I_CVTPS2DQ:
+    case I_CVTPS2PD:
+    case I_CVTSD2SI:
+    case I_CVTSD2SS:
+    case I_CVTSI2SD:
+    case I_CVTSS2SD:
+    case I_CVTTPD2PI:
+    case I_CVTTPD2DQ:
+    case I_CVTTPS2DQ:
+    case I_CVTTSD2SI:
+    case I_DIVPD:
+    case I_DIVSD:
+    case I_MAXPD:
+    case I_MAXSD:
+    case I_MINPD:
+    case I_MINSD:
+    case I_MULPD:
+    case I_MULSD:
+    case I_ORPD:
+    case I_SQRTPD:
+    case I_SQRTSD:
+    case I_SUBPD:
+    case I_SUBSD:
+    case I_UNPCKHPD:
+    case I_UNPCKLPD:
+    case I_XORPS:
+    case I_XORPD:
+    case I_LZCNT:
+    case I_ARPL:
+    case I_PCMPEQB:
+    case I_PCMPEQD:
+    case I_PCMPEQW:
+    case I_PCMPGTB:
+    case I_PCMPGTD:
+    case I_PCMPGTW:
+    case I_CMPEQPS:
+    case I_CMPEQSS:
+    case I_CMPLEPS:
+    case I_CMPLESS:
+    case I_CMPLTPS:
+    case I_CMPLTSS:
+    case I_CMPNEQPS:
+    case I_CMPNEQSS:
+    case I_CMPNLEPS:
+    case I_CMPNLESS:
+    case I_CMPNLTPS:
+    case I_CMPNLTSS:
+    case I_CMPORDPS:
+    case I_CMPORDSS:
+    case I_CMPUNORDPS:
+    case I_CMPUNORDSS:
+    case I_CMPEQPD:
+    case I_CMPEQSD:
+    case I_CMPLEPD:
+    case I_CMPLESD:
+    case I_CMPLTPD:
+    case I_CMPLTSD:
+    case I_CMPNEQPD:
+    case I_CMPNEQSD:
+    case I_CMPNLEPD:
+    case I_CMPNLESD:
+    case I_CMPNLTPD:
+    case I_CMPNLTSD:
+    case I_CMPORDPD:
+    case I_CMPORDSD:
+    case I_CMPUNORDPD:
+    case I_CMPUNORDSD:
+        if (opnum == 0) {
+            srcdestflags = OPDEST;
+            if (operands <= 2) {
+                srcdestflags |= OPSRC;
             }
         } else {
-            if (sqi.i >= sqi.num)
-                return false;
-            int seqi = sqi.i++;
-            for (int i = 0; i < opnum; i++) {
-                sqi_set_opi(seed->opd[i], seqi % get_opnd_num(seed->opd[i]));
-                seqi /= get_opnd_num(seed->opd[i]);
+            srcdestflags = OPSRC;
+        }
+        break;
+    case I_BSWAP:
+    case I_DEC:
+    case I_FXCH:
+    case I_INC:
+    case I_NEG:
+    case I_NOT:
+        srcdestflags = OPSRC | OPDEST;
+        break;
+    case I_FADD:
+    case I_FADDP:
+    case I_FIADD:
+    case I_FDIV:
+    case I_FDIVP:
+    case I_FIDIV:
+    case I_FDIVR:
+    case I_FDIVRP:
+    case I_FIDIVR:
+    case I_FMUL:
+    case I_FMULP:
+    case I_FIMUL:
+    case I_FSUB:
+    case I_FSUBP:
+    case I_FISUB:
+    case I_FSUBR:
+    case I_FSUBRP:
+    case I_FISUBR:
+        srcdestflags = OPSRC;
+        if (opnum == 0 &&
+            operands >= 2) {
+            srcdestflags |= OPDEST;
+        }
+        break;
+    case I_FBSTP:
+    case I_FIST:
+    case I_FISTP:
+    case I_POP:
+    case I_SLDT:
+    case I_SMSW:
+    case I_STR:
+    case I_SETcc:
+    case I_FSAVE:
+    case I_FNSAVE:
+    case I_FST:
+    case I_FSTP:
+    case I_FSTCW:
+    case I_FNSTCW:
+    case I_FSTENV:
+    case I_FNSTENV:
+    case I_FSTSW:
+    case I_FNSTSW:
+        srcdestflags = OPDEST;
+        break;
+    case I_LAR:
+    case I_LSL:
+    case I_MOV:
+    case I_MOVD:
+    case I_MOVQ:
+    case I_MOVSB:
+    case I_MOVSD:
+    case I_MOVSW:
+    case I_MOVSX:
+    case I_MOVZX:
+    case I_MOVNTDQ:
+    case I_MOVNTI:
+    case I_MOVNTPD:
+    case I_MOVDQA:
+    case I_MOVDQU:
+    case I_MOVDQ2Q:
+    case I_MOVQ2DQ:
+    case I_MOVAPD:
+    case I_MOVHPD:
+    case I_MOVLPD:
+    case I_MOVMSKPD:
+    case I_MOVUPD:
+    case I_CMOVcc:
+    case I_LDS:
+    case I_LES:
+    case I_LFS:
+    case I_LGS:
+    case I_LSS:
+    case I_IN:
+    case I_OUT:
+    case I_RCPPS:
+    case I_RCPSS:
+    case I_RSQRTPS:
+    case I_RSQRTSS:
+    case I_SQRTPS:
+    case I_SQRTSS:
+    case I_FCMOVB:
+    case I_FCMOVBE:
+    case I_FCMOVE:
+    case I_FCMOVNB:
+    case I_FCMOVNBE:
+    case I_FCMOVNE:
+    case I_FCMOVNU:
+    case I_FCMOVU:
+        if (opnum == 0) {
+            srcdestflags = OPDEST;
+        } else {
+            srcdestflags = OPSRC;
+        }
+        break;
+    case I_IMUL:
+        if (operands == 1) {
+            srcdestflags = OPSRC;
+        } else {
+            if (opnum == 0) {
+                srcdestflags = OPDEST;
+                if (operands <= 2) {
+                    srcdestflags |= OPSRC;
+                }
+            } else {
+                srcdestflags = OPSRC;
             }
         }
+        break;
+    case I_SHUFPD:
+    case I_SHUFPS:
+        srcdestflags = OPSRC;
+        if (opnum == 0) {
+            srcdestflags |= OPDEST;
+        }
+        break;
+    default:
+        nasm_fatal("opcode XXX(TODO) should not have any operands or unsupported opcode");
+        break;
     }
-    return true;
-}
-
-/* Generate int type immediate sequentially.
- * If it's larger than the limmit (8/16-bits imm), the high significant bytes
- * will be wipped away while assembling.
- * TODO: support 64-bit immediate
- */
-static const char* sequence_imm(void)
-{
-    int num = imms[sqi.immi];
-    sprintf(genbuf, "%d", num);
-    return genbuf;
+    return srcdestflags;
 }
 
 /* Generate instruction opcode. */
 void gen_opcode(enum opcode opcode, char *buffer)
 {
     const char* insn_name = nasm_insn_names[opcode];
-    data_copy(insn_name, buffer, nasm_isidchar);
+    sprintf(buffer, "%s\n", insn_name);
 }
 
 /* Generate operand. */
-void gen_operand(operand_seed *opnd_seed, char *buffer, bool force_random)
+void gen_operand(operand_seed *opnd_seed, char *buffer)
 {
-    const char *opnd_src = NULL;
-    bool (*valid_func)(char);
     opflags_t opndflags;
 
     opndflags = opnd_seed->opndflags;
     switch (opndflags) {
     /* specific registers */
     case REG_AL:
-        opnd_src = nasm_reg_names[R_AL - EXPR_REG_START];
+        create_specific_register(buffer, R_AL);
         break;
     case REG_AX:
-        opnd_src = nasm_reg_names[R_AX - EXPR_REG_START];
+        create_specific_register(buffer, R_AX);
         break;
     case REG_EAX:
-        opnd_src = nasm_reg_names[R_EAX - EXPR_REG_START];
+        create_specific_register(buffer, R_EAX);
         break;
     case REG_CL:
-        opnd_src = nasm_reg_names[R_CL - EXPR_REG_START];
+        create_specific_register(buffer, R_CL);
         break;
     case REG_CX:
-        opnd_src = nasm_reg_names[R_CX - EXPR_REG_START];
+        create_specific_register(buffer, R_CX);
         break;
     case REG_ECX:
-        opnd_src = nasm_reg_names[R_ECX - EXPR_REG_START];
+        create_specific_register(buffer, R_ECX);
         break;
     case REG_DX:
-        opnd_src = nasm_reg_names[R_DX - EXPR_REG_START];
+        create_specific_register(buffer, R_DX);
         break;
 
     /* segment registers */
     case REG_ES:
-        opnd_src = nasm_reg_names[R_ES - EXPR_REG_START];
+        create_specific_register(buffer, R_ES);
         break;
     case REG_CS:
-        opnd_src = nasm_reg_names[R_CS - EXPR_REG_START];
+        create_specific_register(buffer, R_CS);
         break;
     case REG_SS:
-        opnd_src = nasm_reg_names[R_SS - EXPR_REG_START];
+        create_specific_register(buffer, R_SS);
         break;
     case REG_DS:
-        opnd_src = nasm_reg_names[R_DS - EXPR_REG_START];
+        create_specific_register(buffer, R_DS);
         break;
     case REG_FS:
-        opnd_src = nasm_reg_names[R_FS - EXPR_REG_START];
+        create_specific_register(buffer, R_FS);
         break;
     case REG_GS:
-        opnd_src = nasm_reg_names[R_GS - EXPR_REG_START];
+        create_specific_register(buffer, R_GS);
         break;
 
-    /* register class */
+    /* special register class */
     case REG_CREG:
-        opnd_src = new_reg(creg, opndflags);
+        create_control_register(buffer);
         break;
     case REG_SREG:
-        opnd_src = new_reg(sreg, opndflags);
+        create_segment_register(buffer);
         break;
 
-//TODO:    /*special immediate values*/
-//TODO:    case UNITY:
-//TODO:        opnd_src = create_unity(opnd_seed->shiftbits);
-//TODO:        break;
-//TODO:
+    /*special immediate values*/
+    case UNITY:
+        create_unity(buffer, opnd_seed->shiftCount);
+        break;
+
 //TODO:    /* special types of EAs */
 //TODO:    case MEM_OFFS:
-//TODO:
-//TODO:    /* immediate */
-//TODO:    case IMMEDIATE:
+
+    /* immediate */
+    case IMMEDIATE:
+        create_immediate(buffer, opndflags & ~IMMEDIATE);
+        break;
 //TODO:    case IMMEDIATE|BITS8:
 //TODO:    case IMMEDIATE|BITS16:
 //TODO:    case IMMEDIATE|BITS32:
@@ -291,56 +489,26 @@ void gen_operand(operand_seed *opnd_seed, char *buffer, bool force_random)
 //TODO:    case MEMORY|BITS16:
 //TODO:    case MEMORY|BITS32:
 //TODO:    case MEMORY|FAR:
-//TODO:
-//TODO:    /* general purpose registers */
-//TODO:    case REG_REG|BITS8:
-//TODO:    case REG_REG|BITS16:
-//TODO:    case REG_REG|BITS32:
-//TODO:
-//TODO:
+
+    /* general purpose registers */
+    case REG_GPR|BITS8:
+    case REG_GPR|BITS16:
+    case REG_GPR|BITS32:
+        create_gpr_register(buffer, opndflags & SIZE_MASK);
+        break;
+
 //TODO:    /* r/m */
 //TODO:    case RM_GPR|BITS8:
 //TODO:    case RM_GPR|BITS16:
 //TODO:    case RM_GPR|BITS32:
 
-
-    case (REG_GPR|BITS8):
-    case (RM_GPR|BITS8):
-        opnd_src = new_reg(reg8, opndflags);
-        break;
-    case (REG_GPR|BITS16):
-    case (RM_GPR|BITS16):
-        opnd_src = new_reg(reg16, opndflags);
-        break;
-    case (REG_GPR|BITS32):
-    case (RM_GPR|BITS32):
-        opnd_src = new_reg(reg32, opndflags);
-        break;
-    case (REG_GPR|BITS64):
-    case (RM_GPR|BITS64):
-        opnd_src = new_reg(reg64, opndflags);
-        break;
-    case IMMEDIATE:
-    case MEM_OFFS:
-        opnd_src = new_opnd(imm);
-        break;
     default:
         nasm_nonfatal("unsupported opnd type");
         break;
     }
-    if (opndflags == IMMEDIATE)
-        valid_func = nasm_isdigit;
-    else
-        valid_func = nasm_isidchar;
-    data_copy(opnd_src, buffer, valid_func);
 }
 
-void gendata_init(bool set_sequence)
+void gendata_init(void)
 {
-    sequence = set_sequence;
-    if (set_sequence) {
-        sqi_init();
-    } else {
-        srand((unsigned)time(NULL));
-    }
+    srand((unsigned)time(NULL));
 }

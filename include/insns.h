@@ -15,9 +15,10 @@ typedef uint64_t srcdestflags_t;
 #define OPDEST      0x2
 
 typedef struct operand_seed {
-    enum opcode     opcode;
+    enum opcode     opcode;               /* point to instruction */
     opflags_t       opndflags;
-    srcdestflags_t  srcdestflags;
+    srcdestflags_t  srcdestflags;         /* source and destination operand flag */
+    int             shiftCount;           /* shift/rotate bits, can be 8/16/32 */
 } operand_seed;
 
 typedef struct insn_seed {
