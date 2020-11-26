@@ -1,6 +1,9 @@
 /* config/config.h.  Generated from config.h.in by configure.  */
 /* config/config.h.in.  Generated from configure.ac by autoheader.  */
 
+/* Define to 1 to print log */
+#define DEBUG_MODE 1
+
 /* Define to 1 to call abort() on panics (internal errors), for debugging. */
 /* #undef ABORT_ON_PANIC */
 

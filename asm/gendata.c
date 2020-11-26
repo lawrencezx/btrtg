@@ -3,12 +3,12 @@
 #include "nasm.h"
 #include "nasmlib.h"
 #include "insns.h"
-#include "gendata.h"
 #include "error.h"
+#include "seed.h"
 #include "gendata.h"
 #include "regdis.h"
-#include <string.h>
 #include "operand.h"
+#include <string.h>
 
 srcdestflags_t calSrcDestFlags(enum opcode op, int opnum, int operands)
 {
@@ -394,6 +394,76 @@ srcdestflags_t calSrcDestFlags(enum opcode op, int opnum, int operands)
     return srcdestflags;
 }
 
+static opflags_t getCurOperandSize(opflags_t opflags)
+{
+    opflags_t opdsize = 0;
+    if ((SIZE_MASK & opflags) != 0) {
+        opdsize = SIZE_MASK & opflags;
+    } else if (opflags == MEMORY ||
+        opflags == (MEMORY|FAR)) {
+        opdsize = (globalbits == 16) ? BITS16 : BITS32;
+    } else {
+        switch (opflags) {
+            case REG_AL:
+            case REG_CL:
+                opdsize = BITS8;
+                break;
+            case REG_AX:
+            case REG_CX:
+            case REG_DX:
+            case REG_ES:
+            case REG_CS:
+            case REG_SS:
+            case REG_DS:
+            case REG_FS:
+            case REG_GS:
+                opdsize = BITS16;
+                break;
+            case REG_EAX:
+            case REG_ECX:
+                opdsize = BITS32;
+                break;
+            default:
+                break;
+        }
+    }
+    return opdsize;
+}
+
+opflags_t calOperandSize(const insn_seed *seed, int opdi)
+{
+    opflags_t opdsize = 0;
+    /* If operand's opflags contain size information, extract it. */
+    if ((opdsize = getCurOperandSize(seed->opd[opdi])) == 0) {
+    /* If operand's opflags does not contain size information
+     * Copy the size information from other operands.
+     */
+        for (int i = 0; i < MAX_OPERANDS && seed->opd[i] != 0; i++) {
+            if ((opdsize = getCurOperandSize(seed->opd[i])) != 0) {
+                break;
+            }
+        }
+    }
+    if (opdsize == 0) {
+        /* Instructions whose operands do not indicate it's operand sizeof()
+         * We can calculate it according from instruction opcode.
+         */
+        switch (seed->opcode) {
+            case I_RET:
+            case I_RETF:
+                opdsize = BITS16;
+                break;
+            case I_ENTER:
+                opdsize = (opdi == 1) ? BITS16 : BITS8;
+                break;
+            default:
+                opdsize = (globalbits == 16) ? BITS16 : BITS32;
+                break;
+        }
+    }
+    return opdsize;
+}
+
 /* Generate instruction opcode. */
 void gen_opcode(enum opcode opcode, char *buffer)
 {
@@ -461,8 +531,18 @@ void gen_operand(operand_seed *opnd_seed, char *buffer)
 
     /*special immediate values*/
     case UNITY:
-        create_unity(buffer, opnd_seed->shiftCount);
+    {
+        int shiftCount = 0;
+        if (opnd_seed->opdsize == BITS8) {
+            shiftCount = 8;
+        } else if (opnd_seed->opdsize == BITS16) {
+            shiftCount = 16;
+        } else if (opnd_seed->opdsize == BITS32) {
+            shiftCount = 32;
+        }
+        create_unity(buffer, shiftCount);
         break;
+    }
 
 //TODO:    /* special types of EAs */
 //TODO:    case MEM_OFFS:

@@ -1,5 +1,6 @@
 #include "compiler.h"
 
+#include "seed.h"
 #include "generator.h"
 #include "insn/insn-test.h"
 #include "ut.h"

@@ -15,29 +15,30 @@ typedef struct big_sequence_index {
 } big_sequence_index;
 
 
+/* INDEX SIZE | INDEX POS
+ */
 typedef uint32_t bseqiflags_t;
 
-
-#define INDEX_SHIFT         (0)
-#define INDEX_BITS          (6)
-#define INDEX_MASK          (((1 << INDEX_BITS) - 1) << INDEX_SHIFT)
-#define GEN_INDEX(bit)      (bit << INDEX_SHIFT)
+#define INDEXPOS_SHIFT         (0)
+#define INDEXPOS_BITS          (6)
+#define INDEXPOS_MASK          (((1 << INDEXPOS_BITS) - 1) << INDEXPOS_SHIFT)
+#define GEN_INDEXPOS(bit)      (bit << INDEXPOS_SHIFT)
                             
-#define SEQINUM_SHIFT       (6)
-#define SEQINUM_BITS        (5)
-#define SEQINUM_MASK        (((1 << SEQINUM_BITS) - 1) << SEQINUM_SHIFT)
-#define GEN_SEQINUM(bit)    (bit << SEQINUM_SHIFT)
+#define INDEXSIZE_SHIFT       (6)
+#define INDEXSIZE_BITS        (5)
+#define INDEXSIZE_MASK        (((1 << INDEXSIZE_BITS) - 1) << INDEXSIZE_SHIFT)
+#define GEN_INDEXSIZE(bit)    (bit << INDEXSIZE_SHIFT)
 
 /* bits distribution (counted from 0)
  *  *
  *   3         2         1
  * 210987654321098765432109876543210
- * ...........................111111 index of bseqi.indexes
- * ......................11111...... sequence index numbers
+ * ...........................111111 index position in bseqi.indexes[]
+ * ......................11111...... index size of bseqi.indexes[pos]
  */
-#define SEQIFLAG_VALUE(flags,flag)    ((flags & flag##_MASK) >> flag##_SHIFT)
-#define SEQIFLAG_INDEX(flags)         SEQIFLAG_VALUE(flags,INDEX)
-#define SEQIFLAG_SEQINUM(flags)       SEQIFLAG_VALUE(flags,SEQINUM)
+#define BSEQIFLAG_VALUE(flags,flag)      ((flags & flag##_MASK) >> flag##_SHIFT)
+#define BSEQIFLAG_INDEXPOS(flags)        BSEQIFLAG_VALUE(flags,INDEXPOS)
+#define BSEQIFLAG_INDEXSIZE(flags)       BSEQIFLAG_VALUE(flags,INDEXSIZE)
 
 void bseqi_init(big_sequence_index *bseqi);
 bseqiflags_t bseqi_flags(opflags_t opndflags);

@@ -2,6 +2,7 @@
 
 #include "nasm.h"
 #include "insns.h"
+#include "seed.h"
 #include "bseqi.h"
 
 
@@ -11,12 +12,12 @@ bseqiflags_t bseqi_flags(opflags_t opndflags)
         opflags_t       opflags;
         bseqiflags_t    bseqiflags;
     } sequence_indexes[SEQ_INDEXES_NUM] = {
-        {REG_SREG,          GEN_INDEX(0) | GEN_SEQINUM(((globalbits == 16) ? 4 : 6))},
-        {REG_CREG,          GEN_INDEX(1) | GEN_SEQINUM(4)},
-        {REG_GPR|BITS8,     GEN_INDEX(2) | GEN_SEQINUM(8)},
-        {REG_GPR|BITS16,    GEN_INDEX(3) | GEN_SEQINUM(8)},
-        {REG_GPR|BITS32,    GEN_INDEX(4) | GEN_SEQINUM(8)},
-        {IMMEDIATE,         GEN_INDEX(5) | GEN_SEQINUM(14)}
+        {REG_SREG,          GEN_INDEXPOS(0) | GEN_INDEXSIZE(((globalbits == 16) ? 4 : 6))},
+        {REG_CREG,          GEN_INDEXPOS(1) | GEN_INDEXSIZE(4)},
+        {REG_GPR|BITS8,     GEN_INDEXPOS(2) | GEN_INDEXSIZE(8)},
+        {REG_GPR|BITS16,    GEN_INDEXPOS(3) | GEN_INDEXSIZE(8)},
+        {REG_GPR|BITS32,    GEN_INDEXPOS(4) | GEN_INDEXSIZE(8)},
+        {IMMEDIATE,         GEN_INDEXPOS(5) | GEN_INDEXSIZE(14)}
     };
 
     for (size_t i = 0; i < ARRAY_SIZE(sequence_indexes); i++) {
@@ -44,7 +45,7 @@ bool bseqi_inc(big_sequence_index *bseqi, const insn_seed *seed, int opnum)
         bseqi->num = 1;
         for (int i = 0; i < opnum; i++) {
             bseqiflags_t bseqiflags = bseqi_flags(seed->opd[i]);
-            bseqi->num *= SEQIFLAG_SEQINUM(bseqiflags);
+            bseqi->num *= BSEQIFLAG_INDEXSIZE(bseqiflags);
         }
     } else {
         if (bseqi->i >= bseqi->num)
@@ -52,8 +53,8 @@ bool bseqi_inc(big_sequence_index *bseqi, const insn_seed *seed, int opnum)
         int seqi = bseqi->i++;
         for (int i = 0; i < opnum; i++) {
             bseqiflags_t bseqiflags = bseqi_flags(seed->opd[i]);
-            bseqi->indexes[SEQIFLAG_INDEX(bseqiflags)] = seqi % SEQIFLAG_SEQINUM(bseqiflags);
-            seqi /= SEQIFLAG_SEQINUM(bseqiflags);
+            bseqi->indexes[BSEQIFLAG_INDEXPOS(bseqiflags)] = seqi % BSEQIFLAG_INDEXSIZE(bseqiflags);
+            seqi /= BSEQIFLAG_INDEXSIZE(bseqiflags);
         }
     }
     return true;

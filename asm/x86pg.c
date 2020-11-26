@@ -2,6 +2,7 @@
 
 #include "nasm.h"
 #include "insns.h"
+#include "seed.h"
 #include "x86pg.h"
 
 struct X86PGState X86PGState;

@@ -50,9 +50,9 @@
 ;# Conventional instructions
 AAA		void				[	37]					8086,NOLONG
 AAD		void				[	d5 0a]					8086,NOLONG
-AAD		imm				[i:	d5 ib,u]				8086,SB,NOLONG
+AAD		imm8				[i:	d5 ib,u]				8086,SB,NOLONG
 AAM		void				[	d4 0a]					8086,NOLONG
-AAM		imm				[i:	d4 ib,u]				8086,SB,NOLONG
+AAM		imm8				[i:	d4 ib,u]				8086,SB,NOLONG
 AAS		void				[	3f]					8086,NOLONG
 ADC		mem,reg8			[mr:	hle 10 /r]				8086,SM,LOCK
 ADC		reg8,reg8			[mr:	10 /r]					8086
@@ -227,9 +227,9 @@ BTS		reg64,reg64			[mr:	o64 0f ab /r]				X86_64,LONG
 BTS		rm16,imm8			[mi:	hle o16 0f ba /5 ib,u]			386,LOCK
 BTS		rm32,imm8			[mi:	hle o32 0f ba /5 ib,u]			386,LOCK
 BTS		rm64,imm8			[mi:	hle o64 0f ba /5 ib,u]			X86_64,LONG,LOCK
-CALL		imm				[i:	odf e8 rel]				8086,BND
-CALL		imm|near			[i:	odf e8 rel]				8086,ND,BND
-CALL		imm|far				[i:	odf 9a iwd seg]				8086,ND,NOLONG
+;## CALL		imm				[i:	odf e8 rel]				8086,BND
+;## CALL		imm|near			[i:	odf e8 rel]				8086,ND,BND
+;## CALL		imm|far				[i:	odf 9a iwd seg]				8086,ND,NOLONG
 ; Call/jmp near imm/reg/mem is always 64-bit in long mode.
 CALL		imm16				[i:	o16 e8 rel]				8086,NOLONG,BND
 CALL		imm16|near			[i:	o16 e8 rel]				8086,ND,NOLONG,BND
@@ -345,7 +345,7 @@ DIV		rm32				[m:	o32 f7 /6]				386
 DIV		rm64				[m:	o64 f7 /6]				X86_64,LONG
 DMINT		void				[	0f 39]					P6,CYRIX
 EMMS		void				[	0f 77]					PENT,MMX
-ENTER		imm,imm				[ij:	c8 iw ib,u]				186
+ENTER		imm16,imm8				[ij:	c8 iw ib,u]				186
 ;## EQU		imm				ignore						8086
 ;## EQU		imm:imm				ignore						8086
 F2XM1		void				[	d9 f0]					8086,FPU
@@ -622,9 +622,9 @@ IMUL		reg64,imm8			[r+mi:	o64 6b /r ib,s]				X86_64,LONG
 IMUL		reg64,sbytedword		[r+mi:	o64 6b /r ib,s]				X86_64,LONG,SM,ND
 IMUL		reg64,imm32			[r+mi:	o64 69 /r id,s]				X86_64,LONG
 IMUL		reg64,imm			[r+mi:	o64 69 /r id,s]				X86_64,LONG,SM,ND
-IN		reg_al,imm			[-i:	e4 ib,u]				8086,SB
-IN		reg_ax,imm			[-i:	o16 e5 ib,u]				8086,SB
-IN		reg_eax,imm			[-i:	o32 e5 ib,u]				386,SB
+IN		reg_al,imm8			[-i:	e4 ib,u]				8086,SB
+IN		reg_ax,imm8			[-i:	o16 e5 ib,u]				8086,SB
+IN		reg_eax,imm8			[-i:	o32 e5 ib,u]				386,SB
 IN		reg_al,reg_dx			[--:	ec]					8086
 IN		reg_ax,reg_dx			[--:	o16 ed]					8086
 IN		reg_eax,reg_dx			[--:	o32 ed]					386
@@ -637,7 +637,7 @@ INC		rm64				[m:	hle o64 ff /0]				X86_64,LONG,LOCK
 INSB		void				[	6c]					186
 INSD		void				[	o32 6d]					386
 INSW		void				[	o16 6d]					186
-INT		imm				[i:	cd ib,u]				8086,SB
+INT		imm8				[i:	cd ib,u]				8086,SB
 INT01		void				[	f1]					386,ND
 INT1		void				[	f1]					386
 INT03		void				[	cc]					8086,ND
@@ -742,25 +742,25 @@ LODSD		void				[	o32 ad]					386
 LODSQ		void				[	o64 ad]					X86_64,LONG
 LODSW		void				[	o16 ad]					8086
 LOOP		imm				[i:	adf e2 rel8]				8086
-LOOP		imm,reg_cx			[i-:	a16 e2 rel8]				8086,NOLONG
-LOOP		imm,reg_ecx			[i-:	a32 e2 rel8]				386
-LOOP		imm,reg_rcx			[i-:	a64 e2 rel8]				X86_64,LONG
+;## LOOP		imm,reg_cx			[i-:	a16 e2 rel8]				8086,NOLONG
+;## LOOP		imm,reg_ecx			[i-:	a32 e2 rel8]				386
+;## LOOP		imm,reg_rcx			[i-:	a64 e2 rel8]				X86_64,LONG
 LOOPE		imm				[i:	adf e1 rel8]				8086
-LOOPE		imm,reg_cx			[i-:	a16 e1 rel8]				8086,NOLONG
-LOOPE		imm,reg_ecx			[i-:	a32 e1 rel8]				386
-LOOPE		imm,reg_rcx			[i-:	a64 e1 rel8]				X86_64,LONG
+;## LOOPE		imm,reg_cx			[i-:	a16 e1 rel8]				8086,NOLONG
+;## LOOPE		imm,reg_ecx			[i-:	a32 e1 rel8]				386
+;## LOOPE		imm,reg_rcx			[i-:	a64 e1 rel8]				X86_64,LONG
 LOOPNE		imm				[i:	adf e0 rel8]				8086
-LOOPNE		imm,reg_cx			[i-:	a16 e0 rel8]				8086,NOLONG
-LOOPNE		imm,reg_ecx			[i-:	a32 e0 rel8]				386
-LOOPNE		imm,reg_rcx			[i-:	a64 e0 rel8]				X86_64,LONG
+;## LOOPNE		imm,reg_cx			[i-:	a16 e0 rel8]				8086,NOLONG
+;## LOOPNE		imm,reg_ecx			[i-:	a32 e0 rel8]				386
+;## LOOPNE		imm,reg_rcx			[i-:	a64 e0 rel8]				X86_64,LONG
 LOOPNZ		imm				[i:	adf e0 rel8]				8086
-LOOPNZ		imm,reg_cx			[i-:	a16 e0 rel8]				8086,NOLONG
-LOOPNZ		imm,reg_ecx			[i-:	a32 e0 rel8]				386
-LOOPNZ		imm,reg_rcx			[i-:	a64 e0 rel8]				X86_64,LONG
+;## LOOPNZ		imm,reg_cx			[i-:	a16 e0 rel8]				8086,NOLONG
+;## LOOPNZ		imm,reg_ecx			[i-:	a32 e0 rel8]				386
+;## LOOPNZ		imm,reg_rcx			[i-:	a64 e0 rel8]				X86_64,LONG
 LOOPZ		imm				[i:	adf e1 rel8]				8086
-LOOPZ		imm,reg_cx			[i-:	a16 e1 rel8]				8086,NOLONG
-LOOPZ		imm,reg_ecx			[i-:	a32 e1 rel8]				386
-LOOPZ		imm,reg_rcx			[i-:	a64 e1 rel8]				X86_64,LONG
+;## LOOPZ		imm,reg_cx			[i-:	a16 e1 rel8]				8086,NOLONG
+;## LOOPZ		imm,reg_ecx			[i-:	a32 e1 rel8]				386
+;## LOOPZ		imm,reg_rcx			[i-:	a64 e1 rel8]				X86_64,LONG
 LSL		reg16,mem			[rm:	o16 0f 03 /r]				286,PROT,SW
 LSL		reg16,reg16			[rm:	o16 0f 03 /r]				286,PROT
 LSL		reg16,reg32			[rm:	o16 0f 03 /r]				386,PROT
@@ -1109,26 +1109,26 @@ RET		void				[	c3]					8086,BND
 RET		imm				[i:	c2 iw]					8086,SW,BND
 RETF		void				[	cb]					8086
 RETF		imm				[i:	ca iw]					8086,SW
-RETN		void				[	c3]					8086,BND
-RETN		imm				[i:	c2 iw]					8086,SW,BND
-RETW		void				[	o16 c3]					8086,BND
-RETW		imm				[i:	c2 iw]					8086,SW,BND
-RETFW		void				[	o16 cb]					8086
-RETFW		imm				[i:	o16 ca iw]				8086,SW
-RETNW		void				[	o16 c3]					8086,BND
-RETNW		imm				[i:	o16 c2 iw]				8086,SW,BND
-RETD		void				[	o32 c3]					8086,BND,NOLONG
-RETD		imm				[i:	o32 c2 iw]				8086,SW,BND,NOLONG
-RETFD		void				[	o32 cb]					8086
-RETFD		imm				[i:	o32 ca iw]				8086,SW
-RETND		void				[	o32 c3]					8086,BND,NOLONG
-RETND		imm				[i:	o32 c2 iw]				8086,SW,BND,NOLONG
-RETQ		void				[	o64nw c3]				X86_64,LONG,BND
-RETQ		imm				[i:	o64nw c2 iw]				X86_64,LONG,SW,BND
-RETFQ		void				[	o64 cb]					X86_64,LONG
-RETFQ		imm				[i:	o64 ca iw]				X86_64,LONG,SW
-RETNQ		void				[	o64nw c3]				X86_64,LONG,BND
-RETNQ		imm				[i:	o64nw c2 iw]				X86_64,LONG,SW,BND
+;## RETN		void				[	c3]					8086,BND
+;## RETN		imm				[i:	c2 iw]					8086,SW,BND
+;## RETW		void				[	o16 c3]					8086,BND
+;## RETW		imm				[i:	c2 iw]					8086,SW,BND
+;## RETFW		void				[	o16 cb]					8086
+;## RETFW		imm				[i:	o16 ca iw]				8086,SW
+;## RETNW		void				[	o16 c3]					8086,BND
+;## RETNW		imm				[i:	o16 c2 iw]				8086,SW,BND
+;## RETD		void				[	o32 c3]					8086,BND,NOLONG
+;## RETD		imm				[i:	o32 c2 iw]				8086,SW,BND,NOLONG
+;## RETFD		void				[	o32 cb]					8086
+;## RETFD		imm				[i:	o32 ca iw]				8086,SW
+;## RETND		void				[	o32 c3]					8086,BND,NOLONG
+;## RETND		imm				[i:	o32 c2 iw]				8086,SW,BND,NOLONG
+;## RETQ		void				[	o64nw c3]				X86_64,LONG,BND
+;## RETQ		imm				[i:	o64nw c2 iw]				X86_64,LONG,SW,BND
+;## RETFQ		void				[	o64 cb]					X86_64,LONG
+;## RETFQ		imm				[i:	o64 ca iw]				X86_64,LONG,SW
+;## RETNQ		void				[	o64nw c3]				X86_64,LONG,BND
+;## RETNQ		imm				[i:	o64nw c2 iw]				X86_64,LONG,SW,BND
 
 ROL		rm8,unity			[m-:	d0 /0]					8086
 ROL		rm8,reg_cl			[m-:	d2 /0]					8086

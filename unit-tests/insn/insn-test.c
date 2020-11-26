@@ -1,6 +1,7 @@
 #include "compiler.h"
 
 #include "error.h"
+#include "seed.h"
 #include "generator.h"
 #include "insnlist.h"
 #include "ofmt.h"
@@ -19,8 +20,8 @@ static void insn_gen_operand_initialize(const operand *opnd_seed)
     bool seqMode = X86PGState.seqMode;
     X86PGState.seqMode = false;
     opnd_type = opnd_seed->type;
-    const_seed.opcode = I_MOV;
-    const_seed.operands = 2;
+    const_seed.insn_seed.opcode = I_MOV;
+    assign_arr5(const_seed.insn_seed.opd, opnd_seed->type,IMMEDIATE,0,0,0);
     insn mov_inst;
     if (is_class(REGISTER, opnd_type)) {
         if (!(REG_SREG & ~opnd_type))
@@ -31,7 +32,7 @@ static void insn_gen_operand_initialize(const operand *opnd_seed)
             const_seed.oprs[1].type = IMMEDIATE;
             const_seed.oprs_random[1] = true;
             one_insn_gen_const(&const_seed, &mov_inst);
-            insnlist_insert_head(X86PGState.instlist, &mov_inst);
+            insnlist_insert(X86PGState.instlist, &mov_inst);
         }
     } else {
         nasm_fatal("Unsupported operand initialize\n");
@@ -44,11 +45,10 @@ void gsp(const insn_seed *seed, const struct ofmt *ofmt)
     insn new_inst;
 
     while (one_insn_gen(seed, &new_inst)) {
-    //    one_insn_gen(seed, &new_inst);
-        insnlist_insert_head(X86PGState.instlist, &new_inst);
         for (int i = 0; i < new_inst.operands; i++) {
             insn_gen_operand_initialize(&new_inst.oprs[i]);
         }
+        insnlist_insert(X86PGState.instlist, &new_inst);
     }
     insnlist_output(X86PGState.instlist, ofmt);
     insnlist_clear(X86PGState.instlist);

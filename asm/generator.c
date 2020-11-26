@@ -5,6 +5,7 @@
 #include "assemble.h"
 #include "insns.h"
 #include "nctype.h"
+#include "seed.h"
 #include "generator.h"
 #include "gendata.h"
 #include "disasm.h"
@@ -156,6 +157,9 @@ static inline void init_operand(operand *op)
 
 bool one_insn_gen(const insn_seed *seed, insn *result)
 {
+#ifdef DEBUG_MODE
+    fprintf(stderr, "Gen inst: %s\n", nasm_insn_names[seed->opcode]);
+#endif
     int opnum = 0;
     char valbuf[20];
 
@@ -191,6 +195,7 @@ bool one_insn_gen(const insn_seed *seed, insn *result)
         opnd_seed.opcode = seed->opcode;
         opnd_seed.opndflags = seed->opd[i];
         opnd_seed.srcdestflags = calSrcDestFlags(seed->opcode, i, opnum);
+        opnd_seed.opdsize = calOperandSize(seed, i);
         gen_operand(&opnd_seed, (char *)valbuf);
         buf2token(valbuf, &tokval);
 
@@ -244,8 +249,12 @@ fail:
 
 bool one_insn_gen_const(const const_insn_seed *const_seed, insn *result)
 {
-    int i;
+#ifdef DEBUG_MODE
+    fprintf(stderr, "Gen const inst: %s\n", nasm_insn_names[const_seed->insn_seed.opcode]);
+#endif
+    int i, opnum = 0;
     char valbuf[20];
+    const insn_seed* seed;
 
     memset(result->prefixes, P_none, sizeof(result->prefixes));
     result->times       = 1;
@@ -254,15 +263,19 @@ bool one_insn_gen_const(const const_insn_seed *const_seed, insn *result)
     result->operands    = 0;
     result->evex_rm     = 0;
     result->evex_brerop = -1;
-    result->operands = 2;
 
-    gen_opcode(const_seed->opcode, (char *)valbuf);
+    seed = &const_seed->insn_seed;
+
+    gen_opcode(seed->opcode, (char *)valbuf);
     buf2token(valbuf, &tokval);
 
     result->opcode = tokval.t_integer;
     result->condition = tokval.t_inttwo;
 
-    for (i = 0; i < const_seed->operands; ++i) {
+    while (opnum < MAX_OPERANDS && seed->opd[opnum] != 0)
+        opnum++;
+
+    for (i = 0; i < opnum; ++i) {
         if (const_seed->oprs_random[i] == false) {
             result->oprs[i] = const_seed->oprs[i];
             continue;
@@ -276,9 +289,10 @@ bool one_insn_gen_const(const const_insn_seed *const_seed, insn *result)
         op = &result->oprs[i];
         init_operand(op);
 
-        opnd_seed.opcode = const_seed->opcode;
-        opnd_seed.opndflags = const_seed->oprs[i].type;
-        opnd_seed.srcdestflags = calSrcDestFlags(const_seed->opcode, i, const_seed->operands);
+        opnd_seed.opcode = seed->opcode;
+        opnd_seed.opndflags = seed->opd[i];
+        opnd_seed.srcdestflags = calSrcDestFlags(seed->opcode, i, opnum);
+        opnd_seed.opdsize = calOperandSize(seed, i);
         gen_operand(&opnd_seed, (char *)valbuf);
         buf2token(valbuf, &tokval);
 
@@ -316,6 +330,8 @@ bool one_insn_gen_const(const const_insn_seed *const_seed, insn *result)
             }
         }
     }
+
+    result->operands = opnum; /* set operand count */
 
     /* clear remaining operands */
     while (i < MAX_OPERANDS)

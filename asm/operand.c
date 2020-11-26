@@ -3,8 +3,8 @@
 #include "nasm.h"
 #include "nasmlib.h"
 #include "insns.h"
-#include "gendata.h"
 #include "error.h"
+#include "seed.h"
 #include "gendata.h"
 #include "regdis.h"
 #include "randomlib.h"
@@ -22,65 +22,92 @@ static int imms[14] =
 
 void create_specific_register(char *buffer, enum reg_enum R_reg)
 {
+#ifdef DEBUG_MODE
+    fprintf(stderr, "    try> create specific register\n");
+#endif
     const char *src;
     src = nasm_reg_names[R_reg - EXPR_REG_START];
     sprintf(buffer, "%s\n", src);
+#ifdef DEBUG_MODE
+    fprintf(stderr, "    done> new specific register: %s", buffer);
+#endif
 }
 
 void create_control_register(char *buffer)
 {
+#ifdef DEBUG_MODE
+    fprintf(stderr, "    try> create creg\n");
+#endif
     int cregi;
     enum reg_enum creg;
     const char *src;
 
     bseqiflags_t bseqiflags = bseqi_flags(REG_CREG);
     if (X86PGState.seqMode) {
-        cregi = X86PGState.bseqi.indexes[SEQIFLAG_INDEX(bseqiflags)];
+        cregi = X86PGState.bseqi.indexes[BSEQIFLAG_INDEXPOS(bseqiflags)];
     } else {
-        int cregn = SEQIFLAG_SEQINUM(bseqiflags);
+        int cregn = BSEQIFLAG_INDEXSIZE(bseqiflags);
         cregi = nasm_random(cregn);
     }
     creg = nasm_rd_creg[cregi];
     src = nasm_reg_names[creg - EXPR_REG_START];
     sprintf(buffer, "%s\n", src);
+#ifdef DEBUG_MODE
+    fprintf(stderr, "    done> new creg: %s", buffer);
+#endif
 }
 
 void create_segment_register(char *buffer)
 {
+#ifdef DEBUG_MODE
+    fprintf(stderr, "    try> create sreg\n");
+#endif
     int sregi;
     enum reg_enum sreg;
     const char *src;
 
     bseqiflags_t bseqiflags = bseqi_flags(REG_SREG);
     if (X86PGState.seqMode) {
-        sregi = X86PGState.bseqi.indexes[SEQIFLAG_INDEX(bseqiflags)];
+        sregi = X86PGState.bseqi.indexes[BSEQIFLAG_INDEXPOS(bseqiflags)];
     } else {
-        int sregn = SEQIFLAG_SEQINUM(bseqiflags);
+        int sregn = BSEQIFLAG_INDEXSIZE(bseqiflags);
         sregi = nasm_random(sregn);
     }
     sreg = nasm_rd_sreg[sregi];
     src = nasm_reg_names[sreg - EXPR_REG_START];
     sprintf(buffer, "%s\n", src);
+#ifdef DEBUG_MODE
+    fprintf(stderr, "    done> new sreg: %s", buffer);
+#endif
 }
 
 void create_unity(char *buffer, int shiftCount)
 {
+#ifdef DEBUG_MODE
+    fprintf(stderr, "    try> create unity with shitCount: %d\n", shiftCount);
+#endif
     int unity;
     unity = nasm_random(shiftCount + 1);
     sprintf(buffer, "%d\n", unity);
+#ifdef DEBUG_MODE
+    fprintf(stderr, "    done> new unity: %s", buffer);
+#endif
 }
 
 void create_gpr_register(char *buffer, opflags_t size)
 {
+#ifdef DEBUG_MODE
+    fprintf(stderr, "    try> create gpr\n");
+#endif
     int gpri;
     enum reg_enum gpr;
     const char *src;
 
     bseqiflags_t bseqiflags = bseqi_flags(REG_GPR|size);
     if (X86PGState.seqMode) {
-        gpri = X86PGState.bseqi.indexes[SEQIFLAG_INDEX(bseqiflags)];
+        gpri = X86PGState.bseqi.indexes[BSEQIFLAG_INDEXPOS(bseqiflags)];
     } else {
-        int gprn = SEQIFLAG_SEQINUM(bseqiflags);
+        int gprn = BSEQIFLAG_INDEXSIZE(bseqiflags);
         gpri = nasm_random(gprn);
     }
     switch (size) {
@@ -96,6 +123,9 @@ void create_gpr_register(char *buffer, opflags_t size)
     }
     src = nasm_reg_names[gpr - EXPR_REG_START];
     sprintf(buffer, "%s\n", src);
+#ifdef DEBUG_MODE
+    fprintf(stderr, "    done> new gpr: %s", buffer);
+#endif
 }
 
 /* Generate int type immediate.
@@ -104,15 +134,21 @@ void create_gpr_register(char *buffer, opflags_t size)
  */
 void create_immediate(char *buffer, opflags_t opflags)
 {
+#ifdef DEBUG_MODE
+    fprintf(stderr, "    try> create immediate\n");
+#endif
     int immi, imm;
     
     bseqiflags_t bseqiflags = bseqi_flags(IMMEDIATE|opflags);
     if (X86PGState.seqMode) {
-        immi = X86PGState.bseqi.indexes[SEQIFLAG_INDEX(bseqiflags)];
+        immi = X86PGState.bseqi.indexes[BSEQIFLAG_INDEXPOS(bseqiflags)];
         imm = imms[immi];
     } else {
         int immn = INT_MAX;
         imm = nasm_random(immn);
     }
-    sprintf(buffer, "%d\n", imm);
+    sprintf(buffer, "0x%x\n", imm);
+#ifdef DEBUG_MODE
+    fprintf(stderr, "    done> new immediate: %s", buffer);
+#endif
 }

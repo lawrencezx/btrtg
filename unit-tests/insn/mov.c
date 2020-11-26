@@ -1,5 +1,6 @@
 #include "compiler.h"
 
+#include "seed.h"
 #include "../ut.h"
 #include "generator.h"
 #include "ofmt.h"

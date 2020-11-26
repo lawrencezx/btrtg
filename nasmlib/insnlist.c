@@ -4,6 +4,7 @@
 #include "insnlist.h"
 #include "queue.h"
 #include "ofmt.h"
+#include "seed.h"
 #include "generator.h"
 
 struct insnlist_entry {
@@ -14,6 +15,7 @@ struct insnlist_entry {
 struct insnlist {
     TLIST_HEAD(, insnlist_entry) insn_entries;
     uint32_t insn_count;
+    struct insnlist_entry *tail;
 };
 
 
@@ -53,19 +55,26 @@ insnlist_t *insnlist_create(void)
 
     instlist = nasm_zalloc(sizeof(*instlist));
     TLIST_INIT(&instlist->insn_entries);
+    instlist->tail = NULL;
     instlist->insn_count = 0;
 
     return (instlist);
 }
 
-int insnlist_insert_head(insnlist_t *instlist, const insn* inst)
+int insnlist_insert(insnlist_t *instlist, const insn* inst)
 {
     if (inst == NULL)
         return -1;
     struct insnlist_entry *entry;
     entry = nasm_zalloc(sizeof(*entry));
     entry->insn = nasm_insndup(inst);
-    TLIST_INSERT_HEAD(&instlist->insn_entries, entry, insn_link);
+    if (instlist->tail == NULL) {
+        TLIST_INSERT_HEAD(&instlist->insn_entries, entry, insn_link);
+        instlist->tail = instlist->insn_entries.lh_first;
+    } else {
+        TLIST_INSERT_AFTER(instlist->tail, entry, insn_link);
+        instlist->tail = entry;
+    }
     instlist->insn_count++;
     return 0;
 }
@@ -80,6 +89,8 @@ void insnlist_clear(insnlist_t *instlist)
         nasm_insnfree(entry->insn);
         nasm_free(entry);
     }
+    instlist->tail = NULL;
+    instlist->insn_count = 0;
 }
 
 void insnlist_destroy(insnlist_t *instlist)
