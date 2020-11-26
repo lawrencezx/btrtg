@@ -54,6 +54,13 @@ union intorptr {
 };
 typedef union intorptr intorptr;
 
+/* Wrappers of random number generator for 32/64bit.
+ * 32bit: RAND_MAX = 0x7fffffff
+ * 64bit: RAND_MAX = 0x7fffffffffffffff
+ */
+int nasm_random32(int bound);
+long long nasm_random64(long long bound);
+
 /*
  * Wrappers around malloc, realloc, free and a few more. nasm_malloc
  * will fatal-error and die rather than return NULL; nasm_realloc will

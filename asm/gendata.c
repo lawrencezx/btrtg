@@ -532,15 +532,7 @@ void gen_operand(operand_seed *opnd_seed, char *buffer)
     /*special immediate values*/
     case UNITY:
     {
-        int shiftCount = 0;
-        if (opnd_seed->opdsize == BITS8) {
-            shiftCount = 8;
-        } else if (opnd_seed->opdsize == BITS16) {
-            shiftCount = 16;
-        } else if (opnd_seed->opdsize == BITS32) {
-            shiftCount = 32;
-        }
-        create_unity(buffer, shiftCount);
+        create_unity(buffer, opnd_seed);
         break;
     }
 
@@ -549,7 +541,7 @@ void gen_operand(operand_seed *opnd_seed, char *buffer)
 
     /* immediate */
     case IMMEDIATE:
-        create_immediate(buffer, opndflags & ~IMMEDIATE);
+        create_immediate(buffer, opnd_seed);
         break;
 //TODO:    case IMMEDIATE|BITS8:
 //TODO:    case IMMEDIATE|BITS16:
@@ -574,7 +566,7 @@ void gen_operand(operand_seed *opnd_seed, char *buffer)
     case REG_GPR|BITS8:
     case REG_GPR|BITS16:
     case REG_GPR|BITS32:
-        create_gpr_register(buffer, opndflags & SIZE_MASK);
+        create_gpr_register(buffer, opnd_seed);
         break;
 
 //TODO:    /* r/m */
@@ -583,7 +575,7 @@ void gen_operand(operand_seed *opnd_seed, char *buffer)
 //TODO:    case RM_GPR|BITS32:
 
     default:
-        nasm_nonfatal("unsupported opnd type");
+        nasm_fatal("unsupported opnd type");
         break;
     }
 }

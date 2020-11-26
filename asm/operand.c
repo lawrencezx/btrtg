@@ -7,7 +7,6 @@
 #include "seed.h"
 #include "gendata.h"
 #include "regdis.h"
-#include "randomlib.h"
 #include "x86pg.h"
 #include "operand.h"
 
@@ -47,7 +46,7 @@ void create_control_register(char *buffer)
         cregi = X86PGState.bseqi.indexes[BSEQIFLAG_INDEXPOS(bseqiflags)];
     } else {
         int cregn = BSEQIFLAG_INDEXSIZE(bseqiflags);
-        cregi = nasm_random(cregn);
+        cregi = nasm_random32(cregn);
     }
     creg = nasm_rd_creg[cregi];
     src = nasm_reg_names[creg - EXPR_REG_START];
@@ -71,7 +70,7 @@ void create_segment_register(char *buffer)
         sregi = X86PGState.bseqi.indexes[BSEQIFLAG_INDEXPOS(bseqiflags)];
     } else {
         int sregn = BSEQIFLAG_INDEXSIZE(bseqiflags);
-        sregi = nasm_random(sregn);
+        sregi = nasm_random32(sregn);
     }
     sreg = nasm_rd_sreg[sregi];
     src = nasm_reg_names[sreg - EXPR_REG_START];
@@ -81,20 +80,29 @@ void create_segment_register(char *buffer)
 #endif
 }
 
-void create_unity(char *buffer, int shiftCount)
+void create_unity(char *buffer, operand_seed *opnd_seed)
 {
 #ifdef DEBUG_MODE
-    fprintf(stderr, "    try> create unity with shitCount: %d\n", shiftCount);
+    fprintf(stderr, "    try> create unity\n");
 #endif
-    int unity;
-    unity = nasm_random(shiftCount + 1);
+    int unity, shiftCount;
+    
+    if (opnd_seed->opdsize == BITS8) {
+        shiftCount = 8;
+    } else if (opnd_seed->opdsize == BITS16) {
+        shiftCount = 16;
+    } else if (opnd_seed->opdsize == BITS32) {
+        shiftCount = 32;
+    }
+
+    unity = nasm_random32(shiftCount + 1);
     sprintf(buffer, "%d\n", unity);
 #ifdef DEBUG_MODE
     fprintf(stderr, "    done> new unity: %s", buffer);
 #endif
 }
 
-void create_gpr_register(char *buffer, opflags_t size)
+void create_gpr_register(char *buffer, operand_seed *opnd_seed)
 {
 #ifdef DEBUG_MODE
     fprintf(stderr, "    try> create gpr\n");
@@ -103,14 +111,14 @@ void create_gpr_register(char *buffer, opflags_t size)
     enum reg_enum gpr;
     const char *src;
 
-    bseqiflags_t bseqiflags = bseqi_flags(REG_GPR|size);
+    bseqiflags_t bseqiflags = bseqi_flags(opnd_seed->opndflags);
     if (X86PGState.seqMode) {
         gpri = X86PGState.bseqi.indexes[BSEQIFLAG_INDEXPOS(bseqiflags)];
     } else {
         int gprn = BSEQIFLAG_INDEXSIZE(bseqiflags);
-        gpri = nasm_random(gprn);
+        gpri = nasm_random32(gprn);
     }
-    switch (size) {
+    switch (opnd_seed->opdsize) {
         case BITS8:
             gpr = nasm_rd_reg8[gpri];
             break;
@@ -132,20 +140,34 @@ void create_gpr_register(char *buffer, opflags_t size)
  * If it's larger than the limmit (8/16-bits imm), the high significant bytes
  * will be wipped away while assembling.
  */
-void create_immediate(char *buffer, opflags_t opflags)
+void create_immediate(char *buffer, operand_seed* opnd_seed)
 {
 #ifdef DEBUG_MODE
     fprintf(stderr, "    try> create immediate\n");
 #endif
     int immi, imm;
     
-    bseqiflags_t bseqiflags = bseqi_flags(IMMEDIATE|opflags);
     if (X86PGState.seqMode) {
+        bseqiflags_t bseqiflags = bseqi_flags(opnd_seed->opndflags);
         immi = X86PGState.bseqi.indexes[BSEQIFLAG_INDEXPOS(bseqiflags)];
         imm = imms[immi];
     } else {
-        int immn = INT_MAX;
-        imm = nasm_random(immn);
+        long long immn;
+        switch (opnd_seed->opdsize) {
+            case BITS8:
+                immn = 0x100;
+                break;
+            case BITS16:
+                immn = 0x10000;
+                break;
+            case BITS32:
+                immn = 0x100000000;
+                break;
+            default:
+                nasm_fatal("wrong immediate size");
+                break;
+        }
+        imm = (int)nasm_random64(immn);
     }
     sprintf(buffer, "0x%x\n", imm);
 #ifdef DEBUG_MODE
