@@ -4,6 +4,7 @@
 #include "../ut.h"
 #include "generator.h"
 #include "ofmt.h"
+#include "dfmt.h"
 #include "insn-test.h"
 
 static insn_seed MOV_seed =
@@ -20,6 +21,7 @@ bool gen_test_file_MOV(void)
     generator_init(true);
 
     ofmt->init("test_MOV.s");
+    dfmt->init("debug_MOV.txt");
     
     data.type = OUTPUT_RAWDATA;
     data.buf = (const char *)fout_head;
@@ -34,6 +36,7 @@ bool gen_test_file_MOV(void)
     ofmt->output(&data);
     
     ofmt->cleanup();
+    dfmt->cleanup();
 
     generator_exit();
     return true;

@@ -9,6 +9,7 @@
 #include "regdis.h"
 #include "x86pg.h"
 #include "operand.h"
+#include "dfmt.h"
 
 static int imms[14] =
 {
@@ -21,22 +22,16 @@ static int imms[14] =
 
 void create_specific_register(char *buffer, enum reg_enum R_reg)
 {
-#ifdef DEBUG_MODE
-    fprintf(stderr, "    try> create specific register\n");
-#endif
+    dfmt->print("    try> create specific register\n");
     const char *src;
     src = nasm_reg_names[R_reg - EXPR_REG_START];
     sprintf(buffer, "%s\n", src);
-#ifdef DEBUG_MODE
-    fprintf(stderr, "    done> new specific register: %s", buffer);
-#endif
+    dfmt->print("    done> new specific register: %s", buffer);
 }
 
 void create_control_register(char *buffer)
 {
-#ifdef DEBUG_MODE
-    fprintf(stderr, "    try> create creg\n");
-#endif
+    dfmt->print("    try> create creg\n");
     int cregi;
     enum reg_enum creg;
     const char *src;
@@ -51,16 +46,12 @@ void create_control_register(char *buffer)
     creg = nasm_rd_creg[cregi];
     src = nasm_reg_names[creg - EXPR_REG_START];
     sprintf(buffer, "%s\n", src);
-#ifdef DEBUG_MODE
-    fprintf(stderr, "    done> new creg: %s", buffer);
-#endif
+    dfmt->print("    done> new creg: %s", buffer);
 }
 
 void create_segment_register(char *buffer)
 {
-#ifdef DEBUG_MODE
-    fprintf(stderr, "    try> create sreg\n");
-#endif
+    dfmt->print("    try> create sreg\n");
     int sregi;
     enum reg_enum sreg;
     const char *src;
@@ -75,16 +66,12 @@ void create_segment_register(char *buffer)
     sreg = nasm_rd_sreg[sregi];
     src = nasm_reg_names[sreg - EXPR_REG_START];
     sprintf(buffer, "%s\n", src);
-#ifdef DEBUG_MODE
-    fprintf(stderr, "    done> new sreg: %s", buffer);
-#endif
+    dfmt->print("    done> new sreg: %s", buffer);
 }
 
 void create_unity(char *buffer, operand_seed *opnd_seed)
 {
-#ifdef DEBUG_MODE
-    fprintf(stderr, "    try> create unity\n");
-#endif
+    dfmt->print("    try> create unity\n");
     int unity, shiftCount;
     
     if (opnd_seed->opdsize == BITS8) {
@@ -97,16 +84,12 @@ void create_unity(char *buffer, operand_seed *opnd_seed)
 
     unity = nasm_random32(shiftCount + 1);
     sprintf(buffer, "%d\n", unity);
-#ifdef DEBUG_MODE
-    fprintf(stderr, "    done> new unity: %s", buffer);
-#endif
+    dfmt->print("    done> new unity: %s", buffer);
 }
 
 void create_gpr_register(char *buffer, operand_seed *opnd_seed)
 {
-#ifdef DEBUG_MODE
-    fprintf(stderr, "    try> create gpr\n");
-#endif
+    dfmt->print("    try> create gpr\n");
     int gpri;
     enum reg_enum gpr;
     const char *src;
@@ -131,9 +114,7 @@ void create_gpr_register(char *buffer, operand_seed *opnd_seed)
     }
     src = nasm_reg_names[gpr - EXPR_REG_START];
     sprintf(buffer, "%s\n", src);
-#ifdef DEBUG_MODE
-    fprintf(stderr, "    done> new gpr: %s", buffer);
-#endif
+    dfmt->print("    done> new gpr: %s", buffer);
 }
 
 /* Generate int type immediate.
@@ -142,9 +123,7 @@ void create_gpr_register(char *buffer, operand_seed *opnd_seed)
  */
 void create_immediate(char *buffer, operand_seed* opnd_seed)
 {
-#ifdef DEBUG_MODE
-    fprintf(stderr, "    try> create immediate\n");
-#endif
+    dfmt->print("    try> create immediate\n");
     int immi, imm;
     
     if (X86PGState.seqMode) {
@@ -170,7 +149,5 @@ void create_immediate(char *buffer, operand_seed* opnd_seed)
         imm = (int)nasm_random64(immn);
     }
     sprintf(buffer, "0x%x\n", imm);
-#ifdef DEBUG_MODE
-    fprintf(stderr, "    done> new immediate: %s", buffer);
-#endif
+    dfmt->print("    done> new immediate: %s", buffer);
 }

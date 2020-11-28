@@ -16,6 +16,7 @@
 #include "insnlist.h"
 #include "bseqi.h"
 #include "x86pg.h"
+#include "dfmt.h"
 
 bool global_sequence;
 
@@ -157,9 +158,7 @@ static inline void init_operand(operand *op)
 
 bool one_insn_gen(const insn_seed *seed, insn *result)
 {
-#ifdef DEBUG_MODE
-    fprintf(stderr, "Gen inst: %s\n", nasm_insn_names[seed->opcode]);
-#endif
+    dfmt->print("Gen inst: %s\n", nasm_insn_names[seed->opcode]);
     int opnum = 0;
     char valbuf[20];
 
@@ -249,9 +248,7 @@ fail:
 
 bool one_insn_gen_const(const const_insn_seed *const_seed, insn *result)
 {
-#ifdef DEBUG_MODE
-    fprintf(stderr, "Gen const inst: %s\n", nasm_insn_names[const_seed->insn_seed.opcode]);
-#endif
+    dfmt->print("Gen const inst: %s\n", nasm_insn_names[const_seed->insn_seed.opcode]);
     int i, opnum = 0;
     char valbuf[20];
     const insn_seed* seed;
