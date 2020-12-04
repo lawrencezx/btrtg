@@ -20,13 +20,6 @@ typedef struct insn_seed {
     opflags_t       opd[MAX_OPERANDS];
 } insn_seed;
 
-typedef struct const_insn_seed {
-    insn_seed       insn_seed;
-    bool            oprs_random[MAX_OPERANDS];
-    operand         oprs[MAX_OPERANDS];
-} const_insn_seed;
-
 void create_insn_seed(insn_seed *seed);
-void create_const_insn_seed(const_insn_seed *const_seed);
 
 #endif

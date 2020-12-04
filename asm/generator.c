@@ -15,6 +15,7 @@
 #include "operand.h"
 #include "insnlist.h"
 #include "bseqi.h"
+#include "parseXML.h"
 #include "x86pg.h"
 #include "dfmt.h"
 
@@ -80,6 +81,8 @@ void generator_init(bool set_sequence)
 
     init_x86pgstate();
     X86PGState.seqMode = set_sequence;
+
+    init_TKs();
 
     gendata_init();
 
@@ -156,11 +159,115 @@ static inline void init_operand(operand *op)
     op->wrt      = NO_SEG;
 }
 
+static int parse_mref(operand *op, const expr *e)
+{
+    int b, i, s;        /* basereg, indexreg, scale */
+    int64_t o;          /* offset */
+
+    b = op->basereg;
+    i = op->indexreg;
+    s = op->scale;
+    o = op->offset;
+
+    for (; e->type; e++) {
+        if (e->type <= EXPR_REG_END) {
+            bool is_gpr = is_class(REG_GPR,nasm_reg_flags[e->type]);
+
+            if (is_gpr && e->value == 1 && b == -1) {
+                /* It can be basereg */
+                b = e->type;
+            } else if (i == -1) {
+                /* Must be index register */
+                i = e->type;
+                s = e->value;
+            } else {
+                if (b == -1)
+                    nasm_nonfatal("invalid effective address: two index registers");
+                else if (!is_gpr)
+                    nasm_nonfatal("invalid effective address: impossible register");
+                else
+                    nasm_nonfatal("invalid effective address: too many registers");
+                return -1;
+            }
+        } else if (e->type == EXPR_UNKNOWN) {
+            op->opflags |= OPFLAG_UNKNOWN;
+        } else if (e->type == EXPR_SIMPLE) {
+            o += e->value;
+        } else if  (e->type == EXPR_WRT) {
+            op->wrt = e->value;
+        } else if (e->type >= EXPR_SEGBASE) {
+            if (e->value == 1) {
+                if (op->segment != NO_SEG) {
+                    nasm_nonfatal("invalid effective address: multiple base segments");
+                    return -1;
+                }
+                op->segment = e->type - EXPR_SEGBASE;
+            } else if (e->value == -1 &&
+                       e->type == location.segment + EXPR_SEGBASE &&
+                       !(op->opflags & OPFLAG_RELATIVE)) {
+                op->opflags |= OPFLAG_RELATIVE;
+            } else {
+                nasm_nonfatal("invalid effective address: impossible segment base multiplier");
+                return -1;
+            }
+        } else {
+            nasm_nonfatal("invalid effective address: bad subexpression type");
+            return -1;
+        }
+   }
+
+    op->basereg  = b;
+    op->indexreg = i;
+    op->scale    = s;
+    op->offset   = o;
+    return 0;
+}
+
+static void mref_set_optype(operand *op)
+{
+    int b = op->basereg;
+    int i = op->indexreg;
+    int s = op->scale;
+
+    /* It is memory, but it can match any r/m operand */
+    op->type |= MEMORY_ANY;
+
+    if (b == -1 && (i == -1 || s == 0)) {
+        int is_rel = globalbits == 64 &&
+            !(op->eaflags & EAF_ABS) &&
+            ((globalrel &&
+              !(op->eaflags & EAF_FSGS)) ||
+             (op->eaflags & EAF_REL));
+
+        op->type |= is_rel ? IP_REL : MEM_OFFS;
+    }
+
+    if (i != -1) {
+        opflags_t iclass = nasm_reg_flags[i];
+
+        if (is_class(XMMREG,iclass))
+            op->type |= XMEM;
+        else if (is_class(YMMREG,iclass))
+            op->type |= YMEM;
+        else if (is_class(ZMMREG,iclass))
+            op->type |= ZMEM;
+    }
+}
+
 bool one_insn_gen(const insn_seed *seed, insn *result)
 {
-    dfmt->print("Gen inst: %s\n", nasm_insn_names[seed->opcode]);
-    int opnum = 0;
-    char valbuf[20];
+    if (seed != NULL) {
+        dfmt->print("Gen inst: %s\n", nasm_insn_names[seed->opcode]);
+    } else {
+        dfmt->print("Gen const inst: %s\n", get_token_bufptr());
+    }
+    int i;
+    int opi = 0;
+    struct eval_hints hints;
+
+    if (seed != NULL) {
+        X86PGState.curr_seed = seed;
+    }
 
     memset(result->prefixes, P_none, sizeof(result->prefixes));
     result->times       = 1;
@@ -170,46 +277,83 @@ bool one_insn_gen(const insn_seed *seed, insn *result)
     result->evex_rm     = 0;
     result->evex_brerop = -1;
 
-    gen_opcode(seed->opcode, (char *)valbuf);
-    buf2token(valbuf, &tokval);
+    if (seed != NULL) {
+        gen_opcode(seed->opcode, get_token_cbufptr());
+    }
+    i = get_token(&tokval);
 
     result->opcode = tokval.t_integer;
     result->condition = tokval.t_inttwo;
 
-    while (opnum < MAX_OPERANDS && seed->opd[opnum] != 0)
-        opnum++;
+//    if (seed != NULL && X86PGState.seqMode && !bseqi_inc(&X86PGState.bseqi, seed, opnum))
+//        return false;
 
-    if (X86PGState.seqMode && !bseqi_inc(&X86PGState.bseqi, seed, opnum))
-        return false;
-
-    for (int i = 0; i < opnum; ++i) {
+    while (true) {
         expr *value;
         bool mref = false;
+        int bracket = 0;
+        bool mib;
         operand *op;
-        operand_seed opnd_seed;
 
-        op = &result->oprs[i];
+        op = &result->oprs[opi];
         init_operand(op);
 
-        opnd_seed.opcode = seed->opcode;
-        opnd_seed.opndflags = seed->opd[i];
-        opnd_seed.srcdestflags = calSrcDestFlags(seed->opcode, i, opnum);
-        opnd_seed.opdsize = calOperandSize(seed, i);
-        gen_operand(&opnd_seed, (char *)valbuf);
-        buf2token(valbuf, &tokval);
+        if (seed != NULL) {
+            if (seed->opd[opi] == 0) {
+                break;
+            }
+            operand_seed opnd_seed;
+            opnd_seed.opcode = seed->opcode;
+            opnd_seed.opndflags = seed->opd[opi];
+            opnd_seed.srcdestflags = calSrcDestFlags(seed, opi);
+            opnd_seed.opdsize = calOperandSize(seed, opi);
+            gen_operand(&opnd_seed, get_token_cbufptr());
+        }
+        i = get_token(&tokval);
+        if (i == TOKEN_EOS)
+            break;              /* end of operands: get out of here */
 
         op->type = 0;
+
+        if (i == '[' || i == TOKEN_MASM_PTR || i == '&') {
+            /* memory reference */
+            mref = true;
+            bracket += (i == '[');
+            i = get_token(&tokval);
+        }
 
         /* mref_more: */
         if (mref) {
           /* TODO */
         }
 
-        value = evaluate(NULL, NULL, &tokval,
-                         &op->opflags, false, NULL);
+        value = evaluate(get_token, NULL, &tokval,
+                         &op->opflags, false, &hints);
+        i = tokval.t_type;
+
+        mib = false;
 
         if (mref) {
+            if (bracket == 1) {
+                if (i == ']') {
+                    bracket--;
+                    i = get_token(&tokval);
+                } else {
+                    nasm_nonfatal("expecting ] at end of memory operand");
+                }
+            }
           /* TODO */
+        }
+
+        if (mref) {             /* it's a memory reference */
+            /* A mib reference was fully parsed already */
+            if (!mib) {
+                if (parse_mref(op, value))
+                    goto fail;
+                op->hintbase = hints.base;
+                op->hinttype = hints.type;
+            }
+            mref_set_optype(op);
         } else {
             if (is_reloc(value)) {          /* it's immediate */
                 uint64_t n = reloc_value(value);
@@ -231,112 +375,33 @@ bool one_insn_gen(const insn_seed *seed, insn *result)
                 op->basereg    = value->type;
             }
         }
+        opi++;
     }
 
-    result->operands = opnum; /* set operand count */
+    result->operands = opi; /* set operand count */
 
     /* clear remaining operands */
-    while (opnum < MAX_OPERANDS)
-        result->oprs[opnum++].type = 0;
+    while (opi < MAX_OPERANDS)
+        result->oprs[opi++].type = 0;
 
     return true;
 
 fail:
+    nasm_fatal("fail to generate instruction");
     /* TODO */
     return true;
 }
 
-bool one_insn_gen_const(const const_insn_seed *const_seed, insn *result)
+bool one_insn_gen_const(const char *asm_buffer)
 {
-    dfmt->print("Gen const inst: %s\n", nasm_insn_names[const_seed->insn_seed.opcode]);
-    int i, opnum = 0;
-    char valbuf[20];
-    const insn_seed* seed;
-
-    memset(result->prefixes, P_none, sizeof(result->prefixes));
-    result->times       = 1;
-    result->label       = NULL;
-    result->eops        = NULL;
-    result->operands    = 0;
-    result->evex_rm     = 0;
-    result->evex_brerop = -1;
-
-    seed = &const_seed->insn_seed;
-
-    gen_opcode(seed->opcode, (char *)valbuf);
-    buf2token(valbuf, &tokval);
-
-    result->opcode = tokval.t_integer;
-    result->condition = tokval.t_inttwo;
-
-    while (opnum < MAX_OPERANDS && seed->opd[opnum] != 0)
-        opnum++;
-
-    for (i = 0; i < opnum; ++i) {
-        if (const_seed->oprs_random[i] == false) {
-            result->oprs[i] = const_seed->oprs[i];
-            continue;
-        }
-
-        expr *value;
-        bool mref = false;
-        operand *op;
-        operand_seed opnd_seed;
-
-        op = &result->oprs[i];
-        init_operand(op);
-
-        opnd_seed.opcode = seed->opcode;
-        opnd_seed.opndflags = seed->opd[i];
-        opnd_seed.srcdestflags = calSrcDestFlags(seed->opcode, i, opnum);
-        opnd_seed.opdsize = calOperandSize(seed, i);
-        gen_operand(&opnd_seed, (char *)valbuf);
-        buf2token(valbuf, &tokval);
-
-        op->type = 0;
-
-        /* mref_more: */
-        if (mref) {
-          /* TODO */
-        }
-
-        value = evaluate(NULL, NULL, &tokval,
-                         &op->opflags, false, NULL);
-
-        if (mref) {
-          /* TODO */
-        } else {
-            if (is_reloc(value)) {          /* it's immediate */
-                uint64_t n = reloc_value(value);
-
-                op->type       |= IMMEDIATE;
-                op->offset     = n;
-                op->segment    = reloc_seg(value);
-                op->wrt        = reloc_wrt(value);
-                op->opflags    |= is_self_relative(value) ? OPFLAG_RELATIVE : 0;
-            } else {                        /* it's a register */
-                if (value->type >= EXPR_SIMPLE || value->value != 1) {
-                    nasm_nonfatal("invalid operand type");
-                    goto fail;
-                }
-
-                op->type       &= TO;
-                op->type       |= REGISTER;
-                op->type       |= nasm_reg_flags[value->type];
-                op->basereg    = value->type;
-            }
-        }
-    }
-
-    result->operands = opnum; /* set operand count */
-
-    /* clear remaining operands */
-    while (i < MAX_OPERANDS)
-        result->oprs[i++].type = 0;
-
-    return true;
-
-fail:
-    /* TODO */
-    return true;
+    insn const_inst;
+    char temp[128], *old_bufptr = get_token_bufptr();
+    bool sucess = false;
+    sprintf(temp, "%s", asm_buffer);
+    set_token_bufptr(temp);
+    sucess = one_insn_gen(NULL, &const_inst);
+    if (sucess)
+        insnlist_insert(X86PGState.instlist, &const_inst);
+    set_token_bufptr(old_bufptr);
+    return sucess;
 }

@@ -307,7 +307,7 @@ struct tokenval {
     enum token_type     t_type;
     int8_t              t_flag;
 };
-typedef int (*scanner)(void *private_data, struct tokenval *tv);
+typedef int (*scanner)(struct tokenval *tv);
 
 struct location {
     int64_t offset;

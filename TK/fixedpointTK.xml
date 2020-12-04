@@ -1,0 +1,6 @@
+<TKs>
+    <TK inst = "add" initP = "0.4">
+        <Node name = "arith" weight="50"> </Node>
+        <Node name = "normal" weight="50"> </Node>
+    </TK>
+</TKs>

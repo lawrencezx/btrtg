@@ -7,7 +7,7 @@
 struct X86PGState {
     bool seqMode;
     big_sequence_index bseqi;
-    insn_seed *curr_seed;
+    const insn_seed *curr_seed;
     insn *curr_inst;
     insnlist_t *instlist;
 };

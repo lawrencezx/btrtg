@@ -12,7 +12,8 @@ include_directories(${srcdir}
                     ${srcdir}/x86
                     ${srcdir}/asm
                     ${srcdir}/config
-                    ${srcdir}/disasm)
+                    ${srcdir}/disasm
+                    /usr/include/libxml2)
 
 # @OUTPUT: generate dependencies
 SET(GEN_TARS
@@ -69,6 +70,8 @@ file(GLOB LIB_SRCS stdlib/*.c
                    disasm/*.c
                    output/*.c)
 add_library(nasmlib STATIC ${LIB_SRCS})
+target_link_libraries(nasmlib xml2)
+#target_link_libraries(nasmlib libxml2.so)
 add_dependencies(nasmlib perlreq)
 
 add_subdirectory(unit-tests)

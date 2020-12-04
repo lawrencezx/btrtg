@@ -61,6 +61,10 @@ typedef union intorptr intorptr;
 int nasm_random32(int bound);
 long long nasm_random64(long long bound);
 
+/* Transform string to number.
+ */
+int hex2dec(const char *hex);
+
 /*
  * Wrappers around malloc, realloc, free and a few more. nasm_malloc
  * will fatal-error and die rather than return NULL; nasm_realloc will

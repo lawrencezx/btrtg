@@ -10,9 +10,14 @@
 #include "operand.h"
 #include <string.h>
 
-srcdestflags_t calSrcDestFlags(enum opcode op, int opnum, int operands)
+srcdestflags_t calSrcDestFlags(const insn_seed *seed, int opi)
 {
     srcdestflags_t srcdestflags = 0;
+    enum opcode op = seed->opcode;
+    int operands = 0;
+    while (seed->opd[operands]) {
+        operands++;
+    }
 
     switch (op) {
     case I_AAD:
@@ -255,7 +260,7 @@ srcdestflags_t calSrcDestFlags(enum opcode op, int opnum, int operands)
     case I_CMPORDSD:
     case I_CMPUNORDPD:
     case I_CMPUNORDSD:
-        if (opnum == 0) {
+        if (opi == 0) {
             srcdestflags = OPDEST;
             if (operands <= 2) {
                 srcdestflags |= OPSRC;
@@ -291,7 +296,7 @@ srcdestflags_t calSrcDestFlags(enum opcode op, int opnum, int operands)
     case I_FSUBRP:
     case I_FISUBR:
         srcdestflags = OPSRC;
-        if (opnum == 0 &&
+        if (opi == 0 &&
             operands >= 2) {
             srcdestflags |= OPDEST;
         }
@@ -360,7 +365,7 @@ srcdestflags_t calSrcDestFlags(enum opcode op, int opnum, int operands)
     case I_FCMOVNE:
     case I_FCMOVNU:
     case I_FCMOVU:
-        if (opnum == 0) {
+        if (opi == 0) {
             srcdestflags = OPDEST;
         } else {
             srcdestflags = OPSRC;
@@ -370,7 +375,7 @@ srcdestflags_t calSrcDestFlags(enum opcode op, int opnum, int operands)
         if (operands == 1) {
             srcdestflags = OPSRC;
         } else {
-            if (opnum == 0) {
+            if (opi == 0) {
                 srcdestflags = OPDEST;
                 if (operands <= 2) {
                     srcdestflags |= OPSRC;
@@ -383,7 +388,7 @@ srcdestflags_t calSrcDestFlags(enum opcode op, int opnum, int operands)
     case I_SHUFPD:
     case I_SHUFPS:
         srcdestflags = OPSRC;
-        if (opnum == 0) {
+        if (opi == 0) {
             srcdestflags |= OPDEST;
         }
         break;
@@ -553,10 +558,12 @@ void gen_operand(operand_seed *opnd_seed, char *buffer)
 //TODO:    case IMMEDIATE|BITS32|NEAR:
 //TODO:    case IMMEDIATE|SHORT:
 //TODO:    case IMMEDIATE|NEAR:
-//TODO:
-//TODO:
-//TODO:    /* memory */
-//TODO:    case MEMORY:
+
+
+    /* memory */
+    case MEMORY:
+        create_memory(buffer);
+        break;
 //TODO:    case MEMORY|BITS8:
 //TODO:    case MEMORY|BITS16:
 //TODO:    case MEMORY|BITS32:

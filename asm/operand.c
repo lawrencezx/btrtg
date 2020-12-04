@@ -10,6 +10,8 @@
 #include "x86pg.h"
 #include "operand.h"
 #include "dfmt.h"
+#include "model.h"
+#include "generator.h"
 
 static int imms[14] =
 {
@@ -92,7 +94,7 @@ void create_gpr_register(char *buffer, operand_seed *opnd_seed)
     dfmt->print("    try> create gpr\n");
     int gpri;
     enum reg_enum gpr;
-    const char *src;
+    const char *instName, *src;
 
     bseqiflags_t bseqiflags = bseqi_flags(opnd_seed->opndflags);
     if (X86PGState.seqMode) {
@@ -113,6 +115,13 @@ void create_gpr_register(char *buffer, operand_seed *opnd_seed)
             break;
     }
     src = nasm_reg_names[gpr - EXPR_REG_START];
+
+    instName = nasm_insn_names[X86PGState.curr_seed->opcode];
+    if (request_initialize(instName)) {
+        constVal *cVal = request_constVal(instName);
+        sprintf(buffer, "mov %s, 0x%x", src, (cVal == NULL) ? (int)nasm_random64(0x100000000) : cVal->imm32);
+        one_insn_gen_const(buffer);
+    }
     sprintf(buffer, "%s\n", src);
     dfmt->print("    done> new gpr: %s", buffer);
 }
@@ -125,6 +134,7 @@ void create_immediate(char *buffer, operand_seed* opnd_seed)
 {
     dfmt->print("    try> create immediate\n");
     int immi, imm;
+    const char *instName;
     
     if (X86PGState.seqMode) {
         bseqiflags_t bseqiflags = bseqi_flags(opnd_seed->opndflags);
@@ -148,6 +158,108 @@ void create_immediate(char *buffer, operand_seed* opnd_seed)
         }
         imm = (int)nasm_random64(immn);
     }
+
+    instName = nasm_insn_names[X86PGState.curr_seed->opcode];
+    if (request_initialize(instName)) {
+        constVal *cVal = request_constVal(instName);
+        if (cVal != NULL)
+            imm = cVal->imm32;
+    }
     sprintf(buffer, "0x%x\n", imm);
     dfmt->print("    done> new immediate: %s", buffer);
+}
+
+static void create_random_sib(char *buffer)
+{
+    int bi, si;
+    const char *base[8] = {
+        "eax",   "ecx",   "edx",   "ebx",   "esp", "",      "esi",   "edi"
+    };
+    const char *scaledIndex[32] = {
+        "eax",   "ecx",   "edx",   "ebx",   "",    "ebp",   "esi",   "edi",
+        "eax*2", "ecx*2", "edx*2", "ebx*2", "",    "ebp*2", "esi*2", "edi*2",
+        "eax*4", "ecx*4", "edx*4", "ebx*4", "",    "ebp*4", "esi*4", "edi*4",
+        "eax*8", "ecx*8", "edx*8", "ebx*8", "",    "ebp*8", "esi*8", "edi*8",
+    };
+    bi = nasm_random32((int)ARRAY_SIZE(base));
+    si = nasm_random32((int)ARRAY_SIZE(scaledIndex));
+    if (strcmp(base[bi], "") == 0 && strcmp(scaledIndex[si], "") == 0) {
+    } else if (strcmp(base[bi], "") == 0) {
+        sprintf(buffer, "%s", scaledIndex[si]);
+    } else if (strcmp(scaledIndex[si], "") == 0) {
+        sprintf(buffer, "%s", base[bi]);
+    } else {
+        sprintf(buffer, "%s + %s", base[bi], scaledIndex[si]);
+    }
+}
+
+static int random_disp8()
+{
+    return nasm_random32(0x80);
+}
+
+static int random_disp32()
+{
+    return (int)nasm_random64(0x80000000);
+}
+
+static void create_random_modrm(char *buffer)
+{
+    int modrmi, disp = 0;
+    char sib[32];
+    const int modrmn = 24;
+    modrmi = nasm_random32(modrmn);
+    if (modrmi == 004 || modrmi == 014 || modrmi == 024) {
+        create_random_sib(sib);
+    }
+    if ((modrmi & 030) == 010) {
+        disp = random_disp8();
+    } else if ((modrmi & 030) == 020 || modrmi == 005) {
+        disp = random_disp32();
+    }
+    switch (modrmi & 007) {
+        /* mod 00 */
+        case 000:
+            sprintf(buffer, "[eax + 0x%x]", disp);
+            break;
+        case 001:
+            sprintf(buffer, "[ecx + 0x%x]", disp);
+            break;
+        case 002:
+            sprintf(buffer, "[edx + 0x%x]", disp);
+            break;
+        case 003:
+            sprintf(buffer, "[ebx + 0x%x]", disp);
+            break;
+        case 004:
+            sprintf(buffer, "[%s + 0x%x]", sib, disp);
+            break;
+        case 005:
+            if (modrmi == 005) {
+                sprintf(buffer, "0x%x", disp);
+            } else {
+                sprintf(buffer, "[ebp + 0x%x]", disp);
+            }
+            break;
+        case 006:
+            sprintf(buffer, "[esi + 0x%x]", disp);
+            break;
+        case 007:
+            sprintf(buffer, "[edi + 0x%x]", disp);
+            break;
+        default:
+            nasm_nonfatal("unsupported modr/m form");
+            break;
+    }
+}
+
+void create_memory(char *buffer)
+{
+    dfmt->print("    try> create memory\n");
+    if (globalbits == 16) {
+        nasm_nonfatal("unsupported 16-bit memory type");
+    } else {
+        create_random_modrm(buffer);
+    }
+    dfmt->print("    done> new memory: %s", buffer);
 }
