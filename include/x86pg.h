@@ -1,6 +1,11 @@
-#ifndef NASM_BSEQI_H
-#define NASM_BSEQI_H
+#ifndef NASM_X86PG_H
+#define NASM_X86PG_H
 
+#include "insnlist.h"
+
+
+/* big sequence index
+ */
 #define SEQ_INDEXES_NUM 6
 /* big_sequence_index:
  *     A big index structure used to traverse all the operand combinations.
@@ -43,5 +48,20 @@ typedef uint32_t bseqiflags_t;
 void bseqi_init(big_sequence_index *bseqi);
 bseqiflags_t bseqi_flags(opflags_t opndflags);
 bool bseqi_inc(big_sequence_index *bseqi, const insn_seed *seed, int opnum);
+
+
+/* global program generator state
+ */
+struct X86PGState {
+    bool seqMode;
+    big_sequence_index bseqi;
+    const insn_seed *curr_seed;
+    insn *curr_inst;
+    insnlist_t *instlist;
+};
+
+extern struct X86PGState X86PGState;
+
+void init_x86pgstate(void);
 
 #endif

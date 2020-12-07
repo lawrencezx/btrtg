@@ -10,7 +10,9 @@ SET(RUNPERL perl -I${srcdir}/perllib -I${srcdir})
 include_directories(${srcdir}
                     ${srcdir}/include
                     ${srcdir}/x86
-                    ${srcdir}/asm
+                    ${srcdir}/stat
+                    ${srcdir}/xmlparser
+                    ${srcdir}/core
                     ${srcdir}/config
                     ${srcdir}/disasm
                     /usr/include/libxml2)
@@ -32,9 +34,9 @@ SET(GEN_TARS
   ${srcdir}/x86/regs.h
 
   ${srcdir}/include/warnings.h
-  ${srcdir}/asm/warnings.c
-  ${srcdir}/asm/tokhash.c
-  ${srcdir}/asm/tokens.h)
+  ${srcdir}/core/warnings.c
+  ${srcdir}/core/tokhash.c
+  ${srcdir}/core/tokens.h)
 
 add_custom_command(OUTPUT ${GEN_TARS}
   COMMAND ${RUNPERL} ${srcdir}/x86/insns.pl -fc ${srcdir}/x86/insns.dat ${srcdir}/x86/iflag.c
@@ -52,10 +54,10 @@ add_custom_command(OUTPUT ${GEN_TARS}
   COMMAND ${RUNPERL} ${srcdir}/x86/regs.pl vc ${srcdir}/x86/regs.dat > ${srcdir}/x86/regvals.c
   COMMAND ${RUNPERL} ${srcdir}/x86/regs.pl h ${srcdir}/x86/regs.dat > ${srcdir}/x86/regs.h
 
-  COMMAND ${RUNPERL} ${srcdir}/asm/warnings.pl c ${srcdir}/asm/warnings.c ${srcdir}
-  COMMAND ${RUNPERL} ${srcdir}/asm/warnings.pl h ${srcdir}/include/warnings.h ${srcdir}
-  COMMAND ${RUNPERL} ${srcdir}/asm/tokhash.pl c ${srcdir}/x86/insns.dat ${srcdir}/x86/regs.dat ${srcdir}/asm/tokens.dat > ${srcdir}/asm/tokhash.c
-  COMMAND ${RUNPERL} ${srcdir}/asm/tokhash.pl h ${srcdir}/x86/insns.dat ${srcdir}/x86/regs.dat ${srcdir}/asm/tokens.dat > ${srcdir}/asm/tokens.h)
+  COMMAND ${RUNPERL} ${srcdir}/core/warnings.pl c ${srcdir}/core/warnings.c ${srcdir}
+  COMMAND ${RUNPERL} ${srcdir}/core/warnings.pl h ${srcdir}/include/warnings.h ${srcdir}
+  COMMAND ${RUNPERL} ${srcdir}/core/tokhash.pl c ${srcdir}/x86/insns.dat ${srcdir}/x86/regs.dat ${srcdir}/core/tokens.dat > ${srcdir}/core/tokhash.c
+  COMMAND ${RUNPERL} ${srcdir}/core/tokhash.pl h ${srcdir}/x86/insns.dat ${srcdir}/x86/regs.dat ${srcdir}/core/tokens.dat > ${srcdir}/core/tokens.h)
 
 
 # @target: perlreq, nasmlib dependencies
@@ -66,7 +68,9 @@ file(GLOB LIB_SRCS stdlib/*.c
                    nasmlib/*.c
                    common/*.c
                    x86/*.c
-                   asm/*.c
+                   stat/*.c
+                   xmlparser/*.c
+                   core/*.c
                    disasm/*.c
                    output/*.c)
 add_library(nasmlib STATIC ${LIB_SRCS})

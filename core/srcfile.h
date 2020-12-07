@@ -156,27 +156,4 @@ static inline void src_error_reset(void)
     _src_error = &_src_top;
 }
 
-/*
- * Sets the current information. The filename member of the structure
- * *must* have been previously returned by src_get(), src_where(), or
- * src_get_fname() and therefore be present in the hash.
- */
-static inline struct src_location src_update(struct src_location whence)
-{
-    struct src_location old = _src_bottom->l;
-    _src_bottom->l = whence;
-    return old;
-}
-
-/*
- * Push/pop macro expansion level. "macroname" must remain constant at
- * least until the same macro expansion level is popped.
- */
-void src_macro_push(const void *macroname, struct src_location where);
-static inline const void *src_macro_current(void)
-{
-    return _src_bottom->macro;
-}
-void src_macro_pop(void);
-
 #endif /* ASM_SRCFILE_H */

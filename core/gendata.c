@@ -577,7 +577,7 @@ void gen_operand(operand_seed *opnd_seed, char *buffer)
     case RM_GPR|BITS8:
     case RM_GPR|BITS16:
     case RM_GPR|BITS32:
-        create_rm(buffer, opnd_seed);
+        create_gprmem(buffer, opnd_seed);
         break;
 
     default:

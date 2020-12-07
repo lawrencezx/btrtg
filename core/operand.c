@@ -277,16 +277,15 @@ void create_memory(char *buffer, operand_seed *opnd_seed)
     dfmt->print("    done> new memory: %s", buffer);
 }
 
-void create_rm(char *buffer, operand_seed *opnd_seed)
+void create_gprmem(char *buffer, operand_seed *opnd_seed)
 {
-    dfmt->print("    try> create rm\n");
     operand_seed temp = *opnd_seed;
     if (nasm_random32(2) == 0) {
-        dfmt->print("    rm register\n");
+        dfmt->print("    try> create rm register\n");
         temp.opndflags = REG_GPR|opnd_seed->opdsize;
         create_gpr_register(buffer, &temp);
     } else {
-        dfmt->print("    rm memory\n");
+        dfmt->print("    try> create rm memory\n");
         temp.opndflags = MEMORY|opnd_seed->opdsize;
         create_memory(buffer, &temp);
     }

@@ -90,25 +90,3 @@ void src_set(int32_t line, const char *fname)
     src_set_fname(fname);
     src_set_linnum(line);
 }
-
-void src_macro_push(const void *macro, struct src_location where)
-{
-    struct src_location_stack *sl;
-
-    nasm_new(sl);
-    sl->l = where;
-    sl->macro = macro;
-    sl->up = _src_bottom;
-    _src_bottom->down = sl;
-    _src_bottom = sl;
-}
-
-void src_macro_pop(void)
-{
-    struct src_location_stack *sl = _src_bottom;
-
-    _src_bottom = sl->up;
-    _src_bottom->down = NULL;
-
-    nasm_free(sl);
-}

@@ -14,7 +14,7 @@ static const char *xmlfiles[2] =
     "fixedpointConsts.xml",
     "fixedpointTK.xml"
 };
-char *TKpath = "/home/lawrence/Workspace/git/x86-assembler-generator/TK";
+char *TKpath = "/home/lawrence/Workspace/git/x86-assembler-generator/xmlmodel/tks";
 
 
 static int getElemsSize(xmlNodePtr node)
@@ -136,7 +136,7 @@ static void parseXML_file(const char *fname)
     xmlFreeDoc(doc);
 }
 
-void init_TKs(void)
+void parse_TKs(void)
 {
 #ifdef LIBXML_READER_ENABLED
     char fname[1024];

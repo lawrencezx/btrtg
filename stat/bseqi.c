@@ -3,7 +3,7 @@
 #include "nasm.h"
 #include "insns.h"
 #include "seed.h"
-#include "bseqi.h"
+#include "x86pg.h"
 
 
 bseqiflags_t bseqi_flags(opflags_t opndflags)

@@ -14,8 +14,7 @@
 #include "eval.h"
 #include "operand.h"
 #include "insnlist.h"
-#include "bseqi.h"
-#include "parseXML.h"
+#include "xmlparser/parseXML.h"
 #include "x86pg.h"
 #include "dfmt.h"
 
@@ -82,7 +81,7 @@ void generator_init(bool set_sequence)
     init_x86pgstate();
     X86PGState.seqMode = set_sequence;
 
-    init_TKs();
+    parse_TKs();
 
     gendata_init();
 
