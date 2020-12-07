@@ -13,6 +13,7 @@ typedef struct operand_seed {
     opflags_t       opndflags;
     srcdestflags_t  srcdestflags;         /* source and destination operand flag */
     opflags_t       opdsize;
+    bool            explicitmemsize;
 } operand_seed;
 
 typedef struct insn_seed {

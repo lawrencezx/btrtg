@@ -7,6 +7,7 @@ void create_segment_register(char *buffer);
 void create_unity(char *buffer, operand_seed *opnd_seed);
 void create_gpr_register(char *buffer, operand_seed *opnd_seed);
 void create_immediate(char *buffer, operand_seed *opnd_seed);
-void create_memory(char *buffer);
+void create_memory(char *buffer, operand_seed *opnd_seed);
+void create_rm(char *buffer, operand_seed *opnd_seed);
 
 #endif

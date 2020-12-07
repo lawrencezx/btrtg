@@ -232,7 +232,11 @@ static void create_random_modrm(char *buffer)
             sprintf(buffer, "[ebx + 0x%x]", disp);
             break;
         case 004:
-            sprintf(buffer, "[%s + 0x%x]", sib, disp);
+            if (strcmp(sib, "")) {
+                sprintf(buffer, "[0x%x]", disp);
+            } else {
+                sprintf(buffer, "[%s + 0x%x]", sib, disp);
+            }
             break;
         case 005:
             if (modrmi == 005) {
@@ -253,13 +257,38 @@ static void create_random_modrm(char *buffer)
     }
 }
 
-void create_memory(char *buffer)
+void create_memory(char *buffer, operand_seed *opnd_seed)
 {
     dfmt->print("    try> create memory\n");
     if (globalbits == 16) {
         nasm_nonfatal("unsupported 16-bit memory type");
     } else {
-        create_random_modrm(buffer);
+        char modrm[64];
+        create_random_modrm(modrm);
+        if (opnd_seed->explicitmemsize) {
+            static const char *memsize[3] = {"byte", "word", "dword"};
+            int whichmemsize = opnd_seed->opdsize == BITS8 ? 0 :
+                (opnd_seed->opdsize == BITS16 ? 1 : 2);
+            sprintf(buffer, "%s %s\n", memsize[whichmemsize], modrm);
+        } else {
+            sprintf(buffer, "%s\n", modrm);
+        }
     }
     dfmt->print("    done> new memory: %s", buffer);
+}
+
+void create_rm(char *buffer, operand_seed *opnd_seed)
+{
+    dfmt->print("    try> create rm\n");
+    operand_seed temp = *opnd_seed;
+    if (nasm_random32(2) == 0) {
+        dfmt->print("    rm register\n");
+        temp.opndflags = REG_GPR|opnd_seed->opdsize;
+        create_gpr_register(buffer, &temp);
+    } else {
+        dfmt->print("    rm memory\n");
+        temp.opndflags = MEMORY|opnd_seed->opdsize;
+        create_memory(buffer, &temp);
+    }
+    dfmt->print("    done> new rm: %s", buffer);
 }

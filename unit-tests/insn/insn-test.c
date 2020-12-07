@@ -13,7 +13,7 @@ void gsp(const insn_seed *seed, const struct ofmt *ofmt)
 {
     insn new_inst;
 
-    for (int i = 0; i < 1000; i++) {
+    for (int i = 0; i < 100; i++) {
         one_insn_gen(seed, &new_inst);
         insnlist_insert(X86PGState.instlist, &new_inst);
     }

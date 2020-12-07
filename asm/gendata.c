@@ -404,9 +404,6 @@ static opflags_t getCurOperandSize(opflags_t opflags)
     opflags_t opdsize = 0;
     if ((SIZE_MASK & opflags) != 0) {
         opdsize = SIZE_MASK & opflags;
-    } else if (opflags == MEMORY ||
-        opflags == (MEMORY|FAR)) {
-        opdsize = (globalbits == 16) ? BITS16 : BITS32;
     } else {
         switch (opflags) {
             case REG_AL:
@@ -546,11 +543,11 @@ void gen_operand(operand_seed *opnd_seed, char *buffer)
 
     /* immediate */
     case IMMEDIATE:
+    case IMMEDIATE|BITS8:
+    case IMMEDIATE|BITS16:
+    case IMMEDIATE|BITS32:
         create_immediate(buffer, opnd_seed);
         break;
-//TODO:    case IMMEDIATE|BITS8:
-//TODO:    case IMMEDIATE|BITS16:
-//TODO:    case IMMEDIATE|BITS32:
 //TODO:    case IMMEDIATE|COLON:
 //TODO:    case IMMEDIATE|BITS16|COLON:
 //TODO:    case IMMEDIATE|BITS16|NEAR:
@@ -562,7 +559,7 @@ void gen_operand(operand_seed *opnd_seed, char *buffer)
 
     /* memory */
     case MEMORY:
-        create_memory(buffer);
+        create_memory(buffer, opnd_seed);
         break;
 //TODO:    case MEMORY|BITS8:
 //TODO:    case MEMORY|BITS16:
@@ -576,10 +573,12 @@ void gen_operand(operand_seed *opnd_seed, char *buffer)
         create_gpr_register(buffer, opnd_seed);
         break;
 
-//TODO:    /* r/m */
-//TODO:    case RM_GPR|BITS8:
-//TODO:    case RM_GPR|BITS16:
-//TODO:    case RM_GPR|BITS32:
+    /* r/m */
+    case RM_GPR|BITS8:
+    case RM_GPR|BITS16:
+    case RM_GPR|BITS32:
+        create_rm(buffer, opnd_seed);
+        break;
 
     default:
         nasm_fatal("unsupported opnd type");

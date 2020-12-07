@@ -293,6 +293,7 @@ bool one_insn_gen(const insn_seed *seed, insn *result)
         bool mref = false;
         int bracket = 0;
         bool mib;
+        int setsize = 0;
         operand *op;
 
         op = &result->oprs[opi];
@@ -307,6 +308,11 @@ bool one_insn_gen(const insn_seed *seed, insn *result)
             opnd_seed.opndflags = seed->opd[opi];
             opnd_seed.srcdestflags = calSrcDestFlags(seed, opi);
             opnd_seed.opdsize = calOperandSize(seed, opi);
+            if (opi == 0 && is_class(IMMEDIATE, seed->opd[1])){
+                opnd_seed.explicitmemsize = true;
+            } else {
+                opnd_seed.explicitmemsize = false;
+            }
             gen_operand(&opnd_seed, get_token_cbufptr());
         }
         i = get_token(&tokval);
@@ -314,6 +320,70 @@ bool one_insn_gen(const insn_seed *seed, insn *result)
             break;              /* end of operands: get out of here */
 
         op->type = 0;
+        /* size specifiers */
+        while (i == TOKEN_SPECIAL || i == TOKEN_SIZE) {
+            switch (tokval.t_integer) {
+            case S_BYTE:
+                if (!setsize)   /* we want to use only the first */
+                    op->type |= BITS8;
+                setsize = 1;
+                break;
+            case S_WORD:
+                if (!setsize)
+                    op->type |= BITS16;
+                setsize = 1;
+                break;
+            case S_DWORD:
+            case S_LONG:
+                if (!setsize)
+                    op->type |= BITS32;
+                setsize = 1;
+                break;
+            case S_QWORD:
+                if (!setsize)
+                    op->type |= BITS64;
+                setsize = 1;
+                break;
+            case S_TWORD:
+                if (!setsize)
+                    op->type |= BITS80;
+                setsize = 1;
+                break;
+            case S_OWORD:
+                if (!setsize)
+                    op->type |= BITS128;
+                setsize = 1;
+                break;
+            case S_YWORD:
+                if (!setsize)
+                    op->type |= BITS256;
+                setsize = 1;
+                break;
+            case S_ZWORD:
+                if (!setsize)
+                    op->type |= BITS512;
+                setsize = 1;
+                break;
+            case S_TO:
+                op->type |= TO;
+                break;
+            case S_STRICT:
+                op->type |= STRICT;
+                break;
+            case S_FAR:
+                op->type |= FAR;
+                break;
+            case S_NEAR:
+                op->type |= NEAR;
+                break;
+            case S_SHORT:
+                op->type |= SHORT;
+                break;
+            default:
+                nasm_nonfatal("invalid operand size specification");
+            }
+            i = get_token(&tokval);
+        }
 
         if (i == '[' || i == TOKEN_MASM_PTR || i == '&') {
             /* memory reference */
