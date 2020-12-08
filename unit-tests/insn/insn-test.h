@@ -10,6 +10,8 @@
         arr[4] = a4; \
     }
 
+void gsp_init(void);
+void gsp_finish(void);
 void gsp(const insn_seed *seed, const struct ofmt *ofmt);
 
 #endif

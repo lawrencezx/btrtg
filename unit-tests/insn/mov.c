@@ -24,7 +24,7 @@ bool gen_test_file_MOV(void)
     generator_init(false);
 
     data.type = OUTPUT_RAWDATA;
-    data.buf = (const char *)fout_head;
+    data.buf = (const void *)fout_head;
     ofmt->output(&data);
 
 //    assign_arr5(MOV_seed.opd, REG_GPR|BITS16,REG_SREG,0,0,0);
@@ -33,7 +33,7 @@ bool gen_test_file_MOV(void)
     gsp(&MOV_seed, ofmt);
 
     data.type = OUTPUT_RAWDATA;
-    data.buf = (const char *)fout_tail;
+    data.buf = (const void *)fout_tail;
     ofmt->output(&data);
     
     ofmt->cleanup();

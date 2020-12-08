@@ -1,7 +1,10 @@
 #ifndef NASM_X86PG_H
 #define NASM_X86PG_H
 
+#include "nasm.h"
 #include "insnlist.h"
+#include "section.h"
+#include "seed.h"
 
 
 /* big sequence index
@@ -55,6 +58,9 @@ bool bseqi_inc(big_sequence_index *bseqi, const insn_seed *seed, int opnum);
 struct X86PGState {
     bool seqMode;
     big_sequence_index bseqi;
+    bool simpleDataMemMode;
+    struct section text_sec;
+    struct section data_sec;
     const insn_seed *curr_seed;
     insn *curr_inst;
     insnlist_t *instlist;

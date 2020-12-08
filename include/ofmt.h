@@ -3,12 +3,13 @@
 
 enum output_type {
     OUTPUT_RAWDATA,
+    OUTPUT_SECTION,
     OUTPUT_INSN
 };
 
 struct output_data {
     enum output_type type;
-    const char *buf;
+    const void *buf;
 };
 /*
  * s-file generators should look like this

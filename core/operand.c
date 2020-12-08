@@ -208,7 +208,14 @@ static void create_random_modrm(char *buffer)
     int modrmi, disp = 0;
     char sib[32];
     const int modrmn = 24;
-    modrmi = nasm_random32(modrmn);
+    if (X86PGState.simpleDataMemMode) {
+        /* [ebx + disp8] */
+        sprintf(buffer, "mov ebx, 0x8049000\n");
+        one_insn_gen_const(buffer);
+        modrmi = 013;
+    } else {
+        modrmi = nasm_random32(modrmn);
+    }
     if (modrmi == 004 || modrmi == 014 || modrmi == 024) {
         create_random_sib(sib);
     }

@@ -1,7 +1,7 @@
 #include "compiler.h"
 
-
 #include "ofmt.h"
+#include "section.h"
 
 static FILE* asmfp;
 
@@ -28,17 +28,41 @@ static void asm_init(const char* fname)
     }
 }
 
+static void asm_out_sec(struct section *sec)
+{
+    switch (sec->type) {
+        case TEXT_SEC:
+            fprintf(asmfp, "SECTION .TEXT\n");
+            break;
+        case DATA_SEC:
+            fprintf(asmfp, "SECTION .DATA write\n");
+            break;
+        case BSS_SEC:
+            fprintf(asmfp, "SECTION .BSS write\n");
+            break;
+        default:
+            printf("Unsupported section type\n");
+            break;
+    }
+}
+
 static void asm_out(struct output_data* data)
 {
     if (data == NULL)
         return;
     switch (data->type) {
         case OUTPUT_RAWDATA:
-            fprintf(asmfp, "%s", data->buf);
+            fprintf(asmfp, "%s", (const char *)data->buf);
             break;
         case OUTPUT_INSN:
-            fprintf(asmfp, "  %s\n", data->buf);
+            fprintf(asmfp, "  %s\n", (const char *)data->buf);
             break;
+        case OUTPUT_SECTION:
+        {
+            struct section *sec = (struct section *)data->buf;
+            asm_out_sec(sec);
+            break;
+        }
         default:
             break;
     }

@@ -106,7 +106,7 @@ void insnlist_output(insnlist_t* instlist, const struct ofmt *ofmt)
     TLIST_FOREACH(entry, &instlist->insn_entries, insn_link) {
         insn_to_asm(entry->insn, &buf);
         data.type = OUTPUT_INSN;
-        data.buf = buf;
+        data.buf = (const void *)buf;
         ofmt->output(&data);
     }
 }
