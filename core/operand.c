@@ -301,3 +301,17 @@ void create_gprmem(char *buffer, operand_seed *opnd_seed)
     }
     dfmt->print("    done> new rm: %s", buffer);
 }
+
+void init_specific_register(enum reg_enum R_reg, bool isSrc)
+{
+    const char *instName;
+    char buffer[128];
+    instName = nasm_insn_names[X86PGState.curr_seed->opcode];
+    if (request_initialize(instName)) {
+        const char *src;
+        src = nasm_reg_names[R_reg - EXPR_REG_START];
+        constVal *cVal = request_constVal(instName, isSrc);
+        sprintf(buffer, "mov %s, 0x%x", src, (cVal == NULL) ? (int)nasm_random64(0x100000000) : cVal->imm32);
+        one_insn_gen_const(buffer);
+    }
+}

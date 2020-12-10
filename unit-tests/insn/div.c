@@ -22,6 +22,12 @@ bool gen_test_file_DIV(void)
     assign_arr5(DIV_seed.opd, REG_GPR|BITS8,0,0,0,0);
     gsp(&DIV_seed, ofmt);
 
+    assign_arr5(DIV_seed.opd, REG_GPR|BITS16,0,0,0,0);
+    gsp(&DIV_seed, ofmt);
+
+    assign_arr5(DIV_seed.opd, REG_GPR|BITS32,0,0,0,0);
+    gsp(&DIV_seed, ofmt);
+
     gsp_finish();
     
     ofmt->cleanup();

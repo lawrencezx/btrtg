@@ -9,5 +9,6 @@ void create_gpr_register(char *buffer, operand_seed *opnd_seed);
 void create_immediate(char *buffer, operand_seed *opnd_seed);
 void create_memory(char *buffer, operand_seed *opnd_seed);
 void create_gprmem(char *buffer, operand_seed *opnd_seed);
+void init_specific_register(enum reg_enum R_reg, bool isSrc);
 
 #endif

@@ -278,6 +278,7 @@ bool one_insn_gen(const insn_seed *seed, insn *result)
 
     if (seed != NULL) {
         gen_opcode(seed->opcode, get_token_cbufptr());
+        init_implied_operands(seed);
     }
     i = get_token(&tokval);
 

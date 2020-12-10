@@ -466,6 +466,28 @@ opflags_t calOperandSize(const insn_seed *seed, int opdi)
     return opdsize;
 }
 
+void init_implied_operands(insn_seed *seed)
+{
+    if (seed->opcode == I_DIV ||
+        seed->opcode == I_IDIV) {
+        switch (calOperandSize(seed, 0)) {
+            case BITS8:
+                init_specific_register(R_AX, false);
+                break;
+            case BITS16:
+                init_specific_register(R_DX, false);
+                init_specific_register(R_AX, false);
+                break;
+            case BITS32:
+                init_specific_register(R_EDX, false);
+                init_specific_register(R_EAX, false);
+                break;
+            default:
+                break;
+        }
+    }
+}
+
 /* Generate instruction opcode. */
 void gen_opcode(enum opcode opcode, char *buffer)
 {

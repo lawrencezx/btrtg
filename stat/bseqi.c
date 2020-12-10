@@ -15,8 +15,8 @@ bseqiflags_t bseqi_flags(opflags_t opndflags)
         {REG_SREG,          GEN_INDEXPOS(0) | GEN_INDEXSIZE(((globalbits == 16) ? 4 : 6))},
         {REG_CREG,          GEN_INDEXPOS(1) | GEN_INDEXSIZE(4)},
         {REG_GPR|BITS8,     GEN_INDEXPOS(2) | GEN_INDEXSIZE(8)},
-        {REG_GPR|BITS16,    GEN_INDEXPOS(3) | GEN_INDEXSIZE(8)},
-        {REG_GPR|BITS32,    GEN_INDEXPOS(4) | GEN_INDEXSIZE(8)},
+        {REG_GPR|BITS16,    GEN_INDEXPOS(3) | GEN_INDEXSIZE(4)},
+        {REG_GPR|BITS32,    GEN_INDEXPOS(4) | GEN_INDEXSIZE(4)},
         {IMMEDIATE,         GEN_INDEXPOS(5) | GEN_INDEXSIZE(14)}
     };
 
