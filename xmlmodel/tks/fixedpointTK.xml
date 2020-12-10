@@ -1,5 +1,64 @@
 <TKs>
-    <TK inst = "add" initP = "0.4">
+    <!--  data transfer instructions  -->
+    <TK inst = "mov" initP = "1.0">
+        <Node name = "arith" weight="50"> </Node>
+        <Node name = "normal" weight="50"> </Node>
+    </TK>
+
+    <!-- binary arithmetic instructions -->
+    <TK inst = "add" initP = "1.0">
+        <Node name = "arith" weight="50"> </Node>
+        <Node name = "normal" weight="50"> </Node>
+    </TK>
+    <TK inst = "adc" initP = "1.0">
+        <Node name = "arith" weight="50"> </Node>
+        <Node name = "normal" weight="50"> </Node>
+    </TK>
+    <TK inst = "sub" initP = "1.0">
+        <Node name = "arith" weight="50"> </Node>
+        <Node name = "normal" weight="50"> </Node>
+    </TK>
+    <TK inst = "sbb" initP = "1.0">
+        <Node name = "arith" weight="50"> </Node>
+        <Node name = "normal" weight="50"> </Node>
+    </TK>
+    <TK inst = "imul" initP = "1.0">
+        <Node name = "arith" weight="50"> </Node>
+        <Node name = "normal" weight="50"> </Node>
+    </TK>
+    <TK inst = "mul" initP = "1.0">
+        <Node name = "arith" weight="50"> </Node>
+        <Node name = "normal" weight="50"> </Node>
+    </TK>
+    <TK inst = "idiv" initP = "1.0" diffSrcDest = "true">
+        <Src>
+            <Node name = "divsrc" weight="100"> </Node>
+        </Src>
+        <Dest>
+            <Node name = "divdest" weight="100"> </Node>
+        </Dest>
+    </TK>
+    <TK inst = "div" initP = "1.0" diffSrcDest = "true">
+        <Src>
+            <Node name = "divsrc" weight="100"> </Node>
+        </Src>
+        <Dest>
+            <Node name = "divdest" weight="100"> </Node>
+        </Dest>
+    </TK>
+    <TK inst = "inc" initP = "1.0">
+        <Node name = "arith" weight="50"> </Node>
+        <Node name = "normal" weight="50"> </Node>
+    </TK>
+    <TK inst = "dec" initP = "1.0">
+        <Node name = "arith" weight="50"> </Node>
+        <Node name = "normal" weight="50"> </Node>
+    </TK>
+    <TK inst = "neg" initP = "1.0">
+        <Node name = "arith" weight="50"> </Node>
+        <Node name = "normal" weight="50"> </Node>
+    </TK>
+    <TK inst = "cmp" initP = "1.0">
         <Node name = "arith" weight="50"> </Node>
         <Node name = "normal" weight="50"> </Node>
     </TK>

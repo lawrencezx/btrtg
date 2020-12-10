@@ -92,7 +92,7 @@ void create_unity(char *buffer, operand_seed *opnd_seed)
 void create_gpr_register(char *buffer, operand_seed *opnd_seed)
 {
     dfmt->print("    try> create gpr\n");
-    int gpri;
+    int gpri = 2;
     enum reg_enum gpr;
     const char *instName, *src;
 
@@ -102,6 +102,11 @@ void create_gpr_register(char *buffer, operand_seed *opnd_seed)
     } else {
         int gprn = BSEQIFLAG_INDEXSIZE(bseqiflags);
         gpri = nasm_random32(gprn);
+        if (X86PGState.simpleDataMemMode) {
+            while (gpri == 2 || (gpri == 6 && opnd_seed->opdsize == BITS8)) {
+                gpri = nasm_random32(gprn);
+            }
+        }
     }
     switch (opnd_seed->opdsize) {
         case BITS8:
@@ -118,7 +123,7 @@ void create_gpr_register(char *buffer, operand_seed *opnd_seed)
 
     instName = nasm_insn_names[X86PGState.curr_seed->opcode];
     if (request_initialize(instName)) {
-        constVal *cVal = request_constVal(instName);
+        constVal *cVal = request_constVal(instName, opnd_seed->srcdestflags & OPSRC);
         sprintf(buffer, "mov %s, 0x%x", src, (cVal == NULL) ? (int)nasm_random64(0x100000000) : cVal->imm32);
         one_insn_gen_const(buffer);
     }
@@ -161,7 +166,7 @@ void create_immediate(char *buffer, operand_seed* opnd_seed)
 
     instName = nasm_insn_names[X86PGState.curr_seed->opcode];
     if (request_initialize(instName)) {
-        constVal *cVal = request_constVal(instName);
+        constVal *cVal = request_constVal(instName, opnd_seed->srcdestflags & OPSRC);
         if (cVal != NULL)
             imm = cVal->imm32;
     }
@@ -210,9 +215,7 @@ static void create_random_modrm(char *buffer)
     const int modrmn = 24;
     if (X86PGState.simpleDataMemMode) {
         /* [ebx + disp8] */
-        sprintf(buffer, "mov ebx, 0x8049000\n");
-        one_insn_gen_const(buffer);
-        modrmi = 013;
+        modrmi = 012;
     } else {
         modrmi = nasm_random32(modrmn);
     }

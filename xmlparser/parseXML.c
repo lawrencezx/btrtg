@@ -4,7 +4,6 @@
 #include "nasm.h"
 #include "nasmlib.h"
 #include "parseXML.h"
-#include "dfmt.h"
 #include "error.h"
 #include "model.h"
 
@@ -72,40 +71,70 @@ static void parseCGs(xmlNodePtr cgsNode)
     }
 }
 
+static WDTree *parseTK(xmlNodePtr tkNode)
+{
+    int i = 0;
+    int *weights;
+    const char *key;
+    struct hash_insert hi;
+    WDTree *tkTree;
+    WDTree **subtrees;
+
+    tkTree = wdtree_create();
+    tkTree->size = getElemsSize(tkNode->children);
+    tkTree->weights = (int *)nasm_malloc(tkTree->size * sizeof(int));
+    tkTree->children = (WDTree **)nasm_malloc(tkTree->size * sizeof(WDTree *));
+    weights = tkTree->weights;
+    subtrees = tkTree->children;
+
+    for (xmlNodePtr nNode = tkNode->children; nNode != NULL; nNode = nNode->next) {
+        if (nNode->type != XML_ELEMENT_NODE)
+            continue;
+
+        weights[i] = atoi((const char *)xmlGetProp(nNode, (const unsigned char*)"weight"));
+        key = (const char *)xmlGetProp(nNode, (const unsigned char*)"name");
+        subtrees[i] = *(WDTree **)hash_find(&hash_wdtrees, key, &hi);
+        i++;
+    }
+
+    return tkTree;
+}
+
 static void parseTKs(xmlNodePtr tksNode)
 {
     for (xmlNodePtr tkNode = tksNode->children; tkNode != NULL; tkNode = tkNode->next) {
         if (tkNode->type != XML_ELEMENT_NODE)
             continue;
 
-        int i = 0;
-        int *weights;
         const char *key;
         struct hash_insert hi;
-        WDTree *tkTree;
-        WDTree **subtrees;
         TKmodel *tkm;
-
-        tkTree = wdtree_create();
-        tkTree->size = getElemsSize(tkNode->children);
-        tkTree->weights = (int *)nasm_malloc(tkTree->size * sizeof(int));
-        tkTree->children = (WDTree **)nasm_malloc(tkTree->size * sizeof(WDTree *));
-        weights = tkTree->weights;
-        subtrees = tkTree->children;
-
-        for (xmlNodePtr nNode = tkNode->children; nNode != NULL; nNode = nNode->next) {
-            if (nNode->type != XML_ELEMENT_NODE)
-                continue;
-
-            weights[i] = atoi((const char *)xmlGetProp(nNode, (const unsigned char*)"weight"));
-            key = (const char *)xmlGetProp(nNode, (const unsigned char*)"name");
-            subtrees[i] = *(WDTree **)hash_find(&hash_wdtrees, key, &hi);
-            i++;
-        }
 
         tkm = tkmodel_create();
         tkm->initP = atof((const char *)xmlGetProp(tkNode, (const unsigned char*)"initP"));
-        tkm->wdtree = tkTree;
+
+        if (xmlGetProp(tkNode, (const unsigned char *)"diffSrcDest")) {
+            WDTree *tkSrcTree;
+            WDTree *tkDestTree;
+            for (xmlNodePtr nNode = tkNode->children; nNode != NULL; nNode = nNode->next) {
+                if (nNode->type != XML_ELEMENT_NODE)
+                    continue;
+
+                if (strcmp((const char *)nNode->name, "Src") == 0) {
+                    tkSrcTree = parseTK(nNode);
+                } else if (strcmp((const char *)nNode->name, "Dest") == 0) {
+                    tkDestTree = parseTK(nNode);
+                }
+            }
+            tkm->wdsrctree = tkSrcTree;
+            tkm->wddesttree = tkDestTree;
+            tkm->diffSrcDest = true;
+        } else {
+            WDTree *tkTree;
+            tkTree = parseTK(tkNode);
+            tkm->wdtree = tkTree;
+            tkm->diffSrcDest = false;
+        }
 
         key = (const char *)xmlGetProp(tkNode, (const unsigned char*)"inst");
         hash_find(&hash_tks, key, &hi);
@@ -115,7 +144,6 @@ static void parseTKs(xmlNodePtr tksNode)
 
 static void parseXML_file(const char *fname)
 {
-    dfmt->print("parse XML file: %s\n", fname);
     LIBXML_TEST_VERSION
     xmlDocPtr doc = xmlParseFile(fname);
     if (doc != NULL) {

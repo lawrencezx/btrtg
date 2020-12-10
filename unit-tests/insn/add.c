@@ -17,8 +17,6 @@ bool gen_test_file_ADD(void)
     ofmt->init("test_ADD.s");
     dfmt->init("debug_ADD.txt");
     
-    generator_init(false);
-
     gsp_init();
 
     assign_arr5(ADD_seed.opd, MEMORY,REG_GPR|BITS8,0,0,0);
@@ -94,7 +92,5 @@ bool gen_test_file_ADD(void)
 
     ofmt->cleanup();
     dfmt->cleanup();
-
-    generator_exit();
     return true;
 }

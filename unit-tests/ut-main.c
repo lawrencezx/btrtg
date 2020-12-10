@@ -45,11 +45,16 @@ int main(int argc, char *argv[])
   if (op == ERR_ARG || op == EXIT_ARG) {
     return 0;
   }
+  generator_init(false);
   if (!gen_test_file_ADD()) {
       fprintf(stderr, "genrate ADD test file failed!\n");
   }
-//  if (!gen_test_file_MOV()) {
-//      fprintf(stderr, "genrate MOV test file failed!\n");
-//  }
+  if (!gen_test_file_MOV()) {
+      fprintf(stderr, "genrate MOV test file failed!\n");
+  }
+  if (!gen_test_file_DIV()) {
+      fprintf(stderr, "genrate DIV test file failed!\n");
+  }
+  generator_exit();
   return 0;
 }

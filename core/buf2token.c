@@ -53,6 +53,7 @@ int get_token(struct tokenval *tv)
         while (nasm_isidchar(*token_bufptr))
             token_bufptr++;
 
+        nasm_free(tv->t_charptr);
         tv->t_charptr = buf_copy(r, token_bufptr - r < IDLEN_MAX ?
                                      token_bufptr - r : IDLEN_MAX - 1);
 
@@ -82,6 +83,7 @@ int get_token(struct tokenval *tv)
 //        } else {
             r = buf_copy(r, token_bufptr - r);
             tv->t_integer = readnum(r, &rn_error);
+            nasm_free((void *)r);
             if (rn_error) {
                 /* some malformation occurred */
                 return tv->t_type = TOKEN_ERRNUM;

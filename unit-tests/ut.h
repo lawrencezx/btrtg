@@ -3,5 +3,6 @@
 
 bool gen_test_file_ADD(void);
 bool gen_test_file_MOV(void);
+bool gen_test_file_DIV(void);
 
 #endif

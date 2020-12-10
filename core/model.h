@@ -19,14 +19,21 @@ typedef struct WDTree {
  */
 typedef struct TKmodel {
     double initP;
-    WDTree *wdtree;
+    bool diffSrcDest;
+    union {
+        WDTree *wdtree;
+        struct {
+            WDTree *wdsrctree;
+            WDTree *wddesttree;
+        };
+    };
 } TKmodel;
 
 TKmodel *tkmodel_create(void);
 WDTree *wdtree_create(void);
 void wdtree_clear(WDTree *tree);
 bool request_initialize(const char *instName);
-constVal *request_constVal(const char *instName);
+constVal *request_constVal(const char *instName, bool isSrc);
 
 extern struct hash_table hash_wdtrees;
 extern struct hash_table hash_tks;

@@ -90,11 +90,19 @@ bool request_initialize(const char *instName)
     return false;
 }
 
-constVal *request_constVal(const char *instName)
+constVal *request_constVal(const char *instName, bool isSrc)
 {
     constVal *cVal;
     TKmodel *tkm;
     tkm = get_tkm_from_hashtbl(instName);
-    cVal = wdtree_select_constval(tkm->wdtree);
+    if (tkm->diffSrcDest == false) {
+        cVal = wdtree_select_constval(tkm->wdtree);
+    } else {
+        if (isSrc) {
+            cVal = wdtree_select_constval(tkm->wdsrctree);
+        } else {
+            cVal = wdtree_select_constval(tkm->wddesttree);
+        }
+    }
     return cVal;
 }
