@@ -46,15 +46,15 @@ int main(int argc, char *argv[])
     return 0;
   }
   generator_init(false);
-  //if (!gen_test_file_ADD()) {
-  //    fprintf(stderr, "genrate ADD test file failed!\n");
-  //}
-  //if (!gen_test_file_MOV()) {
-  //    fprintf(stderr, "genrate MOV test file failed!\n");
-  //}
-  //if (!gen_test_file_DIV()) {
-  //    fprintf(stderr, "genrate DIV test file failed!\n");
-  //}
+  if (!gen_test_file_ADD()) {
+      fprintf(stderr, "genrate ADD test file failed!\n");
+  }
+  if (!gen_test_file_MOV()) {
+      fprintf(stderr, "genrate MOV test file failed!\n");
+  }
+  if (!gen_test_file_DIV()) {
+      fprintf(stderr, "genrate DIV test file failed!\n");
+  }
   if (!gen_test_file_JMP()) {
       fprintf(stderr, "genrate JMP test file failed!\n");
   }

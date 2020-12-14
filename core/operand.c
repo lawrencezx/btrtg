@@ -12,6 +12,7 @@
 #include "dfmt.h"
 #include "model.h"
 #include "generator.h"
+#include "check.h"
 
 static int imms[14] =
 {
@@ -92,21 +93,18 @@ void create_unity(char *buffer, operand_seed *opnd_seed)
 void create_gpr_register(char *buffer, operand_seed *opnd_seed)
 {
     dfmt->print("    try> create gpr\n");
-    int gpri = 2;
+    int gpri;
     enum reg_enum gpr;
     const char *instName, *src;
 
     bseqiflags_t bseqiflags = bseqi_flags(opnd_seed->opndflags);
+
+gen_gpr:
     if (X86PGState.seqMode) {
         gpri = X86PGState.bseqi.indexes[BSEQIFLAG_INDEXPOS(bseqiflags)];
     } else {
         int gprn = BSEQIFLAG_INDEXSIZE(bseqiflags);
         gpri = nasm_random32(gprn);
-        if (X86PGState.simpleDataMemMode) {
-            while (gpri == 2 || (gpri == 6 && opnd_seed->opdsize == BITS8)) {
-                gpri = nasm_random32(gprn);
-            }
-        }
     }
     switch (opnd_seed->opdsize) {
         case BITS8:
@@ -119,6 +117,9 @@ void create_gpr_register(char *buffer, operand_seed *opnd_seed)
             gpr = nasm_rd_reg32[gpri];
             break;
     }
+    if (!check_reg_valid(gpr))
+        goto gen_gpr;  
+
     src = nasm_reg_names[gpr - EXPR_REG_START];
 
     instName = nasm_insn_names[X86PGState.curr_seed->opcode];
@@ -212,13 +213,11 @@ static void create_random_modrm(char *buffer)
 {
     int modrmi, disp = 0;
     char sib[32];
-    const int modrmn = 24;
-    if (X86PGState.simpleDataMemMode) {
-        /* [ebx + disp8] */
-        modrmi = 012;
-    } else {
-        modrmi = nasm_random32(modrmn);
-    }
+    /* [ebx + disp8] */
+    modrmi = 012;
+    stat_lock_edx();
+    //const int modrmn = 24;
+    //modrmi = nasm_random32(modrmn);
     if (modrmi == 004 || modrmi == 014 || modrmi == 024) {
         create_random_sib(sib);
     }

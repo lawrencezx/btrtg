@@ -458,7 +458,7 @@ bool one_insn_gen(const insn_seed *seed, insn *result)
     while (opi < MAX_OPERANDS)
         result->oprs[opi++].type = 0;
 
-    X86PGState.insertpos = insnlist_insert_after(X86PGState.instlist, X86PGState.insertpos, result);
+    stat_insert_insn(result, INSERT_AFTER);
 
     return true;
 

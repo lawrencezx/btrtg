@@ -58,7 +58,6 @@ bool bseqi_inc(big_sequence_index *bseqi, const insn_seed *seed, int opnum);
 struct X86PGState {
     bool seqMode;
     big_sequence_index bseqi;
-    bool simpleDataMemMode;
 
     struct section text_sec;
     struct section data_sec;
@@ -67,6 +66,9 @@ struct X86PGState {
 
     int labeli;
     insnlist_entry_t **labelspos;
+    bool lock_ctrl;
+    bool lock_ecx;
+    bool lock_edx;
 
     insn *curr_inst;
     insnlist_t *instlist;
@@ -77,5 +79,26 @@ extern struct X86PGState X86PGState;
 
 void init_x86pgstate(void);
 void reset_x86pgstate(void);
+
+enum position {
+    INSERT_AFTER,
+    INSERT_BEFORE,
+    INSERT_TAIL
+};
+
+void stat_insert_insn(insn *inst, enum position pos);
+
+int stat_get_labeli(void);
+void stat_inc_labeli(void);
+
+void stat_lock_ctrl(void);
+void stat_unlock_ctrl(void);
+bool stat_ctrl_locked(void);
+void stat_lock_edx(void);
+void stat_unlock_edx(void);
+bool stat_edx_locked(void);
+void stat_lock_ecx(void);
+void stat_unlock_ecx(void);
+bool stat_ecx_locked(void);
 
 #endif
