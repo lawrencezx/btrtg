@@ -31,10 +31,17 @@ void gsp_init(void)
     data.type = OUTPUT_RAWDATA;
     data.buf = (const void *)fout_head;
     ofmt->output(&data);
+
+    reset_x86pgstate();
 }
 
 void gsp_finish(void)
 {
+    end_insn_gen();
+
+    insnlist_output(X86PGState.instlist, ofmt);
+    insnlist_clear(X86PGState.instlist);
+
     struct output_data data;
     data.type = OUTPUT_RAWDATA;
     data.buf = (const void *)fout_tail;
@@ -47,8 +54,5 @@ void gsp(const insn_seed *seed, const struct ofmt *ofmt)
 
     for (int i = 0; i < 100; i++) {
         one_insn_gen(seed, &new_inst);
-        insnlist_insert(X86PGState.instlist, &new_inst);
     }
-    insnlist_output(X86PGState.instlist, ofmt);
-    insnlist_clear(X86PGState.instlist);
 }

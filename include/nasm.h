@@ -676,7 +676,7 @@ enum vectlens {
 #define MAX_OPERANDS 5
 
 typedef struct insn { /* an instruction itself */
-    char            *label;                 /* the label defined, or NULL */
+    char            *ctrl;                  /* the label defined, or ontrol transfer instructions, or NULL */
     int             prefixes[MAXPREFIX];    /* instruction prefixes, if any */
     enum opcode     opcode;                 /* the opcode - not just the string */
     enum ccode      condition;              /* the condition code, if Jcc/SETcc */

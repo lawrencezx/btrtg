@@ -59,15 +59,23 @@ struct X86PGState {
     bool seqMode;
     big_sequence_index bseqi;
     bool simpleDataMemMode;
+
     struct section text_sec;
     struct section data_sec;
+
     const insn_seed *curr_seed;
+
+    int labeli;
+    insnlist_entry_t **labelspos;
+
     insn *curr_inst;
     insnlist_t *instlist;
+    insnlist_entry_t *insertpos;
 };
 
 extern struct X86PGState X86PGState;
 
 void init_x86pgstate(void);
+void reset_x86pgstate(void);
 
 #endif

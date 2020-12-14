@@ -81,12 +81,8 @@ bool request_initialize(const char *instName)
 {
     TKmodel *tkm;
     tkm = get_tkm_from_hashtbl(instName);
-    if (tkm) {
-        int pivot;
-        static const double init_p_bound = 1000.0;
-        pivot = (int)(init_p_bound * tkm->initP);
-        return pivot > nasm_random32(init_p_bound);
-    }
+    if (tkm)
+        return likely_happen_p(tkm->initP);
     return false;
 }
 

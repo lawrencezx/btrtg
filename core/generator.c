@@ -17,6 +17,7 @@
 #include "xmlparser/parseXML.h"
 #include "x86pg.h"
 #include "dfmt.h"
+#include "ctrl.h"
 
 bool global_sequence;
 
@@ -265,18 +266,21 @@ bool one_insn_gen(const insn_seed *seed, insn *result)
     struct eval_hints hints;
 
     if (seed != NULL) {
-        X86PGState.curr_seed = seed;
+        if (gen_control_transfer_insn(seed, result))
+            return true;
+        likely_gen_label();
     }
 
     memset(result->prefixes, P_none, sizeof(result->prefixes));
     result->times       = 1;
-    result->label       = NULL;
+    result->ctrl       = NULL;
     result->eops        = NULL;
     result->operands    = 0;
     result->evex_rm     = 0;
     result->evex_brerop = -1;
 
     if (seed != NULL) {
+        X86PGState.curr_seed = seed;
         gen_opcode(seed->opcode, get_token_cbufptr());
         init_implied_operands(seed);
     }
@@ -454,6 +458,8 @@ bool one_insn_gen(const insn_seed *seed, insn *result)
     while (opi < MAX_OPERANDS)
         result->oprs[opi++].type = 0;
 
+    X86PGState.insertpos = insnlist_insert_after(X86PGState.instlist, X86PGState.insertpos, result);
+
     return true;
 
 fail:
@@ -469,9 +475,12 @@ bool one_insn_gen_const(const char *asm_buffer)
     bool sucess = false;
     sprintf(temp, "%s", asm_buffer);
     set_token_bufptr(temp);
-    sucess = one_insn_gen(NULL, &const_inst);
-    if (sucess)
-        insnlist_insert(X86PGState.instlist, &const_inst);
+    one_insn_gen(NULL, &const_inst);
     set_token_bufptr(old_bufptr);
     return sucess;
+}
+
+void end_insn_gen(void)
+{
+    gen_control_transfer_finish();
 }

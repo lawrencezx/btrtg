@@ -290,7 +290,7 @@ void create_memory(char *buffer, operand_seed *opnd_seed)
 void create_gprmem(char *buffer, operand_seed *opnd_seed)
 {
     operand_seed temp = *opnd_seed;
-    if (nasm_random32(2) == 0) {
+    if (likely_happen_p(0.5)) {
         dfmt->print("    try> create rm register\n");
         temp.opndflags = REG_GPR|opnd_seed->opdsize;
         create_gpr_register(buffer, &temp);

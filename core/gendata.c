@@ -466,7 +466,7 @@ opflags_t calOperandSize(const insn_seed *seed, int opdi)
     return opdsize;
 }
 
-void init_implied_operands(insn_seed *seed)
+void init_implied_operands(const insn_seed *seed)
 {
     if (seed->opcode == I_DIV ||
         seed->opcode == I_IDIV) {

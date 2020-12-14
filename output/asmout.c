@@ -52,7 +52,7 @@ static void asm_out(struct output_data* data)
         return;
     switch (data->type) {
         case OUTPUT_RAWDATA:
-            fprintf(asmfp, "%s", (const char *)data->buf);
+            fprintf(asmfp, "%s\n", (const char *)data->buf);
             break;
         case OUTPUT_INSN:
             fprintf(asmfp, "  %s\n", (const char *)data->buf);

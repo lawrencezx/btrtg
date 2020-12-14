@@ -61,6 +61,9 @@ typedef union intorptr intorptr;
 int nasm_random32(int bound);
 long long nasm_random64(long long bound);
 
+bool likely_happen_p(double p);
+bool likely_happen_w(int w, int total_w);
+
 /* Transform string to number.
  */
 int hex2dec(const char *hex);

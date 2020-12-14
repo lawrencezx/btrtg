@@ -29,8 +29,8 @@ static insn *nasm_insndup(const insn* s)
 
     p = nasm_malloc(size);
     memcpy(p, s, size);
-    if (s->label) {
-        p->label = nasm_strdup(s->label);
+    if (s->ctrl) {
+        p->ctrl = nasm_strdup(s->ctrl);
     }
     if (s->eops) {
         /* TODO: p->eops = nasm_eopsdup(s->eops); */
@@ -42,7 +42,7 @@ static void nasm_insnfree(insn* inst)
 {
     if (inst == NULL)
         return;
-    free(inst->label);
+    free(inst->ctrl);
     free(inst);
 }
 
@@ -61,10 +61,48 @@ insnlist_t *insnlist_create(void)
     return (instlist);
 }
 
-int insnlist_insert(insnlist_t *instlist, const insn* inst)
+insnlist_entry_t *insnlist_insert_before(insnlist_t *instlist, insnlist_entry_t *pos, const insn* inst)
 {
-    if (inst == NULL)
-        return -1;
+    if (instlist == NULL || inst == NULL ||
+        (pos == NULL && instlist->tail != NULL))
+        return NULL;
+    struct insnlist_entry *entry;
+    entry = nasm_zalloc(sizeof(*entry));
+    entry->insn = nasm_insndup(inst);
+    if (pos == NULL) {
+        TLIST_INSERT_HEAD(&instlist->insn_entries, entry, insn_link);
+        instlist->tail = instlist->insn_entries.lh_first;
+    } else {
+        TLIST_INSERT_BEFORE(pos, entry, insn_link);
+    }
+    instlist->insn_count++;
+    return entry;
+}
+
+insnlist_entry_t *insnlist_insert_after(insnlist_t *instlist, insnlist_entry_t *pos, const insn* inst)
+{
+    if (instlist == NULL || inst == NULL ||
+        (pos == NULL && instlist->tail != NULL))
+        return NULL;
+    struct insnlist_entry *entry;
+    entry = nasm_zalloc(sizeof(*entry));
+    entry->insn = nasm_insndup(inst);
+    if (pos == NULL) {
+        TLIST_INSERT_HEAD(&instlist->insn_entries, entry, insn_link);
+        instlist->tail = instlist->insn_entries.lh_first;
+    } else {
+        TLIST_INSERT_AFTER(pos, entry, insn_link);
+        if (pos == instlist->tail)
+            instlist->tail = entry;
+    }
+    instlist->insn_count++;
+    return entry;
+}
+
+insnlist_entry_t *insnlist_insert_tail(insnlist_t *instlist, const insn* inst)
+{
+    if (instlist == NULL || inst == NULL)
+        return NULL;
     struct insnlist_entry *entry;
     entry = nasm_zalloc(sizeof(*entry));
     entry->insn = nasm_insndup(inst);
@@ -76,7 +114,7 @@ int insnlist_insert(insnlist_t *instlist, const insn* inst)
         instlist->tail = entry;
     }
     instlist->insn_count++;
-    return 0;
+    return entry;
 }
 
 void insnlist_clear(insnlist_t *instlist)
@@ -95,6 +133,7 @@ void insnlist_clear(insnlist_t *instlist)
 
 void insnlist_destroy(insnlist_t *instlist)
 {
+    insnlist_clear(instlist);
     nasm_free(instlist);
 }
 
@@ -104,9 +143,16 @@ void insnlist_output(insnlist_t* instlist, const struct ofmt *ofmt)
     const char *buf;
     struct output_data data;
     TLIST_FOREACH(entry, &instlist->insn_entries, insn_link) {
-        insn_to_asm(entry->insn, &buf);
-        data.type = OUTPUT_INSN;
-        data.buf = (const void *)buf;
-        ofmt->output(&data);
+        char *ctrl = entry->insn->ctrl;
+        if (ctrl) {
+            data.type = OUTPUT_RAWDATA;
+            data.buf = (const void *)ctrl;
+            ofmt->output(&data);
+        } else {
+            insn_to_asm(entry->insn, &buf);
+            data.type = OUTPUT_INSN;
+            data.buf = (const void *)buf;
+            ofmt->output(&data);
+        }
     }
 }
