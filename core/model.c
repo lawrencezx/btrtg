@@ -7,6 +7,9 @@
 
 struct hash_table hash_wdtrees;
 struct hash_table hash_tks;
+struct hash_table hash_templates;
+
+Tmpltmodel tmpltm;
 
 TKmodel *tkmodel_create(void)
 {
@@ -101,4 +104,11 @@ constVal *request_constVal(const char *instName, bool isSrc)
         }
     }
     return cVal;
+}
+
+char *select_inst(void)
+{
+    constVal *cVal;
+    cVal = wdtree_select_constval(tmpltm.wdtree);
+    return cVal->instName;
 }

@@ -19,8 +19,9 @@ typedef struct operand_seed {
 typedef struct insn_seed {
     enum opcode     opcode;
     opflags_t       opd[MAX_OPERANDS];
+    char            *instname;
 } insn_seed;
 
-void create_insn_seed(insn_seed *seed);
+void create_insn_seed(insn_seed *seed, const char *instname);
 
 #endif

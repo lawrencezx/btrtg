@@ -8,6 +8,7 @@ typedef struct constVal {
         int8_t unity;
         int16_t imm16;
         int32_t imm32;
+        char *instName;
     };
 } constVal;
 

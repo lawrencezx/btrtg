@@ -29,11 +29,19 @@ typedef struct TKmodel {
     };
 } TKmodel;
 
+typedef struct Tmpltmodel {
+    int instNum;
+    WDTree *wdtree;
+} Tmpltmodel;
+
+extern Tmpltmodel tmpltm;
+
 TKmodel *tkmodel_create(void);
 WDTree *wdtree_create(void);
 void wdtree_clear(WDTree *tree);
 bool request_initialize(const char *instName);
 constVal *request_constVal(const char *instName, bool isSrc);
+char *select_inst(void);
 
 extern struct hash_table hash_wdtrees;
 extern struct hash_table hash_tks;

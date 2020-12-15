@@ -67,6 +67,7 @@ bool likely_happen_w(int w, int total_w);
 /* Transform string to number.
  */
 int hex2dec(const char *hex);
+char *trim(const char *str);
 
 /*
  * Wrappers around malloc, realloc, free and a few more. nasm_malloc

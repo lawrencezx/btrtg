@@ -48,7 +48,7 @@ void gsp_finish(void)
     ofmt->output(&data);
 }
 
-void gsp(const insn_seed *seed, const struct ofmt *ofmt)
+void gsp(const insn_seed *seed)
 {
     insn new_inst;
 

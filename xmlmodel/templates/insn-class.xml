@@ -1,0 +1,243 @@
+<InsnClass>
+    <InstGroup name = "DataTransfer">
+        <I> mov </I>
+        <I> cmova </I>
+        <I> cmovae </I>
+        <I> cmovb </I>
+        <I> cmovbe </I>
+        <I> cmovc </I>
+        <I> cmove </I>
+        <I> cmovg </I>
+        <I> cmovge </I>
+        <I> cmovl </I>
+        <I> cmovle </I>
+        <I> cmovna </I>
+        <I> cmovnae </I>
+        <I> cmovnb </I>
+        <I> cmovnbe </I>
+        <I> cmovnc </I>
+        <I> cmovne </I>
+        <I> cmovng </I>
+        <I> cmovnge </I>
+        <I> cmovnl </I>
+        <I> cmovnle </I>
+        <I> cmovno </I>
+        <I> cmovnp </I>
+        <I> cmovns </I>
+        <I> cmovnz </I>
+        <I> cmovo </I>
+        <I> cmovp </I>
+        <I> cmovpe </I>
+        <I> cmovpo </I>
+        <I> cmovs </I>
+        <I> cmovz </I>
+        <I> xchg </I>
+        <I> bswap </I>
+        <I> xadd </I>
+        <I> cmpxchg </I>
+        <I> cmpxchg8b </I>
+        <I> push </I>
+        <I> pop </I>
+        <I> pusha </I>
+        <I> pushad </I>
+        <I> pushaw </I>
+        <I> popa </I>
+        <I> popad </I>
+        <I> popaw </I>
+        <I> cwd </I>
+        <I> cdq </I>
+        <I> cbw </I>
+        <I> cwde </I>
+        <I> movsx </I>
+        <I> movzx </I>
+    </InstGroup>
+    <InstGroup name = "BinaryArithmetic">
+        <I> adcx </I>
+        <I> adox </I>
+        <I> add </I>
+        <I> adc </I>
+        <I> sub </I>
+        <I> sbb </I>
+        <I> imul </I>
+        <I> mul </I>
+        <I> idiv </I>
+        <I> div </I>
+        <I> inc </I>
+        <I> dec </I>
+        <I> neg </I>
+        <I> cmp </I>
+    </InstGroup>
+    <InstGroup name = "DecimalArithmetic">
+        <I> daa </I>
+        <I> das </I>
+        <I> aaa </I>
+        <I> aas </I>
+        <I> aam </I>
+        <I> aad </I>
+    </InstGroup>
+    <InstGroup name = "Logical">
+        <I> and </I>
+        <I> or </I>
+        <I> xor </I>
+        <I> not </I>
+    </InstGroup>
+    <InstGroup name = "ShiftRotate">
+        <I> sar </I>
+        <I> shr </I>
+        <I> sal </I>
+        <I> shl </I>
+        <I> shrd </I>
+        <I> shld </I>
+        <I> ror </I>
+        <I> rol </I>
+        <I> rcr </I>
+        <I> rcl </I>
+    </InstGroup>
+    <InstGroup name = "BitByte">
+        <I> bt </I>
+        <I> bts </I>
+        <I> btr </I>
+        <I> btc </I>
+        <I> bsf </I>
+        <I> bsr </I>
+        <I> seta </I> 
+        <I> setae </I>
+        <I> setb </I>
+        <I> setbe </I>
+        <I> setc </I>
+        <I> sete </I>
+        <I> setg </I>
+        <I> setge </I>
+        <I> setl </I>
+        <I> setle </I>
+        <I> setna </I>
+        <I> setnae </I>
+        <I> setnb </I>
+        <I> setnbe </I>
+        <I> setnc </I>
+        <I> setne </I>
+        <I> setng </I>
+        <I> setnge </I>
+        <I> setnl </I>
+        <I> setnle </I>
+        <I> setno </I>
+        <I> setnp </I>
+        <I> setns </I>
+        <I> setnz </I>
+        <I> seto </I>
+        <I> setp </I>
+        <I> setpe </I>
+        <I> setpo </I>
+        <I> sets </I>
+        <I> setz </I> 
+        <I> test </I>
+    </InstGroup>
+    <InstGroup name = "ControlTransfer">
+        <I> jmp </I>
+        <I> ja </I>
+        <I> jae </I>
+        <I> jb </I>
+        <I> jbe </I>
+        <I> jc </I>
+        <I> je </I>
+        <I> jg </I>
+        <I> jge </I>
+        <I> jl </I>
+        <I> jle </I>
+        <I> jna </I>
+        <I> jnae </I>
+        <I> jnb </I>
+        <I> jnbe </I>
+        <I> jnc </I>
+        <I> jne </I>
+        <I> jng </I>
+        <I> jnge </I>
+        <I> jnl </I>
+        <I> jnle </I>
+        <I> jno </I>
+        <I> jnp </I>
+        <I> jns </I>
+        <I> jnz </I>
+        <I> jo </I>
+        <I> jp </I>
+        <I> jpe </I>
+        <I> jpo </I>
+        <I> js </I>
+        <I> jz </I>
+        <I> jcxz </I>
+        <I> jecxz </I>
+        <I> loop </I>
+        <I> loopz </I>
+        <I> loope </I>
+        <I> loopnz </I>
+        <I> loopne </I>
+        <I> call </I>
+        <I> ret </I>
+        <I> int </I>
+        <I> into </I>
+        <I> bound </I>
+        <I> enter </I>
+        <I> leave </I>
+    </InstGroup>
+    <InstGroup name = "String">
+        <I> movsb </I>
+        <I> movsw </I>
+        <I> movsd </I>
+        <I> cmpsb </I>
+        <I> cmpsw </I>
+        <I> cmpsd </I>
+        <I> scasb </I>
+        <I> scasw </I>
+        <I> scasd </I>
+        <I> lodsb </I>
+        <I> lodsw </I>
+        <I> lodsd </I>
+        <I> stosb </I>
+        <I> stosw </I>
+        <I> stosd </I>
+    </InstGroup>
+    <InstGroup name = "IO">
+    </InstGroup>
+    <InstGroup name = "EnterLeave">
+    </InstGroup>
+    <InstGroup name = "FlagControl">
+        <I> stc </I>
+        <I> clc </I>
+        <I> cmc </I>
+        <I> cld </I>
+        <I> std </I>
+        <I> lahf </I>
+        <I> sahf </I>
+        <I> pushf </I>
+        <I> pushfd </I>
+        <I> pushfw </I>
+        <I> popf </I>
+        <I> popfd </I>
+        <I> popfw </I>
+        <I> sti </I>
+        <I> cli </I>
+    </InstGroup>
+    <InstGroup name = "SegmentRegister">
+        <I> lds </I>
+        <I> les </I>
+        <I> lfs </I>
+        <I> lgs </I>
+        <I> lss </I>
+    </InstGroup>
+    <InstGroup name = "Miscellaneous">
+        <I> lea </I>
+        <I> nop </I>
+        <I> ud2 </I>
+        <I> xlat </I>
+        <I> xlatb </I>
+        <I> cpuid </I>
+        <I> movbe </I>
+    </InstGroup>
+    <InstGroup name = "SaveStore">
+        <I> xsave </I>
+        <I> xsavec </I>
+        <I> xsaveopt </I>
+        <I> xrstor </I>
+        <I> xgetbv </I>
+    </InstGroup>
+</InsnClass>

@@ -20,13 +20,13 @@ bool gen_test_file_DIV(void)
     gsp_init();
 
     assign_arr5(DIV_seed.opd, REG_GPR|BITS8,0,0,0,0);
-    gsp(&DIV_seed, ofmt);
+    gsp(&DIV_seed);
 
     assign_arr5(DIV_seed.opd, REG_GPR|BITS16,0,0,0,0);
-    gsp(&DIV_seed, ofmt);
+    gsp(&DIV_seed);
 
     assign_arr5(DIV_seed.opd, REG_GPR|BITS32,0,0,0,0);
-    gsp(&DIV_seed, ofmt);
+    gsp(&DIV_seed);
 
     gsp_finish();
     

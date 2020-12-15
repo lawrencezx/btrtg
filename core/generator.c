@@ -84,6 +84,8 @@ void generator_init(bool set_sequence)
 
     parse_TKs();
 
+    parse_tmplts();
+
     gendata_init();
 
     nasm_ctype_init();

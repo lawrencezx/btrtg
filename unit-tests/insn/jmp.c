@@ -20,7 +20,7 @@ bool gen_test_file_JMP(void)
     gsp_init();
 
     assign_arr5(JMP_seed.opd, IMMEDIATE,0,0,0,0);
-    gsp(&JMP_seed, ofmt);
+    gsp(&JMP_seed);
 
     gsp_finish();
     

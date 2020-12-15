@@ -309,6 +309,8 @@ struct tokenval {
 };
 typedef int (*scanner)(struct tokenval *tv);
 
+int nasm_token_hash(const char *token, struct tokenval *tv);
+
 struct location {
     int64_t offset;
     int32_t segment;

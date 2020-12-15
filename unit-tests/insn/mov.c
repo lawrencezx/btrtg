@@ -20,7 +20,7 @@ bool gen_test_file_MOV(void)
     gsp_init();
 
     assign_arr5(MOV_seed.opd, REG_GPR|BITS32,MEMORY,0,0,0);
-    gsp(&MOV_seed, ofmt);
+    gsp(&MOV_seed);
 
     gsp_finish();
     
