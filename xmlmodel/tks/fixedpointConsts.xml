@@ -59,4 +59,38 @@
 	    <Imm32> 0xdddddddd </Imm32>
 	    <Imm32> 0xd9d7d2d3 </Imm32>
     </CG>
+    <CG name = "logic">
+        <Imm8> 0x0 </Imm8>
+        <Imm8> 0x1 </Imm8>
+        <Imm8> 0x7f </Imm8>
+        <Imm8> 0x80 </Imm8>
+        <Imm8> 0xff </Imm8>
+        <Imm8> 0xce </Imm8>
+        <Imm8> 0x36 </Imm8>
+        <Imm16> 0x7fff </Imm16>
+        <Imm16> 0xffff </Imm16>
+        <Imm16> 0x8000 </Imm16>
+        <Imm16> 0xcccc </Imm16>
+        <Imm16> 0x4532 </Imm16>
+        <Imm32> 0x12345678 </Imm32>
+        <Imm32> 0x7fffffff </Imm32>
+        <Imm32> 0x80000001 </Imm32>
+        <Imm32> 0xffffffff </Imm32>
+        <Imm32> 0xbcadbeef </Imm32>
+    </CG>
+    <CG name = "unity">
+        <Imm8> 0x0 </Imm8>
+        <Imm8> 0x1 </Imm8>
+        <Imm8> 0x2 </Imm8>
+        <Imm8> 0x7 </Imm8>
+        <Imm8> 0x8 </Imm8>
+        <Imm8> 0x9 </Imm8>
+        <Imm8> 0xf </Imm8>
+        <Imm8> 0x10 </Imm8>
+        <Imm8> 0x11 </Imm8>
+        <Imm8> 0x1f </Imm8>
+        <Imm8> 0x20 </Imm8>
+        <Imm8> 0x21 </Imm8>
+        <Imm8> 0x6d </Imm8>
+    </CG>
 </CGs>

@@ -452,15 +452,15 @@ void init_implied_operands(const insn_seed *seed)
         seed->opcode == I_IDIV) {
         switch (calOperandSize(seed, 0)) {
             case BITS8:
-                init_specific_register(R_AX, false);
+                init_specific_register(R_AX, true);
                 break;
             case BITS16:
-                init_specific_register(R_DX, false);
-                init_specific_register(R_AX, false);
+                init_specific_register(R_DX, true);
+                init_specific_register(R_AX, true);
                 break;
             case BITS32:
-                init_specific_register(R_EDX, false);
-                init_specific_register(R_EAX, false);
+                init_specific_register(R_EDX, true);
+                init_specific_register(R_EAX, true);
                 break;
             default:
                 break;
@@ -507,7 +507,7 @@ static void gen_register(operand_seed *opnd_seed, char *buffer)
 
     for (size_t i = 0; i < ARRAY_SIZE(specific_registers); i++)
         if (!(specific_registers[i].flags & ~opndflags)) {
-            create_specific_register(specific_registers[i].reg, buffer);
+            create_specific_register(specific_registers[i].reg, opnd_seed, buffer);
             return;
         }
 

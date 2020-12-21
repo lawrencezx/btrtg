@@ -17,6 +17,7 @@
 #include "xmlparser/parseXML.h"
 #include "x86pg.h"
 #include "dfmt.h"
+#include "model.h"
 #include "ctrl.h"
 
 bool global_sequence;
@@ -284,7 +285,11 @@ bool one_insn_gen(const insn_seed *seed, insn *result)
     if (seed != NULL) {
         X86PGState.curr_seed = seed;
         gen_opcode(seed->opcode, get_token_cbufptr());
-        init_implied_operands(seed);
+        const char *instName = nasm_insn_names[seed->opcode];
+        X86PGState.need_init = request_initialize(instName);
+        if (X86PGState.need_init) {
+            init_implied_operands(seed);
+        }
     }
     i = get_token(&tokval);
 

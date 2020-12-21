@@ -14,18 +14,24 @@
 #include "generator.h"
 #include "check.h"
 
-void create_specific_register(enum reg_enum R_reg, char *buffer)
+void create_specific_register(enum reg_enum R_reg, operand_seed *opnd_seed, char *buffer)
 {
     dfmt->print("    try> create specific register\n");
     const char *src;
     src = nasm_reg_names[R_reg - EXPR_REG_START];
+    if (X86PGState.need_init) {
+        const char *instName = nasm_insn_names[X86PGState.curr_seed->opcode];
+        constVal *cVal = request_constVal(instName, opnd_seed->srcdestflags & OPDEST);
+        sprintf(buffer, "mov %s, 0x%x", src, (cVal == NULL) ? (int)nasm_random64(0x100000000) : cVal->imm32);
+        one_insn_gen_const(buffer);
+    }
     sprintf(buffer, "%s\n", src);
     dfmt->print("    done> new specific register: %s", buffer);
 }
 
 void create_control_register(operand_seed *opnd_seed, char *buffer)
 {
-    (void *)opnd_seed;
+    (void)opnd_seed;
     dfmt->print("    try> create creg\n");
     int cregi, cregn;
     enum reg_enum creg;
@@ -42,7 +48,7 @@ void create_control_register(operand_seed *opnd_seed, char *buffer)
 
 void create_segment_register(operand_seed *opnd_seed, char *buffer)
 {
-    (void *)opnd_seed;
+    (void)opnd_seed;
     dfmt->print("    try> create sreg\n");
     int sregi, sregn;
     enum reg_enum sreg;
@@ -71,7 +77,13 @@ void create_unity(operand_seed *opnd_seed, char *buffer)
     }
 
     unity = nasm_random32(shiftCount + 1);
-    sprintf(buffer, "%d\n", unity);
+    if (X86PGState.need_init) {
+        const char *instName = nasm_insn_names[X86PGState.curr_seed->opcode];
+        constVal *cVal = request_constVal(instName, opnd_seed->srcdestflags & OPDEST);
+        if (cVal != NULL)
+            unity = cVal->imm32;
+    }
+    sprintf(buffer, "0x%x\n", unity);
     dfmt->print("    done> new unity: %s", buffer);
 }
 
@@ -80,7 +92,7 @@ void create_gpr_register(operand_seed *opnd_seed, char *buffer)
     dfmt->print("    try> create gpr\n");
     int gpri, gprn;
     enum reg_enum gpr;
-    const char *instName, *src;
+    const char *src;
 
     bseqiflags_t bseqiflags = bseqi_flags(opnd_seed->opndflags);
 
@@ -104,9 +116,9 @@ gen_gpr:
 
     src = nasm_reg_names[gpr - EXPR_REG_START];
 
-    instName = nasm_insn_names[X86PGState.curr_seed->opcode];
-    if (request_initialize(instName)) {
-        constVal *cVal = request_constVal(instName, opnd_seed->srcdestflags & OPSRC);
+    if (X86PGState.need_init) {
+        const char *instName = nasm_insn_names[X86PGState.curr_seed->opcode];
+        constVal *cVal = request_constVal(instName, opnd_seed->srcdestflags & OPDEST);
         sprintf(buffer, "mov %s, 0x%x", src, (cVal == NULL) ? (int)nasm_random64(0x100000000) : cVal->imm32);
         one_insn_gen_const(buffer);
     }
@@ -122,7 +134,6 @@ void create_immediate(operand_seed* opnd_seed, char *buffer)
 {
     dfmt->print("    try> create immediate\n");
     int imm;
-    const char *instName;
     
     long long immn;
     switch (opnd_seed->opdsize) {
@@ -141,9 +152,9 @@ void create_immediate(operand_seed* opnd_seed, char *buffer)
     }
     imm = (int)nasm_random64(immn);
 
-    instName = nasm_insn_names[X86PGState.curr_seed->opcode];
-    if (request_initialize(instName)) {
-        constVal *cVal = request_constVal(instName, opnd_seed->srcdestflags & OPSRC);
+    if (X86PGState.need_init) {
+        const char *instName = nasm_insn_names[X86PGState.curr_seed->opcode];
+        constVal *cVal = request_constVal(instName, opnd_seed->srcdestflags & OPDEST);
         if (cVal != NULL)
             imm = cVal->imm32;
     }
@@ -245,33 +256,38 @@ static void create_random_modrm(char *buffer)
 void create_memory(operand_seed *opnd_seed, char *buffer)
 {
     dfmt->print("    try> create memory\n");
+    char modrm[64];
+    char src[128];
+    static const char *memsize[3] = {"byte", "word", "dword"};
+    int whichmemsize = opnd_seed->opdsize == BITS8 ? 0 :
+        (opnd_seed->opdsize == BITS16 ? 1 : 2);
     if (globalbits == 16) {
-        nasm_nonfatal("unsupported 16-bit memory type");
+        nasm_fatal("unsupported 16-bit memory type");
     } else {
-        char modrm[64];
         create_random_modrm(modrm);
         if (opnd_seed->explicitmemsize) {
-            static const char *memsize[3] = {"byte", "word", "dword"};
-            int whichmemsize = opnd_seed->opdsize == BITS8 ? 0 :
-                (opnd_seed->opdsize == BITS16 ? 1 : 2);
-            sprintf(buffer, "%s %s\n", memsize[whichmemsize], modrm);
+            sprintf(src, "%s %s", memsize[whichmemsize], modrm);
         } else {
-            sprintf(buffer, "%s\n", modrm);
+            sprintf(src, "%s", modrm);
         }
     }
+    if (X86PGState.need_init) {
+        const char *instName = nasm_insn_names[X86PGState.curr_seed->opcode];
+        constVal *cVal = request_constVal(instName, opnd_seed->srcdestflags & OPDEST);
+        sprintf(buffer, "mov %s %s, 0x%x", memsize[whichmemsize], modrm, (cVal == NULL) ? (int)nasm_random64(0x100000000) : cVal->imm32);
+        one_insn_gen_const(buffer);
+    }
+    sprintf(buffer, "%s\n", src);
     dfmt->print("    done> new memory: %s", buffer);
 }
 
-void init_specific_register(enum reg_enum R_reg, bool isSrc)
+void init_specific_register(enum reg_enum R_reg, bool isDest)
 {
-    const char *instName;
     char buffer[128];
-    instName = nasm_insn_names[X86PGState.curr_seed->opcode];
-    if (request_initialize(instName)) {
-        const char *src;
-        src = nasm_reg_names[R_reg - EXPR_REG_START];
-        constVal *cVal = request_constVal(instName, isSrc);
-        sprintf(buffer, "mov %s, 0x%x", src, (cVal == NULL) ? (int)nasm_random64(0x100000000) : cVal->imm32);
-        one_insn_gen_const(buffer);
-    }
+    const char *instName = nasm_insn_names[X86PGState.curr_seed->opcode];
+    const char *src;
+    src = nasm_reg_names[R_reg - EXPR_REG_START];
+    constVal *cVal = request_constVal(instName, isDest);
+    sprintf(buffer, "mov %s, 0x%x", src, (cVal == NULL) ? (int)nasm_random64(0x100000000) : cVal->imm32);
+    one_insn_gen_const(buffer);
 }

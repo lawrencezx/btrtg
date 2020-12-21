@@ -176,9 +176,13 @@
     </TK>
 
     <!-- shift and rotate instructions -->
-    <TK inst = "sar" initP = "1.0">
-        <Node name = "arith" weight="50"> </Node>
-        <Node name = "normal" weight="50"> </Node>
+    <TK inst = "sar" initP = "1.0" diffSrcDest = "true">
+        <Src>
+            <Node name = "unity" weight="100"> </Node>
+        </Src>
+        <Dest>
+            <Node name = "logic" weight="100"> </Node>
+        </Dest>
     </TK>
     <TK inst = "shr" initP = "1.0">
         <Node name = "arith" weight="50"> </Node>

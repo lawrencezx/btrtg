@@ -89,7 +89,7 @@ bool request_initialize(const char *instName)
     return false;
 }
 
-constVal *request_constVal(const char *instName, bool isSrc)
+constVal *request_constVal(const char *instName, bool isDest)
 {
     constVal *cVal;
     TKmodel *tkm;
@@ -97,10 +97,10 @@ constVal *request_constVal(const char *instName, bool isSrc)
     if (tkm->diffSrcDest == false) {
         cVal = wdtree_select_constval(tkm->wdtree);
     } else {
-        if (isSrc) {
-            cVal = wdtree_select_constval(tkm->wdsrctree);
-        } else {
+        if (isDest) {
             cVal = wdtree_select_constval(tkm->wddesttree);
+        } else {
+            cVal = wdtree_select_constval(tkm->wdsrctree);
         }
     }
     return cVal;

@@ -62,7 +62,11 @@ struct X86PGState {
     struct section text_sec;
     struct section data_sec;
 
-    const insn_seed *curr_seed;
+    struct {
+        const insn_seed *curr_seed;
+        insn *curr_inst;
+        bool need_init;
+    }; /* current instruction */
 
     int labeli;
     insnlist_entry_t **labelspos;
@@ -70,7 +74,6 @@ struct X86PGState {
     bool lock_ecx;
     bool lock_edx;
 
-    insn *curr_inst;
     insnlist_t *instlist;
     insnlist_entry_t *insertpos;
 };
