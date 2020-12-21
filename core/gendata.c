@@ -404,31 +404,10 @@ static opflags_t getCurOperandSize(opflags_t opflags)
     opflags_t opdsize = 0;
     if ((SIZE_MASK & opflags) != 0) {
         opdsize = SIZE_MASK & opflags;
-    } else {
-        switch (opflags) {
-            case REG_AL:
-            case REG_CL:
-                opdsize = BITS8;
-                break;
-            case REG_AX:
-            case REG_CX:
-            case REG_DX:
-            case REG_ES:
-            case REG_CS:
-            case REG_SS:
-            case REG_DS:
-            case REG_FS:
-            case REG_GS:
-                opdsize = BITS16;
-                break;
-            case REG_EAX:
-            case REG_ECX:
-                opdsize = BITS32;
-                break;
-            default:
-                break;
-        }
     }
+    /* or if current operand opflags does not have size property
+     * get it from current instruction's other properties
+     */
     return opdsize;
 }
 
@@ -462,6 +441,7 @@ opflags_t calOperandSize(const insn_seed *seed, int opdi)
                 opdsize = (globalbits == 16) ? BITS16 : BITS32;
                 break;
         }
+        /*TODO: Instructions whose name end with B/W/D. */
     }
     return opdsize;
 }
@@ -495,81 +475,130 @@ void gen_opcode(enum opcode opcode, char *buffer)
     sprintf(buffer, "%s\n", insn_name);
 }
 
+static void gen_register(operand_seed *opnd_seed, char *buffer)
+{
+    opflags_t opndflags;
+    opndflags = opnd_seed->opndflags;
+
+    static const struct {
+        opflags_t       flags;
+        enum reg_enum   reg;
+    } specific_registers[] = {
+        {REG_AL,  R_AL},
+        {REG_AX,  R_AX},
+        {REG_EAX, R_EAX},
+        {REG_DL,  R_DL},
+        {REG_DX,  R_DX},
+        {REG_EDX, R_EDX},
+        {REG_CL,  R_CL},
+        {REG_CX,  R_CX},
+        {REG_ECX, R_ECX},
+        {FPU0,    R_ST0},
+        {XMM0,    R_XMM0},
+        {YMM0,    R_YMM0},
+        {ZMM0,    R_ZMM0},
+        {REG_ES,  R_ES},
+        {REG_CS,  R_CS},
+        {REG_SS,  R_SS},
+        {REG_DS,  R_DS},
+        {REG_FS,  R_FS},
+        {REG_GS,  R_GS},
+    };
+
+    for (size_t i = 0; i < ARRAY_SIZE(specific_registers); i++)
+        if (!(specific_registers[i].flags & ~opndflags)) {
+            create_specific_register(specific_registers[i].reg, buffer);
+            return;
+        }
+
+    if (is_class(REG_CLASS_CDT, opndflags)) {
+        if (is_class(REG_CREG, opndflags)) {
+            create_control_register(opnd_seed, buffer);
+        } else {
+            /* TODO */
+        }
+    } else if (is_class(REG_CLASS_GPR, opndflags)) {
+        create_gpr_register(opnd_seed, buffer);
+    } else if (is_class(REG_CLASS_SREG, opndflags)) {
+        create_segment_register(opnd_seed, buffer);
+    } else if (is_class(REG_CLASS_FPUREG, opndflags)) {
+        /* TODO */
+    } else if (is_class(REG_CLASS_RM_MMX, opndflags)) {
+        /* TODO */
+    } else if (is_class(REG_CLASS_RM_XMM, opndflags)) {
+        /* TODO */
+    } else if (is_class(REG_CLASS_RM_YMM, opndflags)) {
+        /* TODO */
+    } else if (is_class(REG_CLASS_RM_ZMM, opndflags)) {
+        /* TODO */
+    } else if (is_class(REG_CLASS_BND, opndflags)) {
+        /* TODO */
+    } else if (is_class(REG_CLASS_RM_TMM, opndflags)) {
+        /* TODO */
+    } else {
+        nasm_fatal("OPFLAGS: register optype without register class");
+    }
+}
+
+static void gen_immediate(operand_seed *opnd_seed, char *buffer)
+{
+    opflags_t opndflags;
+    opndflags = opnd_seed->opndflags;
+
+    if (is_class(UNITY, opndflags)) {
+        create_unity(opnd_seed, buffer);
+    } else if (is_class(SBYTEDWORD, opndflags)) {
+        /* TODO */
+    } else if (is_class(SBYTEWORD, opndflags)) {
+        /* TODO */
+    } else if (is_class(IMMEDIATE, opndflags)) {
+        create_immediate(opnd_seed, buffer);
+    } else {
+        nasm_fatal("OPFLAGS: not immediate optype");
+    }
+}
+
+static void gen_reg_mem(operand_seed *opnd_seed, char *buffer)
+{
+    opflags_t opndflags;
+    opndflags = opnd_seed->opndflags;
+
+    if (is_class(MEMORY, opndflags)) {
+        if (is_class(MEM_OFFS, opndflags)) {
+            /* TODO */
+        } else {
+            create_memory(opnd_seed, buffer);
+        }
+    } else {
+        bool select_mem = likely_happen_p(0.0);
+        if (select_mem) {
+            create_memory(opnd_seed, buffer);
+        } else {
+            gen_register(opnd_seed, buffer);
+        }
+    }
+}
+
 /* Generate operand. */
 void gen_operand(operand_seed *opnd_seed, char *buffer)
 {
     opflags_t opndflags;
-
     opndflags = opnd_seed->opndflags;
-    switch (opndflags) {
-    /* specific registers */
-    case REG_AL:
-        create_specific_register(buffer, R_AL);
-        break;
-    case REG_AX:
-        create_specific_register(buffer, R_AX);
-        break;
-    case REG_EAX:
-        create_specific_register(buffer, R_EAX);
-        break;
-    case REG_CL:
-        create_specific_register(buffer, R_CL);
-        break;
-    case REG_CX:
-        create_specific_register(buffer, R_CX);
-        break;
-    case REG_ECX:
-        create_specific_register(buffer, R_ECX);
-        break;
-    case REG_DX:
-        create_specific_register(buffer, R_DX);
-        break;
 
-    /* segment registers */
-    case REG_ES:
-        create_specific_register(buffer, R_ES);
-        break;
-    case REG_CS:
-        create_specific_register(buffer, R_CS);
-        break;
-    case REG_SS:
-        create_specific_register(buffer, R_SS);
-        break;
-    case REG_DS:
-        create_specific_register(buffer, R_DS);
-        break;
-    case REG_FS:
-        create_specific_register(buffer, R_FS);
-        break;
-    case REG_GS:
-        create_specific_register(buffer, R_GS);
-        break;
-
-    /* special register class */
-    case REG_CREG:
-        create_control_register(buffer);
-        break;
-    case REG_SREG:
-        create_segment_register(buffer);
-        break;
-
-    /*special immediate values*/
-    case UNITY:
-    {
-        create_unity(buffer, opnd_seed);
-        break;
+    if (is_class(REGISTER, opndflags)) {
+        /* REGISTER condition must be judged before REGMEM
+         */
+        gen_register(opnd_seed, buffer);
+    } else if (is_class(IMMEDIATE, opndflags)) {
+        gen_immediate(opnd_seed, buffer);
+    } else if (is_class(REGMEM, opndflags)) {
+        gen_reg_mem(opnd_seed, buffer);
+    } else {
+        nasm_fatal("Wrong operand odflags with no optype");
     }
 
-//TODO:    /* special types of EAs */
 //TODO:    case MEM_OFFS:
 
-    /* immediate */
-    case IMMEDIATE:
-    case IMMEDIATE|BITS8:
-    case IMMEDIATE|BITS16:
-    case IMMEDIATE|BITS32:
-        create_immediate(buffer, opnd_seed);
-        break;
 //TODO:    case IMMEDIATE|COLON:
 //TODO:    case IMMEDIATE|BITS16|COLON:
 //TODO:    case IMMEDIATE|BITS16|NEAR:
@@ -579,33 +608,10 @@ void gen_operand(operand_seed *opnd_seed, char *buffer)
 //TODO:    case IMMEDIATE|NEAR:
 
 
-    /* memory */
-    case MEMORY:
-        create_memory(buffer, opnd_seed);
-        break;
 //TODO:    case MEMORY|BITS8:
 //TODO:    case MEMORY|BITS16:
 //TODO:    case MEMORY|BITS32:
 //TODO:    case MEMORY|FAR:
-
-    /* general purpose registers */
-    case REG_GPR|BITS8:
-    case REG_GPR|BITS16:
-    case REG_GPR|BITS32:
-        create_gpr_register(buffer, opnd_seed);
-        break;
-
-    /* r/m */
-    case RM_GPR|BITS8:
-    case RM_GPR|BITS16:
-    case RM_GPR|BITS32:
-        create_gprmem(buffer, opnd_seed);
-        break;
-
-    default:
-        nasm_fatal("unsupported opnd type");
-        break;
-    }
 }
 
 void gendata_init(void)

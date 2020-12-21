@@ -14,16 +14,7 @@
 #include "generator.h"
 #include "check.h"
 
-static int imms[14] =
-{
-  0x0,        0x1,        0x7f,
-  0x80,       0x7fff,     0x8000,
-  0x03030303, 0x44444444, 0x7fffffff,
-  0x80000000, 0x80000001, 0xcccccccc,
-  0xf5f5f5f5, 0xffffffff
-};
-
-void create_specific_register(char *buffer, enum reg_enum R_reg)
+void create_specific_register(enum reg_enum R_reg, char *buffer)
 {
     dfmt->print("    try> create specific register\n");
     const char *src;
@@ -32,47 +23,41 @@ void create_specific_register(char *buffer, enum reg_enum R_reg)
     dfmt->print("    done> new specific register: %s", buffer);
 }
 
-void create_control_register(char *buffer)
+void create_control_register(operand_seed *opnd_seed, char *buffer)
 {
+    (void *)opnd_seed;
     dfmt->print("    try> create creg\n");
-    int cregi;
+    int cregi, cregn;
     enum reg_enum creg;
     const char *src;
 
     bseqiflags_t bseqiflags = bseqi_flags(REG_CREG);
-    if (X86PGState.seqMode) {
-        cregi = X86PGState.bseqi.indexes[BSEQIFLAG_INDEXPOS(bseqiflags)];
-    } else {
-        int cregn = BSEQIFLAG_INDEXSIZE(bseqiflags);
-        cregi = nasm_random32(cregn);
-    }
+    cregn = BSEQIFLAG_INDEXSIZE(bseqiflags);
+    cregi = nasm_random32(cregn);
     creg = nasm_rd_creg[cregi];
     src = nasm_reg_names[creg - EXPR_REG_START];
     sprintf(buffer, "%s\n", src);
     dfmt->print("    done> new creg: %s", buffer);
 }
 
-void create_segment_register(char *buffer)
+void create_segment_register(operand_seed *opnd_seed, char *buffer)
 {
+    (void *)opnd_seed;
     dfmt->print("    try> create sreg\n");
-    int sregi;
+    int sregi, sregn;
     enum reg_enum sreg;
     const char *src;
 
     bseqiflags_t bseqiflags = bseqi_flags(REG_SREG);
-    if (X86PGState.seqMode) {
-        sregi = X86PGState.bseqi.indexes[BSEQIFLAG_INDEXPOS(bseqiflags)];
-    } else {
-        int sregn = BSEQIFLAG_INDEXSIZE(bseqiflags);
-        sregi = nasm_random32(sregn);
-    }
+    sregn = BSEQIFLAG_INDEXSIZE(bseqiflags);
+    sregi = nasm_random32(sregn);
     sreg = nasm_rd_sreg[sregi];
     src = nasm_reg_names[sreg - EXPR_REG_START];
     sprintf(buffer, "%s\n", src);
     dfmt->print("    done> new sreg: %s", buffer);
 }
 
-void create_unity(char *buffer, operand_seed *opnd_seed)
+void create_unity(operand_seed *opnd_seed, char *buffer)
 {
     dfmt->print("    try> create unity\n");
     int unity, shiftCount;
@@ -90,22 +75,19 @@ void create_unity(char *buffer, operand_seed *opnd_seed)
     dfmt->print("    done> new unity: %s", buffer);
 }
 
-void create_gpr_register(char *buffer, operand_seed *opnd_seed)
+void create_gpr_register(operand_seed *opnd_seed, char *buffer)
 {
     dfmt->print("    try> create gpr\n");
-    int gpri;
+    int gpri, gprn;
     enum reg_enum gpr;
     const char *instName, *src;
 
     bseqiflags_t bseqiflags = bseqi_flags(opnd_seed->opndflags);
 
 gen_gpr:
-    if (X86PGState.seqMode) {
-        gpri = X86PGState.bseqi.indexes[BSEQIFLAG_INDEXPOS(bseqiflags)];
-    } else {
-        int gprn = BSEQIFLAG_INDEXSIZE(bseqiflags);
-        gpri = nasm_random32(gprn);
-    }
+    gprn = BSEQIFLAG_INDEXSIZE(bseqiflags);
+    gpri = nasm_random32(gprn);
+
     switch (opnd_seed->opdsize) {
         case BITS8:
             gpr = nasm_rd_reg8[gpri];
@@ -136,34 +118,28 @@ gen_gpr:
  * If it's larger than the limmit (8/16-bits imm), the high significant bytes
  * will be wipped away while assembling.
  */
-void create_immediate(char *buffer, operand_seed* opnd_seed)
+void create_immediate(operand_seed* opnd_seed, char *buffer)
 {
     dfmt->print("    try> create immediate\n");
-    int immi, imm;
+    int imm;
     const char *instName;
     
-    if (X86PGState.seqMode) {
-        bseqiflags_t bseqiflags = bseqi_flags(opnd_seed->opndflags);
-        immi = X86PGState.bseqi.indexes[BSEQIFLAG_INDEXPOS(bseqiflags)];
-        imm = imms[immi];
-    } else {
-        long long immn;
-        switch (opnd_seed->opdsize) {
-            case BITS8:
-                immn = 0x100;
-                break;
-            case BITS16:
-                immn = 0x10000;
-                break;
-            case BITS32:
-                immn = 0x100000000;
-                break;
-            default:
-                nasm_fatal("wrong immediate size");
-                break;
-        }
-        imm = (int)nasm_random64(immn);
+    long long immn;
+    switch (opnd_seed->opdsize) {
+        case BITS8:
+            immn = 0x100;
+            break;
+        case BITS16:
+            immn = 0x10000;
+            break;
+        case BITS32:
+            immn = 0x100000000;
+            break;
+        default:
+            nasm_fatal("wrong immediate size");
+            break;
     }
+    imm = (int)nasm_random64(immn);
 
     instName = nasm_insn_names[X86PGState.curr_seed->opcode];
     if (request_initialize(instName)) {
@@ -266,7 +242,7 @@ static void create_random_modrm(char *buffer)
     }
 }
 
-void create_memory(char *buffer, operand_seed *opnd_seed)
+void create_memory(operand_seed *opnd_seed, char *buffer)
 {
     dfmt->print("    try> create memory\n");
     if (globalbits == 16) {
@@ -284,21 +260,6 @@ void create_memory(char *buffer, operand_seed *opnd_seed)
         }
     }
     dfmt->print("    done> new memory: %s", buffer);
-}
-
-void create_gprmem(char *buffer, operand_seed *opnd_seed)
-{
-    operand_seed temp = *opnd_seed;
-    if (likely_happen_p(0.5)) {
-        dfmt->print("    try> create rm register\n");
-        temp.opndflags = REG_GPR|opnd_seed->opdsize;
-        create_gpr_register(buffer, &temp);
-    } else {
-        dfmt->print("    try> create rm memory\n");
-        temp.opndflags = MEMORY|opnd_seed->opdsize;
-        create_memory(buffer, &temp);
-    }
-    dfmt->print("    done> new rm: %s", buffer);
 }
 
 void init_specific_register(enum reg_enum R_reg, bool isSrc)
