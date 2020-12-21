@@ -570,7 +570,7 @@ static void gen_reg_mem(operand_seed *opnd_seed, char *buffer)
             create_memory(opnd_seed, buffer);
         }
     } else {
-        bool select_mem = likely_happen_p(0.0);
+        bool select_mem = likely_happen_p(0.5);
         if (select_mem) {
             create_memory(opnd_seed, buffer);
         } else {

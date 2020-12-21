@@ -319,7 +319,8 @@ bool one_insn_gen(const insn_seed *seed, insn *result)
             opnd_seed.opndflags = seed->opd[opi];
             opnd_seed.srcdestflags = calSrcDestFlags(seed, opi);
             opnd_seed.opdsize = calOperandSize(seed, opi);
-            if (opi == 0 && is_class(IMMEDIATE, seed->opd[1])){
+            if ((opi == 0 && is_class(IMMEDIATE, seed->opd[1])) ||
+                seed->opd[1] == 0) {
                 opnd_seed.explicitmemsize = true;
             } else {
                 opnd_seed.explicitmemsize = false;

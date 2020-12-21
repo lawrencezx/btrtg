@@ -47,7 +47,7 @@
 
 #define fetch_safe(_start, _ptr, _size, _need, _op)         \
     do {                                                    \
-        if (((_ptr) - (_start)) >= ((_size) - (_need)))     \
+        if (((_ptr) - (_start)) > ((_size) - (_need)))     \
             _op;                                            \
     } while (0)
 
