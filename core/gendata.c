@@ -84,10 +84,40 @@ srcdestflags_t calSrcDestFlags(const insn_seed *seed, int opi)
     case I_COMISS:
     case I_UCOMISS:
     case I_UCOMISD:
-    case I_Jcc:
+    case I_JA:
+    case I_JAE:
+    case I_JB:
+    case I_JBE:
+    case I_JC:
+    case I_JE:
+    case I_JG:
+    case I_JGE:
+    case I_JL:
+    case I_JLE:
+    case I_JNA:
+    case I_JNAE:
+    case I_JNB:
+    case I_JNBE:
+    case I_JNC:
+    case I_JNE:
+    case I_JNG:
+    case I_JNGE:
+    case I_JNL:
+    case I_JNLE:
+    case I_JNO:
+    case I_JNP:
+    case I_JNS:
+    case I_JNZ:
+    case I_JO:
+    case I_JP:
+    case I_JS:
+    case I_JZ:
+    case I_JPE:
+    case I_JPO:
         srcdestflags = OPSRC;
         break;
     case I_ADC:
+    case I_SUB:
     case I_ADD:
     case I_AND:
     case I_BSF:
@@ -317,7 +347,36 @@ srcdestflags_t calSrcDestFlags(const insn_seed *seed, int opi)
     case I_SLDT:
     case I_SMSW:
     case I_STR:
-    case I_SETcc:
+    case I_SETA:
+    case I_SETAE:
+    case I_SETB:
+    case I_SETBE:
+    case I_SETC:
+    case I_SETE:
+    case I_SETG:
+    case I_SETGE:
+    case I_SETL:
+    case I_SETLE:
+    case I_SETNA:
+    case I_SETNAE:
+    case I_SETNB:
+    case I_SETNBE:
+    case I_SETNC:
+    case I_SETNE:
+    case I_SETNG:
+    case I_SETNGE:
+    case I_SETNL:
+    case I_SETNLE:
+    case I_SETNO:
+    case I_SETNP:
+    case I_SETNS:
+    case I_SETNZ:
+    case I_SETO:
+    case I_SETP:
+    case I_SETPE:
+    case I_SETPO:
+    case I_SETS:
+    case I_SETZ:
     case I_FSAVE:
     case I_FNSAVE:
     case I_FST:
@@ -352,7 +411,36 @@ srcdestflags_t calSrcDestFlags(const insn_seed *seed, int opi)
     case I_MOVLPD:
     case I_MOVMSKPD:
     case I_MOVUPD:
-    case I_CMOVcc:
+    case I_CMOVA:
+    case I_CMOVAE:
+    case I_CMOVB:
+    case I_CMOVBE:
+    case I_CMOVC:
+    case I_CMOVE:
+    case I_CMOVG:
+    case I_CMOVGE:
+    case I_CMOVL:
+    case I_CMOVLE:
+    case I_CMOVNA:
+    case I_CMOVNAE:
+    case I_CMOVNB:
+    case I_CMOVNBE:
+    case I_CMOVNC:
+    case I_CMOVNE:
+    case I_CMOVNG:
+    case I_CMOVNGE:
+    case I_CMOVNL:
+    case I_CMOVNLE:
+    case I_CMOVNO:
+    case I_CMOVNP:
+    case I_CMOVNS:
+    case I_CMOVNZ:
+    case I_CMOVO:
+    case I_CMOVP:
+    case I_CMOVPE:
+    case I_CMOVPO:
+    case I_CMOVS:
+    case I_CMOVZ:
     case I_LDS:
     case I_LES:
     case I_LFS:

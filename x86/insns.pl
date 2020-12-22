@@ -378,7 +378,6 @@ if ( $output eq 'i' ) {
     print I "#define MAX_INSLEN ", $maxlen, "\n";
     print I "#define NASM_VEX_CLASSES ", $vex_classes, "\n";
     print I "#define NO_DECORATOR\t{", join(',',(0) x $MAX_OPERANDS), "}\n";
-    print I "#define FIRST_COND_OPCODE I_", $opcodes_cc[0], "\n\n";
     print I "#endif /* NASM_INSNSI_H */\n";
 
     close I;

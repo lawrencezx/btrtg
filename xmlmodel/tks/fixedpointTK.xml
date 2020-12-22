@@ -4,7 +4,123 @@
         <Node name = "arith" weight="50"> </Node>
         <Node name = "normal" weight="50"> </Node>
     </TK>
-    <TK inst = "cmov" initP = "1.0">
+    <TK inst = "cmova" initP = "1.0">
+        <Node name = "arith" weight="50"> </Node>
+        <Node name = "normal" weight="50"> </Node>
+    </TK>
+    <TK inst = "cmovae" initP = "1.0">
+        <Node name = "arith" weight="50"> </Node>
+        <Node name = "normal" weight="50"> </Node>
+    </TK>
+    <TK inst = "cmovb" initP = "1.0">
+        <Node name = "arith" weight="50"> </Node>
+        <Node name = "normal" weight="50"> </Node>
+    </TK>
+    <TK inst = "cmovbe" initP = "1.0">
+        <Node name = "arith" weight="50"> </Node>
+        <Node name = "normal" weight="50"> </Node>
+    </TK>
+    <TK inst = "cmovc" initP = "1.0">
+        <Node name = "arith" weight="50"> </Node>
+        <Node name = "normal" weight="50"> </Node>
+    </TK>
+    <TK inst = "cmove" initP = "1.0">
+        <Node name = "arith" weight="50"> </Node>
+        <Node name = "normal" weight="50"> </Node>
+    </TK>
+    <TK inst = "cmovg" initP = "1.0">
+        <Node name = "arith" weight="50"> </Node>
+        <Node name = "normal" weight="50"> </Node>
+    </TK>
+    <TK inst = "cmovge" initP = "1.0">
+        <Node name = "arith" weight="50"> </Node>
+        <Node name = "normal" weight="50"> </Node>
+    </TK>
+    <TK inst = "cmovl" initP = "1.0">
+        <Node name = "arith" weight="50"> </Node>
+        <Node name = "normal" weight="50"> </Node>
+    </TK>
+    <TK inst = "cmovle" initP = "1.0">
+        <Node name = "arith" weight="50"> </Node>
+        <Node name = "normal" weight="50"> </Node>
+    </TK>
+    <TK inst = "cmovna" initP = "1.0">
+        <Node name = "arith" weight="50"> </Node>
+        <Node name = "normal" weight="50"> </Node>
+    </TK>
+    <TK inst = "cmovnae" initP = "1.0">
+        <Node name = "arith" weight="50"> </Node>
+        <Node name = "normal" weight="50"> </Node>
+    </TK>
+    <TK inst = "cmovnb" initP = "1.0">
+        <Node name = "arith" weight="50"> </Node>
+        <Node name = "normal" weight="50"> </Node>
+    </TK>
+    <TK inst = "cmovnbe" initP = "1.0">
+        <Node name = "arith" weight="50"> </Node>
+        <Node name = "normal" weight="50"> </Node>
+    </TK>
+    <TK inst = "cmovnc" initP = "1.0">
+        <Node name = "arith" weight="50"> </Node>
+        <Node name = "normal" weight="50"> </Node>
+    </TK>
+    <TK inst = "cmovne" initP = "1.0">
+        <Node name = "arith" weight="50"> </Node>
+        <Node name = "normal" weight="50"> </Node>
+    </TK>
+    <TK inst = "cmovng" initP = "1.0">
+        <Node name = "arith" weight="50"> </Node>
+        <Node name = "normal" weight="50"> </Node>
+    </TK>
+    <TK inst = "cmovnge" initP = "1.0">
+        <Node name = "arith" weight="50"> </Node>
+        <Node name = "normal" weight="50"> </Node>
+    </TK>
+    <TK inst = "cmovnl" initP = "1.0">
+        <Node name = "arith" weight="50"> </Node>
+        <Node name = "normal" weight="50"> </Node>
+    </TK>
+    <TK inst = "cmovnle" initP = "1.0">
+        <Node name = "arith" weight="50"> </Node>
+        <Node name = "normal" weight="50"> </Node>
+    </TK>
+    <TK inst = "cmovno" initP = "1.0">
+        <Node name = "arith" weight="50"> </Node>
+        <Node name = "normal" weight="50"> </Node>
+    </TK>
+    <TK inst = "cmovnp" initP = "1.0">
+        <Node name = "arith" weight="50"> </Node>
+        <Node name = "normal" weight="50"> </Node>
+    </TK>
+    <TK inst = "cmovns" initP = "1.0">
+        <Node name = "arith" weight="50"> </Node>
+        <Node name = "normal" weight="50"> </Node>
+    </TK>
+    <TK inst = "cmovnz" initP = "1.0">
+        <Node name = "arith" weight="50"> </Node>
+        <Node name = "normal" weight="50"> </Node>
+    </TK>
+    <TK inst = "cmovo" initP = "1.0">
+        <Node name = "arith" weight="50"> </Node>
+        <Node name = "normal" weight="50"> </Node>
+    </TK>
+    <TK inst = "cmovp" initP = "1.0">
+        <Node name = "arith" weight="50"> </Node>
+        <Node name = "normal" weight="50"> </Node>
+    </TK>
+    <TK inst = "cmovpe" initP = "1.0">
+        <Node name = "arith" weight="50"> </Node>
+        <Node name = "normal" weight="50"> </Node>
+    </TK>
+    <TK inst = "cmovpo" initP = "1.0">
+        <Node name = "arith" weight="50"> </Node>
+        <Node name = "normal" weight="50"> </Node>
+    </TK>
+    <TK inst = "cmovs" initP = "1.0">
+        <Node name = "arith" weight="50"> </Node>
+        <Node name = "normal" weight="50"> </Node>
+    </TK>
+    <TK inst = "cmovz" initP = "1.0">
         <Node name = "arith" weight="50"> </Node>
         <Node name = "normal" weight="50"> </Node>
     </TK>
@@ -246,7 +362,123 @@
         <Node name = "arith" weight="50"> </Node>
         <Node name = "normal" weight="50"> </Node>
     </TK>
-    <TK inst = "set" initP = "1.0">
+    <TK inst = "seta" initP = "1.0">
+        <Node name = "arith" weight="50"> </Node>
+        <Node name = "normal" weight="50"> </Node>
+    </TK>
+    <TK inst = "setae" initP = "1.0">
+        <Node name = "arith" weight="50"> </Node>
+        <Node name = "normal" weight="50"> </Node>
+    </TK>
+    <TK inst = "setb" initP = "1.0">
+        <Node name = "arith" weight="50"> </Node>
+        <Node name = "normal" weight="50"> </Node>
+    </TK>
+    <TK inst = "setbe" initP = "1.0">
+        <Node name = "arith" weight="50"> </Node>
+        <Node name = "normal" weight="50"> </Node>
+    </TK>
+    <TK inst = "setc" initP = "1.0">
+        <Node name = "arith" weight="50"> </Node>
+        <Node name = "normal" weight="50"> </Node>
+    </TK>
+    <TK inst = "sete" initP = "1.0">
+        <Node name = "arith" weight="50"> </Node>
+        <Node name = "normal" weight="50"> </Node>
+    </TK>
+    <TK inst = "setg" initP = "1.0">
+        <Node name = "arith" weight="50"> </Node>
+        <Node name = "normal" weight="50"> </Node>
+    </TK>
+    <TK inst = "setge" initP = "1.0">
+        <Node name = "arith" weight="50"> </Node>
+        <Node name = "normal" weight="50"> </Node>
+    </TK>
+    <TK inst = "setl" initP = "1.0">
+        <Node name = "arith" weight="50"> </Node>
+        <Node name = "normal" weight="50"> </Node>
+    </TK>
+    <TK inst = "setle" initP = "1.0">
+        <Node name = "arith" weight="50"> </Node>
+        <Node name = "normal" weight="50"> </Node>
+    </TK>
+    <TK inst = "setna" initP = "1.0">
+        <Node name = "arith" weight="50"> </Node>
+        <Node name = "normal" weight="50"> </Node>
+    </TK>
+    <TK inst = "setnae" initP = "1.0">
+        <Node name = "arith" weight="50"> </Node>
+        <Node name = "normal" weight="50"> </Node>
+    </TK>
+    <TK inst = "setnb" initP = "1.0">
+        <Node name = "arith" weight="50"> </Node>
+        <Node name = "normal" weight="50"> </Node>
+    </TK>
+    <TK inst = "setnbe" initP = "1.0">
+        <Node name = "arith" weight="50"> </Node>
+        <Node name = "normal" weight="50"> </Node>
+    </TK>
+    <TK inst = "setnc" initP = "1.0">
+        <Node name = "arith" weight="50"> </Node>
+        <Node name = "normal" weight="50"> </Node>
+    </TK>
+    <TK inst = "setne" initP = "1.0">
+        <Node name = "arith" weight="50"> </Node>
+        <Node name = "normal" weight="50"> </Node>
+    </TK>
+    <TK inst = "setng" initP = "1.0">
+        <Node name = "arith" weight="50"> </Node>
+        <Node name = "normal" weight="50"> </Node>
+    </TK>
+    <TK inst = "setnge" initP = "1.0">
+        <Node name = "arith" weight="50"> </Node>
+        <Node name = "normal" weight="50"> </Node>
+    </TK>
+    <TK inst = "setnl" initP = "1.0">
+        <Node name = "arith" weight="50"> </Node>
+        <Node name = "normal" weight="50"> </Node>
+    </TK>
+    <TK inst = "setnle" initP = "1.0">
+        <Node name = "arith" weight="50"> </Node>
+        <Node name = "normal" weight="50"> </Node>
+    </TK>
+    <TK inst = "setno" initP = "1.0">
+        <Node name = "arith" weight="50"> </Node>
+        <Node name = "normal" weight="50"> </Node>
+    </TK>
+    <TK inst = "setnp" initP = "1.0">
+        <Node name = "arith" weight="50"> </Node>
+        <Node name = "normal" weight="50"> </Node>
+    </TK>
+    <TK inst = "setns" initP = "1.0">
+        <Node name = "arith" weight="50"> </Node>
+        <Node name = "normal" weight="50"> </Node>
+    </TK>
+    <TK inst = "setnz" initP = "1.0">
+        <Node name = "arith" weight="50"> </Node>
+        <Node name = "normal" weight="50"> </Node>
+    </TK>
+    <TK inst = "seto" initP = "1.0">
+        <Node name = "arith" weight="50"> </Node>
+        <Node name = "normal" weight="50"> </Node>
+    </TK>
+    <TK inst = "setp" initP = "1.0">
+        <Node name = "arith" weight="50"> </Node>
+        <Node name = "normal" weight="50"> </Node>
+    </TK>
+    <TK inst = "setpe" initP = "1.0">
+        <Node name = "arith" weight="50"> </Node>
+        <Node name = "normal" weight="50"> </Node>
+    </TK>
+    <TK inst = "setpo" initP = "1.0">
+        <Node name = "arith" weight="50"> </Node>
+        <Node name = "normal" weight="50"> </Node>
+    </TK>
+    <TK inst = "sets" initP = "1.0">
+        <Node name = "arith" weight="50"> </Node>
+        <Node name = "normal" weight="50"> </Node>
+    </TK>
+    <TK inst = "setz" initP = "1.0">
         <Node name = "arith" weight="50"> </Node>
         <Node name = "normal" weight="50"> </Node>
     </TK>
@@ -267,7 +499,94 @@
     <TK inst = "jmp" initP = "1.0">
         <Node name = "normal" weight="100"> </Node>
     </TK>
-    <TK inst = "j" initP = "1.0">
+    <TK inst = "ja" initP = "1.0">
+        <Node name = "normal" weight="100"> </Node>
+    </TK>
+    <TK inst = "jae" initP = "1.0">
+        <Node name = "normal" weight="100"> </Node>
+    </TK>
+    <TK inst = "jb" initP = "1.0">
+        <Node name = "normal" weight="100"> </Node>
+    </TK>
+    <TK inst = "jbe" initP = "1.0">
+        <Node name = "normal" weight="100"> </Node>
+    </TK>
+    <TK inst = "jc" initP = "1.0">
+        <Node name = "normal" weight="100"> </Node>
+    </TK>
+    <TK inst = "je" initP = "1.0">
+        <Node name = "normal" weight="100"> </Node>
+    </TK>
+    <TK inst = "jg" initP = "1.0">
+        <Node name = "normal" weight="100"> </Node>
+    </TK>
+    <TK inst = "jge" initP = "1.0">
+        <Node name = "normal" weight="100"> </Node>
+    </TK>
+    <TK inst = "jl" initP = "1.0">
+        <Node name = "normal" weight="100"> </Node>
+    </TK>
+    <TK inst = "jle" initP = "1.0">
+        <Node name = "normal" weight="100"> </Node>
+    </TK>
+    <TK inst = "jna" initP = "1.0">
+        <Node name = "normal" weight="100"> </Node>
+    </TK>
+    <TK inst = "jnae" initP = "1.0">
+        <Node name = "normal" weight="100"> </Node>
+    </TK>
+    <TK inst = "jnb" initP = "1.0">
+        <Node name = "normal" weight="100"> </Node>
+    </TK>
+    <TK inst = "jnbe" initP = "1.0">
+        <Node name = "normal" weight="100"> </Node>
+    </TK>
+    <TK inst = "jnc" initP = "1.0">
+        <Node name = "normal" weight="100"> </Node>
+    </TK>
+    <TK inst = "jne" initP = "1.0">
+        <Node name = "normal" weight="100"> </Node>
+    </TK>
+    <TK inst = "jng" initP = "1.0">
+        <Node name = "normal" weight="100"> </Node>
+    </TK>
+    <TK inst = "jnge" initP = "1.0">
+        <Node name = "normal" weight="100"> </Node>
+    </TK>
+    <TK inst = "jnl" initP = "1.0">
+        <Node name = "normal" weight="100"> </Node>
+    </TK>
+    <TK inst = "jnle" initP = "1.0">
+        <Node name = "normal" weight="100"> </Node>
+    </TK>
+    <TK inst = "jno" initP = "1.0">
+        <Node name = "normal" weight="100"> </Node>
+    </TK>
+    <TK inst = "jnp" initP = "1.0">
+        <Node name = "normal" weight="100"> </Node>
+    </TK>
+    <TK inst = "jns" initP = "1.0">
+        <Node name = "normal" weight="100"> </Node>
+    </TK>
+    <TK inst = "jnz" initP = "1.0">
+        <Node name = "normal" weight="100"> </Node>
+    </TK>
+    <TK inst = "jo" initP = "1.0">
+        <Node name = "normal" weight="100"> </Node>
+    </TK>
+    <TK inst = "jp" initP = "1.0">
+        <Node name = "normal" weight="100"> </Node>
+    </TK>
+    <TK inst = "js" initP = "1.0">
+        <Node name = "normal" weight="100"> </Node>
+    </TK>
+    <TK inst = "jz" initP = "1.0">
+        <Node name = "normal" weight="100"> </Node>
+    </TK>
+    <TK inst = "jpe" initP = "1.0">
+        <Node name = "normal" weight="100"> </Node>
+    </TK>
+    <TK inst = "jpo" initP = "1.0">
         <Node name = "normal" weight="100"> </Node>
     </TK>
     <TK inst = "jcxz" initP = "1.0">

@@ -1125,12 +1125,6 @@ static int matches(const struct itemplate *t, uint8_t *data,
     return data - origdata;
 }
 
-/* Condition names for disassembly, sorted by x86 code */
-static const char * const condition_name[16] = {
-    "o", "no", "c", "nc", "z", "nz", "na", "a",
-    "s", "ns", "pe", "po", "l", "nl", "ng", "g"
-};
-
 int32_t disasm(uint8_t *data, int32_t data_size, char *output, int outbufsize, int segsize,
                iflag_t *prefer)
 {
@@ -1423,11 +1417,7 @@ int32_t disasm(uint8_t *data, int32_t data_size, char *output, int outbufsize, i
     }
 
     i = (*p)->opcode;
-    if (i >= FIRST_COND_OPCODE)
-        slen += snprintf(output + slen, outbufsize - slen, "%s%s",
-                        nasm_insn_names[i], condition_name[ins.condition]);
-    else
-        slen += snprintf(output + slen, outbufsize - slen, "%s",
+    slen += snprintf(output + slen, outbufsize - slen, "%s",
                         nasm_insn_names[i]);
 
     colon = false;
