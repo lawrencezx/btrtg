@@ -1,5 +1,6 @@
 #include "compiler.h"
 
+#include "nasmlib.h"
 #include "x86pg.h"
 #include "section.h"
 
@@ -11,5 +12,14 @@ void init_text_sec(struct section *data_sec)
 void init_data_sec(struct section *data_sec)
 {
     data_sec->type = DATA_SEC;
-    data_sec->size = 0x1000;
+    /* CONFIG INFO */
+    data_sec->datanum = 10;
+    data_sec->dataoffs = (int *)nasm_malloc(data_sec->datanum * sizeof(int));
+    data_sec->datasizes = (int *)nasm_malloc(data_sec->datanum * sizeof(int));
+    data_sec->dataoffs[0] = 0;
+    data_sec->datasizes[0] = 256;
+    for (int i = 1; i < data_sec->datanum; i++) {
+        data_sec->dataoffs[i] = data_sec->dataoffs[i - 1] + data_sec->datasizes[i - 1];
+        data_sec->datasizes[i] = 256;
+    }
 }

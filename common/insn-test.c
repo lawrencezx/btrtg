@@ -9,8 +9,7 @@
 #include "insn-test.h"
 #include "x86pg.h"
 
-static const char data_content[] = "  data:  times 256 db 0\n";
-static const char fout_head[] = "  GLOBAL _start\n_start:\n  lea edx,data\n";
+static const char fout_head[] = "  GLOBAL _start\n_start:\n  lea edx,data0\n";
 static const char fout_tail[] = "\n  mov eax,1\n  mov ebx,0\n  int 80h";
 
 void gsp_init(void)
@@ -18,10 +17,6 @@ void gsp_init(void)
     struct output_data data;
     data.type = OUTPUT_SECTION;
     data.buf = (const void *)&X86PGState.data_sec;
-    ofmt->output(&data);
-
-    data.type = OUTPUT_RAWDATA;
-    data.buf = (const void *)data_content;
     ofmt->output(&data);
 
     data.type = OUTPUT_SECTION;
@@ -52,7 +47,7 @@ void gsp(const insn_seed *seed)
 {
     insn new_inst;
 
-    for (int i = 0; i < 100; i++) {
+    for (int i = 0; i < 10; i++) {
         one_insn_gen(seed, &new_inst);
     }
 }

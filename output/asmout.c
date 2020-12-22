@@ -36,6 +36,10 @@ static void asm_out_sec(struct section *sec)
             break;
         case DATA_SEC:
             fprintf(asmfp, "SECTION .DATA write\n");
+            for (int i = 0; i < sec->datanum; i++) {
+                fprintf(asmfp, "  data%d:  times %d db 0\n", i, sec->datasizes[i]);
+            }
+            fprintf(asmfp, "\n");
             break;
         case BSS_SEC:
             fprintf(asmfp, "SECTION .BSS write\n");

@@ -25,7 +25,7 @@ void create_specific_register(enum reg_enum R_reg, operand_seed *opnd_seed, char
         sprintf(buffer, "mov %s, 0x%x", src, (cVal == NULL) ? (int)nasm_random64(0x100000000) : cVal->imm32);
         one_insn_gen_const(buffer);
     }
-    sprintf(buffer, "%s\n", src);
+    sprintf(buffer, " %s", src);
     dfmt->print("    done> new specific register: %s", buffer);
 }
 
@@ -42,7 +42,7 @@ void create_control_register(operand_seed *opnd_seed, char *buffer)
     cregi = nasm_random32(cregn);
     creg = nasm_rd_creg[cregi];
     src = nasm_reg_names[creg - EXPR_REG_START];
-    sprintf(buffer, "%s\n", src);
+    sprintf(buffer, " %s", src);
     dfmt->print("    done> new creg: %s", buffer);
 }
 
@@ -59,7 +59,7 @@ void create_segment_register(operand_seed *opnd_seed, char *buffer)
     sregi = nasm_random32(sregn);
     sreg = nasm_rd_sreg[sregi];
     src = nasm_reg_names[sreg - EXPR_REG_START];
-    sprintf(buffer, "%s\n", src);
+    sprintf(buffer, " %s", src);
     dfmt->print("    done> new sreg: %s", buffer);
 }
 
@@ -83,7 +83,7 @@ void create_unity(operand_seed *opnd_seed, char *buffer)
         if (cVal != NULL)
             unity = cVal->imm32;
     }
-    sprintf(buffer, "0x%x\n", unity);
+    sprintf(buffer, " 0x%x", unity);
     dfmt->print("    done> new unity: %s", buffer);
 }
 
@@ -122,7 +122,7 @@ gen_gpr:
         sprintf(buffer, "mov %s, 0x%x", src, (cVal == NULL) ? (int)nasm_random64(0x100000000) : cVal->imm32);
         one_insn_gen_const(buffer);
     }
-    sprintf(buffer, "%s\n", src);
+    sprintf(buffer, " %s", src);
     dfmt->print("    done> new gpr: %s", buffer);
 }
 
@@ -158,7 +158,7 @@ void create_immediate(operand_seed* opnd_seed, char *buffer)
         if (cVal != NULL)
             imm = cVal->imm32;
     }
-    sprintf(buffer, "0x%x\n", imm);
+    sprintf(buffer, " 0x%x", imm);
     dfmt->print("    done> new immediate: %s", buffer);
 }
 
@@ -277,8 +277,37 @@ void create_memory(operand_seed *opnd_seed, char *buffer)
         sprintf(buffer, "mov %s %s, 0x%x", memsize[whichmemsize], modrm, (cVal == NULL) ? (int)nasm_random64(0x100000000) : cVal->imm32);
         one_insn_gen_const(buffer);
     }
-    sprintf(buffer, "%s\n", src);
+    sprintf(buffer, " %s", src);
     dfmt->print("    done> new memory: %s", buffer);
+}
+
+void create_memoffs(operand_seed *opnd_seed, char *buffer)
+{
+    dfmt->print("    try> create memoffs\n");
+    char src[128];
+    int datai;
+    static const char *memsize[3] = {"byte", "word", "dword"};
+    int whichmemsize = opnd_seed->opdsize == BITS8 ? 0 :
+        (opnd_seed->opdsize == BITS16 ? 1 : 2);
+    if (globalbits == 16) {
+        nasm_fatal("unsupported 16-bit memory type");
+    } else {
+        datai = nasm_random32(X86PGState.data_sec.datanum);
+        if (opnd_seed->explicitmemsize) {
+            sprintf(src, "%s [data%d]", memsize[whichmemsize], datai);
+        } else {
+            sprintf(src, "[data%d]", datai);
+        }
+    }
+    if (X86PGState.need_init) {
+        const char *instName = nasm_insn_names[X86PGState.curr_seed->opcode];
+        constVal *cVal = request_constVal(instName, opnd_seed->srcdestflags & OPDEST);
+        sprintf(buffer, "mov %s [data%d], 0x%x", memsize[whichmemsize], datai,
+                (cVal == NULL) ? (int)nasm_random64(0x100000000) : cVal->imm32);
+        one_insn_gen_const(buffer);
+    }
+    sprintf(buffer, " %s", src);
+    dfmt->print("    done> new memoffs: %s", buffer);
 }
 
 void init_specific_register(enum reg_enum R_reg, bool isDest)

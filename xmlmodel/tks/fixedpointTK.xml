@@ -1,6 +1,6 @@
 <TKs>
     <!--  data transfer instructions  -->
-    <TK inst = "mov" initP = "1.0">
+    <TK inst = "mov" initP = "0.0">
         <Node name = "arith" weight="50"> </Node>
         <Node name = "normal" weight="50"> </Node>
     </TK>

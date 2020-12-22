@@ -9,7 +9,9 @@ enum secType {
 
 struct section {
     enum secType type;
-    int size;
+    int datanum;
+    int *dataoffs;
+    int *datasizes;
 };
 
 void init_text_sec(struct section *text_sec);

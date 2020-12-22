@@ -19,10 +19,16 @@ char *get_token_bufptr(void)
     return token_bufptr;
 }
 
+char *get_token_buf(void)
+{
+    return (char *)token_buf;
+}
+
 char *get_token_cbufptr(void)
 {
-    memset(token_buf, 0, sizeof(token_buf));
-    token_bufptr = (char *)token_buf;
+    memset(token_buf, ' ', 2);
+    memset(token_buf + 2, '\n', sizeof(token_buf) - 2);
+    token_bufptr = (char *)token_buf + 2;
     return token_bufptr;
 }
 

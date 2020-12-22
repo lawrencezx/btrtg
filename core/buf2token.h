@@ -3,6 +3,7 @@
 
 void set_token_bufptr(char *ptr);
 char *get_token_bufptr(void);
+char *get_token_buf(void);
 char *get_token_cbufptr(void);
 int get_token(struct tokenval *tv);
 

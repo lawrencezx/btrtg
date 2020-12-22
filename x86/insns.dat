@@ -811,10 +811,10 @@ MOV		reg32,reg_creg			[mr:	rex.l 0f 20 /r]				386,PRIV,NOLONG
 MOV		reg64,reg_creg			[mr:	o64nw 0f 20 /r]				X86_64,LONG,PRIV
 MOV		reg_creg,reg32			[rm:	rex.l 0f 22 /r]				386,PRIV,NOLONG
 MOV		reg_creg,reg64			[rm:	o64nw 0f 22 /r]				X86_64,LONG,PRIV
-MOV		reg32,reg_dreg			[mr:	0f 21 /r]				386,PRIV,NOLONG
-MOV		reg64,reg_dreg			[mr:	o64nw 0f 21 /r]				X86_64,LONG,PRIV
-MOV		reg_dreg,reg32			[rm:	0f 23 /r]				386,PRIV,NOLONG
-MOV		reg_dreg,reg64			[rm:	o64nw 0f 23 /r]				X86_64,LONG,PRIV
+;## MOV		reg32,reg_dreg			[mr:	0f 21 /r]				386,PRIV,NOLONG
+;## MOV		reg64,reg_dreg			[mr:	o64nw 0f 21 /r]				X86_64,LONG,PRIV
+;## MOV		reg_dreg,reg32			[rm:	0f 23 /r]				386,PRIV,NOLONG
+;## MOV		reg_dreg,reg64			[rm:	o64nw 0f 23 /r]				X86_64,LONG,PRIV
 MOV		reg32,reg_treg			[mr:	0f 24 /r]				386,NOLONG,ND
 MOV		reg_treg,reg32			[rm:	0f 26 /r]				386,NOLONG,ND
 MOV		mem,reg8			[mr:	hlexr 88 /r]				8086,SM

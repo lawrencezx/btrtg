@@ -10,6 +10,15 @@
 #include "operand.h"
 #include <string.h>
 
+
+bool is_label_consumer(operand_seed *opnd_seed)
+{
+    if (is_class(MEM_OFFS, opnd_seed->opndflags)) {
+        return true;
+    }
+    return false;
+}
+
 srcdestflags_t calSrcDestFlags(const insn_seed *seed, int opi)
 {
     srcdestflags_t srcdestflags = 0;
@@ -468,11 +477,16 @@ void init_implied_operands(const insn_seed *seed)
     }
 }
 
+void gen_comma(char *buffer)
+{
+    sprintf(buffer, ",");
+}
+
 /* Generate instruction opcode. */
 void gen_opcode(enum opcode opcode, char *buffer)
 {
     const char* insn_name = nasm_insn_names[opcode];
-    sprintf(buffer, "%s\n", insn_name);
+    sprintf(buffer, "%s ", insn_name);
 }
 
 static void gen_register(operand_seed *opnd_seed, char *buffer)
@@ -565,7 +579,7 @@ static void gen_reg_mem(operand_seed *opnd_seed, char *buffer)
 
     if (is_class(MEMORY, opndflags)) {
         if (is_class(MEM_OFFS, opndflags)) {
-            /* TODO */
+            create_memoffs(opnd_seed, buffer);
         } else {
             create_memory(opnd_seed, buffer);
         }

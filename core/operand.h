@@ -8,6 +8,7 @@ void create_unity(operand_seed *opnd_seed, char *buffer);
 void create_gpr_register(operand_seed *opnd_seed, char *buffer);
 void create_immediate(operand_seed *opnd_seed, char *buffer);
 void create_memory(operand_seed *opnd_seed, char *buffer);
+void create_memoffs(operand_seed *opnd_seed, char *buffer);
 void init_specific_register(enum reg_enum R_reg, bool isDest);
 
 #endif

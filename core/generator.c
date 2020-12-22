@@ -267,6 +267,7 @@ bool one_insn_gen(const insn_seed *seed, insn *result)
     int i;
     int opi = 0;
     struct eval_hints hints;
+    bool label_consumer = false;
 
     if (seed != NULL) {
         if (gen_control_transfer_insn(seed, result))
@@ -325,7 +326,14 @@ bool one_insn_gen(const insn_seed *seed, insn *result)
             } else {
                 opnd_seed.explicitmemsize = false;
             }
-            gen_operand(&opnd_seed, get_token_cbufptr());
+            if (opi != 0) {
+                gen_comma(get_token_bufptr());
+                get_token(&tokval);
+            }
+            gen_operand(&opnd_seed, get_token_bufptr());
+            if (is_label_consumer(&opnd_seed)) {
+                label_consumer = true;
+            }
         }
         i = get_token(&tokval);
         if (i == TOKEN_EOS)
@@ -465,6 +473,9 @@ bool one_insn_gen(const insn_seed *seed, insn *result)
     /* clear remaining operands */
     while (opi < MAX_OPERANDS)
         result->oprs[opi++].type = 0;
+    if (label_consumer) {
+        result->ctrl = nasm_strdup(get_token_buf());
+    }
 
     stat_insert_insn(result, INSERT_AFTER);
 
