@@ -13,7 +13,7 @@ static const char *xmlfiles[2] =
     "insn-class.xml",
     "template-sample.xml"
 };
-char *tmpltpath = "/home/lawrence/Workspace/git/x86-assembler-generator/xmlmodel/templates";
+char *tmpltpath = "../xmlmodel/templates";
 
 
 static int getElemsSize(xmlNodePtr node)

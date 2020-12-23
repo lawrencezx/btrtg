@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.10)
 project(x86-insn-generator)
 
 SET(srcdir ${CMAKE_CURRENT_SOURCE_DIR})
-SET(CMAKE_C_FLAGS "-c -g -O2 -std=c17 -ggdb3 -O0 -fno-omit-frame-pointer -fwrapv -U__STRICT_ANSI__ -fno-common -Werror=attributes -ffunction-sections -fdata-sections -fvisibility=hidden -Wall -W -pedantic -Wno-long-long -Wno-stringop-truncation -Wno-shift-negative-value -Werror=implicit -Werror=missing-braces -Werror=return-type -Werror=trigraphs -Werror=pointer-arith -Werror=missing-prototypes -Werror=missing-declarations -Werror=comment -Werror=vla -DHAVE_CONFIG_H ")
+SET(CMAKE_C_FLAGS "-c -g -O2 -ggdb3 -O0 -fno-omit-frame-pointer -fwrapv -U__STRICT_ANSI__ -fno-common -Werror=attributes -ffunction-sections -fdata-sections -fvisibility=hidden -Wall -W -pedantic -Wno-long-long -Wno-stringop-truncation -Wno-shift-negative-value -Werror=implicit -Werror=missing-braces -Werror=return-type -Werror=trigraphs -Werror=pointer-arith -Werror=missing-prototypes -Werror=missing-declarations -Werror=comment -Werror=vla -DHAVE_CONFIG_H ")
 SET(RUNPERL perl -I${srcdir}/perllib -I${srcdir})
 
 # @headers

@@ -13,7 +13,7 @@ static const char *xmlfiles[2] =
     "fixedpointConsts.xml",
     "fixedpointTK.xml"
 };
-char *TKpath = "/home/lawrence/Workspace/git/x86-assembler-generator/xmlmodel/tks";
+char *TKpath = "../xmlmodel/tks";
 
 
 static int getElemsSize(xmlNodePtr node)
