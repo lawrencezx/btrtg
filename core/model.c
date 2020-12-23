@@ -77,7 +77,9 @@ static constVal *wdtree_select_constval(WDTree *tree)
 static TKmodel *get_tkm_from_hashtbl(const char *instName)
 {
     struct hash_insert hi;
-    return *(TKmodel **)hash_find(&hash_tks, instName, &hi);
+    void **tkmpp;
+    tkmpp = hash_find(&hash_tks, instName, &hi);
+    return tkmpp == NULL ? NULL : *(TKmodel **)tkmpp;
 }
 
 bool request_initialize(const char *instName)

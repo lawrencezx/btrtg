@@ -100,7 +100,8 @@ int get_token(struct tokenval *tv)
             tv->t_charptr = NULL;
             return tv->t_type = TOKEN_NUM;
 //        }
-    } else if (*token_bufptr == ';') {
+    } else if (*token_bufptr == ';' || 
+            *token_bufptr == '\n') {
         /* a comment has happened - stay */
         return tv->t_type = TOKEN_EOS;
     } else
