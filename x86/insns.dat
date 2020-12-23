@@ -1426,10 +1426,10 @@ XBTS		reg16,reg16			[rm:	o16 0f a6 /r]				386,UNDOC,ND
 XBTS		reg32,mem			[rm:	o32 0f a6 /r]				386,SD,UNDOC,ND
 XBTS		reg32,reg32			[rm:	o32 0f a6 /r]				386,UNDOC,ND
 XCHG		reg_ax,reg16			[-r:	o16 90+r]				8086
-XCHG		reg_eax,reg32na			[-r:	o32 90+r]				386
+;## XCHG		reg_eax,reg32na			[-r:	o32 90+r]				386
 XCHG		reg_rax,reg64			[-r:	o64 90+r]				X86_64,LONG
 XCHG		reg16,reg_ax			[r-:	o16 90+r]				8086
-XCHG		reg32na,reg_eax			[r-:	o32 90+r]				386
+;## XCHG		reg32na,reg_eax			[r-:	o32 90+r]				386
 XCHG		reg64,reg_rax			[r-:	o64 90+r]				X86_64,LONG
 ; This must be NOLONG since opcode 90 is NOP, and in 64-bit mode
 ; "xchg eax,eax" is *not* a NOP.
