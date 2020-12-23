@@ -45,6 +45,9 @@ static char *buf_copy(const char *p, int len)
 
 int get_token(struct tokenval *tv)
 {
+#ifdef DEBUG_MODE
+    fprintf(stderr, "[token_bufptr]: %s\n", token_bufptr);
+#endif
     const char *r;
 
     token_bufptr = nasm_skip_spaces(token_bufptr);

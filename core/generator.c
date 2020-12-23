@@ -261,9 +261,9 @@ static void mref_set_optype(operand *op)
 bool one_insn_gen(const insn_seed *seed, insn *result)
 {
     if (seed != NULL) {
-        dfmt->print("Gen inst: %s\n", nasm_insn_names[seed->opcode]);
+        dfmt->print("\033[35m Gen inst: %s \033[m\n", nasm_insn_names[seed->opcode]);
     } else {
-        dfmt->print("Gen const inst: %s\n", get_token_bufptr());
+        dfmt->print("\033[31m Gen const inst\033[m: %s\n", get_token_bufptr());
     }
     int i;
     int opi = 0;

@@ -33,7 +33,11 @@ static void debug_out(const char* format, ...)
 {
     va_list args;
     va_start(args, format);
+#ifdef DEBUG_MODE
+    vfprintf(stderr, format, args);
+#else
     vfprintf(debugfp, format, args);
+#endif
     va_end(args);
 }
 
