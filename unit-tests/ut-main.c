@@ -49,24 +49,30 @@ int main(int argc, char *argv[])
   if (!gen_test_file_TEST()) {
       fprintf(stderr, "genrate TEST test file failed!\n");
   }
-  if (!gen_test_file_ADD()) {
-      fprintf(stderr, "genrate ADD test file failed!\n");
-  }
-  if (!gen_test_file_DEC()) {
-      fprintf(stderr, "genrate DEC test file failed!\n");
-  }
-  if (!gen_test_file_MOV()) {
-      fprintf(stderr, "genrate MOV test file failed!\n");
-  }
-  if (!gen_test_file_DIV()) {
-      fprintf(stderr, "genrate DIV test file failed!\n");
-  }
-  if (!gen_test_file_JMP()) {
-      fprintf(stderr, "genrate JMP test file failed!\n");
-  }
-  if (!gen_test_file_SAR()) {
-      fprintf(stderr, "genrate SAR test file failed!\n");
-  }
+  //if (!gen_test_file_ADD()) {
+  //    fprintf(stderr, "genrate ADD test file failed!\n");
+  //}
+  //if (!gen_test_file_SBB()) {
+  //    fprintf(stderr, "genrate SBB test file failed!\n");
+  //}
+  //if (!gen_test_file_DEC()) {
+  //    fprintf(stderr, "genrate DEC test file failed!\n");
+  //}
+  //if (!gen_test_file_MOV()) {
+  //    fprintf(stderr, "genrate MOV test file failed!\n");
+  //}
+  //if (!gen_test_file_PUSH()) {
+  //    fprintf(stderr, "genrate PUSH test file failed!\n");
+  //}
+  //if (!gen_test_file_DIV()) {
+  //    fprintf(stderr, "genrate DIV test file failed!\n");
+  //}
+  //if (!gen_test_file_JMP()) {
+  //    fprintf(stderr, "genrate JMP test file failed!\n");
+  //}
+  //if (!gen_test_file_SAR()) {
+  //    fprintf(stderr, "genrate SAR test file failed!\n");
+  //}
   generator_exit();
   return 0;
 }

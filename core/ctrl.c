@@ -51,6 +51,47 @@ static void skip_to_stat_get_labeli(int label)
     gen_label(INSERT_AFTER);
 }
 
+static bool is_jcc(enum opcode opcode)
+{
+    switch (opcode) {
+    case I_JA:
+    case I_JAE:
+    case I_JB:
+    case I_JBE:
+    case I_JC:
+    case I_JE:
+    case I_JG:
+    case I_JGE:
+    case I_JL:
+    case I_JLE:
+    case I_JNA:
+    case I_JNAE:
+    case I_JNB:
+    case I_JNBE:
+    case I_JNC:
+    case I_JNE:
+    case I_JNG:
+    case I_JNGE:
+    case I_JNL:
+    case I_JNLE:
+    case I_JNO:
+    case I_JNP:
+    case I_JNS:
+    case I_JNZ:
+    case I_JO:
+    case I_JP:
+    case I_JS:
+    case I_JZ:
+    case I_JPE:
+    case I_JPO:
+        return true;
+        break;
+    default:
+        break;
+    }
+    return false;
+}
+
 bool gen_control_transfer_insn(const insn_seed *seed, insn *result)
 {
     if (stat_ctrl_locked()) {
@@ -58,10 +99,27 @@ bool gen_control_transfer_insn(const insn_seed *seed, insn *result)
     }
     char buffer[64];
     if (seed->opcode == I_JMP) {
-        int label = select_one_label();
+        /* jmp lable(n+1) */
         sprintf(buffer, "  %s label%d", nasm_insn_names[seed->opcode], stat_get_labeli());
         result->ctrl = nasm_strdup(buffer);
         stat_insert_insn(result, INSERT_AFTER);
+        int label = select_one_label();
+        if (label == -1) {
+            gen_label(INSERT_BEFORE);
+        } else {
+            skip_to_stat_get_labeli(label);
+        }
+        return true;
+    } else if (is_jcc(seed->opcode)) {
+        /* jcc lable(n+1) */
+        sprintf(buffer, "  %s label%d", nasm_insn_names[seed->opcode], stat_get_labeli());
+        result->ctrl = nasm_strdup(buffer);
+        stat_insert_insn(result, INSERT_AFTER);
+        /* jmp lable(n+1) */
+        sprintf(buffer, "  %s label%d", nasm_insn_names[I_JMP], stat_get_labeli());
+        result->ctrl = nasm_strdup(buffer);
+        stat_insert_insn(result, INSERT_AFTER);
+        int label = select_one_label();
         if (label == -1) {
             gen_label(INSERT_BEFORE);
         } else {
@@ -73,21 +131,27 @@ bool gen_control_transfer_insn(const insn_seed *seed, insn *result)
         (seed->opcode == I_LOOPNE) ||
         (seed->opcode == I_LOOPNZ) ||
         (seed->opcode == I_LOOPZ)) {
+        /* loopxx lable(n+1) */
         sprintf(buffer, "  %s label%d", nasm_insn_names[seed->opcode], stat_get_labeli());
         result->ctrl = nasm_strdup(buffer);
         stat_insert_insn(result, INSERT_AFTER);
+
         gen_label(INSERT_BEFORE);
         stat_lock_ctrl();
         stat_lock_ecx();
+        return true;
     } else if (seed->opcode == I_CALL) {
+        /* call lable(n+1) */
         sprintf(buffer, "  %s label%d", nasm_insn_names[seed->opcode], stat_get_labeli());
         result->ctrl = nasm_strdup(buffer);
         stat_insert_insn(result, INSERT_AFTER);
+
         sprintf(buffer, "  %s", nasm_insn_names[I_RET]);
         result->ctrl = nasm_strdup(buffer);
         stat_insert_insn(result, INSERT_BEFORE);
         gen_label(INSERT_BEFORE);
         stat_lock_ctrl();
+        return true;
     }
     return false;
 }

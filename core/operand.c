@@ -26,7 +26,7 @@ void create_specific_register(enum reg_enum R_reg, operand_seed *opnd_seed, char
         one_insn_gen_const(buffer);
     }
     sprintf(buffer, " %s", src);
-    dfmt->print("    done> new specific register: %s", buffer);
+    dfmt->print("    done> new specific register: %s\n", buffer);
 }
 
 void create_control_register(operand_seed *opnd_seed, char *buffer)
@@ -43,7 +43,7 @@ void create_control_register(operand_seed *opnd_seed, char *buffer)
     creg = nasm_rd_creg[cregi];
     src = nasm_reg_names[creg - EXPR_REG_START];
     sprintf(buffer, " %s", src);
-    dfmt->print("    done> new creg: %s", buffer);
+    dfmt->print("    done> new creg: %s\n", buffer);
 }
 
 void create_segment_register(operand_seed *opnd_seed, char *buffer)
@@ -60,7 +60,7 @@ void create_segment_register(operand_seed *opnd_seed, char *buffer)
     sreg = nasm_rd_sreg[sregi];
     src = nasm_reg_names[sreg - EXPR_REG_START];
     sprintf(buffer, " %s", src);
-    dfmt->print("    done> new sreg: %s", buffer);
+    dfmt->print("    done> new sreg: %s\n", buffer);
 }
 
 void create_unity(operand_seed *opnd_seed, char *buffer)
@@ -84,7 +84,7 @@ void create_unity(operand_seed *opnd_seed, char *buffer)
             unity = cVal->imm32;
     }
     sprintf(buffer, " 0x%x", unity);
-    dfmt->print("    done> new unity: %s", buffer);
+    dfmt->print("    done> new unity: %s\n", buffer);
 }
 
 void create_gpr_register(operand_seed *opnd_seed, char *buffer)
@@ -123,7 +123,7 @@ gen_gpr:
         one_insn_gen_const(buffer);
     }
     sprintf(buffer, " %s", src);
-    dfmt->print("    done> new gpr: %s", buffer);
+    dfmt->print("    done> new gpr: %s\n", buffer);
 }
 
 /* Generate int type immediate.
@@ -159,7 +159,7 @@ void create_immediate(operand_seed* opnd_seed, char *buffer)
             imm = cVal->imm32;
     }
     sprintf(buffer, " 0x%x", imm);
-    dfmt->print("    done> new immediate: %s", buffer);
+    dfmt->print("    done> new immediate: %s\n", buffer);
 }
 
 static void create_random_sib(char *buffer)
@@ -202,7 +202,6 @@ static void create_random_modrm(char *buffer)
     char sib[32];
     /* [ebx + disp8] */
     modrmi = 012;
-    stat_lock_edx();
     //const int modrmn = 24;
     //modrmi = nasm_random32(modrmn);
     if (modrmi == 004 || modrmi == 014 || modrmi == 024) {
@@ -278,7 +277,7 @@ void create_memory(operand_seed *opnd_seed, char *buffer)
         one_insn_gen_const(buffer);
     }
     sprintf(buffer, " %s", src);
-    dfmt->print("    done> new memory: %s", buffer);
+    dfmt->print("    done> new memory: %s\n", buffer);
 }
 
 void create_memoffs(operand_seed *opnd_seed, char *buffer)
@@ -307,7 +306,7 @@ void create_memoffs(operand_seed *opnd_seed, char *buffer)
         one_insn_gen_const(buffer);
     }
     sprintf(buffer, " %s", src);
-    dfmt->print("    done> new memoffs: %s", buffer);
+    dfmt->print("    done> new memoffs: %s\n", buffer);
 }
 
 void init_specific_register(enum reg_enum R_reg, bool isDest)

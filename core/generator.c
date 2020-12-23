@@ -128,6 +128,7 @@ void insn_to_bin(insn *instruction, const char** buf)
         return;                 /* Nothing to do... */
 
     global_codebuf_len = 0;
+    memset(global_codebuf, 0, sizeof(global_codebuf));
 
     nasm_assert(instruction->times > 0);
 

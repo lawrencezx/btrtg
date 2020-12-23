@@ -1,6 +1,4 @@
 <Template>
     <TestLength value = "200"> </TestLength>
-    <Iset name = "DataTransfer" weight = "30"> </Iset>
-    <Iset name = "BinaryArithmetic" weight = "60"> </Iset>
-    <Iset name = "ControlTransfer" weight = "10"> </Iset>
+    <Iset name = "DataTransfer" weight = "100"> </Iset>
 </Template>

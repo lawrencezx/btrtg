@@ -14,7 +14,7 @@ bool gen_test_file_TEST(void)
     
     gsp_init();
 
-    one_insn_gen_const("mov cs, cx\n");
+    one_insn_gen_const("jne 0x1f\n");
 
     gsp_finish();
     

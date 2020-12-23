@@ -17,7 +17,7 @@ int main(int argc, char *argv[])
 
     gsp_init();
     
-    for (int i = 0; i < 1/*tmpltm.instNum*/; i++) {
+    for (int i = 0; i < 10/*tmpltm.instNum*/; i++) {
         insn_seed seed;
         insn inst;
 

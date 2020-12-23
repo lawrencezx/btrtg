@@ -489,6 +489,9 @@ srcdestflags_t calSrcDestFlags(const insn_seed *seed, int opi)
             srcdestflags |= OPDEST;
         }
         break;
+    case I_XADD:
+        srcdestflags = OPSRC | OPDEST;
+        break;
     default:
         nasm_fatal("opcode XXX(TODO) should not have any operands or unsupported opcode");
         break;

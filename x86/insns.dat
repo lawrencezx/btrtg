@@ -1491,517 +1491,367 @@ XOR		mem,imm16			[mi:	hle o16 81 /6 iw]			8086,SM,LOCK
 XOR		mem,sbytedword32		[mi:	hle o32 83 /6 ib,s]			386,SM,LOCK,ND
 XOR		mem,imm32			[mi:	hle o32 81 /6 id]			386,SM,LOCK
 XOR		rm8,imm				[mi:	hle 82 /6 ib]				8086,SM,LOCK,ND,NOLONG
-CMOVA 		reg16,mem			[rm:	o16 0f 40+c /r]				P6,SM
-CMOVA 		reg16,reg16			[rm:	o16 0f 40+c /r]				P6
-CMOVA 		reg32,mem			[rm:	o32 0f 40+c /r]				P6,SM
-CMOVA 		reg32,reg32			[rm:	o32 0f 40+c /r]				P6
-CMOVA 		reg64,mem			[rm:	o64 0f 40+c /r]				X86_64,LONG,SM
-CMOVA 		reg64,reg64			[rm:	o64 0f 40+c /r]				X86_64,LONG
-CMOVAE		reg16,mem			[rm:	o16 0f 40+c /r]				P6,SM
-CMOVAE		reg16,reg16			[rm:	o16 0f 40+c /r]				P6
-CMOVAE		reg32,mem			[rm:	o32 0f 40+c /r]				P6,SM
-CMOVAE		reg32,reg32			[rm:	o32 0f 40+c /r]				P6
-CMOVAE		reg64,mem			[rm:	o64 0f 40+c /r]				X86_64,LONG,SM
-CMOVAE		reg64,reg64			[rm:	o64 0f 40+c /r]				X86_64,LONG
-CMOVB		reg16,mem			[rm:	o16 0f 40+c /r]				P6,SM
-CMOVB		reg16,reg16			[rm:	o16 0f 40+c /r]				P6
-CMOVB		reg32,mem			[rm:	o32 0f 40+c /r]				P6,SM
-CMOVB		reg32,reg32			[rm:	o32 0f 40+c /r]				P6
-CMOVB		reg64,mem			[rm:	o64 0f 40+c /r]				X86_64,LONG,SM
-CMOVB		reg64,reg64			[rm:	o64 0f 40+c /r]				X86_64,LONG
-CMOVBE		reg16,mem			[rm:	o16 0f 40+c /r]				P6,SM
-CMOVBE		reg16,reg16			[rm:	o16 0f 40+c /r]				P6
-CMOVBE		reg32,mem			[rm:	o32 0f 40+c /r]				P6,SM
-CMOVBE		reg32,reg32			[rm:	o32 0f 40+c /r]				P6
-CMOVBE		reg64,mem			[rm:	o64 0f 40+c /r]				X86_64,LONG,SM
-CMOVBE		reg64,reg64			[rm:	o64 0f 40+c /r]				X86_64,LONG
-CMOVC		reg16,mem			[rm:	o16 0f 40+c /r]				P6,SM
-CMOVC		reg16,reg16			[rm:	o16 0f 40+c /r]				P6
-CMOVC		reg32,mem			[rm:	o32 0f 40+c /r]				P6,SM
-CMOVC		reg32,reg32			[rm:	o32 0f 40+c /r]				P6
-CMOVC		reg64,mem			[rm:	o64 0f 40+c /r]				X86_64,LONG,SM
-CMOVC		reg64,reg64			[rm:	o64 0f 40+c /r]				X86_64,LONG
-CMOVE		reg16,mem			[rm:	o16 0f 40+c /r]				P6,SM
-CMOVE		reg16,reg16			[rm:	o16 0f 40+c /r]				P6
-CMOVE		reg32,mem			[rm:	o32 0f 40+c /r]				P6,SM
-CMOVE		reg32,reg32			[rm:	o32 0f 40+c /r]				P6
-CMOVE		reg64,mem			[rm:	o64 0f 40+c /r]				X86_64,LONG,SM
-CMOVE		reg64,reg64			[rm:	o64 0f 40+c /r]				X86_64,LONG
-CMOVG		reg16,mem			[rm:	o16 0f 40+c /r]				P6,SM
-CMOVG		reg16,reg16			[rm:	o16 0f 40+c /r]				P6
-CMOVG		reg32,mem			[rm:	o32 0f 40+c /r]				P6,SM
-CMOVG		reg32,reg32			[rm:	o32 0f 40+c /r]				P6
-CMOVG		reg64,mem			[rm:	o64 0f 40+c /r]				X86_64,LONG,SM
-CMOVG		reg64,reg64			[rm:	o64 0f 40+c /r]				X86_64,LONG
-CMOVGE		reg16,mem			[rm:	o16 0f 40+c /r]				P6,SM
-CMOVGE		reg16,reg16			[rm:	o16 0f 40+c /r]				P6
-CMOVGE		reg32,mem			[rm:	o32 0f 40+c /r]				P6,SM
-CMOVGE		reg32,reg32			[rm:	o32 0f 40+c /r]				P6
-CMOVGE		reg64,mem			[rm:	o64 0f 40+c /r]				X86_64,LONG,SM
-CMOVGE		reg64,reg64			[rm:	o64 0f 40+c /r]				X86_64,LONG
-CMOVL		reg16,mem			[rm:	o16 0f 40+c /r]				P6,SM
-CMOVL		reg16,reg16			[rm:	o16 0f 40+c /r]				P6
-CMOVL		reg32,mem			[rm:	o32 0f 40+c /r]				P6,SM
-CMOVL		reg32,reg32			[rm:	o32 0f 40+c /r]				P6
-CMOVL		reg64,mem			[rm:	o64 0f 40+c /r]				X86_64,LONG,SM
-CMOVL		reg64,reg64			[rm:	o64 0f 40+c /r]				X86_64,LONG
-CMOVLE		reg16,mem			[rm:	o16 0f 40+c /r]				P6,SM
-CMOVLE		reg16,reg16			[rm:	o16 0f 40+c /r]				P6
-CMOVLE		reg32,mem			[rm:	o32 0f 40+c /r]				P6,SM
-CMOVLE		reg32,reg32			[rm:	o32 0f 40+c /r]				P6
-CMOVLE		reg64,mem			[rm:	o64 0f 40+c /r]				X86_64,LONG,SM
-CMOVLE		reg64,reg64			[rm:	o64 0f 40+c /r]				X86_64,LONG
-CMOVNA		reg16,mem			[rm:	o16 0f 40+c /r]				P6,SM
-CMOVNA		reg16,reg16			[rm:	o16 0f 40+c /r]				P6
-CMOVNA		reg32,mem			[rm:	o32 0f 40+c /r]				P6,SM
-CMOVNA		reg32,reg32			[rm:	o32 0f 40+c /r]				P6
-CMOVNA		reg64,mem			[rm:	o64 0f 40+c /r]				X86_64,LONG,SM
-CMOVNA		reg64,reg64			[rm:	o64 0f 40+c /r]				X86_64,LONG
-CMOVNAE		reg16,mem			[rm:	o16 0f 40+c /r]				P6,SM
-CMOVNAE		reg16,reg16			[rm:	o16 0f 40+c /r]				P6
-CMOVNAE		reg32,mem			[rm:	o32 0f 40+c /r]				P6,SM
-CMOVNAE		reg32,reg32			[rm:	o32 0f 40+c /r]				P6
-CMOVNAE		reg64,mem			[rm:	o64 0f 40+c /r]				X86_64,LONG,SM
-CMOVNAE		reg64,reg64			[rm:	o64 0f 40+c /r]				X86_64,LONG
-CMOVNB		reg16,mem			[rm:	o16 0f 40+c /r]				P6,SM
-CMOVNB		reg16,reg16			[rm:	o16 0f 40+c /r]				P6
-CMOVNB		reg32,mem			[rm:	o32 0f 40+c /r]				P6,SM
-CMOVNB		reg32,reg32			[rm:	o32 0f 40+c /r]				P6
-CMOVNB		reg64,mem			[rm:	o64 0f 40+c /r]				X86_64,LONG,SM
-CMOVNB		reg64,reg64			[rm:	o64 0f 40+c /r]				X86_64,LONG
-CMOVNBE		reg16,mem			[rm:	o16 0f 40+c /r]				P6,SM
-CMOVNBE		reg16,reg16			[rm:	o16 0f 40+c /r]				P6
-CMOVNBE		reg32,mem			[rm:	o32 0f 40+c /r]				P6,SM
-CMOVNBE		reg32,reg32			[rm:	o32 0f 40+c /r]				P6
-CMOVNBE		reg64,mem			[rm:	o64 0f 40+c /r]				X86_64,LONG,SM
-CMOVNBE		reg64,reg64			[rm:	o64 0f 40+c /r]				X86_64,LONG
-CMOVNC		reg16,mem			[rm:	o16 0f 40+c /r]				P6,SM
-CMOVNC		reg16,reg16			[rm:	o16 0f 40+c /r]				P6
-CMOVNC		reg32,mem			[rm:	o32 0f 40+c /r]				P6,SM
-CMOVNC		reg32,reg32			[rm:	o32 0f 40+c /r]				P6
-CMOVNC		reg64,mem			[rm:	o64 0f 40+c /r]				X86_64,LONG,SM
-CMOVNC		reg64,reg64			[rm:	o64 0f 40+c /r]				X86_64,LONG
-CMOVNE		reg16,mem			[rm:	o16 0f 40+c /r]				P6,SM
-CMOVNE		reg16,reg16			[rm:	o16 0f 40+c /r]				P6
-CMOVNE		reg32,mem			[rm:	o32 0f 40+c /r]				P6,SM
-CMOVNE		reg32,reg32			[rm:	o32 0f 40+c /r]				P6
-CMOVNE		reg64,mem			[rm:	o64 0f 40+c /r]				X86_64,LONG,SM
-CMOVNE		reg64,reg64			[rm:	o64 0f 40+c /r]				X86_64,LONG
-CMOVNG		reg16,mem			[rm:	o16 0f 40+c /r]				P6,SM
-CMOVNG		reg16,reg16			[rm:	o16 0f 40+c /r]				P6
-CMOVNG		reg32,mem			[rm:	o32 0f 40+c /r]				P6,SM
-CMOVNG		reg32,reg32			[rm:	o32 0f 40+c /r]				P6
-CMOVNG		reg64,mem			[rm:	o64 0f 40+c /r]				X86_64,LONG,SM
-CMOVNG		reg64,reg64			[rm:	o64 0f 40+c /r]				X86_64,LONG
-CMOVNGE		reg16,mem			[rm:	o16 0f 40+c /r]				P6,SM
-CMOVNGE		reg16,reg16			[rm:	o16 0f 40+c /r]				P6
-CMOVNGE		reg32,mem			[rm:	o32 0f 40+c /r]				P6,SM
-CMOVNGE		reg32,reg32			[rm:	o32 0f 40+c /r]				P6
-CMOVNGE		reg64,mem			[rm:	o64 0f 40+c /r]				X86_64,LONG,SM
-CMOVNGE		reg64,reg64			[rm:	o64 0f 40+c /r]				X86_64,LONG
-CMOVNL		reg16,mem			[rm:	o16 0f 40+c /r]				P6,SM
-CMOVNL		reg16,reg16			[rm:	o16 0f 40+c /r]				P6
-CMOVNL		reg32,mem			[rm:	o32 0f 40+c /r]				P6,SM
-CMOVNL		reg32,reg32			[rm:	o32 0f 40+c /r]				P6
-CMOVNL		reg64,mem			[rm:	o64 0f 40+c /r]				X86_64,LONG,SM
-CMOVNL		reg64,reg64			[rm:	o64 0f 40+c /r]				X86_64,LONG
-CMOVNLE		reg16,mem			[rm:	o16 0f 40+c /r]				P6,SM
-CMOVNLE		reg16,reg16			[rm:	o16 0f 40+c /r]				P6
-CMOVNLE		reg32,mem			[rm:	o32 0f 40+c /r]				P6,SM
-CMOVNLE		reg32,reg32			[rm:	o32 0f 40+c /r]				P6
-CMOVNLE		reg64,mem			[rm:	o64 0f 40+c /r]				X86_64,LONG,SM
-CMOVNLE		reg64,reg64			[rm:	o64 0f 40+c /r]				X86_64,LONG
-CMOVNO		reg16,mem			[rm:	o16 0f 40+c /r]				P6,SM
-CMOVNO		reg16,reg16			[rm:	o16 0f 40+c /r]				P6
-CMOVNO		reg32,mem			[rm:	o32 0f 40+c /r]				P6,SM
-CMOVNO		reg32,reg32			[rm:	o32 0f 40+c /r]				P6
-CMOVNO		reg64,mem			[rm:	o64 0f 40+c /r]				X86_64,LONG,SM
-CMOVNO		reg64,reg64			[rm:	o64 0f 40+c /r]				X86_64,LONG
-CMOVNP		reg16,mem			[rm:	o16 0f 40+c /r]				P6,SM
-CMOVNP		reg16,reg16			[rm:	o16 0f 40+c /r]				P6
-CMOVNP		reg32,mem			[rm:	o32 0f 40+c /r]				P6,SM
-CMOVNP		reg32,reg32			[rm:	o32 0f 40+c /r]				P6
-CMOVNP		reg64,mem			[rm:	o64 0f 40+c /r]				X86_64,LONG,SM
-CMOVNP		reg64,reg64			[rm:	o64 0f 40+c /r]				X86_64,LONG
-CMOVNS		reg16,mem			[rm:	o16 0f 40+c /r]				P6,SM
-CMOVNS		reg16,reg16			[rm:	o16 0f 40+c /r]				P6
-CMOVNS		reg32,mem			[rm:	o32 0f 40+c /r]				P6,SM
-CMOVNS		reg32,reg32			[rm:	o32 0f 40+c /r]				P6
-CMOVNS		reg64,mem			[rm:	o64 0f 40+c /r]				X86_64,LONG,SM
-CMOVNS		reg64,reg64			[rm:	o64 0f 40+c /r]				X86_64,LONG
-CMOVNZ		reg16,mem			[rm:	o16 0f 40+c /r]				P6,SM
-CMOVNZ		reg16,reg16			[rm:	o16 0f 40+c /r]				P6
-CMOVNZ		reg32,mem			[rm:	o32 0f 40+c /r]				P6,SM
-CMOVNZ		reg32,reg32			[rm:	o32 0f 40+c /r]				P6
-CMOVNZ		reg64,mem			[rm:	o64 0f 40+c /r]				X86_64,LONG,SM
-CMOVNZ		reg64,reg64			[rm:	o64 0f 40+c /r]				X86_64,LONG
-CMOVO		reg16,mem			[rm:	o16 0f 40+c /r]				P6,SM
-CMOVO		reg16,reg16			[rm:	o16 0f 40+c /r]				P6
-CMOVO		reg32,mem			[rm:	o32 0f 40+c /r]				P6,SM
-CMOVO		reg32,reg32			[rm:	o32 0f 40+c /r]				P6
-CMOVO		reg64,mem			[rm:	o64 0f 40+c /r]				X86_64,LONG,SM
-CMOVO		reg64,reg64			[rm:	o64 0f 40+c /r]				X86_64,LONG
-CMOVP		reg16,mem			[rm:	o16 0f 40+c /r]				P6,SM
-CMOVP		reg16,reg16			[rm:	o16 0f 40+c /r]				P6
-CMOVP		reg32,mem			[rm:	o32 0f 40+c /r]				P6,SM
-CMOVP		reg32,reg32			[rm:	o32 0f 40+c /r]				P6
-CMOVP		reg64,mem			[rm:	o64 0f 40+c /r]				X86_64,LONG,SM
-CMOVP		reg64,reg64			[rm:	o64 0f 40+c /r]				X86_64,LONG
-CMOVPE		reg16,mem			[rm:	o16 0f 40+c /r]				P6,SM
-CMOVPE		reg16,reg16			[rm:	o16 0f 40+c /r]				P6
-CMOVPE		reg32,mem			[rm:	o32 0f 40+c /r]				P6,SM
-CMOVPE		reg32,reg32			[rm:	o32 0f 40+c /r]				P6
-CMOVPE		reg64,mem			[rm:	o64 0f 40+c /r]				X86_64,LONG,SM
-CMOVPE		reg64,reg64			[rm:	o64 0f 40+c /r]				X86_64,LONG
-CMOVPO		reg16,mem			[rm:	o16 0f 40+c /r]				P6,SM
-CMOVPO		reg16,reg16			[rm:	o16 0f 40+c /r]				P6
-CMOVPO		reg32,mem			[rm:	o32 0f 40+c /r]				P6,SM
-CMOVPO		reg32,reg32			[rm:	o32 0f 40+c /r]				P6
-CMOVPO		reg64,mem			[rm:	o64 0f 40+c /r]				X86_64,LONG,SM
-CMOVPO		reg64,reg64			[rm:	o64 0f 40+c /r]				X86_64,LONG
-CMOVS		reg16,mem			[rm:	o16 0f 40+c /r]				P6,SM
-CMOVS		reg16,reg16			[rm:	o16 0f 40+c /r]				P6
-CMOVS		reg32,mem			[rm:	o32 0f 40+c /r]				P6,SM
-CMOVS		reg32,reg32			[rm:	o32 0f 40+c /r]				P6
-CMOVS		reg64,mem			[rm:	o64 0f 40+c /r]				X86_64,LONG,SM
-CMOVS		reg64,reg64			[rm:	o64 0f 40+c /r]				X86_64,LONG
-CMOVZ		reg16,mem			[rm:	o16 0f 40+c /r]				P6,SM
-CMOVZ		reg16,reg16			[rm:	o16 0f 40+c /r]				P6
-CMOVZ		reg32,mem			[rm:	o32 0f 40+c /r]				P6,SM
-CMOVZ		reg32,reg32			[rm:	o32 0f 40+c /r]				P6
-CMOVZ		reg64,mem			[rm:	o64 0f 40+c /r]				X86_64,LONG,SM
-CMOVZ		reg64,reg64			[rm:	o64 0f 40+c /r]				X86_64,LONG
-JA		imm|near			[i:	odf 0f 80+c rel]			386,BND
-JA		imm16|near			[i:	o16 0f 80+c rel]			386,NOLONG,BND
-JA		imm32|near			[i:	o32 0f 80+c rel]			386,NOLONG,BND
-JA		imm64|near			[i:	o64nw 0f 80+c rel]			X86_64,LONG,BND
-JA		imm|short			[i:	70+c rel8]				8086,ND,BND
-JA		imm				[i:	jcc8 70+c rel8]				8086,ND,BND
-JA		imm				[i:	0f 80+c rel]				386,ND,BND
-JA		imm				[i:	71+c jlen e9 rel]			8086,ND,BND
-JA		imm				[i:	70+c rel8]				8086,BND
-JAE		imm|near			[i:	odf 0f 80+c rel]			386,BND
-JAE		imm16|near			[i:	o16 0f 80+c rel]			386,NOLONG,BND
-JAE		imm32|near			[i:	o32 0f 80+c rel]			386,NOLONG,BND
-JAE		imm64|near			[i:	o64nw 0f 80+c rel]			X86_64,LONG,BND
-JAE		imm|short			[i:	70+c rel8]				8086,ND,BND
-JAE		imm				[i:	jcc8 70+c rel8]				8086,ND,BND
-JAE		imm				[i:	0f 80+c rel]				386,ND,BND
-JAE		imm				[i:	71+c jlen e9 rel]			8086,ND,BND
-JAE		imm				[i:	70+c rel8]				8086,BND
-JB		imm|near			[i:	odf 0f 80+c rel]			386,BND
-JB		imm16|near			[i:	o16 0f 80+c rel]			386,NOLONG,BND
-JB		imm32|near			[i:	o32 0f 80+c rel]			386,NOLONG,BND
-JB		imm64|near			[i:	o64nw 0f 80+c rel]			X86_64,LONG,BND
-JB		imm|short			[i:	70+c rel8]				8086,ND,BND
-JB		imm				[i:	jcc8 70+c rel8]				8086,ND,BND
-JB		imm				[i:	0f 80+c rel]				386,ND,BND
-JB		imm				[i:	71+c jlen e9 rel]			8086,ND,BND
-JB		imm				[i:	70+c rel8]				8086,BND
-JBE		imm|near			[i:	odf 0f 80+c rel]			386,BND
-JBE		imm16|near			[i:	o16 0f 80+c rel]			386,NOLONG,BND
-JBE		imm32|near			[i:	o32 0f 80+c rel]			386,NOLONG,BND
-JBE		imm64|near			[i:	o64nw 0f 80+c rel]			X86_64,LONG,BND
-JBE		imm|short			[i:	70+c rel8]				8086,ND,BND
-JBE		imm				[i:	jcc8 70+c rel8]				8086,ND,BND
-JBE		imm				[i:	0f 80+c rel]				386,ND,BND
-JBE		imm				[i:	71+c jlen e9 rel]			8086,ND,BND
-JBE		imm				[i:	70+c rel8]				8086,BND
-JC		imm|near			[i:	odf 0f 80+c rel]			386,BND
-JC		imm16|near			[i:	o16 0f 80+c rel]			386,NOLONG,BND
-JC		imm32|near			[i:	o32 0f 80+c rel]			386,NOLONG,BND
-JC		imm64|near			[i:	o64nw 0f 80+c rel]			X86_64,LONG,BND
-JC		imm|short			[i:	70+c rel8]				8086,ND,BND
-JC		imm				[i:	jcc8 70+c rel8]				8086,ND,BND
-JC		imm				[i:	0f 80+c rel]				386,ND,BND
-JC		imm				[i:	71+c jlen e9 rel]			8086,ND,BND
-JC		imm				[i:	70+c rel8]				8086,BND
-JE		imm|near			[i:	odf 0f 80+c rel]			386,BND
-JE		imm16|near			[i:	o16 0f 80+c rel]			386,NOLONG,BND
-JE		imm32|near			[i:	o32 0f 80+c rel]			386,NOLONG,BND
-JE		imm64|near			[i:	o64nw 0f 80+c rel]			X86_64,LONG,BND
-JE		imm|short			[i:	70+c rel8]				8086,ND,BND
-JE		imm				[i:	jcc8 70+c rel8]				8086,ND,BND
-JE		imm				[i:	0f 80+c rel]				386,ND,BND
-JE		imm				[i:	71+c jlen e9 rel]			8086,ND,BND
-JE		imm				[i:	70+c rel8]				8086,BND
-JG		imm|near			[i:	odf 0f 80+c rel]			386,BND
-JG		imm16|near			[i:	o16 0f 80+c rel]			386,NOLONG,BND
-JG		imm32|near			[i:	o32 0f 80+c rel]			386,NOLONG,BND
-JG		imm64|near			[i:	o64nw 0f 80+c rel]			X86_64,LONG,BND
-JG		imm|short			[i:	70+c rel8]				8086,ND,BND
-JG		imm				[i:	jcc8 70+c rel8]				8086,ND,BND
-JG		imm				[i:	0f 80+c rel]				386,ND,BND
-JG		imm				[i:	71+c jlen e9 rel]			8086,ND,BND
-JG		imm				[i:	70+c rel8]				8086,BND
-JGE		imm|near			[i:	odf 0f 80+c rel]			386,BND
-JGE		imm16|near			[i:	o16 0f 80+c rel]			386,NOLONG,BND
-JGE		imm32|near			[i:	o32 0f 80+c rel]			386,NOLONG,BND
-JGE		imm64|near			[i:	o64nw 0f 80+c rel]			X86_64,LONG,BND
-JGE		imm|short			[i:	70+c rel8]				8086,ND,BND
-JGE		imm				[i:	jcc8 70+c rel8]				8086,ND,BND
-JGE		imm				[i:	0f 80+c rel]				386,ND,BND
-JGE		imm				[i:	71+c jlen e9 rel]			8086,ND,BND
-JGE		imm				[i:	70+c rel8]				8086,BND
-JL		imm|near			[i:	odf 0f 80+c rel]			386,BND
-JL		imm16|near			[i:	o16 0f 80+c rel]			386,NOLONG,BND
-JL		imm32|near			[i:	o32 0f 80+c rel]			386,NOLONG,BND
-JL		imm64|near			[i:	o64nw 0f 80+c rel]			X86_64,LONG,BND
-JL		imm|short			[i:	70+c rel8]				8086,ND,BND
-JL		imm				[i:	jcc8 70+c rel8]				8086,ND,BND
-JL		imm				[i:	0f 80+c rel]				386,ND,BND
-JL		imm				[i:	71+c jlen e9 rel]			8086,ND,BND
-JL		imm				[i:	70+c rel8]				8086,BND
-JLE		imm|near			[i:	odf 0f 80+c rel]			386,BND
-JLE		imm16|near			[i:	o16 0f 80+c rel]			386,NOLONG,BND
-JLE		imm32|near			[i:	o32 0f 80+c rel]			386,NOLONG,BND
-JLE		imm64|near			[i:	o64nw 0f 80+c rel]			X86_64,LONG,BND
-JLE		imm|short			[i:	70+c rel8]				8086,ND,BND
-JLE		imm				[i:	jcc8 70+c rel8]				8086,ND,BND
-JLE		imm				[i:	0f 80+c rel]				386,ND,BND
-JLE		imm				[i:	71+c jlen e9 rel]			8086,ND,BND
-JLE		imm				[i:	70+c rel8]				8086,BND
-JNA		imm|near			[i:	odf 0f 80+c rel]			386,BND
-JNA		imm16|near			[i:	o16 0f 80+c rel]			386,NOLONG,BND
-JNA		imm32|near			[i:	o32 0f 80+c rel]			386,NOLONG,BND
-JNA		imm64|near			[i:	o64nw 0f 80+c rel]			X86_64,LONG,BND
-JNA		imm|short			[i:	70+c rel8]				8086,ND,BND
-JNA		imm				[i:	jcc8 70+c rel8]				8086,ND,BND
-JNA		imm				[i:	0f 80+c rel]				386,ND,BND
-JNA		imm				[i:	71+c jlen e9 rel]			8086,ND,BND
-JNA		imm				[i:	70+c rel8]				8086,BND
-JNAE	imm|near			[i:	odf 0f 80+c rel]			386,BND
-JNAE	imm16|near			[i:	o16 0f 80+c rel]			386,NOLONG,BND
-JNAE	imm32|near			[i:	o32 0f 80+c rel]			386,NOLONG,BND
-JNAE	imm64|near			[i:	o64nw 0f 80+c rel]			X86_64,LONG,BND
-JNAE	imm|short			[i:	70+c rel8]				8086,ND,BND
-JNAE	imm				[i:	jcc8 70+c rel8]				8086,ND,BND
-JNAE	imm				[i:	0f 80+c rel]				386,ND,BND
-JNAE	imm				[i:	71+c jlen e9 rel]			8086,ND,BND
-JNAE	imm				[i:	70+c rel8]				8086,BND
-JNB		imm|near			[i:	odf 0f 80+c rel]			386,BND
-JNB		imm16|near			[i:	o16 0f 80+c rel]			386,NOLONG,BND
-JNB		imm32|near			[i:	o32 0f 80+c rel]			386,NOLONG,BND
-JNB		imm64|near			[i:	o64nw 0f 80+c rel]			X86_64,LONG,BND
-JNB		imm|short			[i:	70+c rel8]				8086,ND,BND
-JNB		imm				[i:	jcc8 70+c rel8]				8086,ND,BND
-JNB		imm				[i:	0f 80+c rel]				386,ND,BND
-JNB		imm				[i:	71+c jlen e9 rel]			8086,ND,BND
-JNB		imm				[i:	70+c rel8]				8086,BND
-JNBE	imm|near			[i:	odf 0f 80+c rel]			386,BND
-JNBE	imm16|near			[i:	o16 0f 80+c rel]			386,NOLONG,BND
-JNBE	imm32|near			[i:	o32 0f 80+c rel]			386,NOLONG,BND
-JNBE	imm64|near			[i:	o64nw 0f 80+c rel]			X86_64,LONG,BND
-JNBE	imm|short			[i:	70+c rel8]				8086,ND,BND
-JNBE	imm				[i:	jcc8 70+c rel8]				8086,ND,BND
-JNBE	imm				[i:	0f 80+c rel]				386,ND,BND
-JNBE	imm				[i:	71+c jlen e9 rel]			8086,ND,BND
-JNBE	imm				[i:	70+c rel8]				8086,BND
-JNC		imm|near			[i:	odf 0f 80+c rel]			386,BND
-JNC		imm16|near			[i:	o16 0f 80+c rel]			386,NOLONG,BND
-JNC		imm32|near			[i:	o32 0f 80+c rel]			386,NOLONG,BND
-JNC		imm64|near			[i:	o64nw 0f 80+c rel]			X86_64,LONG,BND
-JNC		imm|short			[i:	70+c rel8]				8086,ND,BND
-JNC		imm				[i:	jcc8 70+c rel8]				8086,ND,BND
-JNC		imm				[i:	0f 80+c rel]				386,ND,BND
-JNC		imm				[i:	71+c jlen e9 rel]			8086,ND,BND
-JNC		imm				[i:	70+c rel8]				8086,BND
-JNE		imm|near			[i:	odf 0f 80+c rel]			386,BND
-JNE		imm16|near			[i:	o16 0f 80+c rel]			386,NOLONG,BND
-JNE		imm32|near			[i:	o32 0f 80+c rel]			386,NOLONG,BND
-JNE		imm64|near			[i:	o64nw 0f 80+c rel]			X86_64,LONG,BND
-JNE		imm|short			[i:	70+c rel8]				8086,ND,BND
-JNE		imm				[i:	jcc8 70+c rel8]				8086,ND,BND
-JNE		imm				[i:	0f 80+c rel]				386,ND,BND
-JNE		imm				[i:	71+c jlen e9 rel]			8086,ND,BND
-JNE		imm				[i:	70+c rel8]				8086,BND
-JNG		imm|near			[i:	odf 0f 80+c rel]			386,BND
-JNG		imm16|near			[i:	o16 0f 80+c rel]			386,NOLONG,BND
-JNG		imm32|near			[i:	o32 0f 80+c rel]			386,NOLONG,BND
-JNG		imm64|near			[i:	o64nw 0f 80+c rel]			X86_64,LONG,BND
-JNG		imm|short			[i:	70+c rel8]				8086,ND,BND
-JNG		imm				[i:	jcc8 70+c rel8]				8086,ND,BND
-JNG		imm				[i:	0f 80+c rel]				386,ND,BND
-JNG		imm				[i:	71+c jlen e9 rel]			8086,ND,BND
-JNG		imm				[i:	70+c rel8]				8086,BND
-JNGE	imm|near			[i:	odf 0f 80+c rel]			386,BND
-JNGE	imm16|near			[i:	o16 0f 80+c rel]			386,NOLONG,BND
-JNGE	imm32|near			[i:	o32 0f 80+c rel]			386,NOLONG,BND
-JNGE	imm64|near			[i:	o64nw 0f 80+c rel]			X86_64,LONG,BND
-JNGE	imm|short			[i:	70+c rel8]				8086,ND,BND
-JNGE	imm				[i:	jcc8 70+c rel8]				8086,ND,BND
-JNGE	imm				[i:	0f 80+c rel]				386,ND,BND
-JNGE	imm				[i:	71+c jlen e9 rel]			8086,ND,BND
-JNGE	imm				[i:	70+c rel8]				8086,BND
-JNL		imm|near			[i:	odf 0f 80+c rel]			386,BND
-JNL		imm16|near			[i:	o16 0f 80+c rel]			386,NOLONG,BND
-JNL		imm32|near			[i:	o32 0f 80+c rel]			386,NOLONG,BND
-JNL		imm64|near			[i:	o64nw 0f 80+c rel]			X86_64,LONG,BND
-JNL		imm|short			[i:	70+c rel8]				8086,ND,BND
-JNL		imm				[i:	jcc8 70+c rel8]				8086,ND,BND
-JNL		imm				[i:	0f 80+c rel]				386,ND,BND
-JNL		imm				[i:	71+c jlen e9 rel]			8086,ND,BND
-JNL		imm				[i:	70+c rel8]				8086,BND
-JNLE	imm|near			[i:	odf 0f 80+c rel]			386,BND
-JNLE	imm16|near			[i:	o16 0f 80+c rel]			386,NOLONG,BND
-JNLE	imm32|near			[i:	o32 0f 80+c rel]			386,NOLONG,BND
-JNLE	imm64|near			[i:	o64nw 0f 80+c rel]			X86_64,LONG,BND
-JNLE	imm|short			[i:	70+c rel8]				8086,ND,BND
-JNLE	imm				[i:	jcc8 70+c rel8]				8086,ND,BND
-JNLE	imm				[i:	0f 80+c rel]				386,ND,BND
-JNLE	imm				[i:	71+c jlen e9 rel]			8086,ND,BND
-JNLE	imm				[i:	70+c rel8]				8086,BND
-JNO		imm|near			[i:	odf 0f 80+c rel]			386,BND
-JNO		imm16|near			[i:	o16 0f 80+c rel]			386,NOLONG,BND
-JNO		imm32|near			[i:	o32 0f 80+c rel]			386,NOLONG,BND
-JNO		imm64|near			[i:	o64nw 0f 80+c rel]			X86_64,LONG,BND
-JNO		imm|short			[i:	70+c rel8]				8086,ND,BND
-JNO		imm				[i:	jcc8 70+c rel8]				8086,ND,BND
-JNO		imm				[i:	0f 80+c rel]				386,ND,BND
-JNO		imm				[i:	71+c jlen e9 rel]			8086,ND,BND
-JNO		imm				[i:	70+c rel8]				8086,BND
-JNP		imm|near			[i:	odf 0f 80+c rel]			386,BND
-JNP		imm16|near			[i:	o16 0f 80+c rel]			386,NOLONG,BND
-JNP		imm32|near			[i:	o32 0f 80+c rel]			386,NOLONG,BND
-JNP		imm64|near			[i:	o64nw 0f 80+c rel]			X86_64,LONG,BND
-JNP		imm|short			[i:	70+c rel8]				8086,ND,BND
-JNP		imm				[i:	jcc8 70+c rel8]				8086,ND,BND
-JNP		imm				[i:	0f 80+c rel]				386,ND,BND
-JNP		imm				[i:	71+c jlen e9 rel]			8086,ND,BND
-JNP		imm				[i:	70+c rel8]				8086,BND
-JNS		imm|near			[i:	odf 0f 80+c rel]			386,BND
-JNS		imm16|near			[i:	o16 0f 80+c rel]			386,NOLONG,BND
-JNS		imm32|near			[i:	o32 0f 80+c rel]			386,NOLONG,BND
-JNS		imm64|near			[i:	o64nw 0f 80+c rel]			X86_64,LONG,BND
-JNS		imm|short			[i:	70+c rel8]				8086,ND,BND
-JNS		imm				[i:	jcc8 70+c rel8]				8086,ND,BND
-JNS		imm				[i:	0f 80+c rel]				386,ND,BND
-JNS		imm				[i:	71+c jlen e9 rel]			8086,ND,BND
-JNS		imm				[i:	70+c rel8]				8086,BND
-JNZ		imm|near			[i:	odf 0f 80+c rel]			386,BND
-JNZ		imm16|near			[i:	o16 0f 80+c rel]			386,NOLONG,BND
-JNZ		imm32|near			[i:	o32 0f 80+c rel]			386,NOLONG,BND
-JNZ		imm64|near			[i:	o64nw 0f 80+c rel]			X86_64,LONG,BND
-JNZ		imm|short			[i:	70+c rel8]				8086,ND,BND
-JNZ		imm				[i:	jcc8 70+c rel8]				8086,ND,BND
-JNZ		imm				[i:	0f 80+c rel]				386,ND,BND
-JNZ		imm				[i:	71+c jlen e9 rel]			8086,ND,BND
-JNZ		imm				[i:	70+c rel8]				8086,BND
-JO		imm|near			[i:	odf 0f 80+c rel]			386,BND
-JO		imm16|near			[i:	o16 0f 80+c rel]			386,NOLONG,BND
-JO		imm32|near			[i:	o32 0f 80+c rel]			386,NOLONG,BND
-JO		imm64|near			[i:	o64nw 0f 80+c rel]			X86_64,LONG,BND
-JO		imm|short			[i:	70+c rel8]				8086,ND,BND
-JO		imm				[i:	jcc8 70+c rel8]				8086,ND,BND
-JO		imm				[i:	0f 80+c rel]				386,ND,BND
-JO		imm				[i:	71+c jlen e9 rel]			8086,ND,BND
-JO		imm				[i:	70+c rel8]				8086,BND
-JP		imm|near			[i:	odf 0f 80+c rel]			386,BND
-JP		imm16|near			[i:	o16 0f 80+c rel]			386,NOLONG,BND
-JP		imm32|near			[i:	o32 0f 80+c rel]			386,NOLONG,BND
-JP		imm64|near			[i:	o64nw 0f 80+c rel]			X86_64,LONG,BND
-JP		imm|short			[i:	70+c rel8]				8086,ND,BND
-JP		imm				[i:	jcc8 70+c rel8]				8086,ND,BND
-JP		imm				[i:	0f 80+c rel]				386,ND,BND
-JP		imm				[i:	71+c jlen e9 rel]			8086,ND,BND
-JP		imm				[i:	70+c rel8]				8086,BND
-JS		imm|near			[i:	odf 0f 80+c rel]			386,BND
-JS		imm16|near			[i:	o16 0f 80+c rel]			386,NOLONG,BND
-JS		imm32|near			[i:	o32 0f 80+c rel]			386,NOLONG,BND
-JS		imm64|near			[i:	o64nw 0f 80+c rel]			X86_64,LONG,BND
-JS		imm|short			[i:	70+c rel8]				8086,ND,BND
-JS		imm				[i:	jcc8 70+c rel8]				8086,ND,BND
-JS		imm				[i:	0f 80+c rel]				386,ND,BND
-JS		imm				[i:	71+c jlen e9 rel]			8086,ND,BND
-JS		imm				[i:	70+c rel8]				8086,BND
-JZ		imm|near			[i:	odf 0f 80+c rel]			386,BND
-JZ		imm16|near			[i:	o16 0f 80+c rel]			386,NOLONG,BND
-JZ		imm32|near			[i:	o32 0f 80+c rel]			386,NOLONG,BND
-JZ		imm64|near			[i:	o64nw 0f 80+c rel]			X86_64,LONG,BND
-JZ		imm|short			[i:	70+c rel8]				8086,ND,BND
-JZ		imm				[i:	jcc8 70+c rel8]				8086,ND,BND
-JZ		imm				[i:	0f 80+c rel]				386,ND,BND
-JZ		imm				[i:	71+c jlen e9 rel]			8086,ND,BND
-JZ		imm				[i:	70+c rel8]				8086,BND
-JPE		imm|near			[i:	odf 0f 80+c rel]			386,BND
-JPE		imm16|near			[i:	o16 0f 80+c rel]			386,NOLONG,BND
-JPE		imm32|near			[i:	o32 0f 80+c rel]			386,NOLONG,BND
-JPE		imm64|near			[i:	o64nw 0f 80+c rel]			X86_64,LONG,BND
-JPE		imm|short			[i:	70+c rel8]				8086,ND,BND
-JPE		imm				[i:	jcc8 70+c rel8]				8086,ND,BND
-JPE		imm				[i:	0f 80+c rel]				386,ND,BND
-JPE		imm				[i:	71+c jlen e9 rel]			8086,ND,BND
-JPE		imm				[i:	70+c rel8]				8086,BND
-JPO		imm|near			[i:	odf 0f 80+c rel]			386,BND
-JPO		imm16|near			[i:	o16 0f 80+c rel]			386,NOLONG,BND
-JPO		imm32|near			[i:	o32 0f 80+c rel]			386,NOLONG,BND
-JPO		imm64|near			[i:	o64nw 0f 80+c rel]			X86_64,LONG,BND
-JPO		imm|short			[i:	70+c rel8]				8086,ND,BND
-JPO		imm				[i:	jcc8 70+c rel8]				8086,ND,BND
-JPO		imm				[i:	0f 80+c rel]				386,ND,BND
-JPO		imm				[i:	71+c jlen e9 rel]			8086,ND,BND
-JPO		imm				[i:	70+c rel8]				8086,BND
+CMOVA 		reg16,mem			[rm:	o16 0f 47 /r]				P6,SM
+CMOVA 		reg16,reg16			[rm:	o16 0f 47 /r]				P6
+CMOVA 		reg32,mem			[rm:	o32 0f 47 /r]				P6,SM
+CMOVA 		reg32,reg32			[rm:	o32 0f 47 /r]				P6
+CMOVA 		reg64,mem			[rm:	o64 0f 47 /r]				X86_64,LONG,SM
+CMOVA 		reg64,reg64			[rm:	o64 0f 47 /r]				X86_64,LONG
+CMOVAE		reg16,mem			[rm:	o16 0f 43 /r]				P6,SM
+CMOVAE		reg16,reg16			[rm:	o16 0f 43 /r]				P6
+CMOVAE		reg32,mem			[rm:	o32 0f 43 /r]				P6,SM
+CMOVAE		reg32,reg32			[rm:	o32 0f 43 /r]				P6
+CMOVAE		reg64,mem			[rm:	o64 0f 43 /r]				X86_64,LONG,SM
+CMOVAE		reg64,reg64			[rm:	o64 0f 43 /r]				X86_64,LONG
+CMOVB		reg16,mem			[rm:	o16 0f 42 /r]				P6,SM
+CMOVB		reg16,reg16			[rm:	o16 0f 42 /r]				P6
+CMOVB		reg32,mem			[rm:	o32 0f 42 /r]				P6,SM
+CMOVB		reg32,reg32			[rm:	o32 0f 42 /r]				P6
+CMOVB		reg64,mem			[rm:	o64 0f 42 /r]				X86_64,LONG,SM
+CMOVB		reg64,reg64			[rm:	o64 0f 42 /r]				X86_64,LONG
+CMOVBE		reg16,mem			[rm:	o16 0f 46 /r]				P6,SM
+CMOVBE		reg16,reg16			[rm:	o16 0f 46 /r]				P6
+CMOVBE		reg32,mem			[rm:	o32 0f 46 /r]				P6,SM
+CMOVBE		reg32,reg32			[rm:	o32 0f 46 /r]				P6
+CMOVBE		reg64,mem			[rm:	o64 0f 46 /r]				X86_64,LONG,SM
+CMOVBE		reg64,reg64			[rm:	o64 0f 46 /r]				X86_64,LONG
+CMOVC		reg16,mem			[rm:	o16 0f 42 /r]				P6,SM
+CMOVC		reg16,reg16			[rm:	o16 0f 42 /r]				P6
+CMOVC		reg32,mem			[rm:	o32 0f 42 /r]				P6,SM
+CMOVC		reg32,reg32			[rm:	o32 0f 42 /r]				P6
+CMOVC		reg64,mem			[rm:	o64 0f 42 /r]				X86_64,LONG,SM
+CMOVC		reg64,reg64			[rm:	o64 0f 42 /r]				X86_64,LONG
+CMOVE		reg16,mem			[rm:	o16 0f 44 /r]				P6,SM
+CMOVE		reg16,reg16			[rm:	o16 0f 44 /r]				P6
+CMOVE		reg32,mem			[rm:	o32 0f 44 /r]				P6,SM
+CMOVE		reg32,reg32			[rm:	o32 0f 44 /r]				P6
+CMOVE		reg64,mem			[rm:	o64 0f 44 /r]				X86_64,LONG,SM
+CMOVE		reg64,reg64			[rm:	o64 0f 44 /r]				X86_64,LONG
+CMOVG		reg16,mem			[rm:	o16 0f 4f /r]				P6,SM
+CMOVG		reg16,reg16			[rm:	o16 0f 4f /r]				P6
+CMOVG		reg32,mem			[rm:	o32 0f 4f /r]				P6,SM
+CMOVG		reg32,reg32			[rm:	o32 0f 4f /r]				P6
+CMOVG		reg64,mem			[rm:	o64 0f 4f /r]				X86_64,LONG,SM
+CMOVG		reg64,reg64			[rm:	o64 0f 4f /r]				X86_64,LONG
+CMOVGE		reg16,mem			[rm:	o16 0f 4d /r]				P6,SM
+CMOVGE		reg16,reg16			[rm:	o16 0f 4d /r]				P6
+CMOVGE		reg32,mem			[rm:	o32 0f 4d /r]				P6,SM
+CMOVGE		reg32,reg32			[rm:	o32 0f 4d /r]				P6
+CMOVGE		reg64,mem			[rm:	o64 0f 4d /r]				X86_64,LONG,SM
+CMOVGE		reg64,reg64			[rm:	o64 0f 4d /r]				X86_64,LONG
+CMOVL		reg16,mem			[rm:	o16 0f 4c /r]				P6,SM
+CMOVL		reg16,reg16			[rm:	o16 0f 4c /r]				P6
+CMOVL		reg32,mem			[rm:	o32 0f 4c /r]				P6,SM
+CMOVL		reg32,reg32			[rm:	o32 0f 4c /r]				P6
+CMOVL		reg64,mem			[rm:	o64 0f 4c /r]				X86_64,LONG,SM
+CMOVL		reg64,reg64			[rm:	o64 0f 4c /r]				X86_64,LONG
+CMOVLE		reg16,mem			[rm:	o16 0f 4e /r]				P6,SM
+CMOVLE		reg16,reg16			[rm:	o16 0f 4e /r]				P6
+CMOVLE		reg32,mem			[rm:	o32 0f 4e /r]				P6,SM
+CMOVLE		reg32,reg32			[rm:	o32 0f 4e /r]				P6
+CMOVLE		reg64,mem			[rm:	o64 0f 4e /r]				X86_64,LONG,SM
+CMOVLE		reg64,reg64			[rm:	o64 0f 4e /r]				X86_64,LONG
+CMOVNA		reg16,mem			[rm:	o16 0f 46 /r]				P6,SM
+CMOVNA		reg16,reg16			[rm:	o16 0f 46 /r]				P6
+CMOVNA		reg32,mem			[rm:	o32 0f 46 /r]				P6,SM
+CMOVNA		reg32,reg32			[rm:	o32 0f 46 /r]				P6
+CMOVNA		reg64,mem			[rm:	o64 0f 46 /r]				X86_64,LONG,SM
+CMOVNA		reg64,reg64			[rm:	o64 0f 46 /r]				X86_64,LONG
+CMOVNAE		reg16,mem			[rm:	o16 0f 42 /r]				P6,SM
+CMOVNAE		reg16,reg16			[rm:	o16 0f 42 /r]				P6
+CMOVNAE		reg32,mem			[rm:	o32 0f 42 /r]				P6,SM
+CMOVNAE		reg32,reg32			[rm:	o32 0f 42 /r]				P6
+CMOVNAE		reg64,mem			[rm:	o64 0f 42 /r]				X86_64,LONG,SM
+CMOVNAE		reg64,reg64			[rm:	o64 0f 42 /r]				X86_64,LONG
+CMOVNB		reg16,mem			[rm:	o16 0f 43 /r]				P6,SM
+CMOVNB		reg16,reg16			[rm:	o16 0f 43 /r]				P6
+CMOVNB		reg32,mem			[rm:	o32 0f 43 /r]				P6,SM
+CMOVNB		reg32,reg32			[rm:	o32 0f 43 /r]				P6
+CMOVNB		reg64,mem			[rm:	o64 0f 43 /r]				X86_64,LONG,SM
+CMOVNB		reg64,reg64			[rm:	o64 0f 43 /r]				X86_64,LONG
+CMOVNBE		reg16,mem			[rm:	o16 0f 47 /r]				P6,SM
+CMOVNBE		reg16,reg16			[rm:	o16 0f 47 /r]				P6
+CMOVNBE		reg32,mem			[rm:	o32 0f 47 /r]				P6,SM
+CMOVNBE		reg32,reg32			[rm:	o32 0f 47 /r]				P6
+CMOVNBE		reg64,mem			[rm:	o64 0f 47 /r]				X86_64,LONG,SM
+CMOVNBE		reg64,reg64			[rm:	o64 0f 47 /r]				X86_64,LONG
+CMOVNC		reg16,mem			[rm:	o16 0f 43 /r]				P6,SM
+CMOVNC		reg16,reg16			[rm:	o16 0f 43 /r]				P6
+CMOVNC		reg32,mem			[rm:	o32 0f 43 /r]				P6,SM
+CMOVNC		reg32,reg32			[rm:	o32 0f 43 /r]				P6
+CMOVNC		reg64,mem			[rm:	o64 0f 43 /r]				X86_64,LONG,SM
+CMOVNC		reg64,reg64			[rm:	o64 0f 43 /r]				X86_64,LONG
+CMOVNE		reg16,mem			[rm:	o16 0f 45 /r]				P6,SM
+CMOVNE		reg16,reg16			[rm:	o16 0f 45 /r]				P6
+CMOVNE		reg32,mem			[rm:	o32 0f 45 /r]				P6,SM
+CMOVNE		reg32,reg32			[rm:	o32 0f 45 /r]				P6
+CMOVNE		reg64,mem			[rm:	o64 0f 45 /r]				X86_64,LONG,SM
+CMOVNE		reg64,reg64			[rm:	o64 0f 45 /r]				X86_64,LONG
+CMOVNG		reg16,mem			[rm:	o16 0f 4e /r]				P6,SM
+CMOVNG		reg16,reg16			[rm:	o16 0f 4e /r]				P6
+CMOVNG		reg32,mem			[rm:	o32 0f 4e /r]				P6,SM
+CMOVNG		reg32,reg32			[rm:	o32 0f 4e /r]				P6
+CMOVNG		reg64,mem			[rm:	o64 0f 4e /r]				X86_64,LONG,SM
+CMOVNG		reg64,reg64			[rm:	o64 0f 4e /r]				X86_64,LONG
+CMOVNGE		reg16,mem			[rm:	o16 0f 4c /r]				P6,SM
+CMOVNGE		reg16,reg16			[rm:	o16 0f 4c /r]				P6
+CMOVNGE		reg32,mem			[rm:	o32 0f 4c /r]				P6,SM
+CMOVNGE		reg32,reg32			[rm:	o32 0f 4c /r]				P6
+CMOVNGE		reg64,mem			[rm:	o64 0f 4c /r]				X86_64,LONG,SM
+CMOVNGE		reg64,reg64			[rm:	o64 0f 4c /r]				X86_64,LONG
+CMOVNL		reg16,mem			[rm:	o16 0f 4d /r]				P6,SM
+CMOVNL		reg16,reg16			[rm:	o16 0f 4d /r]				P6
+CMOVNL		reg32,mem			[rm:	o32 0f 4d /r]				P6,SM
+CMOVNL		reg32,reg32			[rm:	o32 0f 4d /r]				P6
+CMOVNL		reg64,mem			[rm:	o64 0f 4d /r]				X86_64,LONG,SM
+CMOVNL		reg64,reg64			[rm:	o64 0f 4d /r]				X86_64,LONG
+CMOVNLE		reg16,mem			[rm:	o16 0f 4f /r]				P6,SM
+CMOVNLE		reg16,reg16			[rm:	o16 0f 4f /r]				P6
+CMOVNLE		reg32,mem			[rm:	o32 0f 4f /r]				P6,SM
+CMOVNLE		reg32,reg32			[rm:	o32 0f 4f /r]				P6
+CMOVNLE		reg64,mem			[rm:	o64 0f 4f /r]				X86_64,LONG,SM
+CMOVNLE		reg64,reg64			[rm:	o64 0f 4f /r]				X86_64,LONG
+CMOVNO		reg16,mem			[rm:	o16 0f 41 /r]				P6,SM
+CMOVNO		reg16,reg16			[rm:	o16 0f 41 /r]				P6
+CMOVNO		reg32,mem			[rm:	o32 0f 41 /r]				P6,SM
+CMOVNO		reg32,reg32			[rm:	o32 0f 41 /r]				P6
+CMOVNO		reg64,mem			[rm:	o64 0f 41 /r]				X86_64,LONG,SM
+CMOVNO		reg64,reg64			[rm:	o64 0f 41 /r]				X86_64,LONG
+CMOVNP		reg16,mem			[rm:	o16 0f 4b /r]				P6,SM
+CMOVNP		reg16,reg16			[rm:	o16 0f 4b /r]				P6
+CMOVNP		reg32,mem			[rm:	o32 0f 4b /r]				P6,SM
+CMOVNP		reg32,reg32			[rm:	o32 0f 4b /r]				P6
+CMOVNP		reg64,mem			[rm:	o64 0f 4b /r]				X86_64,LONG,SM
+CMOVNP		reg64,reg64			[rm:	o64 0f 4b /r]				X86_64,LONG
+CMOVNS		reg16,mem			[rm:	o16 0f 49 /r]				P6,SM
+CMOVNS		reg16,reg16			[rm:	o16 0f 49 /r]				P6
+CMOVNS		reg32,mem			[rm:	o32 0f 49 /r]				P6,SM
+CMOVNS		reg32,reg32			[rm:	o32 0f 49 /r]				P6
+CMOVNS		reg64,mem			[rm:	o64 0f 49 /r]				X86_64,LONG,SM
+CMOVNS		reg64,reg64			[rm:	o64 0f 49 /r]				X86_64,LONG
+CMOVNZ		reg16,mem			[rm:	o16 0f 45 /r]				P6,SM
+CMOVNZ		reg16,reg16			[rm:	o16 0f 45 /r]				P6
+CMOVNZ		reg32,mem			[rm:	o32 0f 45 /r]				P6,SM
+CMOVNZ		reg32,reg32			[rm:	o32 0f 45 /r]				P6
+CMOVNZ		reg64,mem			[rm:	o64 0f 45 /r]				X86_64,LONG,SM
+CMOVNZ		reg64,reg64			[rm:	o64 0f 45 /r]				X86_64,LONG
+CMOVO		reg16,mem			[rm:	o16 0f 40 /r]				P6,SM
+CMOVO		reg16,reg16			[rm:	o16 0f 40 /r]				P6
+CMOVO		reg32,mem			[rm:	o32 0f 40 /r]				P6,SM
+CMOVO		reg32,reg32			[rm:	o32 0f 40 /r]				P6
+CMOVO		reg64,mem			[rm:	o64 0f 40 /r]				X86_64,LONG,SM
+CMOVO		reg64,reg64			[rm:	o64 0f 40 /r]				X86_64,LONG
+CMOVP		reg16,mem			[rm:	o16 0f 4a /r]				P6,SM
+CMOVP		reg16,reg16			[rm:	o16 0f 4a /r]				P6
+CMOVP		reg32,mem			[rm:	o32 0f 4a /r]				P6,SM
+CMOVP		reg32,reg32			[rm:	o32 0f 4a /r]				P6
+CMOVP		reg64,mem			[rm:	o64 0f 4a /r]				X86_64,LONG,SM
+CMOVP		reg64,reg64			[rm:	o64 0f 4a /r]				X86_64,LONG
+CMOVPE		reg16,mem			[rm:	o16 0f 4a /r]				P6,SM
+CMOVPE		reg16,reg16			[rm:	o16 0f 4a /r]				P6
+CMOVPE		reg32,mem			[rm:	o32 0f 4a /r]				P6,SM
+CMOVPE		reg32,reg32			[rm:	o32 0f 4a /r]				P6
+CMOVPE		reg64,mem			[rm:	o64 0f 4a /r]				X86_64,LONG,SM
+CMOVPE		reg64,reg64			[rm:	o64 0f 4a /r]				X86_64,LONG
+CMOVPO		reg16,mem			[rm:	o16 0f 4b /r]				P6,SM
+CMOVPO		reg16,reg16			[rm:	o16 0f 4b /r]				P6
+CMOVPO		reg32,mem			[rm:	o32 0f 4b /r]				P6,SM
+CMOVPO		reg32,reg32			[rm:	o32 0f 4b /r]				P6
+CMOVPO		reg64,mem			[rm:	o64 0f 4b /r]				X86_64,LONG,SM
+CMOVPO		reg64,reg64			[rm:	o64 0f 4b /r]				X86_64,LONG
+CMOVS		reg16,mem			[rm:	o16 0f 48 /r]				P6,SM
+CMOVS		reg16,reg16			[rm:	o16 0f 48 /r]				P6
+CMOVS		reg32,mem			[rm:	o32 0f 48 /r]				P6,SM
+CMOVS		reg32,reg32			[rm:	o32 0f 48 /r]				P6
+CMOVS		reg64,mem			[rm:	o64 0f 48 /r]				X86_64,LONG,SM
+CMOVS		reg64,reg64			[rm:	o64 0f 48 /r]				X86_64,LONG
+CMOVZ		reg16,mem			[rm:	o16 0f 44 /r]				P6,SM
+CMOVZ		reg16,reg16			[rm:	o16 0f 44 /r]				P6
+CMOVZ		reg32,mem			[rm:	o32 0f 44 /r]				P6,SM
+CMOVZ		reg32,reg32			[rm:	o32 0f 44 /r]				P6
+CMOVZ		reg64,mem			[rm:	o64 0f 44 /r]				X86_64,LONG,SM
+CMOVZ		reg64,reg64			[rm:	o64 0f 44 /r]				X86_64,LONG
+JA		imm16|near			[i:	o16 0f 87 rel]			386,NOLONG,BND
+JA		imm32|near			[i:	o32 0f 87 rel]			386,NOLONG,BND
+JA		imm64|near			[i:	o64nw 0f 87 rel]			X86_64,LONG,BND
+JA		imm					[i:	77 rel8]				8086,BND
+JAE		imm16|near			[i:	o16 0f 83 rel]			386,NOLONG,BND
+JAE		imm32|near			[i:	o32 0f 83 rel]			386,NOLONG,BND
+JAE		imm64|near			[i:	o64nw 0f 83 rel]			X86_64,LONG,BND
+JAE		imm					[i:	73 rel8]				8086,BND
+JB		imm16|near			[i:	o16 0f 82 rel]			386,NOLONG,BND
+JB		imm32|near			[i:	o32 0f 82 rel]			386,NOLONG,BND
+JB		imm64|near			[i:	o64nw 0f 82 rel]			X86_64,LONG,BND
+JB		imm					[i:	72 rel8]				8086,BND
+JBE		imm16|near			[i:	o16 0f 86 rel]			386,NOLONG,BND
+JBE		imm32|near			[i:	o32 0f 86 rel]			386,NOLONG,BND
+JBE		imm64|near			[i:	o64nw 0f 86 rel]			X86_64,LONG,BND
+JBE		imm					[i:	76 rel8]				8086,BND
+JC		imm16|near			[i:	o16 0f 82 rel]			386,NOLONG,BND
+JC		imm32|near			[i:	o32 0f 82 rel]			386,NOLONG,BND
+JC		imm64|near			[i:	o64nw 0f 82 rel]			X86_64,LONG,BND
+JC		imm					[i:	72 rel8]				8086,BND
+JE		imm16|near			[i:	o16 0f 84 rel]			386,NOLONG,BND
+JE		imm32|near			[i:	o32 0f 84 rel]			386,NOLONG,BND
+JE		imm64|near			[i:	o64nw 0f 84 rel]			X86_64,LONG,BND
+JE		imm					[i:	74 rel8]				8086,BND
+JG		imm16|near			[i:	o16 0f 8f rel]			386,NOLONG,BND
+JG		imm32|near			[i:	o32 0f 8f rel]			386,NOLONG,BND
+JG		imm64|near			[i:	o64nw 0f 8f rel]			X86_64,LONG,BND
+JG		imm			    	[i:	7f rel8]				8086,BND
+JGE		imm16|near			[i:	o16 0f 8d rel]			386,NOLONG,BND
+JGE		imm32|near			[i:	o32 0f 8d rel]			386,NOLONG,BND
+JGE		imm64|near			[i:	o64nw 0f 8d rel]			X86_64,LONG,BND
+JGE		imm					[i:	7d rel8]				8086,BND
+JL		imm16|near			[i:	o16 0f 8c rel]			386,NOLONG,BND
+JL		imm32|near			[i:	o32 0f 8c rel]			386,NOLONG,BND
+JL		imm64|near			[i:	o64nw 0f 8c rel]			X86_64,LONG,BND
+JL		imm					[i:	7c rel8]				8086,BND
+JLE		imm16|near			[i:	o16 0f 8e rel]			386,NOLONG,BND
+JLE		imm32|near			[i:	o32 0f 8e rel]			386,NOLONG,BND
+JLE		imm64|near			[i:	o64nw 0f 8e rel]			X86_64,LONG,BND
+JLE		imm					[i:	7e rel8]				8086,BND
+JNA		imm16|near			[i:	o16 0f 86 rel]			386,NOLONG,BND
+JNA		imm32|near			[i:	o32 0f 86 rel]			386,NOLONG,BND
+JNA		imm64|near			[i:	o64nw 0f 86 rel]			X86_64,LONG,BND
+JNA		imm					[i:	76 rel8]				8086,BND
+JNAE	imm16|near			[i:	o16 0f 82 rel]			386,NOLONG,BND
+JNAE	imm32|near			[i:	o32 0f 82 rel]			386,NOLONG,BND
+JNAE	imm64|near			[i:	o64nw 0f 82 rel]			X86_64,LONG,BND
+JNAE	imm					[i:	72 rel8]				8086,BND
+JNB		imm16|near			[i:	o16 0f 83 rel]			386,NOLONG,BND
+JNB		imm32|near			[i:	o32 0f 83 rel]			386,NOLONG,BND
+JNB		imm64|near			[i:	o64nw 0f 83 rel]			X86_64,LONG,BND
+JNB		imm					[i:	73 rel8]				8086,BND
+JNBE	imm16|near			[i:	o16 0f 87 rel]			386,NOLONG,BND
+JNBE	imm32|near			[i:	o32 0f 87 rel]			386,NOLONG,BND
+JNBE	imm64|near			[i:	o64nw 0f 87 rel]			X86_64,LONG,BND
+JNBE	imm					[i:	77 rel8]				8086,BND
+JNC		imm16|near			[i:	o16 0f 83 rel]			386,NOLONG,BND
+JNC		imm32|near			[i:	o32 0f 83 rel]			386,NOLONG,BND
+JNC		imm64|near			[i:	o64nw 0f 83 rel]			X86_64,LONG,BND
+JNC		imm					[i:	73 rel8]				8086,BND
+JNE		imm16|near			[i:	o16 0f 85 rel]			386,NOLONG,BND
+JNE		imm32|near			[i:	o32 0f 85 rel]			386,NOLONG,BND
+JNE		imm64|near			[i:	o64nw 0f 85 rel]			X86_64,LONG,BND
+JNE		imm					[i:	75 rel8]				8086,BND
+JNG		imm16|near			[i:	o16 0f 8e rel]			386,NOLONG,BND
+JNG		imm32|near			[i:	o32 0f 8e rel]			386,NOLONG,BND
+JNG		imm64|near			[i:	o64nw 0f 8e rel]			X86_64,LONG,BND
+JNG		imm					[i:	7e rel8]				8086,BND
+JNGE	imm16|near			[i:	o16 0f 8c rel]			386,NOLONG,BND
+JNGE	imm32|near			[i:	o32 0f 8c rel]			386,NOLONG,BND
+JNGE	imm64|near			[i:	o64nw 0f 8c rel]			X86_64,LONG,BND
+JNGE	imm					[i:	7c rel8]				8086,BND
+JNL		imm16|near			[i:	o16 0f 8d rel]			386,NOLONG,BND
+JNL		imm32|near			[i:	o32 0f 8d rel]			386,NOLONG,BND
+JNL		imm64|near			[i:	o64nw 0f 8d rel]			X86_64,LONG,BND
+JNL		imm					[i:	7d rel8]				8086,BND
+JNLE	imm16|near			[i:	o16 0f 8f rel]			386,NOLONG,BND
+JNLE	imm32|near			[i:	o32 0f 8f rel]			386,NOLONG,BND
+JNLE	imm64|near			[i:	o64nw 0f 8f rel]			X86_64,LONG,BND
+JNLE	imm					[i:	7f rel8]				8086,BND
+JNO		imm16|near			[i:	o16 0f 81 rel]			386,NOLONG,BND
+JNO		imm32|near			[i:	o32 0f 81 rel]			386,NOLONG,BND
+JNO		imm64|near			[i:	o64nw 0f 81 rel]			X86_64,LONG,BND
+JNO		imm					[i:	71 rel8]				8086,BND
+JNP		imm16|near			[i:	o16 0f 8b rel]			386,NOLONG,BND
+JNP		imm32|near			[i:	o32 0f 8b rel]			386,NOLONG,BND
+JNP		imm64|near			[i:	o64nw 0f 8b rel]			X86_64,LONG,BND
+JNP		imm					[i:	7b rel8]				8086,BND
+JNS		imm16|near			[i:	o16 0f 89 rel]			386,NOLONG,BND
+JNS		imm32|near			[i:	o32 0f 89 rel]			386,NOLONG,BND
+JNS		imm64|near			[i:	o64nw 0f 89 rel]			X86_64,LONG,BND
+JNS		imm					[i:	79 rel8]				8086,BND
+JNZ		imm16|near			[i:	o16 0f 85 rel]			386,NOLONG,BND
+JNZ		imm32|near			[i:	o32 0f 85 rel]			386,NOLONG,BND
+JNZ		imm64|near			[i:	o64nw 0f 85 rel]			X86_64,LONG,BND
+JNZ		imm					[i:	75 rel8]				8086,BND
+JO		imm16|near			[i:	o16 0f 80 rel]			386,NOLONG,BND
+JO		imm32|near			[i:	o32 0f 80 rel]			386,NOLONG,BND
+JO		imm64|near			[i:	o64nw 0f 80 rel]			X86_64,LONG,BND
+JO		imm					[i:	70 rel8]				8086,BND
+JP		imm16|near			[i:	o16 0f 8a rel]			386,NOLONG,BND
+JP		imm32|near			[i:	o32 0f 8a rel]			386,NOLONG,BND
+JP		imm64|near			[i:	o64nw 0f 8a rel]			X86_64,LONG,BND
+JP		imm					[i:	7a rel8]				8086,BND
+JS		imm16|near			[i:	o16 0f 8a rel]			386,NOLONG,BND
+JS		imm32|near			[i:	o32 0f 8a rel]			386,NOLONG,BND
+JS		imm64|near			[i:	o64nw 0f 8b rel]			X86_64,LONG,BND
+JS		imm					[i:	7a rel8]				8086,BND
+JZ		imm16|near			[i:	o16 0f 8b rel]			386,NOLONG,BND
+JZ		imm32|near			[i:	o32 0f 8b rel]			386,NOLONG,BND
+JZ		imm64|near			[i:	o64nw 0f 8b rel]			X86_64,LONG,BND
+JZ		imm					[i:	7b rel8]				8086,BND
+JPE		imm16|near			[i:	o16 0f 88 rel]			386,NOLONG,BND
+JPE		imm32|near			[i:	o32 0f 88 rel]			386,NOLONG,BND
+JPE		imm64|near			[i:	o64nw 0f 88 rel]			X86_64,LONG,BND
+JPE		imm					[i:	78 rel8]				8086,BND
+JPO		imm16|near			[i:	o16 0f 84 rel]			386,NOLONG,BND
+JPO		imm32|near			[i:	o32 0f 84 rel]			386,NOLONG,BND
+JPO		imm64|near			[i:	o64nw 0f 84 rel]			X86_64,LONG,BND
+JPO		imm					[i:	74 rel8]				8086,BND
 
-SETA		mem				[m:	0f 90+c /0]				386,SB
-SETA		reg8				[m:	0f 90+c /0]				386
-SETAE		mem				[m:	0f 90+c /0]				386,SB
-SETAE		reg8				[m:	0f 90+c /0]				386
-SETB		mem				[m:	0f 90+c /0]				386,SB
-SETB		reg8				[m:	0f 90+c /0]				386
-SETBE		mem				[m:	0f 90+c /0]				386,SB
-SETBE		reg8				[m:	0f 90+c /0]				386
-SETC		mem				[m:	0f 90+c /0]				386,SB
-SETC		reg8				[m:	0f 90+c /0]				386
-SETE		mem				[m:	0f 90+c /0]				386,SB
-SETE		reg8				[m:	0f 90+c /0]				386
-SETG		mem				[m:	0f 90+c /0]				386,SB
-SETG		reg8				[m:	0f 90+c /0]				386
-SETGE		mem				[m:	0f 90+c /0]				386,SB
-SETGE		reg8				[m:	0f 90+c /0]				386
-SETL		mem				[m:	0f 90+c /0]				386,SB
-SETL		reg8				[m:	0f 90+c /0]				386
-SETLE		mem				[m:	0f 90+c /0]				386,SB
-SETLE		reg8				[m:	0f 90+c /0]				386
-SETNA		mem				[m:	0f 90+c /0]				386,SB
-SETNA		reg8				[m:	0f 90+c /0]				386
-SETNAE		mem				[m:	0f 90+c /0]				386,SB
-SETNAE		reg8				[m:	0f 90+c /0]				386
-SETNB		mem				[m:	0f 90+c /0]				386,SB
-SETNB		reg8				[m:	0f 90+c /0]				386
-SETNBE		mem				[m:	0f 90+c /0]				386,SB
-SETNBE		reg8				[m:	0f 90+c /0]				386
-SETNC		mem				[m:	0f 90+c /0]				386,SB
-SETNC		reg8				[m:	0f 90+c /0]				386
-SETNE		mem				[m:	0f 90+c /0]				386,SB
-SETNE		reg8				[m:	0f 90+c /0]				386
-SETNG		mem				[m:	0f 90+c /0]				386,SB
-SETNG		reg8				[m:	0f 90+c /0]				386
-SETNGE		mem				[m:	0f 90+c /0]				386,SB
-SETNGE		reg8				[m:	0f 90+c /0]				386
-SETNL		mem				[m:	0f 90+c /0]				386,SB
-SETNL		reg8				[m:	0f 90+c /0]				386
-SETNLE		mem				[m:	0f 90+c /0]				386,SB
-SETNLE		reg8				[m:	0f 90+c /0]				386
-SETNO		mem				[m:	0f 90+c /0]				386,SB
-SETNO		reg8				[m:	0f 90+c /0]				386
-SETNP		mem				[m:	0f 90+c /0]				386,SB
-SETNP		reg8				[m:	0f 90+c /0]				386
-SETNS		mem				[m:	0f 90+c /0]				386,SB
-SETNS		reg8				[m:	0f 90+c /0]				386
-SETNZ		mem				[m:	0f 90+c /0]				386,SB
-SETNZ		reg8				[m:	0f 90+c /0]				386
-SETO		mem				[m:	0f 90+c /0]				386,SB
-SETO		reg8				[m:	0f 90+c /0]				386
-SETP		mem				[m:	0f 90+c /0]				386,SB
-SETP		reg8				[m:	0f 90+c /0]				386
-SETPE		mem				[m:	0f 90+c /0]				386,SB
-SETPE		reg8				[m:	0f 90+c /0]				386
-SETPO		mem				[m:	0f 90+c /0]				386,SB
-SETPO		reg8				[m:	0f 90+c /0]				386
-SETS		mem				[m:	0f 90+c /0]				386,SB
-SETS		reg8				[m:	0f 90+c /0]				386
-SETZ		mem				[m:	0f 90+c /0]				386,SB
-SETZ		reg8				[m:	0f 90+c /0]				386
+SETA		mem				[m:	0f 97 /0]				386,SB
+SETA		reg8			[m:	0f 97 /0]				386
+SETAE		mem				[m:	0f 93 /0]				386,SB
+SETAE		reg8			[m:	0f 93 /0]				386
+SETB		mem				[m:	0f 92 /0]				386,SB
+SETB		reg8			[m:	0f 92 /0]				386
+SETBE		mem				[m:	0f 96 /0]				386,SB
+SETBE		reg8			[m:	0f 96 /0]				386
+SETC		mem				[m:	0f 92 /0]				386,SB
+SETC		reg8			[m:	0f 92 /0]				386
+SETE		mem				[m:	0f 94 /0]				386,SB
+SETE		reg8			[m:	0f 94 /0]				386
+SETG		mem				[m:	0f 9f /0]				386,SB
+SETG		reg8			[m:	0f 9f /0]				386
+SETGE		mem				[m:	0f 9d /0]				386,SB
+SETGE		reg8			[m:	0f 9d /0]				386
+SETL		mem				[m:	0f 9c /0]				386,SB
+SETL		reg8			[m:	0f 9c /0]				386
+SETLE		mem				[m:	0f 9e /0]				386,SB
+SETLE		reg8			[m:	0f 9e /0]				386
+SETNA		mem				[m:	0f 96 /0]				386,SB
+SETNA		reg8			[m:	0f 96 /0]				386
+SETNAE		mem				[m:	0f 92 /0]				386,SB
+SETNAE		reg8			[m:	0f 92 /0]				386
+SETNB		mem				[m:	0f 93 /0]				386,SB
+SETNB		reg8			[m:	0f 93 /0]				386
+SETNBE		mem				[m:	0f 97 /0]				386,SB
+SETNBE		reg8			[m:	0f 97 /0]				386
+SETNC		mem				[m:	0f 93 /0]				386,SB
+SETNC		reg8			[m:	0f 93 /0]				386
+SETNE		mem				[m:	0f 95 /0]				386,SB
+SETNE		reg8			[m:	0f 95 /0]				386
+SETNG		mem				[m:	0f 9e /0]				386,SB
+SETNG		reg8			[m:	0f 9e /0]				386
+SETNGE		mem				[m:	0f 9c /0]				386,SB
+SETNGE		reg8			[m:	0f 9c /0]				386
+SETNL		mem				[m:	0f 9d /0]				386,SB
+SETNL		reg8			[m:	0f 9d /0]				386
+SETNLE		mem				[m:	0f 9f /0]				386,SB
+SETNLE		reg8			[m:	0f 9f /0]				386
+SETNO		mem				[m:	0f 91 /0]				386,SB
+SETNO		reg8			[m:	0f 91 /0]				386
+SETNP		mem				[m:	0f 9b /0]				386,SB
+SETNP		reg8			[m:	0f 9b /0]				386
+SETNS		mem				[m:	0f 99 /0]				386,SB
+SETNS		reg8			[m:	0f 99 /0]				386
+SETNZ		mem				[m:	0f 95 /0]				386,SB
+SETNZ		reg8			[m:	0f 95 /0]				386
+SETO		mem				[m:	0f 90 /0]				386,SB
+SETO		reg8			[m:	0f 90 /0]				386
+SETP		mem				[m:	0f 9a /0]				386,SB
+SETP		reg8			[m:	0f 9a /0]				386
+SETPE		mem				[m:	0f 9a /0]				386,SB
+SETPE		reg8			[m:	0f 9a /0]				386
+SETPO		mem				[m:	0f 9b /0]				386,SB
+SETPO		reg8			[m:	0f 9b /0]				386
+SETS		mem				[m:	0f 98 /0]				386,SB
+SETS		reg8			[m:	0f 98 /0]				386
+SETZ		mem				[m:	0f 94 /0]				386,SB
+SETZ		reg8			[m:	0f 94 /0]				386
 
 ;# Katmai Streaming SIMD instructions (SSE -- a.k.a. KNI, XMM, MMX2)
 ADDPS		xmmreg,xmmrm128			[rm:	np 0f 58 /r]				KATMAI,SSE

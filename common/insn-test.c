@@ -28,6 +28,8 @@ void gsp_init(void)
     ofmt->output(&data);
 
     reset_x86pgstate();
+
+    stat_lock_edx();
 }
 
 void gsp_finish(void)
