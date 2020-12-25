@@ -21,6 +21,7 @@ void init_x86pgstate(void)
     X86PGState.insertpos = NULL;
     X86PGState.lock_ctrl = false;
     X86PGState.lock_edx = false;
+    X86PGState.lock_ebx = false;
     X86PGState.lock_ecx = false;
 }
 
@@ -37,6 +38,7 @@ void reset_x86pgstate(void)
     X86PGState.insertpos = NULL;
     X86PGState.lock_ctrl = false;
     X86PGState.lock_edx = false;
+    X86PGState.lock_ebx = false;
     X86PGState.lock_ecx = false;
 }
 
@@ -78,6 +80,21 @@ void stat_unlock_edx(void)
 bool stat_edx_locked(void)
 {
     return X86PGState.lock_edx == true;
+}
+
+void stat_lock_ebx(void)
+{
+    X86PGState.lock_ebx = true;
+}
+
+void stat_unlock_ebx(void)
+{
+    X86PGState.lock_ebx = false;
+}
+
+bool stat_ebx_locked(void)
+{
+    return X86PGState.lock_ebx == true;
 }
 
 void stat_lock_ecx(void)

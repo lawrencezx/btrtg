@@ -72,6 +72,7 @@ struct X86PGState {
     insnlist_entry_t **labelspos;
     bool lock_ctrl;
     bool lock_ecx;
+    bool lock_ebx;
     bool lock_edx;
 
     insnlist_t *instlist;
@@ -100,6 +101,9 @@ bool stat_ctrl_locked(void);
 void stat_lock_edx(void);
 void stat_unlock_edx(void);
 bool stat_edx_locked(void);
+void stat_lock_ebx(void);
+void stat_unlock_ebx(void);
+bool stat_ebx_locked(void);
 void stat_lock_ecx(void);
 void stat_unlock_ecx(void);
 bool stat_ecx_locked(void);

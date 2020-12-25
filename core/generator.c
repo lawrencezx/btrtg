@@ -285,6 +285,7 @@ bool one_insn_gen(const insn_seed *seed, insn *result)
     result->evex_brerop = -1;
 
     if (seed != NULL) {
+        stat_unlock_ebx();
         X86PGState.curr_seed = seed;
         gen_opcode(seed->opcode, get_token_cbufptr());
         const char *instName = nasm_insn_names[seed->opcode];
@@ -331,7 +332,8 @@ bool one_insn_gen(const insn_seed *seed, insn *result)
                 gen_comma(get_token_bufptr());
                 get_token(&tokval);
             }
-            gen_operand(&opnd_seed, get_token_bufptr());
+            if (!gen_operand(&opnd_seed, get_token_bufptr()))
+                return false;
             if (is_label_consumer(&opnd_seed)) {
                 label_consumer = true;
             }

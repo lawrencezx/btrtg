@@ -580,7 +580,7 @@ void gen_opcode(enum opcode opcode, char *buffer)
     sprintf(buffer, "%s ", insn_name);
 }
 
-static void gen_register(operand_seed *opnd_seed, char *buffer)
+static bool gen_register(operand_seed *opnd_seed, char *buffer)
 {
     opflags_t opndflags;
     opndflags = opnd_seed->opndflags;
@@ -612,20 +612,19 @@ static void gen_register(operand_seed *opnd_seed, char *buffer)
 
     for (size_t i = 0; i < ARRAY_SIZE(specific_registers); i++)
         if (!(specific_registers[i].flags & ~opndflags)) {
-            create_specific_register(specific_registers[i].reg, opnd_seed, buffer);
-            return;
+            return create_specific_register(specific_registers[i].reg, opnd_seed, buffer);
         }
 
     if (is_class(REG_CLASS_CDT, opndflags)) {
         if (is_class(REG_CREG, opndflags)) {
-            create_control_register(opnd_seed, buffer);
+            return create_control_register(opnd_seed, buffer);
         } else {
             /* TODO */
         }
     } else if (is_class(REG_CLASS_GPR, opndflags)) {
-        create_gpr_register(opnd_seed, buffer);
+        return create_gpr_register(opnd_seed, buffer);
     } else if (is_class(REG_CLASS_SREG, opndflags)) {
-        create_segment_register(opnd_seed, buffer);
+        return create_segment_register(opnd_seed, buffer);
     } else if (is_class(REG_CLASS_FPUREG, opndflags)) {
         /* TODO */
     } else if (is_class(REG_CLASS_RM_MMX, opndflags)) {
@@ -643,49 +642,52 @@ static void gen_register(operand_seed *opnd_seed, char *buffer)
     } else {
         nasm_fatal("OPFLAGS: register optype without register class");
     }
+    return false;
 }
 
-static void gen_immediate(operand_seed *opnd_seed, char *buffer)
+static bool gen_immediate(operand_seed *opnd_seed, char *buffer)
 {
     opflags_t opndflags;
     opndflags = opnd_seed->opndflags;
 
     if (is_class(UNITY, opndflags)) {
-        create_unity(opnd_seed, buffer);
+        return create_unity(opnd_seed, buffer);
     } else if (is_class(SBYTEDWORD, opndflags)) {
         /* TODO */
     } else if (is_class(SBYTEWORD, opndflags)) {
         /* TODO */
     } else if (is_class(IMMEDIATE, opndflags)) {
-        create_immediate(opnd_seed, buffer);
+        return create_immediate(opnd_seed, buffer);
     } else {
         nasm_fatal("OPFLAGS: not immediate optype");
     }
+    return false;
 }
 
-static void gen_reg_mem(operand_seed *opnd_seed, char *buffer)
+static bool gen_reg_mem(operand_seed *opnd_seed, char *buffer)
 {
     opflags_t opndflags;
     opndflags = opnd_seed->opndflags;
 
     if (is_class(MEMORY, opndflags)) {
         if (is_class(MEM_OFFS, opndflags)) {
-            create_memoffs(opnd_seed, buffer);
+            return create_memoffs(opnd_seed, buffer);
         } else {
-            create_memory(opnd_seed, buffer);
+            return create_memory(opnd_seed, buffer);
         }
     } else {
         bool select_mem = likely_happen_p(0.5);
         if (select_mem) {
-            create_memory(opnd_seed, buffer);
+            return create_memory(opnd_seed, buffer);
         } else {
-            gen_register(opnd_seed, buffer);
+            return gen_register(opnd_seed, buffer);
         }
     }
+    return false;
 }
 
 /* Generate operand. */
-void gen_operand(operand_seed *opnd_seed, char *buffer)
+bool gen_operand(operand_seed *opnd_seed, char *buffer)
 {
     opflags_t opndflags;
     opndflags = opnd_seed->opndflags;
@@ -693,14 +695,15 @@ void gen_operand(operand_seed *opnd_seed, char *buffer)
     if (is_class(REGISTER, opndflags)) {
         /* REGISTER condition must be judged before REGMEM
          */
-        gen_register(opnd_seed, buffer);
+        return gen_register(opnd_seed, buffer);
     } else if (is_class(IMMEDIATE, opndflags)) {
-        gen_immediate(opnd_seed, buffer);
+        return gen_immediate(opnd_seed, buffer);
     } else if (is_class(REGMEM, opndflags)) {
-        gen_reg_mem(opnd_seed, buffer);
+        return gen_reg_mem(opnd_seed, buffer);
     } else {
         nasm_fatal("Wrong operand odflags with no optype");
     }
+    return false;
 
 //TODO:    case MEM_OFFS:
 

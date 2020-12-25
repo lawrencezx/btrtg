@@ -14,10 +14,13 @@
 #include "generator.h"
 #include "check.h"
 
-void create_specific_register(enum reg_enum R_reg, operand_seed *opnd_seed, char *buffer)
+bool create_specific_register(enum reg_enum R_reg, operand_seed *opnd_seed, char *buffer)
 {
     dfmt->print("    try> create specific register\n");
     const char *src;
+    if (is_class(REG_CLASS_SREG, opnd_seed->opndflags) && (opnd_seed->srcdestflags & OPDEST)) {
+        return false;
+    }
     src = nasm_reg_names[R_reg - EXPR_REG_START];
     if (X86PGState.need_init) {
         const char *instName = nasm_insn_names[X86PGState.curr_seed->opcode];
@@ -27,10 +30,12 @@ void create_specific_register(enum reg_enum R_reg, operand_seed *opnd_seed, char
     }
     sprintf(buffer, " %s", src);
     dfmt->print("    done> new specific register: %s\n", buffer);
+    return true;
 }
 
-void create_control_register(operand_seed *opnd_seed, char *buffer)
+bool create_control_register(operand_seed *opnd_seed, char *buffer)
 {
+    return false;
     (void)opnd_seed;
     dfmt->print("    try> create creg\n");
     int cregi, cregn;
@@ -44,15 +49,19 @@ void create_control_register(operand_seed *opnd_seed, char *buffer)
     src = nasm_reg_names[creg - EXPR_REG_START];
     sprintf(buffer, " %s", src);
     dfmt->print("    done> new creg: %s\n", buffer);
+    return true;
 }
 
-void create_segment_register(operand_seed *opnd_seed, char *buffer)
+bool create_segment_register(operand_seed *opnd_seed, char *buffer)
 {
     (void)opnd_seed;
     dfmt->print("    try> create sreg\n");
     int sregi, sregn;
     enum reg_enum sreg;
     const char *src;
+    if (opnd_seed->srcdestflags & OPDEST) {
+        return false;
+    }
 
     bseqiflags_t bseqiflags = bseqi_flags(REG_SREG);
     sregn = BSEQIFLAG_INDEXSIZE(bseqiflags);
@@ -61,9 +70,10 @@ void create_segment_register(operand_seed *opnd_seed, char *buffer)
     src = nasm_reg_names[sreg - EXPR_REG_START];
     sprintf(buffer, " %s", src);
     dfmt->print("    done> new sreg: %s\n", buffer);
+    return true;
 }
 
-void create_unity(operand_seed *opnd_seed, char *buffer)
+bool create_unity(operand_seed *opnd_seed, char *buffer)
 {
     dfmt->print("    try> create unity\n");
     int unity, shiftCount;
@@ -85,9 +95,10 @@ void create_unity(operand_seed *opnd_seed, char *buffer)
     }
     sprintf(buffer, " 0x%x", unity);
     dfmt->print("    done> new unity: %s\n", buffer);
+    return true;
 }
 
-void create_gpr_register(operand_seed *opnd_seed, char *buffer)
+bool create_gpr_register(operand_seed *opnd_seed, char *buffer)
 {
     dfmt->print("    try> create gpr\n");
     int gpri, gprn;
@@ -124,13 +135,14 @@ gen_gpr:
     }
     sprintf(buffer, " %s", src);
     dfmt->print("    done> new gpr: %s\n", buffer);
+    return true;
 }
 
 /* Generate int type immediate.
  * If it's larger than the limmit (8/16-bits imm), the high significant bytes
  * will be wipped away while assembling.
  */
-void create_immediate(operand_seed* opnd_seed, char *buffer)
+bool create_immediate(operand_seed* opnd_seed, char *buffer)
 {
     dfmt->print("    try> create immediate\n");
     int imm;
@@ -160,6 +172,7 @@ void create_immediate(operand_seed* opnd_seed, char *buffer)
     }
     sprintf(buffer, " 0x%x", imm);
     dfmt->print("    done> new immediate: %s\n", buffer);
+    return true;
 }
 
 static void create_random_sib(char *buffer)
@@ -201,7 +214,14 @@ static void create_random_modrm(char *buffer)
     int modrmi, disp = 0;
     char sib[32];
     /* [ebx + disp8] */
-    modrmi = 012;
+    modrmi = 013;
+
+    insn lea;
+    sprintf(buffer, "  lea ebx, data0");
+    lea.ctrl = nasm_strdup(buffer);
+    stat_insert_insn(&lea, INSERT_AFTER);
+    stat_lock_ebx();
+
     //const int modrmn = 24;
     //modrmi = nasm_random32(modrmn);
     if (modrmi == 004 || modrmi == 014 || modrmi == 024) {
@@ -252,7 +272,7 @@ static void create_random_modrm(char *buffer)
     }
 }
 
-void create_memory(operand_seed *opnd_seed, char *buffer)
+bool create_memory(operand_seed *opnd_seed, char *buffer)
 {
     dfmt->print("    try> create memory\n");
     char modrm[64];
@@ -278,9 +298,10 @@ void create_memory(operand_seed *opnd_seed, char *buffer)
     }
     sprintf(buffer, " %s", src);
     dfmt->print("    done> new memory: %s\n", buffer);
+    return true;
 }
 
-void create_memoffs(operand_seed *opnd_seed, char *buffer)
+bool create_memoffs(operand_seed *opnd_seed, char *buffer)
 {
     dfmt->print("    try> create memoffs\n");
     char src[128];
@@ -307,9 +328,10 @@ void create_memoffs(operand_seed *opnd_seed, char *buffer)
     }
     sprintf(buffer, " %s", src);
     dfmt->print("    done> new memoffs: %s\n", buffer);
+    return true;
 }
 
-void init_specific_register(enum reg_enum R_reg, bool isDest)
+bool init_specific_register(enum reg_enum R_reg, bool isDest)
 {
     char buffer[128];
     const char *instName = nasm_insn_names[X86PGState.curr_seed->opcode];
@@ -318,4 +340,5 @@ void init_specific_register(enum reg_enum R_reg, bool isDest)
     constVal *cVal = request_constVal(instName, isDest);
     sprintf(buffer, "mov %s, 0x%x", src, (cVal == NULL) ? (int)nasm_random64(0x100000000) : cVal->imm32);
     one_insn_gen_const(buffer);
+    return true;
 }
