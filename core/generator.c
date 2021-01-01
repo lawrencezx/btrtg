@@ -17,7 +17,7 @@
 #include "xmlparser/parseXML.h"
 #include "x86pg.h"
 #include "dfmt.h"
-#include "model.h"
+#include "tk.h"
 #include "ctrl.h"
 
 bool global_sequence;

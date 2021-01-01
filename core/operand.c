@@ -10,7 +10,7 @@
 #include "x86pg.h"
 #include "operand.h"
 #include "dfmt.h"
-#include "model.h"
+#include "tk.h"
 #include "generator.h"
 #include "check.h"
 

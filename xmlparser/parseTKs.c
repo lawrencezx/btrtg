@@ -5,7 +5,7 @@
 #include "nasmlib.h"
 #include "parseXML.h"
 #include "error.h"
-#include "model.h"
+#include "tk.h"
 
 static const char *xmlfiles[2] =
 {

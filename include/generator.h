@@ -2,6 +2,7 @@
 #define NASM_GENERATOR_H
 
 #include "insns.h"
+#include "seed.h"
 
 void generator_init(bool set_sequence);
 void generator_exit(void);

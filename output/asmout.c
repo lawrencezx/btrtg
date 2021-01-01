@@ -35,6 +35,12 @@ static void asm_out_sec(struct section *sec)
             fprintf(asmfp, "SECTION .TEXT\n");
             break;
         case DATA_SEC:
+            /* symbols */
+            fprintf(asmfp, "EXTERN print_x86_state\n");
+            fprintf(asmfp, "EXTERN print_x87_state\n");
+            fprintf(asmfp, "EXTERN print_all_state\n");
+            fprintf(asmfp, "\n");
+            /* data section */
             fprintf(asmfp, "SECTION .DATA write\n");
             for (int i = 0; i < sec->datanum; i++) {
                 fprintf(asmfp, "  data%d:  times %d db 0\n", i, sec->datasizes[i]);
