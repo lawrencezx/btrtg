@@ -16,6 +16,11 @@ TKmodel *tkmodel_create(void)
     return tkm;
 }
 
+void tks_free_all(void)
+{
+    hash_free_all(&hash_tks, true);
+}
+
 static TKmodel *get_tkm_from_hashtbl(const char *instName)
 {
     struct hash_insert hi;

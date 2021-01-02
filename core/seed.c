@@ -19,7 +19,6 @@ void create_insn_seed(insn_seed *seed, const char *instname)
     struct tokenval tv;
     nasm_token_hash(instname, &tv);
     seed->opcode = tv.t_integer;
-    seed->instname = nasm_strdup(instname);
     const struct itemplate *itmplt = nasm_instructions[seed->opcode];
     int operandsi = nasm_random32(itemplate_size(itmplt));
     memcpy(seed->opd, itmplt[operandsi].opd, sizeof(itmplt[operandsi].opd));

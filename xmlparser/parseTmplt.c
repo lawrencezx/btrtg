@@ -49,7 +49,8 @@ static void parseClasses(xmlNodePtr classesNode)
             if (iNode->type != XML_ELEMENT_NODE)
                 continue;
 
-            classVal[i].instName = trim((const char *)iNode->children->content);
+            classVal[i].type = CONST_INSN;
+            classVal[i].instName = nasm_strdup(nasm_trim((char *)iNode->children->content));
             i++;
         }
 
@@ -71,7 +72,7 @@ static void parseSelBlk(xmlNodePtr selNode, blk_struct *blk)
 {
     int i = 0;
     int *weights;
-    const char *key;
+    char *key;
     struct hash_insert hi;
     WDTree *selTree;
     WDTree **subtrees;
@@ -87,10 +88,17 @@ static void parseSelBlk(xmlNodePtr selNode, blk_struct *blk)
         if (blkNode->type != XML_ELEMENT_NODE)
             continue;
 
-        weights[i] = atoi((const char *)xmlGetProp(blkNode, (const unsigned char*)"weight"));
-        key = (const char*)trim((const char *)xmlGetProp(blkNode, (const unsigned char*)"type"));
+        char *propWeight;
+
+        propWeight = (char *)xmlGetProp(blkNode, (const unsigned char*)"weight");
+
+        weights[i] = atoi(propWeight);
+        key = (char *)xmlGetProp(blkNode, (const unsigned char*)"type");
         subtrees[i] = *(WDTree **)hash_find(&hash_wdtrees, key, &hi);
         i++;
+
+        free(propWeight);
+        free(key);
     }
 
     blk->type = SEL_BLK;
@@ -100,43 +108,65 @@ static void parseSelBlk(xmlNodePtr selNode, blk_struct *blk)
 
 static void parseXfrBlk(xmlNodePtr xfrNode, blk_struct *blk)
 {
+    char *propTimes, *propXfrName;
+
+    propTimes = (char *)xmlGetProp(xfrNode, (const unsigned char*)"times");
+    propXfrName = (char *)xmlGetProp(xfrNode, (const unsigned char*)"type");
+
     blk->type = XFR_BLK;
-    blk->times = atoi((const char *)xmlGetProp(xfrNode, (const unsigned char*)"times"));
-    blk->xfrName = nasm_strdup(trim((const char *)xmlGetProp(xfrNode, (const unsigned char*)"type")));
+    blk->times = atoi(propTimes);
+    blk->xfrName = nasm_strdup(nasm_trim(propXfrName));
     parseBlk(xfrNode->children, blk);
+
+    free(propTimes);
+    free(propXfrName);
 }
 
 static void parseRptBlk(xmlNodePtr rptNode, blk_struct *blk)
 {
+    char *propTimes;
+
+    propTimes = (char *)xmlGetProp(rptNode, (const unsigned char*)"times");
+
     blk->type = RPT_BLK;
-    blk->times = atoi((const char *)xmlGetProp(rptNode, (const unsigned char*)"times"));
+    blk->times = atoi(propTimes);
     parseBlk(rptNode->children, blk);
+
+    free(propTimes);
 }
 
 static void parseIset(xmlNodePtr IsetNode, blk_struct *blk)
 {
-    const char *isetType;
+    char *isetType;
     elem_struct *iset_e;
     struct hash_insert hi;
+    char *propType;
+
+    propType = (char *)xmlGetProp(IsetNode, (const unsigned char*)"type");
 
     iset_e = (elem_struct *)nasm_malloc(sizeof(elem_struct));
     iset_e->type = ISET_ELEM;
-    isetType = (const char*)trim((const char *)xmlGetProp(IsetNode, (const unsigned char*)"type"));
+    isetType = nasm_trim(propType);
     iset_e->wdtree = *(WDTree **)hash_find(&hash_wdtrees, isetType, &hi);
 
     blk->type = ELEM_BLK;
     blk->blks = (void **)nasm_malloc(sizeof(void *));
     blk->blks[0] = (void *)iset_e;
+
+    free(propType);
 }
 
 static void parsePrint(xmlNodePtr PrintNode, blk_struct *blk)
 {
-    const char *printType;
+    char *printType;
     elem_struct *print_e;
+    char *propType;
+
+    propType = (char *)xmlGetProp(PrintNode, (const unsigned char*)"type");
 
     print_e = (elem_struct *)nasm_malloc(sizeof(elem_struct));
     print_e->type = PRINT_ELEM;
-    printType = (const char*)trim((const char *)xmlGetProp(PrintNode, (const unsigned char*)"type"));
+    printType = nasm_trim(propType);
     if (strcmp(printType, "all_state") == 0) {
         print_e->printType = ALL_STATE;
     } else if (strcmp(printType, "x86_state") == 0) {
@@ -150,21 +180,26 @@ static void parsePrint(xmlNodePtr PrintNode, blk_struct *blk)
     blk->type = ELEM_BLK;
     blk->blks = (void **)nasm_malloc(sizeof(void *));
     blk->blks[0] = (void *)print_e;
+
+    free(propType);
 }
 
 static void parseI(xmlNodePtr INode, blk_struct *blk)
 {
-    const char *iType;
     elem_struct *i_e;
+    char *propType;
+
+    propType = (char *)xmlGetProp(INode, (const unsigned char*)"type");
 
     i_e = (elem_struct *)nasm_malloc(sizeof(elem_struct));
     i_e->type = INSN_ELEM;
-    iType = (const char*)trim((const char *)xmlGetProp(INode, (const unsigned char*)"type"));
-    i_e->inst = nasm_strdup(iType);
+    i_e->inst = nasm_strdup(nasm_trim(propType));
 
     blk->type = ELEM_BLK;
     blk->blks = (void **)nasm_malloc(sizeof(void *));
     blk->blks[0] = (void *)i_e;
+
+    free(propType);
 }
 
 static void parseBlk(xmlNodePtr blkNodeStart, blk_struct *blk)

@@ -130,6 +130,15 @@ char *nasm_skip_word(const char *p)
     return (char *)p;
 }
 
+/* skip to string end */
+char *nasm_skip_string(const char *p)
+{
+    if (p)
+        while (*p && *p != '\n' && *p != '\0')
+            p++;
+    return (char *)p;
+}
+
 /* zap leading spaces with zero */
 char *nasm_zap_spaces_fwd(char *p)
 {
@@ -148,6 +157,14 @@ char *nasm_zap_spaces_rev(char *p)
     return p;
 }
 
+/* zap leading and trailing spaces */
+char *nasm_trim(char *p)
+{
+    p = nasm_zap_spaces_fwd(p);
+    nasm_zap_spaces_rev(nasm_skip_string(p) - 1);
+
+    return p;
+}
 /* zap leading and trailing spaces */
 char *nasm_trim_spaces(char *p)
 {

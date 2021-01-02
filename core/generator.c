@@ -18,6 +18,7 @@
 #include "x86pg.h"
 #include "dfmt.h"
 #include "tk.h"
+#include "tmplt.h"
 #include "ctrl.h"
 
 bool global_sequence;
@@ -77,6 +78,8 @@ void generator_init(bool set_sequence)
     iflag_set_default_cpu(&cpu);
     iflag_set_default_cpu(&cmd_cpu);
 
+    nasm_ctype_init();
+
     /* Save away the default state of warnings */
     init_warnings();
 
@@ -88,8 +91,6 @@ void generator_init(bool set_sequence)
     parse_tmplts();
 
     gendata_init();
-
-    nasm_ctype_init();
 
     switch (cmd_sb) {
     case 16:
@@ -118,6 +119,10 @@ void generator_init(bool set_sequence)
 void generator_exit(void)
 {
     src_free();
+    tks_free_all();
+    wdtrees_free_all();
+    tmplt_clear(&tmpltm);
+    token_cleanup();
 }
 
 void insn_to_bin(insn *instruction, const char** buf)
@@ -278,7 +283,7 @@ bool one_insn_gen(const insn_seed *seed, insn *result)
 
     memset(result->prefixes, P_none, sizeof(result->prefixes));
     result->times       = 1;
-    result->ctrl       = NULL;
+    result->ctrl        = NULL;
     result->eops        = NULL;
     result->operands    = 0;
     result->evex_rm     = 0;
@@ -287,6 +292,7 @@ bool one_insn_gen(const insn_seed *seed, insn *result)
     if (seed != NULL) {
         stat_unlock_ebx();
         X86PGState.curr_seed = seed;
+        token_reset();
         gen_opcode(seed->opcode, get_token_cbufptr());
         const char *instName = nasm_insn_names[seed->opcode];
         X86PGState.need_init = request_initialize(instName);
@@ -477,7 +483,7 @@ bool one_insn_gen(const insn_seed *seed, insn *result)
     while (opi < MAX_OPERANDS)
         result->oprs[opi++].type = 0;
     if (label_consumer) {
-        result->ctrl = nasm_strdup(get_token_buf());
+        result->ctrl = get_token_buf();
     }
 
     stat_insert_insn(result, INSERT_AFTER);

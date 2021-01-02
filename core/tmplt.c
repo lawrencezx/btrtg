@@ -6,7 +6,7 @@
 #include "generator.h"
 #include "tmplt.h"
 
-struct tmplt tmpltm;
+tmplt_struct tmpltm;
 
 void init_blk_struct(blk_struct *blk)
 {
@@ -178,4 +178,39 @@ void walk_tmplt(void)
 {
     blk_struct *blk = (blk_struct *)tmpltm.blk;
     walkBlkFuncs[blk->type](blk);
+}
+
+static void elem_free(elem_struct *elem)
+{
+    if (elem->type == INSN_ELEM)
+        free(elem->inst);
+    free(elem);
+}
+
+static void blk_free(blk_struct *blk)
+{
+    if (blk == NULL)
+        return;
+    if (blk->type == SEL_BLK) {
+    } else if (blk->type == ELEM_BLK) {
+        elem_free((elem_struct *)blk->blks[0]);
+    } else {
+        for (int i = 0; i < blk->num; i++) {
+            blk_free(blk->blks[i]);
+        }
+    }
+    free(blk->xfrName);
+    free(blk->blks);
+    free(blk);
+}
+
+void tmplt_clear(tmplt_struct *tmpltm)
+{
+    blk_free((blk_struct *)tmpltm->blk);
+}
+
+void tmplt_free(tmplt_struct *tmpltm)
+{
+    tmplt_clear(tmpltm);
+    free(tmpltm);
 }

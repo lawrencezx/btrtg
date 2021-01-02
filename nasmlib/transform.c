@@ -32,21 +32,3 @@ int hex2dec(const char *hex)
     }
     return num;
 }
-
-char *trim(const char *str)
-{
-	int uLen = strlen(str);
- 
-	if(uLen == 0)
-		return '\0';
- 
-	char *strRet = (char *)malloc(uLen + 1);
-	memset(strRet, 0, uLen+1);
- 
-	for(int i = 0, j = 0; i < uLen + 1; i++) {
-		if(str[i] != ' ')
-			strRet[j++] = str[i];
-	}
- 
-	return strRet;
-}

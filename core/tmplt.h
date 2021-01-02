@@ -39,7 +39,7 @@ typedef struct elem_struct {
     union {
         WDTree *wdtree;
         print_type printType;
-        const char *inst;
+        char *inst;
     };
 } elem_struct;
 
@@ -56,20 +56,22 @@ typedef enum blk_type {
 typedef struct blk_struct {
     blk_type type;
     int num;
-    const char *xfrName;
+    char *xfrName;
     int times;          /* RPT_BLK, XFR_BLK */
     void **blks;
 } blk_struct;
 
 /* template
  */
-struct tmplt {
+typedef struct tmplt_struct {
     void *blk;
-};
+} tmplt_struct;
 
 void init_blk_struct(blk_struct *blk);
 void walk_tmplt(void);
+void tmplt_clear(tmplt_struct *tmpltm);
+void tmplt_free(tmplt_struct *tmpltm);
 
-extern struct tmplt tmpltm;
+extern tmplt_struct tmpltm;
 
 #endif

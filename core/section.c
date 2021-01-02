@@ -13,9 +13,7 @@ void init_data_sec(struct section *data_sec)
 {
     data_sec->type = DATA_SEC;
     /* CONFIG INFO */
-    data_sec->datanum = 10;
-    data_sec->dataoffs = (int *)nasm_malloc(data_sec->datanum * sizeof(int));
-    data_sec->datasizes = (int *)nasm_malloc(data_sec->datanum * sizeof(int));
+    data_sec->datanum = SECTION_DATA_NUM;
     data_sec->dataoffs[0] = 0;
     data_sec->datasizes[0] = 256;
     for (int i = 1; i < data_sec->datanum; i++) {

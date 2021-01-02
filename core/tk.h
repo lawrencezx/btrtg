@@ -20,6 +20,7 @@ typedef struct TKmodel {
 } TKmodel;
 
 TKmodel *tkmodel_create(void);
+void tks_free_all(void);
 bool request_initialize(const char *instName);
 constVal *request_constVal(const char *instName, bool isDest);
 

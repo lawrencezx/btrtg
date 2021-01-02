@@ -7,7 +7,16 @@
 #include "insns.h"
 
 static char token_buf[128];
-static char *token_bufptr;
+
+/*
+ * Standard scanner routine used by parser.c and some output
+ * formats. It keeps a succession of temporary-storage strings in
+ * stdscan_tempstorage, which can be cleared using stdscan_reset.
+ */
+static char *token_bufptr = NULL;
+static char **token_tempstorage = NULL;
+static int token_tempsize = 0, token_templen = 0;
+#define TOKEN_TEMP_DELTA 256
 
 void set_token_bufptr(char *ptr)
 {
@@ -32,6 +41,27 @@ char *get_token_cbufptr(void)
     return token_bufptr;
 }
 
+static void token_pop(void)
+{
+    nasm_free(token_tempstorage[--token_templen]);
+}
+
+void token_reset(void)
+{
+    while (token_templen > 0)
+        token_pop();
+}
+
+/*
+ * Unimportant cleanup is done to avoid confusing people who are trying
+ * to debug real memory leaks
+ */
+void token_cleanup(void)
+{
+    token_reset();
+    nasm_free(token_tempstorage);
+}
+
 static char *buf_copy(const char *p, int len)
 {
     char *text;
@@ -39,6 +69,14 @@ static char *buf_copy(const char *p, int len)
     text = nasm_malloc(len + 1);
     memcpy(text, p, len);
     text[len] = '\0';
+
+    if (token_templen >= token_tempsize) {
+        token_tempsize += TOKEN_TEMP_DELTA;
+        token_tempstorage = nasm_realloc(token_tempstorage,
+                                           token_tempsize *
+                                           sizeof(char *));
+    }
+    token_tempstorage[token_templen++] = text;
 
     return text;
 }
@@ -62,7 +100,6 @@ int get_token(struct tokenval *tv)
         while (nasm_isidchar(*token_bufptr))
             token_bufptr++;
 
-        nasm_free(tv->t_charptr);
         tv->t_charptr = buf_copy(r, token_bufptr - r < IDLEN_MAX ?
                                      token_bufptr - r : IDLEN_MAX - 1);
 
@@ -92,7 +129,6 @@ int get_token(struct tokenval *tv)
 //        } else {
             r = buf_copy(r, token_bufptr - r);
             tv->t_integer = readnum(r, &rn_error);
-            nasm_free((void *)r);
             if (rn_error) {
                 /* some malformation occurred */
                 return tv->t_type = TOKEN_ERRNUM;

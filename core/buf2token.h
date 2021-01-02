@@ -6,5 +6,7 @@ char *get_token_bufptr(void);
 char *get_token_buf(void);
 char *get_token_cbufptr(void);
 int get_token(struct tokenval *tv);
+void token_reset(void);
+void token_cleanup(void);
 
 #endif

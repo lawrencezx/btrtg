@@ -34,7 +34,6 @@ void reset_x86pgstate(void)
     X86PGState.curr_seed = NULL;
     X86PGState.curr_inst = NULL;
     X86PGState.need_init = false;
-    X86PGState.instlist = insnlist_create();
     X86PGState.insertpos = NULL;
     X86PGState.lock_ctrl = false;
     X86PGState.lock_edx = false;

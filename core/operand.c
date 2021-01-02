@@ -218,7 +218,7 @@ static void create_random_modrm(char *buffer)
 
     insn lea;
     sprintf(buffer, "  lea ebx, data0");
-    lea.ctrl = nasm_strdup(buffer);
+    lea.ctrl = buffer;
     stat_insert_insn(&lea, INSERT_AFTER);
     stat_lock_ebx();
 

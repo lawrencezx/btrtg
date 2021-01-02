@@ -67,7 +67,6 @@ bool likely_happen_w(int w, int total_w);
 /* Transform string to number.
  */
 int hex2dec(const char *hex);
-char *trim(const char *str);
 
 /*
  * Wrappers around malloc, realloc, free and a few more. nasm_malloc
@@ -340,9 +339,11 @@ int bsii(const char *string, const char **array, int size);
  */
 char *nasm_skip_spaces(const char *p);
 char *nasm_skip_word(const char *p);
+char *nasm_skip_string(const char *p);
 char *nasm_zap_spaces_fwd(char *p);
 char *nasm_zap_spaces_rev(char *p);
 char *nasm_trim_spaces(char *p);
+char *nasm_trim(char *p);
 char *nasm_get_word(char *p, char **tail);
 char *nasm_opt_val(char *p, char **opt, char **val);
 

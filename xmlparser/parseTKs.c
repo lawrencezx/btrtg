@@ -36,7 +36,7 @@ static void parseCGs(xmlNodePtr cgsNode)
         int i = 0;
         WDTree *cgTree;
         constVal *cgVal;
-        const char *key;
+        char *key;
         struct hash_insert hi;
 
         cgTree = wdtree_create();
@@ -58,6 +58,7 @@ static void parseCGs(xmlNodePtr cgsNode)
             //} else if (strcmp(cNodeName, "Imm16") == 0) {
             //    cgVal[i].imm16 = (uint16_t)imm;
             //} else if (strcmp(cNodeName, "Imm32") == 0) {
+                cgVal[i].type = CONST_IMM32;
                 cgVal[i].imm32 = (uint32_t)imm;
             //} else {
             //    printf("0x%x\n", imm);
@@ -65,7 +66,7 @@ static void parseCGs(xmlNodePtr cgsNode)
             i++;
         }
 
-        key = (const char *)xmlGetProp(cgNode, (const unsigned char*)"name");
+        key = (char *)xmlGetProp(cgNode, (const unsigned char*)"name");
         hash_find(&hash_wdtrees, key, &hi);
         hash_add(&hi, key, (void *)cgTree);
     }
@@ -75,7 +76,6 @@ static WDTree *parseTK(xmlNodePtr tkNode)
 {
     int i = 0;
     int *weights;
-    const char *key;
     struct hash_insert hi;
     WDTree *tkTree;
     WDTree **subtrees;
@@ -91,10 +91,17 @@ static WDTree *parseTK(xmlNodePtr tkNode)
         if (nNode->type != XML_ELEMENT_NODE)
             continue;
 
-        weights[i] = atoi((const char *)xmlGetProp(nNode, (const unsigned char*)"weight"));
-        key = (const char *)xmlGetProp(nNode, (const unsigned char*)"name");
-        subtrees[i] = *(WDTree **)hash_find(&hash_wdtrees, key, &hi);
+        char *propWeight, *propKey;
+
+        propWeight = (char *)xmlGetProp(nNode, (const unsigned char*)"weight");
+        propKey = (char *)xmlGetProp(nNode, (const unsigned char*)"name");
+
+        weights[i] = atoi(propWeight);
+        subtrees[i] = *(WDTree **)hash_find(&hash_wdtrees, propKey, &hi);
         i++;
+
+        free(propWeight);
+        free(propKey);
     }
 
     return tkTree;
@@ -106,14 +113,18 @@ static void parseTKs(xmlNodePtr tksNode)
         if (tkNode->type != XML_ELEMENT_NODE)
             continue;
 
-        const char *key;
+        char *key;
         struct hash_insert hi;
         TKmodel *tkm;
+        char *propInitP, *propDiffSrcDest;
+
+        propInitP = (char *)xmlGetProp(tkNode, (const unsigned char*)"initP");
+        propDiffSrcDest = (char *)xmlGetProp(tkNode, (const unsigned char *)"diffSrcDest");
 
         tkm = tkmodel_create();
-        tkm->initP = atof((const char *)xmlGetProp(tkNode, (const unsigned char*)"initP"));
+        tkm->initP = atof(propInitP);
 
-        if (xmlGetProp(tkNode, (const unsigned char *)"diffSrcDest")) {
+        if (propDiffSrcDest) {
             WDTree *tkSrcTree;
             WDTree *tkDestTree;
             for (xmlNodePtr nNode = tkNode->children; nNode != NULL; nNode = nNode->next) {
@@ -136,9 +147,12 @@ static void parseTKs(xmlNodePtr tksNode)
             tkm->diffSrcDest = false;
         }
 
-        key = (const char *)xmlGetProp(tkNode, (const unsigned char*)"inst");
+        key = (char *)xmlGetProp(tkNode, (const unsigned char*)"inst");
         hash_find(&hash_tks, key, &hi);
         hash_add(&hi, key, (void *)tkm);
+
+        free(propInitP);
+        free(propDiffSrcDest);
     }
 }
 

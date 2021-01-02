@@ -3,13 +3,21 @@
 
 #include "hashtbl.h"
 
+typedef enum constType {
+    CONST_IMM8,
+    CONST_IMM16,
+    CONST_IMM32,
+    CONST_UNITY,
+    CONST_INSN  
+} constType;
+
 typedef struct constVal {
-    opflags_t type;
+    constType type;
     union {
         int8_t imm8;
-        int8_t unity;
         int16_t imm16;
         int32_t imm32;
+        int8_t unity;
         char *instName;
     };
 } constVal;
@@ -20,8 +28,10 @@ typedef struct WDTree {
     bool isleaf;
     int size;
     int *weights;
-    struct WDTree **children;
-    constVal *consts;
+    union {
+        struct WDTree **children;
+        constVal *consts;
+    };
 } WDTree;
 
 typedef struct Tmpltmodel {
@@ -31,6 +41,7 @@ typedef struct Tmpltmodel {
 
 WDTree *wdtree_create(void);
 void wdtree_clear(WDTree *tree);
+void wdtrees_free_all(void);
 constVal *wdtree_select_constval(WDTree *tree);
 
 extern struct hash_table hash_wdtrees;

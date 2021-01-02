@@ -17,7 +17,7 @@ static int gen_label(enum position pos)
     char buffer[32];
     sprintf(buffer, "label%d:", stat_get_labeli());
     stat_inc_labeli();
-    label.ctrl = nasm_strdup(buffer);
+    label.ctrl = buffer;
     stat_insert_insn(&label, pos);
     X86PGState.labelspos = (insnlist_entry_t **)nasm_realloc(X86PGState.labelspos, stat_get_labeli() * sizeof(insnlist_entry_t *));
     X86PGState.labelspos[stat_get_labeli() - 1] = X86PGState.insertpos;
@@ -46,7 +46,7 @@ static void skip_to_stat_get_labeli(int label)
 
     X86PGState.insertpos = X86PGState.labelspos[label];
     sprintf(buffer, "  jmp label%d", label);
-    jmp.ctrl = nasm_strdup(buffer);
+    jmp.ctrl = buffer;
     stat_insert_insn(&jmp, INSERT_BEFORE);
     gen_label(INSERT_AFTER);
 }
@@ -101,7 +101,7 @@ bool gen_control_transfer_insn(const insn_seed *seed, insn *result)
     if (seed->opcode == I_JMP) {
         /* jmp lable(n+1) */
         sprintf(buffer, "  %s label%d", nasm_insn_names[seed->opcode], stat_get_labeli());
-        result->ctrl = nasm_strdup(buffer);
+        result->ctrl = buffer;
         stat_insert_insn(result, INSERT_AFTER);
         int label = select_one_label();
         if (label == -1) {
@@ -113,11 +113,11 @@ bool gen_control_transfer_insn(const insn_seed *seed, insn *result)
     } else if (is_jcc(seed->opcode)) {
         /* jcc lable(n+1) */
         sprintf(buffer, "  %s label%d", nasm_insn_names[seed->opcode], stat_get_labeli());
-        result->ctrl = nasm_strdup(buffer);
+        result->ctrl = buffer;
         stat_insert_insn(result, INSERT_AFTER);
         /* jmp lable(n+1) */
         sprintf(buffer, "  %s label%d", nasm_insn_names[I_JMP], stat_get_labeli());
-        result->ctrl = nasm_strdup(buffer);
+        result->ctrl = buffer;
         stat_insert_insn(result, INSERT_AFTER);
         int label = select_one_label();
         if (label == -1) {
@@ -133,7 +133,7 @@ bool gen_control_transfer_insn(const insn_seed *seed, insn *result)
         (seed->opcode == I_LOOPZ)) {
         /* loopxx lable(n+1) */
         sprintf(buffer, "  %s label%d", nasm_insn_names[seed->opcode], stat_get_labeli());
-        result->ctrl = nasm_strdup(buffer);
+        result->ctrl = buffer;
         stat_insert_insn(result, INSERT_AFTER);
 
         gen_label(INSERT_BEFORE);
@@ -143,11 +143,11 @@ bool gen_control_transfer_insn(const insn_seed *seed, insn *result)
     } else if (seed->opcode == I_CALL) {
         /* call lable(n+1) */
         sprintf(buffer, "  %s label%d", nasm_insn_names[seed->opcode], stat_get_labeli());
-        result->ctrl = nasm_strdup(buffer);
+        result->ctrl = buffer;
         stat_insert_insn(result, INSERT_AFTER);
 
         sprintf(buffer, "  %s", nasm_insn_names[I_RET]);
-        result->ctrl = nasm_strdup(buffer);
+        result->ctrl = buffer;
         stat_insert_insn(result, INSERT_BEFORE);
         gen_label(INSERT_BEFORE);
         stat_lock_ctrl();
@@ -161,7 +161,7 @@ void gen_control_transfer_finish(void)
     char buffer[64];
     insn jmp;
     sprintf(buffer, "  %s label%d", nasm_insn_names[I_JMP], stat_get_labeli());
-    jmp.ctrl = nasm_strdup(buffer);
+    jmp.ctrl = buffer;
     stat_insert_insn(&jmp, INSERT_AFTER);
     gen_label(INSERT_TAIL);
 }
