@@ -276,7 +276,7 @@ bool one_insn_gen(const insn_seed *seed, insn *result)
     bool label_consumer = false;
 
     if (seed != NULL) {
-        if (gen_control_transfer_insn(seed, result))
+        if (gen_control_transfer_insn(seed))
             return true;
         likely_gen_label();
     }
@@ -496,16 +496,23 @@ fail:
     return true;
 }
 
-bool one_insn_gen_const(const char *asm_buffer)
+bool one_insn_gen_const(char *asm_buffer)
 {
     insn const_inst;
-    char temp[128], *old_bufptr = get_token_bufptr();
+    char *old_bufptr = get_token_bufptr();
     bool sucess = false;
-    sprintf(temp, "%s", asm_buffer);
-    set_token_bufptr(temp);
+    set_token_bufptr(asm_buffer);
     one_insn_gen(NULL, &const_inst);
     set_token_bufptr(old_bufptr);
     return sucess;
+}
+
+bool one_insn_gen_ctrl(char *asm_buffer, enum position pos)
+{
+    insn ctrl_inst;
+    ctrl_inst.ctrl = asm_buffer;
+    stat_insert_insn(&ctrl_inst, pos);
+    return true;
 }
 
 void end_insn_gen(void)

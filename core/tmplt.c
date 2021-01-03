@@ -104,7 +104,7 @@ static void gen_call_print_x86_state(void)
     one_insn_gen_const("push es");
     one_insn_gen_const("push fs");
     one_insn_gen_const("push gs");
-    one_insn_gen_const("call print_x86_state");
+    one_insn_gen_ctrl("  call print_x86_state", INSERT_AFTER);
     one_insn_gen_const("pop eax");
     one_insn_gen_const("pop eax");
     one_insn_gen_const("pop eax");
@@ -119,7 +119,7 @@ static void gen_call_print_x87_state(void)
 {
     one_insn_gen_const("sub esp, 0x200");
     one_insn_gen_const("fxsave [esp]");
-    one_insn_gen_const("call print_x87_state");
+    one_insn_gen_ctrl("  call print_x87_state", INSERT_AFTER);
     one_insn_gen_const("add esp, 0x200");
     one_insn_gen_const("fxrstor [esp]");
 }
@@ -136,7 +136,7 @@ static void gen_call_print_all_state(void)
     one_insn_gen_const("push gs");
     one_insn_gen_const("sub esp, 0x200");
     one_insn_gen_const("fxsave [esp]");
-    one_insn_gen_const("call print_all_state");
+    one_insn_gen_ctrl("  call print_all_state", INSERT_AFTER);
     one_insn_gen_const("add esp, 0x200");
     one_insn_gen_const("fxrstor [esp]");
     one_insn_gen_const("pop eax");
