@@ -42,12 +42,3 @@ void gsp_finish(void)
     data.buf = (const void *)fout_tail;
     ofmt->output(&data);
 }
-
-void gsp(const insn_seed *seed)
-{
-    insn new_inst;
-
-    for (int i = 0; i < 10; i++) {
-        one_insn_gen(seed, &new_inst);
-    }
-}

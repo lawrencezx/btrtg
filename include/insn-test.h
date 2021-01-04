@@ -12,6 +12,5 @@
 
 void gsp_init(void);
 void gsp_finish(void);
-void gsp(const insn_seed *seed);
 
 #endif

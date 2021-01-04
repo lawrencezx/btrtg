@@ -78,5 +78,4 @@ target_link_libraries(nasmlib xml2)
 #target_link_libraries(nasmlib libxml2.so)
 add_dependencies(nasmlib perlreq)
 
-add_subdirectory(unit-tests)
 add_subdirectory(intg-tests)
