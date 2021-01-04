@@ -1,0 +1,29 @@
+<?xml version = "1.0" ?>
+
+<!--
+@Test: LEA
+@Description: test lea single instruction
+@Detail:
+    1. translator/tr_mov.c:translate_lea
+    2. translator/tr_opnd_process.c:load_ir1_mem_addr_to_ir2
+@Author: ZouXu
+-->
+
+<Template>
+    <traverse operand = "mem">
+        <I type = "lea ebx,mem"></I>
+        <P type = "ebx"> </P>
+    </traverse>
+    <traverse operand = "mem">
+        <I type = "lea ebx,mem"></I>
+        <P type = "ebx"> </P>
+    </traverse>
+    <traverse operand = "imm">
+        <I type = "lea ebx,imm"></I>
+        <P type = "ebx"> </P>
+    </traverse>
+    <traverse operand = "imm">
+        <I type = "lea ebx,imm"></I>
+        <P type = "ebx"> </P>
+    </traverse>
+</Template>

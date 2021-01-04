@@ -1,8 +1,8 @@
 #include "compiler.h"
 
-#include <libxml/parser.h>
 #include "nasm.h"
 #include "nasmlib.h"
+#include "parseLib.h"
 #include "parseXML.h"
 #include "error.h"
 #include "tmplt.h"
@@ -10,22 +10,11 @@
 static const char *xmlfiles[2] =
 {
     /* must put class before tempalte, so the tempalte can find relevant instruction group */
-    "insn-class.xml",
+    "insn-group.xml",
     "template-sample.xml"
 };
 char *tmpltpath = "../xmlmodel/templates";
 
-
-static int getElemsSize(xmlNodePtr node)
-{
-    int num = 0;
-    for (; node != NULL; node = node->next) {
-        if (node->type == XML_ELEMENT_NODE) {
-            num++;
-        }
-    }
-    return num;
-}
 
 static void parseClasses(xmlNodePtr classesNode)
 {
@@ -101,6 +90,7 @@ static void parseSelBlk(xmlNodePtr selNode, blk_struct *blk)
         free(key);
     }
 
+    blk->num = 1;
     blk->type = SEL_BLK;
     blk->blks = (void **)nasm_malloc(sizeof(void *));
     blk->blks[0] = (void *)selTree;
@@ -149,6 +139,7 @@ static void parseIset(xmlNodePtr IsetNode, blk_struct *blk)
     isetType = nasm_trim(propType);
     iset_e->wdtree = *(WDTree **)hash_find(&hash_wdtrees, isetType, &hi);
 
+    blk->num = 1;
     blk->type = ELEM_BLK;
     blk->blks = (void **)nasm_malloc(sizeof(void *));
     blk->blks[0] = (void *)iset_e;
@@ -177,6 +168,7 @@ static void parsePrint(xmlNodePtr PrintNode, blk_struct *blk)
         nasm_fatal("Unsupported print type: %s", printType);
     }
 
+    blk->num = 1;
     blk->type = ELEM_BLK;
     blk->blks = (void **)nasm_malloc(sizeof(void *));
     blk->blks[0] = (void *)print_e;
@@ -195,6 +187,7 @@ static void parseI(xmlNodePtr INode, blk_struct *blk)
     i_e->type = INSN_ELEM;
     i_e->inst = nasm_strdup(nasm_trim(propType));
 
+    blk->num = 1;
     blk->type = ELEM_BLK;
     blk->blks = (void **)nasm_malloc(sizeof(void *));
     blk->blks[0] = (void *)i_e;
@@ -222,9 +215,9 @@ static void parseBlk(xmlNodePtr blkNodeStart, blk_struct *blk)
             parseXfrBlk(blkNode, subblk);
         } else if (strcmp(blkName, "repeat") == 0) {
             parseRptBlk(blkNode, subblk);
-        } else if (strcmp(blkName, "Iset") == 0) {
+        } else if (strcmp(blkName, "G") == 0) {
             parseIset(blkNode, subblk);
-        } else if (strcmp(blkName, "Print") == 0) {
+        } else if (strcmp(blkName, "P") == 0) {
             parsePrint(blkNode, subblk);
         } else if (strcmp(blkName, "I") == 0) {
             parseI(blkNode, subblk);
@@ -257,7 +250,7 @@ static void parseXML_file(const char *fname)
         xmlNodePtr node = doc->children;
         if (node->type == XML_ELEMENT_NODE) {
             const char *nodeName = (const char *)node->name;
-            if (strcmp(nodeName, "InsnClass") == 0) {
+            if (strcmp(nodeName, "InsnGroups") == 0) {
                 parseClasses(node);
             } else if (strcmp(nodeName, "Template") == 0) {
                 parseTmplts(node);

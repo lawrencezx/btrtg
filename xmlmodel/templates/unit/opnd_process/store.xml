@@ -1,0 +1,53 @@
+<?xml version = "1.0" ?>
+
+<!--
+@Test: STORE
+@Description: test store_ir2_to_ir1
+@Detail:
+    1. translator/mov.c: translate_mov
+    2. translator/tr_opnd_process.c: store_ir2_to_ir1
+    3. translator/tr_opnd_process.c: store_ir2_to_ir1_gpr
+    4. translator/tr_opnd_process.c: store_ir2_to_ir1_seg
+    5. translator/tr_opnd_process.c: store_ir2_to_ir1_cr
+    6. translator/tr_opnd_process.c: store_ir2_to_ir1_dr
+    7. translator/tr_opnd_process.c: store_ir2_to_ir1_mem
+    8. translator/tr_opnd_process.c: convert_mem_opnd
+@Author: ZouXu
+@TODO: CREG,DREG,MMX,XMM
+-->
+
+<Template>
+    <!-- store gpr8/16/32 -->
+    <traverse var = "reg" type = "reg8">
+        <I type = "mov @reg,imm8"></I>
+        <P type = "@reg"></P>
+    </traverse>
+    <traverse var = "reg" type = "reg16">
+        <I type = "mov @reg,imm16"></I>
+        <P type = "@reg"></P>
+    </traverse>
+    <traverse var = "reg" type = "reg32">
+        <I type = "mov @reg,imm32"></I>
+        <P type = "@reg"></P>
+    </traverse>
+    <!-- store sreg -->
+    <I type = "mov es,0x1f"></I>
+    <P type = "es"></P>
+    <I type = "mov es,0x0"></I>
+    <!-- store mem8/16/32 -->
+    <traverse var = "mem" type = "mem8">
+        <I type = "mov @mem,imm8"></I>
+        <I type = "mov al,@mem"></I>
+        <P type = "al"></P>
+    </traverse>
+    <traverse var = "mem" type = "mem16">
+        <I type = "mov @mem16,imm16"></I>
+        <I type = "mov ax, @mem16"></I>
+        <P type = "ax"></P>
+    </traverse>
+    <traverse var = "mem" type = "mem32">
+        <I type = "mov @mem,imm32"></I>
+        <I type = "mov eax, @mem"></I>
+        <P type = "eax"></P>
+    </traverse>
+</Template>

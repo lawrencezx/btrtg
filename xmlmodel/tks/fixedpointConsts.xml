@@ -1,4 +1,4 @@
-<CGs>
+<ConstGroups>
     <CG name = "arith">
         <Imm8> 0x0 </Imm8>
         <Imm8> 0x1 </Imm8>
@@ -93,4 +93,4 @@
         <Imm8> 0x21 </Imm8>
         <Imm8> 0x6d </Imm8>
     </CG>
-</CGs>
+</ConstGroups>

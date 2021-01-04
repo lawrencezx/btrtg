@@ -1,8 +1,8 @@
 #include "compiler.h"
 
-#include <libxml/parser.h>
 #include "nasm.h"
 #include "nasmlib.h"
+#include "parseLib.h"
 #include "parseXML.h"
 #include "error.h"
 #include "tk.h"
@@ -15,17 +15,6 @@ static const char *xmlfiles[2] =
 };
 char *TKpath = "../xmlmodel/tks";
 
-
-static int getElemsSize(xmlNodePtr node)
-{
-    int num = 0;
-    for (; node != NULL; node = node->next) {
-        if (node->type == XML_ELEMENT_NODE) {
-            num++;
-        }
-    }
-    return num;
-}
 
 static void parseCGs(xmlNodePtr cgsNode)
 {
@@ -164,9 +153,9 @@ static void parseXML_file(const char *fname)
         xmlNodePtr node = doc->children;
         if (node->type == XML_ELEMENT_NODE) {
             const char *nodeName = (const char *)node->name;
-            if (strcmp(nodeName, "CGs") == 0) {
+            if (strcmp(nodeName, "ConstGroups") == 0) {
                 parseCGs(node);
-            } else if (strcmp(nodeName, "TKs") == 0) {
+            } else if (strcmp(nodeName, "TestingKnowledges") == 0) {
                 parseTKs(node);
             } else {
                 nasm_nonfatal("failed to parse element: %s", nodeName);

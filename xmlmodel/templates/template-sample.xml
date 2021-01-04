@@ -1,4 +1,11 @@
 <Template>
-    <TestLength value = "200"> </TestLength>
-    <Iset name = "DataTransfer" weight = "100"> </Iset>
+    <repeat times = "10">
+        <select>
+            <G type = "BinaryArithmetic" weight = "35"> </G>
+            <G type = "Logical" weight = "25"> </G>
+            <G type = "ShiftRotate" weight = "15"> </G>
+            <G type = "DataTransfer" weight = "25"> </G>
+        </select>
+        <P type = "all_state"> </P>
+    </repeat>
 </Template>

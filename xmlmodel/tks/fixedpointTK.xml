@@ -1,4 +1,4 @@
-<TKs>
+<TestingKnowledges>
     <!--  data transfer instructions  -->
     <TK inst = "mov" initP = "0.0">
         <Node name = "arith" weight="50"> </Node>
@@ -153,10 +153,6 @@
         <Node name = "normal" weight="50"> </Node>
     </TK>
     <TK inst = "pusha" initP = "1.0">
-        <Node name = "arith" weight="50"> </Node>
-        <Node name = "normal" weight="50"> </Node>
-    </TK>
-    <TK inst = "pushad" initP = "1.0">
         <Node name = "arith" weight="50"> </Node>
         <Node name = "normal" weight="50"> </Node>
     </TK>
@@ -804,4 +800,4 @@
     <!-- bmi1, bmi2 -->
     <!-- TODO -->
 
-</TKs>
+</TestingKnowledges>

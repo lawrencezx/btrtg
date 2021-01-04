@@ -1,5 +1,8 @@
-<InsnClass>
-    <InstGroup name = "DataTransfer">
+<InsnGroups>
+    <IG name = "Test">
+        <I> popa </I>
+    </IG>
+    <IG name = "DataTransfer">
         <I> mov </I>
         <I> cmova </I>
         <I> cmovae </I>
@@ -41,17 +44,19 @@
         <I> pusha </I>
         <I> pushad </I>
         <I> pushaw </I>
-        <I> popa </I>
-        <I> popad </I>
-        <I> popaw </I>
         <I> cwd </I>
         <I> cdq </I>
         <I> cbw </I>
         <I> cwde </I>
         <I> movsx </I>
         <I> movzx </I>
-    </InstGroup>
-    <InstGroup name = "BinaryArithmetic">
+    </IG>
+    <IG name = "PopAll">
+        <I> popa </I>
+        <I> popad </I>
+        <I> popaw </I>
+    </IG>
+    <IG name = "BinaryArithmetic">
         <I> adcx </I>
         <I> adox </I>
         <I> add </I>
@@ -66,22 +71,22 @@
         <I> dec </I>
         <I> neg </I>
         <I> cmp </I>
-    </InstGroup>
-    <InstGroup name = "DecimalArithmetic">
+    </IG>
+    <IG name = "DecimalArithmetic">
         <I> daa </I>
         <I> das </I>
         <I> aaa </I>
         <I> aas </I>
         <I> aam </I>
         <I> aad </I>
-    </InstGroup>
-    <InstGroup name = "Logical">
+    </IG>
+    <IG name = "Logical">
         <I> and </I>
         <I> or </I>
         <I> xor </I>
         <I> not </I>
-    </InstGroup>
-    <InstGroup name = "ShiftRotate">
+    </IG>
+    <IG name = "ShiftRotate">
         <I> sar </I>
         <I> shr </I>
         <I> sal </I>
@@ -92,8 +97,8 @@
         <I> rol </I>
         <I> rcr </I>
         <I> rcl </I>
-    </InstGroup>
-    <InstGroup name = "BitByte">
+    </IG>
+    <IG name = "BitByte">
         <I> bt </I>
         <I> bts </I>
         <I> btr </I>
@@ -131,8 +136,8 @@
         <I> sets </I>
         <I> setz </I> 
         <I> test </I>
-    </InstGroup>
-    <InstGroup name = "ControlTransfer">
+    </IG>
+    <IG name = "ControlTransfer">
         <I> jmp </I>
         <I> ja </I>
         <I> jae </I>
@@ -178,8 +183,8 @@
         <I> bound </I>
         <I> enter </I>
         <I> leave </I>
-    </InstGroup>
-    <InstGroup name = "String">
+    </IG>
+    <IG name = "String">
         <I> movsb </I>
         <I> movsw </I>
         <I> movsd </I>
@@ -195,12 +200,12 @@
         <I> stosb </I>
         <I> stosw </I>
         <I> stosd </I>
-    </InstGroup>
-    <InstGroup name = "IO">
-    </InstGroup>
-    <InstGroup name = "EnterLeave">
-    </InstGroup>
-    <InstGroup name = "FlagControl">
+    </IG>
+    <IG name = "IO">
+    </IG>
+    <IG name = "EnterLeave">
+    </IG>
+    <IG name = "FlagControl">
         <I> stc </I>
         <I> clc </I>
         <I> cmc </I>
@@ -216,28 +221,27 @@
         <I> popfw </I>
         <I> sti </I>
         <I> cli </I>
-    </InstGroup>
-    <InstGroup name = "SegmentRegister">
+    </IG>
+    <IG name = "SegmentRegister">
         <I> lds </I>
         <I> les </I>
         <I> lfs </I>
         <I> lgs </I>
         <I> lss </I>
-    </InstGroup>
-    <InstGroup name = "Miscellaneous">
+    </IG>
+    <IG name = "Miscellaneous">
         <I> lea </I>
         <I> nop </I>
         <I> ud2 </I>
         <I> xlat </I>
         <I> xlatb </I>
         <I> cpuid </I>
-        <I> movbe </I>
-    </InstGroup>
-    <InstGroup name = "SaveStore">
+    </IG>
+    <IG name = "SaveStore">
         <I> xsave </I>
         <I> xsavec </I>
         <I> xsaveopt </I>
         <I> xrstor </I>
         <I> xgetbv </I>
-    </InstGroup>
-</InsnClass>
+    </IG>
+</InsnGroups>
