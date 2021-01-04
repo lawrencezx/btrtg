@@ -41,8 +41,8 @@
         <P type = "al"></P>
     </traverse>
     <traverse var = "mem" type = "mem16">
-        <I type = "mov @mem16,imm16"></I>
-        <I type = "mov ax, @mem16"></I>
+        <I type = "mov @mem,imm16"></I>
+        <I type = "mov ax, @mem"></I>
         <P type = "ax"></P>
     </traverse>
     <traverse var = "mem" type = "mem32">

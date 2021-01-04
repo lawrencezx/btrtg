@@ -10,20 +10,20 @@
 -->
 
 <Template>
-    <traverse operand = "mem">
-        <I type = "lea ebx,mem"></I>
+    <traverse var = "mem" type = "mem16">
+        <I type = "lea bx,@mem"></I>
+        <P type = "bx"> </P>
+    </traverse>
+    <traverse var = "mem" type = "mem32">
+        <I type = "lea ebx,@mem"></I>
         <P type = "ebx"> </P>
     </traverse>
-    <traverse operand = "mem">
-        <I type = "lea ebx,mem"></I>
-        <P type = "ebx"> </P>
+    <traverse var = "imm" type = "imm16">
+        <I type = "lea bx,@imm"></I>
+        <P type = "bx"> </P>
     </traverse>
-    <traverse operand = "imm">
-        <I type = "lea ebx,imm"></I>
-        <P type = "ebx"> </P>
-    </traverse>
-    <traverse operand = "imm">
-        <I type = "lea ebx,imm"></I>
+    <traverse var = "imm" type = "imm32">
+        <I type = "lea ebx,@imm"></I>
         <P type = "ebx"> </P>
     </traverse>
 </Template>
