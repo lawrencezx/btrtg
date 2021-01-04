@@ -12,7 +12,7 @@ include_directories(${srcdir}
                     ${srcdir}/x86
                     ${srcdir}/stat
                     ${srcdir}/xmlparser
-                    ${srcdir}/core
+                    ${srcdir}/engine
                     ${srcdir}/config
                     ${srcdir}/disasm
                     /usr/include/libxml2)
@@ -34,9 +34,9 @@ SET(GEN_TARS
   ${srcdir}/x86/regs.h
 
   ${srcdir}/include/warnings.h
-  ${srcdir}/core/warnings.c
-  ${srcdir}/core/tokhash.c
-  ${srcdir}/core/tokens.h)
+  ${srcdir}/engine/warnings.c
+  ${srcdir}/engine/tokhash.c
+  ${srcdir}/engine/tokens.h)
 
 add_custom_command(OUTPUT ${GEN_TARS}
   COMMAND ${RUNPERL} ${srcdir}/x86/insns.pl -fc ${srcdir}/x86/insns.dat ${srcdir}/x86/iflag.c
@@ -54,10 +54,10 @@ add_custom_command(OUTPUT ${GEN_TARS}
   COMMAND ${RUNPERL} ${srcdir}/x86/regs.pl vc ${srcdir}/x86/regs.dat > ${srcdir}/x86/regvals.c
   COMMAND ${RUNPERL} ${srcdir}/x86/regs.pl h ${srcdir}/x86/regs.dat > ${srcdir}/x86/regs.h
 
-  COMMAND ${RUNPERL} ${srcdir}/core/warnings.pl c ${srcdir}/core/warnings.c ${srcdir}
-  COMMAND ${RUNPERL} ${srcdir}/core/warnings.pl h ${srcdir}/include/warnings.h ${srcdir}
-  COMMAND ${RUNPERL} ${srcdir}/core/tokhash.pl c ${srcdir}/x86/insns.dat ${srcdir}/x86/regs.dat ${srcdir}/core/tokens.dat > ${srcdir}/core/tokhash.c
-  COMMAND ${RUNPERL} ${srcdir}/core/tokhash.pl h ${srcdir}/x86/insns.dat ${srcdir}/x86/regs.dat ${srcdir}/core/tokens.dat > ${srcdir}/core/tokens.h)
+  COMMAND ${RUNPERL} ${srcdir}/engine/warnings.pl c ${srcdir}/engine/warnings.c ${srcdir}
+  COMMAND ${RUNPERL} ${srcdir}/engine/warnings.pl h ${srcdir}/include/warnings.h ${srcdir}
+  COMMAND ${RUNPERL} ${srcdir}/engine/tokhash.pl c ${srcdir}/x86/insns.dat ${srcdir}/x86/regs.dat ${srcdir}/engine/tokens.dat > ${srcdir}/engine/tokhash.c
+  COMMAND ${RUNPERL} ${srcdir}/engine/tokhash.pl h ${srcdir}/x86/insns.dat ${srcdir}/x86/regs.dat ${srcdir}/engine/tokens.dat > ${srcdir}/engine/tokens.h)
 
 
 # @target: perlreq, nasmlib dependencies
@@ -70,7 +70,7 @@ file(GLOB LIB_SRCS stdlib/*.c
                    x86/*.c
                    stat/*.c
                    xmlparser/*.c
-                   core/*.c
+                   engine/*.c
                    disasm/*.c
                    output/*.c)
 add_library(nasmlib STATIC ${LIB_SRCS})
