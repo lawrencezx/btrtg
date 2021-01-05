@@ -105,13 +105,11 @@ static void parseTKs(xmlNodePtr tksNode)
         char *key;
         struct hash_insert hi;
         TKmodel *tkm;
-        char *propInitP, *propDiffSrcDest;
+        char *propDiffSrcDest;
 
-        propInitP = (char *)xmlGetProp(tkNode, (const unsigned char*)"initP");
         propDiffSrcDest = (char *)xmlGetProp(tkNode, (const unsigned char *)"diffSrcDest");
 
         tkm = tkmodel_create();
-        tkm->initP = atof(propInitP);
 
         if (propDiffSrcDest) {
             WDTree *tkSrcTree;
@@ -140,12 +138,11 @@ static void parseTKs(xmlNodePtr tksNode)
         hash_find(&hash_tks, key, &hi);
         hash_add(&hi, key, (void *)tkm);
 
-        free(propInitP);
         free(propDiffSrcDest);
     }
 }
 
-static void parseXML_file(const char *fname)
+void parse_tks_file(const char *fname)
 {
     LIBXML_TEST_VERSION
     xmlDocPtr doc = xmlParseFile(fname);
@@ -167,13 +164,13 @@ static void parseXML_file(const char *fname)
     xmlFreeDoc(doc);
 }
 
-void parse_TKs(void)
+void init_tks(void)
 {
 #ifdef LIBXML_READER_ENABLED
     char fname[1024];
     for (size_t i = 0; i < ARRAY_SIZE(xmlfiles); i++) {
         sprintf(fname, "%s/%s", TKpath, xmlfiles[i]);
-        parseXML_file(fname);
+        parse_tks_file(fname);
         memset(fname, 0, 1024);
     }
 #else

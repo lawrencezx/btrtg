@@ -7,11 +7,10 @@
 #include "error.h"
 #include "tmplt.h"
 
-static const char *xmlfiles[2] =
+static const char *xmlfiles[1] =
 {
     /* must put class before tempalte, so the tempalte can find relevant instruction group */
     "insn-group.xml",
-    "template-sample.xml"
 };
 char *tmpltpath = "../xmlmodel/templates";
 
@@ -125,7 +124,7 @@ static void parseRptBlk(xmlNodePtr rptNode, blk_struct *blk)
     free(propTimes);
 }
 
-static void parseIset(xmlNodePtr IsetNode, blk_struct *blk)
+static void parseG(xmlNodePtr IsetNode, blk_struct *blk)
 {
     char *isetType;
     elem_struct *iset_e;
@@ -147,7 +146,7 @@ static void parseIset(xmlNodePtr IsetNode, blk_struct *blk)
     free(propType);
 }
 
-static void parsePrint(xmlNodePtr PrintNode, blk_struct *blk)
+static void parseP(xmlNodePtr PrintNode, blk_struct *blk)
 {
     char *printType;
     elem_struct *print_e;
@@ -216,9 +215,9 @@ static void parseBlk(xmlNodePtr blkNodeStart, blk_struct *blk)
         } else if (strcmp(blkName, "repeat") == 0) {
             parseRptBlk(blkNode, subblk);
         } else if (strcmp(blkName, "G") == 0) {
-            parseIset(blkNode, subblk);
+            parseG(blkNode, subblk);
         } else if (strcmp(blkName, "P") == 0) {
-            parsePrint(blkNode, subblk);
+            parseP(blkNode, subblk);
         } else if (strcmp(blkName, "I") == 0) {
             parseI(blkNode, subblk);
         } else {
@@ -242,7 +241,7 @@ static void parseTmplts(xmlNodePtr tmpltsNode)
     parseSeqBlk(tmpltsNode, tmpltm.blk);
 }
 
-static void parseXML_file(const char *fname)
+void parse_tmplts_file(const char *fname)
 {
     LIBXML_TEST_VERSION
     xmlDocPtr doc = xmlParseFile(fname);
@@ -255,22 +254,22 @@ static void parseXML_file(const char *fname)
             } else if (strcmp(nodeName, "Template") == 0) {
                 parseTmplts(node);
             } else {
-                nasm_nonfatal("failed to parse element: %s", nodeName);
+                nasm_fatal("failed to parse element: %s", nodeName);
             }
         }
     } else {
-        nasm_nonfatal("Unable to open %s\n", fname);
+        nasm_fatal("Unable to open %s\n", fname);
     }
     xmlFreeDoc(doc);
 }
 
-void parse_tmplts(void)
+void init_tmplts(void)
 {
 #ifdef LIBXML_READER_ENABLED
     char fname[1024];
     for (size_t i = 0; i < ARRAY_SIZE(xmlfiles); i++) {
         sprintf(fname, "%s/%s", tmpltpath, xmlfiles[i]);
-        parseXML_file(fname);
+        parse_tmplts_file(fname);
         memset(fname, 0, 1024);
     }
 #else

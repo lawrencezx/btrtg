@@ -8,10 +8,13 @@
 #include "gendata.h"
 #include "regdis.h"
 #include "operand.h"
+#include "x86pg.h"
+#include "buf2token.h"
+#include "tk.h"
 #include <string.h>
 
 
-bool is_label_consumer(operand_seed *opnd_seed)
+static bool is_label_consumer(operand_seed *opnd_seed)
 {
     if (is_class(MEM_OFFS, opnd_seed->opndflags)) {
         return true;
@@ -19,7 +22,7 @@ bool is_label_consumer(operand_seed *opnd_seed)
     return false;
 }
 
-srcdestflags_t calSrcDestFlags(const insn_seed *seed, int opi)
+static srcdestflags_t calSrcDestFlags(const insn_seed *seed, int opi)
 {
     srcdestflags_t srcdestflags = 0;
     enum opcode op = seed->opcode;
@@ -511,7 +514,7 @@ static opflags_t getCurOperandSize(opflags_t opflags)
     return opdsize;
 }
 
-opflags_t calOperandSize(const insn_seed *seed, int opdi)
+static opflags_t calOperandSize(const insn_seed *seed, int opdi)
 {
     opflags_t opdsize = 0;
     /* If operand's opflags contain size information, extract it. */
@@ -546,7 +549,7 @@ opflags_t calOperandSize(const insn_seed *seed, int opdi)
     return opdsize;
 }
 
-void init_implied_operands(const insn_seed *seed)
+static void init_implied_operands(const insn_seed *seed)
 {
     if (seed->opcode == I_DIV ||
         seed->opcode == I_IDIV) {
@@ -568,16 +571,33 @@ void init_implied_operands(const insn_seed *seed)
     }
 }
 
-void gen_comma(char *buffer)
+static void gen_comma(char *buffer)
 {
     sprintf(buffer, ",");
 }
 
 /* Generate instruction opcode. */
-void gen_opcode(enum opcode opcode, char *buffer)
+bool gen_opcode(const insn_seed *seed)
 {
-    const char* insn_name = nasm_insn_names[opcode];
-    sprintf(buffer, "%s ", insn_name);
+    if (seed == NULL)
+        return true;
+    const char *inst_name;
+
+    /* reset global state */
+    X86PGState.curr_seed = seed;
+    stat_unlock_ebx();
+    token_reset();
+
+    /* write instruction name to token_buf */
+    inst_name = nasm_insn_names[seed->opcode];
+    sprintf(get_token_cbufptr(), "%s ", inst_name);
+
+    /* initialize all operands if need_init is true  */
+    X86PGState.need_init = request_initialize(inst_name);
+    if (X86PGState.need_init)
+        init_implied_operands(seed);
+
+    return true;
 }
 
 static bool gen_register(operand_seed *opnd_seed, char *buffer)
@@ -687,7 +707,7 @@ static bool gen_reg_mem(operand_seed *opnd_seed, char *buffer)
 }
 
 /* Generate operand. */
-bool gen_operand(operand_seed *opnd_seed, char *buffer)
+static bool gen_operand_internal(operand_seed *opnd_seed, char *buffer)
 {
     opflags_t opndflags;
     opndflags = opnd_seed->opndflags;
@@ -705,8 +725,6 @@ bool gen_operand(operand_seed *opnd_seed, char *buffer)
     }
     return false;
 
-//TODO:    case MEM_OFFS:
-
 //TODO:    case IMMEDIATE|COLON:
 //TODO:    case IMMEDIATE|BITS16|COLON:
 //TODO:    case IMMEDIATE|BITS16|NEAR:
@@ -720,6 +738,61 @@ bool gen_operand(operand_seed *opnd_seed, char *buffer)
 //TODO:    case MEMORY|BITS16:
 //TODO:    case MEMORY|BITS32:
 //TODO:    case MEMORY|FAR:
+}
+
+bool gen_operand(const insn_seed *seed, int opi, bool *label_consumer)
+{
+    operand_seed opnd_seed;
+
+    init_opnd_seed(&opnd_seed);
+
+    if (seed == NULL) {
+        char *opnd_start, *opnd_end;
+        char asm_opnd[128];
+        opnd_end = opnd_start = nasm_skip_spaces(get_token_bufptr());
+        while (*opnd_end != 0 && *opnd_end != '\n' && *opnd_end != ',') {
+            asm_opnd[opnd_end - opnd_start] = *opnd_end;
+            opnd_end++;
+        }
+        asm_opnd[opnd_end - opnd_start] = '\0';
+        create_opnd_seed(&opnd_seed, asm_opnd);
+        if (opnd_seed.opndflags) {
+            memset(asm_opnd, '\0', sizeof(asm_opnd));
+            if (!gen_operand_internal(&opnd_seed, asm_opnd))
+                return false;
+            nasm_strrplc(opnd_start, opnd_end - opnd_start, asm_opnd, strlen(asm_opnd));
+        }
+    } else {
+        if (seed->opd[opi] == 0)
+            return true;
+
+        opnd_seed.opndflags = seed->opd[opi];
+        opnd_seed.srcdestflags = calSrcDestFlags(seed, opi);
+        opnd_seed.opdsize = calOperandSize(seed, opi);
+
+        /* specify the fundamental data item size for a memory operand
+         * for example: byte, word, dword, etc.
+         */
+        if ((opi == 0 && is_class(IMMEDIATE, seed->opd[1])) ||
+            seed->opd[1] == 0) {
+            opnd_seed.explicitmemsize = true;
+        } else {
+            opnd_seed.explicitmemsize = false;
+        }
+
+        if (opi != 0) {
+            gen_comma(get_token_bufptr());
+            set_token_bufptr(get_token_bufptr() + 1);
+        }
+
+        if (!gen_operand_internal(&opnd_seed, get_token_bufptr()))
+            return false;
+
+        if (is_label_consumer(&opnd_seed)) {
+            *label_consumer = true;
+        }
+    }
+    return true;
 }
 
 void gendata_init(void)

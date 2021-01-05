@@ -9,7 +9,6 @@ typedef uint64_t srcdestflags_t;
 #define OPDEST      0x2
 
 typedef struct operand_seed {
-    enum opcode     opcode;               /* point to instruction */
     opflags_t       opndflags;
     srcdestflags_t  srcdestflags;         /* source and destination operand flag */
     opflags_t       opdsize;
@@ -21,6 +20,8 @@ typedef struct insn_seed {
     opflags_t       opd[MAX_OPERANDS];
 } insn_seed;
 
+void init_opnd_seed(operand_seed *opnd_seed);
 void create_insn_seed(insn_seed *seed, const char *instname);
+void create_opnd_seed(operand_seed *opnd_seed, const char *asm_opnd);
 
 #endif

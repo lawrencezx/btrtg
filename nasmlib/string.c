@@ -239,3 +239,19 @@ char *nasm_opt_val(char *p, char **val, char **next)
     *next = nxt;
     return p;
 }
+
+/* replace [dest, dest + dest_size) with [src, src + src_size)
+ */
+char *nasm_strrplc(char *dest, int dest_size, char *src, int src_size)
+{
+    if (dest_size < 0 || src_size < 0)
+        return NULL;
+    if (src_size <= dest_size) {
+        strcpy(dest, src);
+        strcpy(dest + src_size, dest + dest_size);
+    } else {
+        strcpy(dest + src_size, dest + dest_size);
+        strcpy(dest, src);
+    }
+    return dest;
+}

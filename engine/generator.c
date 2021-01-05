@@ -86,9 +86,9 @@ void generator_init(bool set_sequence)
     init_x86pgstate();
     X86PGState.seqMode = set_sequence;
 
-    parse_TKs();
+    init_tks();
 
-    parse_tmplts();
+    init_tmplts();
 
     gendata_init();
 
@@ -265,21 +265,19 @@ static void mref_set_optype(operand *op)
 
 bool one_insn_gen(const insn_seed *seed, insn *result)
 {
-    if (seed != NULL) {
+    if (seed != NULL)
         dfmt->print("\033[35m Gen inst: %s \033[m\n", nasm_insn_names[seed->opcode]);
-    } else {
+    else
         dfmt->print("\033[31m Gen const inst\033[m: %s\n", get_token_bufptr());
-    }
+
+    if (gen_control_transfer_insn(seed))
+        return true;
+    likely_gen_label();
+
     int i;
     int opi = 0;
     struct eval_hints hints;
     bool label_consumer = false;
-
-    if (seed != NULL) {
-        if (gen_control_transfer_insn(seed))
-            return true;
-        likely_gen_label();
-    }
 
     memset(result->prefixes, P_none, sizeof(result->prefixes));
     result->times       = 1;
@@ -289,17 +287,8 @@ bool one_insn_gen(const insn_seed *seed, insn *result)
     result->evex_rm     = 0;
     result->evex_brerop = -1;
 
-    if (seed != NULL) {
-        stat_unlock_ebx();
-        X86PGState.curr_seed = seed;
-        token_reset();
-        gen_opcode(seed->opcode, get_token_cbufptr());
-        const char *instName = nasm_insn_names[seed->opcode];
-        X86PGState.need_init = request_initialize(instName);
-        if (X86PGState.need_init) {
-            init_implied_operands(seed);
-        }
-    }
+    if (!gen_opcode(seed))
+        return false;
     i = get_token(&tokval);
 
     result->opcode = tokval.t_integer;
@@ -319,31 +308,8 @@ bool one_insn_gen(const insn_seed *seed, insn *result)
         op = &result->oprs[opi];
         init_operand(op);
 
-        if (seed != NULL) {
-            if (seed->opd[opi] == 0) {
-                break;
-            }
-            operand_seed opnd_seed;
-            opnd_seed.opcode = seed->opcode;
-            opnd_seed.opndflags = seed->opd[opi];
-            opnd_seed.srcdestflags = calSrcDestFlags(seed, opi);
-            opnd_seed.opdsize = calOperandSize(seed, opi);
-            if ((opi == 0 && is_class(IMMEDIATE, seed->opd[1])) ||
-                seed->opd[1] == 0) {
-                opnd_seed.explicitmemsize = true;
-            } else {
-                opnd_seed.explicitmemsize = false;
-            }
-            if (opi != 0) {
-                gen_comma(get_token_bufptr());
-                get_token(&tokval);
-            }
-            if (!gen_operand(&opnd_seed, get_token_bufptr()))
-                return false;
-            if (is_label_consumer(&opnd_seed)) {
-                label_consumer = true;
-            }
-        }
+        if (!gen_operand(seed, opi, &label_consumer))
+            return false;
         i = get_token(&tokval);
         if (i == TOKEN_EOS)
             break;              /* end of operands: get out of here */
@@ -498,12 +464,21 @@ fail:
 
 bool one_insn_gen_const(char *asm_buffer)
 {
+    bool sucess;
     insn const_inst;
-    char *old_bufptr = get_token_bufptr();
-    bool sucess = false;
-    set_token_bufptr(asm_buffer);
-    one_insn_gen(NULL, &const_inst);
+    char buffer[128];
+    char *old_bufptr;
+    /* save the current contents in token_buf */
+    old_bufptr = get_token_bufptr();
+    strcpy(buffer, get_token_buf());
+
+    strcpy(get_token_cbufptr(), asm_buffer);
+    sucess = one_insn_gen(NULL, &const_inst);
+
+    /* restore the contents in token_buf */
+    strcpy(get_token_buf(), buffer);
     set_token_bufptr(old_bufptr);
+
     return sucess;
 }
 

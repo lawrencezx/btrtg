@@ -8,7 +8,6 @@
  *  a weighted set of instruction scenarios.
  */
 typedef struct TKmodel {
-    double initP;
     bool diffSrcDest;
     union {
         WDTree *wdtree;

@@ -165,7 +165,7 @@ static void walkPrintElem(elem_struct *print_e)
 
 static void walkIElem(elem_struct *i_e)
 {
-    /* TODO */
+    one_insn_gen_const(i_e->inst);
 }
 
 static void walkElemBlk(blk_struct *blk)

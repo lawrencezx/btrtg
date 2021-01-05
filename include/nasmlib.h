@@ -346,6 +346,7 @@ char *nasm_trim_spaces(char *p);
 char *nasm_trim(char *p);
 char *nasm_get_word(char *p, char **tail);
 char *nasm_opt_val(char *p, char **opt, char **val);
+char *nasm_strrplc(char *dest, int dest_size, char *src, int src_size);
 
 /*
  * Converts a relative pathname rel_path into an absolute path name.

@@ -91,9 +91,8 @@ static bool is_jcc(enum opcode opcode)
 
 bool gen_control_transfer_insn(const insn_seed *seed)
 {
-    if (stat_ctrl_locked()) {
-        return true;
-    }
+    if (seed == NULL || stat_ctrl_locked())
+        return false;
     char buffer[64];
     if (seed->opcode == I_JMP) {
         /* jmp lable(n+1) */
@@ -147,6 +146,8 @@ bool gen_control_transfer_insn(const insn_seed *seed)
     return false;
 }
 
+/* jmp to the tail from current context
+ */
 void gen_control_transfer_finish(void)
 {
     char buffer[64];

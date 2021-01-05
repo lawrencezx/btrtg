@@ -11,7 +11,6 @@ TKmodel *tkmodel_create(void)
 {
     TKmodel *tkm;
     tkm = (TKmodel *)nasm_malloc(sizeof(TKmodel));
-    tkm->initP = 0;
     tkm->wdtree = NULL;
     return tkm;
 }
@@ -31,11 +30,12 @@ static TKmodel *get_tkm_from_hashtbl(const char *instName)
 
 bool request_initialize(const char *instName)
 {
-    TKmodel *tkm;
-    tkm = get_tkm_from_hashtbl(instName);
-    if (tkm)
-        return likely_happen_p(tkm->initP);
     return false;
+//    TKmodel *tkm;
+//    tkm = get_tkm_from_hashtbl(instName);
+//    if (tkm)
+//        return likely_happen_p(tkm->initP);
+//    return false;
 }
 
 constVal *request_constVal(const char *instName, bool isDest)
@@ -43,14 +43,14 @@ constVal *request_constVal(const char *instName, bool isDest)
     constVal *cVal;
     TKmodel *tkm;
     tkm = get_tkm_from_hashtbl(instName);
-    if (tkm->diffSrcDest == false) {
+//if (tkm->diffSrcDest == false) {
         cVal = wdtree_select_constval(tkm->wdtree);
-    } else {
-        if (isDest) {
-            cVal = wdtree_select_constval(tkm->wddesttree);
-        } else {
-            cVal = wdtree_select_constval(tkm->wdsrctree);
-        }
-    }
+//    } else {
+//        if (isDest) {
+//            cVal = wdtree_select_constval(tkm->wddesttree);
+//        } else {
+//            cVal = wdtree_select_constval(tkm->wdsrctree);
+//        }
+//    }
     return cVal;
 }
