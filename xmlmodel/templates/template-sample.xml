@@ -1,5 +1,5 @@
 <Template>
-    <I type = "add ebx, imm32"> </I>
+    <I type = "add reg32, imm32" inip = "1.0"> </I>
     <repeat times = "10">
         <select>
             <G type = "BinaryArithmetic" weight = "35"> </G>

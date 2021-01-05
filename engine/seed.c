@@ -53,15 +53,16 @@ void create_opnd_seed(operand_seed *opnd_seed, const char *asm_opnd)
         {"rm", RM_GPR},
         {"unity", UNITY},
         {"sbyteword", SBYTEWORD},
-        {"sbytedword", SBYTEDWORD}
+        {"sbytedword", SBYTEDWORD},
         {"reg_sreg", REG_SREG},
         {"reg_creg", REG_CREG},
         {"reg_dreg", REG_DREG},
     };
 
     for (i = 0; i < ARRAY_SIZE(opnd_ids); i++) {
-        if (strcmp(opnd_ids[i].id, opnd_id)) {
+        if (strcmp(opnd_ids[i].id, opnd_id) == 0) {
             opnd_seed->opndflags = opnd_ids[i].opndflags;
+            break;
         }
     }
     if (i == ARRAY_SIZE(opnd_ids))

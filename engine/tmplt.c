@@ -5,6 +5,7 @@
 #include "nasmlib.h"
 #include "generator.h"
 #include "tmplt.h"
+#include "x86pg.h"
 
 tmplt_struct tmpltm;
 
@@ -71,27 +72,30 @@ static void walkRptBlk(blk_struct *blk)
 
 /* walk element
  */
-static void walkIsetElem(elem_struct *iset_e);
-static void walkPrintElem(elem_struct *print_e);
+static void walkGElem(elem_struct *g_e);
+static void walkPElem(elem_struct *p_e);
 static void walkIElem(elem_struct *i_e);
 
 static void (*walkElemFuncs[])(elem_struct *elem) =
 {
-    walkIsetElem,
-    walkPrintElem,
+    walkGElem,
+    walkPElem,
     walkIElem
 };
 
-static void walkIsetElem(elem_struct *iset_e)
+static void walkGElem(elem_struct *g_e)
 {
     constVal *cVal;
     insn_seed seed;
     insn inst;
 
-    cVal = wdtree_select_constval(iset_e->wdtree);
+    stat_set_need_init(likely_happen_p(g_e->inip));
+
+    cVal = wdtree_select_constval(g_e->wdtree);
     
     create_insn_seed(&seed, cVal->instName);
     one_insn_gen(&seed, &inst);
+    stat_set_need_init(false);
 }
 
 static void gen_call_print_x86_state(void)
@@ -150,26 +154,29 @@ static void gen_call_print_all_state(void)
     one_insn_gen_const("popa");
 }
 
-static void walkPrintElem(elem_struct *print_e)
+static void walkPElem(elem_struct *p_e)
 {
-    if (print_e->printType == X86_STATE) {
+    if (p_e->pType == X86_STATE) {
         gen_call_print_x86_state();
-    } else if (print_e->printType == X87_STATE) {
+    } else if (p_e->pType == X87_STATE) {
         gen_call_print_x87_state();
-    } else if (print_e->printType == ALL_STATE) {
+    } else if (p_e->pType == ALL_STATE) {
         gen_call_print_all_state();
     } else {
-        nasm_fatal("Unsupported print type: %d", print_e->printType);
+        nasm_fatal("Unsupported print type: %d", p_e->pType);
     }
 }
 
 static void walkIElem(elem_struct *i_e)
 {
+    stat_set_need_init(likely_happen_p(i_e->inip));
     one_insn_gen_const(i_e->inst);
+    stat_set_need_init(false);
 }
 
 static void walkElemBlk(blk_struct *blk)
 {
+    stat_set_opcode(I_none);
     elem_struct *elem = (elem_struct *)blk->blks[0];
     walkElemFuncs[elem->type](elem);
 }

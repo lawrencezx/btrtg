@@ -35,10 +35,11 @@ typedef enum print_type {
 } print_type;
 
 typedef struct elem_struct {
+    double inip;
     elem_type type;
     union {
         WDTree *wdtree;
-        print_type printType;
+        print_type pType;
         char *inst;
     };
 } elem_struct;

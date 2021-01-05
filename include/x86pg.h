@@ -63,7 +63,7 @@ struct X86PGState {
     struct section data_sec;
 
     struct {
-        const insn_seed *curr_seed;
+        enum opcode opcode;
         insn *curr_inst;
         bool need_init;
     }; /* current instruction */
@@ -94,6 +94,10 @@ void stat_insert_insn(insn *inst, enum position pos);
 
 int stat_get_labeli(void);
 void stat_inc_labeli(void);
+enum opcode stat_get_opcode(void);
+void stat_set_opcode(enum opcode opcode);
+bool stat_get_need_init(void);
+void stat_set_need_init(bool need_init);
 
 void stat_lock_ctrl(void);
 void stat_unlock_ctrl(void);

@@ -22,8 +22,8 @@ bool create_specific_register(enum reg_enum R_reg, operand_seed *opnd_seed, char
         return false;
     }
     src = nasm_reg_names[R_reg - EXPR_REG_START];
-    if (X86PGState.need_init) {
-        const char *instName = nasm_insn_names[X86PGState.curr_seed->opcode];
+    if (stat_get_need_init()) {
+        const char *instName = nasm_insn_names[stat_get_opcode()];
         constVal *cVal = request_constVal(instName, opnd_seed->srcdestflags & OPDEST);
         sprintf(buffer, "mov %s, 0x%x", src, (cVal == NULL) ? (int)nasm_random64(0x100000000) : cVal->imm32);
         one_insn_gen_const(buffer);
@@ -87,8 +87,8 @@ bool create_unity(operand_seed *opnd_seed, char *buffer)
     }
 
     unity = nasm_random32(shiftCount + 1);
-    if (X86PGState.need_init) {
-        const char *instName = nasm_insn_names[X86PGState.curr_seed->opcode];
+    if (stat_get_need_init()) {
+        const char *instName = nasm_insn_names[stat_get_opcode()];
         constVal *cVal = request_constVal(instName, opnd_seed->srcdestflags & OPDEST);
         if (cVal != NULL)
             unity = cVal->imm32;
@@ -127,8 +127,8 @@ gen_gpr:
 
     src = nasm_reg_names[gpr - EXPR_REG_START];
 
-    if (X86PGState.need_init) {
-        const char *instName = nasm_insn_names[X86PGState.curr_seed->opcode];
+    if (stat_get_need_init()) {
+        const char *instName = nasm_insn_names[stat_get_opcode()];
         constVal *cVal = request_constVal(instName, opnd_seed->srcdestflags & OPDEST);
         sprintf(buffer, "mov %s, 0x%x", src, (cVal == NULL) ? (int)nasm_random64(0x100000000) : cVal->imm32);
         one_insn_gen_const(buffer);
@@ -164,8 +164,8 @@ bool create_immediate(operand_seed* opnd_seed, char *buffer)
     }
     imm = (int)nasm_random64(immn);
 
-    if (X86PGState.need_init) {
-        const char *instName = nasm_insn_names[X86PGState.curr_seed->opcode];
+    if (stat_get_need_init()) {
+        const char *instName = nasm_insn_names[stat_get_opcode()];
         constVal *cVal = request_constVal(instName, opnd_seed->srcdestflags & OPDEST);
         if (cVal != NULL)
             imm = cVal->imm32;
@@ -290,8 +290,8 @@ bool create_memory(operand_seed *opnd_seed, char *buffer)
             sprintf(src, "%s", modrm);
         }
     }
-    if (X86PGState.need_init) {
-        const char *instName = nasm_insn_names[X86PGState.curr_seed->opcode];
+    if (stat_get_need_init()) {
+        const char *instName = nasm_insn_names[stat_get_opcode()];
         constVal *cVal = request_constVal(instName, opnd_seed->srcdestflags & OPDEST);
         sprintf(buffer, "mov %s %s, 0x%x", memsize[whichmemsize], modrm, (cVal == NULL) ? (int)nasm_random64(0x100000000) : cVal->imm32);
         one_insn_gen_const(buffer);
@@ -319,8 +319,8 @@ bool create_memoffs(operand_seed *opnd_seed, char *buffer)
             sprintf(src, "[data%d]", datai);
         }
     }
-    if (X86PGState.need_init) {
-        const char *instName = nasm_insn_names[X86PGState.curr_seed->opcode];
+    if (stat_get_need_init()) {
+        const char *instName = nasm_insn_names[stat_get_opcode()];
         constVal *cVal = request_constVal(instName, opnd_seed->srcdestflags & OPDEST);
         sprintf(buffer, "mov %s [data%d], 0x%x", memsize[whichmemsize], datai,
                 (cVal == NULL) ? (int)nasm_random64(0x100000000) : cVal->imm32);
@@ -334,7 +334,7 @@ bool create_memoffs(operand_seed *opnd_seed, char *buffer)
 bool init_specific_register(enum reg_enum R_reg, bool isDest)
 {
     char buffer[128];
-    const char *instName = nasm_insn_names[X86PGState.curr_seed->opcode];
+    const char *instName = nasm_insn_names[stat_get_opcode()];
     const char *src;
     src = nasm_reg_names[R_reg - EXPR_REG_START];
     constVal *cVal = request_constVal(instName, isDest);

@@ -14,7 +14,7 @@ void init_x86pgstate(void)
     init_text_sec(&X86PGState.text_sec);
     init_data_sec(&X86PGState.data_sec);
     X86PGState.labeli = 0;
-    X86PGState.curr_seed = NULL;
+    X86PGState.opcode = I_none;
     X86PGState.curr_inst = NULL;
     X86PGState.need_init = false;
     X86PGState.instlist = insnlist_create();
@@ -31,7 +31,7 @@ void reset_x86pgstate(void)
     init_text_sec(&X86PGState.text_sec);
     init_data_sec(&X86PGState.data_sec);
     X86PGState.labeli = 0;
-    X86PGState.curr_seed = NULL;
+    X86PGState.opcode = I_none;
     X86PGState.curr_inst = NULL;
     X86PGState.need_init = false;
     X86PGState.insertpos = NULL;
@@ -49,6 +49,26 @@ int stat_get_labeli(void)
 void stat_inc_labeli(void)
 {
     X86PGState.labeli++;
+}
+
+enum opcode stat_get_opcode(void)
+{
+    return X86PGState.opcode;
+}
+
+void stat_set_opcode(enum opcode opcode)
+{
+    X86PGState.opcode = opcode;
+}
+
+bool stat_get_need_init(void)
+{
+    return X86PGState.need_init;
+}
+
+void stat_set_need_init(bool need_init)
+{
+    X86PGState.need_init = need_init;
 }
 
 void stat_lock_ctrl(void)

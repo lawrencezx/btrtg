@@ -28,16 +28,6 @@ static TKmodel *get_tkm_from_hashtbl(const char *instName)
     return tkmpp == NULL ? NULL : *(TKmodel **)tkmpp;
 }
 
-bool request_initialize(const char *instName)
-{
-    return false;
-//    TKmodel *tkm;
-//    tkm = get_tkm_from_hashtbl(instName);
-//    if (tkm)
-//        return likely_happen_p(tkm->initP);
-//    return false;
-}
-
 constVal *request_constVal(const char *instName, bool isDest)
 {
     constVal *cVal;

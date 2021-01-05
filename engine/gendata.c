@@ -584,7 +584,6 @@ bool gen_opcode(const insn_seed *seed)
     const char *inst_name;
 
     /* reset global state */
-    X86PGState.curr_seed = seed;
     stat_unlock_ebx();
     token_reset();
 
@@ -592,8 +591,7 @@ bool gen_opcode(const insn_seed *seed)
     inst_name = nasm_insn_names[seed->opcode];
     sprintf(get_token_cbufptr(), "%s ", inst_name);
 
-    /* initialize all operands if need_init is true  */
-    X86PGState.need_init = request_initialize(inst_name);
+    /* initialize implied operands, exp: eax in mul  */
     if (X86PGState.need_init)
         init_implied_operands(seed);
 

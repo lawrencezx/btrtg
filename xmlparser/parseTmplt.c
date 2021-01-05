@@ -1,3 +1,13 @@
+/******************************************************************************
+* @File name: parseTmplt.c
+* @Author: watchnima
+* @Version: 0.1
+* @Date: 2020-12-15
+* @Description: Parse two kinds of template file:
+*   1) Instruction grouping template.
+*   2) Test generation template.
+******************************************************************************/
+
 #include "compiler.h"
 
 #include "nasm.h"
@@ -72,20 +82,21 @@ static void parseSelBlk(xmlNodePtr selNode, blk_struct *blk)
     weights = selTree->weights;
     subtrees = selTree->children;
 
-    for (xmlNodePtr blkNode = selNode->children; blkNode != NULL; blkNode = blkNode->next) {
+    for (xmlNodePtr blkNode = selNode->children; blkNode != NULL;
+        blkNode = blkNode->next) {
         if (blkNode->type != XML_ELEMENT_NODE)
             continue;
 
-        char *propWeight;
+        char *prop_weight;
 
-        propWeight = (char *)xmlGetProp(blkNode, (const unsigned char*)"weight");
+        prop_weight = (char *)xmlGetProp(blkNode, (const unsigned char*)"weight");
 
-        weights[i] = atoi(propWeight);
+        weights[i] = atoi(prop_weight);
         key = (char *)xmlGetProp(blkNode, (const unsigned char*)"type");
         subtrees[i] = *(WDTree **)hash_find(&hash_wdtrees, key, &hi);
         i++;
 
-        free(propWeight);
+        free(prop_weight);
         free(key);
     }
 
@@ -124,79 +135,121 @@ static void parseRptBlk(xmlNodePtr rptNode, blk_struct *blk)
     free(propTimes);
 }
 
-static void parseG(xmlNodePtr IsetNode, blk_struct *blk)
+/******************************************************************************
+*
+* Function name: parseG
+* Description: parse an <G> tag into a blk_struct
+*              An <G> tag has two attribute:
+*              (1) type: string, instruction group identifier
+*              (2) inip: double, the probability to initilize it's operand
+* Parameter:
+*       @GNode: input, a xml instruction group node
+*       @blk: return, the return blk_struct
+* Return: none
+******************************************************************************/
+static void parseG(xmlNodePtr GNode, blk_struct *blk)
 {
-    char *isetType;
-    elem_struct *iset_e;
+    char *gType;
+    elem_struct *g_e;
     struct hash_insert hi;
-    char *propType;
+    char *prop_type, *prop_inip;
 
-    propType = (char *)xmlGetProp(IsetNode, (const unsigned char*)"type");
+    prop_type = (char *)xmlGetProp(GNode, (const unsigned char*)"type");
+    prop_inip = (char *)xmlGetProp(GNode, (const unsigned char*)"inip");
 
-    iset_e = (elem_struct *)nasm_malloc(sizeof(elem_struct));
-    iset_e->type = ISET_ELEM;
-    isetType = nasm_trim(propType);
-    iset_e->wdtree = *(WDTree **)hash_find(&hash_wdtrees, isetType, &hi);
+    g_e = (elem_struct *)nasm_malloc(sizeof(elem_struct));
+    g_e->type = ISET_ELEM;
+    gType = nasm_trim(prop_type);
+    g_e->wdtree = *(WDTree **)hash_find(&hash_wdtrees, gType, &hi);
+    g_e->inip = (prop_inip == NULL) ? 0.0 : atof(prop_inip);
 
     blk->num = 1;
     blk->type = ELEM_BLK;
     blk->blks = (void **)nasm_malloc(sizeof(void *));
-    blk->blks[0] = (void *)iset_e;
+    blk->blks[0] = (void *)g_e;
 
-    free(propType);
+    free(prop_type);
+    free(prop_inip);
 }
 
-static void parseP(xmlNodePtr PrintNode, blk_struct *blk)
+/******************************************************************************
+*
+* Function name: parseP
+* Description: parse an <P> tag into a blk_struct
+*              An <P> tag has one attribute:
+*              (1) type: string, printing type
+* Parameter:
+*       @GNode: input, a xml printing node
+*       @blk: return, the return blk_struct
+* Return: none
+******************************************************************************/
+static void parseP(xmlNodePtr PNode, blk_struct *blk)
 {
-    char *printType;
-    elem_struct *print_e;
-    char *propType;
+    char *pType;
+    elem_struct *p_e;
+    char *prop_type;
 
-    propType = (char *)xmlGetProp(PrintNode, (const unsigned char*)"type");
+    prop_type = (char *)xmlGetProp(PNode, (const unsigned char*)"type");
 
-    print_e = (elem_struct *)nasm_malloc(sizeof(elem_struct));
-    print_e->type = PRINT_ELEM;
-    printType = nasm_trim(propType);
-    if (strcmp(printType, "all_state") == 0) {
-        print_e->printType = ALL_STATE;
-    } else if (strcmp(printType, "x86_state") == 0) {
-        print_e->printType = X86_STATE;
-    } else if (strcmp(printType, "x87_state") == 0) {
-        print_e->printType = X87_STATE;
+    p_e = (elem_struct *)nasm_malloc(sizeof(elem_struct));
+    p_e->type = PRINT_ELEM;
+    pType = nasm_trim(prop_type);
+    if (strcmp(pType, "all_state") == 0) {
+        p_e->pType = ALL_STATE;
+    } else if (strcmp(pType, "x86_state") == 0) {
+        p_e->pType = X86_STATE;
+    } else if (strcmp(pType, "x87_state") == 0) {
+        p_e->pType = X87_STATE;
     } else {
-        nasm_fatal("Unsupported print type: %s", printType);
+        nasm_fatal("Unsupported p type: %s", pType);
     }
 
     blk->num = 1;
     blk->type = ELEM_BLK;
     blk->blks = (void **)nasm_malloc(sizeof(void *));
-    blk->blks[0] = (void *)print_e;
+    blk->blks[0] = (void *)p_e;
 
-    free(propType);
+    free(prop_type);
 }
 
+/******************************************************************************
+*
+* Function name: parseI
+* Description: parse an <I> tag into a blk_struct
+*              An <I> tag has two attribute:
+*              (1) type: string, pseudo assembler code
+*              (2) inip: double, the probability to initilize it's operand
+* Parameter:
+*       @INode: input, a xml instruction node
+*       @blk: return, the return blk_struct
+* Return: none
+******************************************************************************/
 static void parseI(xmlNodePtr INode, blk_struct *blk)
 {
     elem_struct *i_e;
-    char *propType;
+    char *prop_type, *prop_inip;
 
-    propType = (char *)xmlGetProp(INode, (const unsigned char*)"type");
+    prop_type = (char *)xmlGetProp(INode, (const unsigned char*)"type");
+    prop_inip = (char *)xmlGetProp(INode, (const unsigned char*)"inip");
 
     i_e = (elem_struct *)nasm_malloc(sizeof(elem_struct));
     i_e->type = INSN_ELEM;
-    i_e->inst = nasm_strdup(nasm_trim(propType));
+    i_e->inst = nasm_strdup(nasm_trim(prop_type));
+    i_e->inip = (prop_inip == NULL) ? 0.0 : atof(prop_inip);
 
     blk->num = 1;
     blk->type = ELEM_BLK;
     blk->blks = (void **)nasm_malloc(sizeof(void *));
     blk->blks[0] = (void *)i_e;
 
-    free(propType);
+    free(prop_type);
+    free(prop_inip);
 }
 
 static void parseBlk(xmlNodePtr blkNodeStart, blk_struct *blk)
 {
-    for (xmlNodePtr blkNode = blkNodeStart; blkNode != NULL; blkNode = blkNode->next) {
+    for (xmlNodePtr blkNode = blkNodeStart; blkNode != NULL;
+        blkNode = blkNode->next) {
         if (blkNode->type != XML_ELEMENT_NODE)
             continue;
 
@@ -227,7 +280,8 @@ static void parseBlk(xmlNodePtr blkNodeStart, blk_struct *blk)
         if (blk->blks == NULL) {
             blk->blks = (void **)nasm_malloc(sizeof(void *));
         } else {
-            blk->blks = (void **)nasm_realloc(blk->blks, (blk->num + 1) * sizeof(void *));
+            blk->blks = (void **)nasm_realloc(blk->blks,
+                (blk->num + 1) * sizeof(void *));
         }
         blk->blks[blk->num] = (void *)subblk;
         blk->num++;

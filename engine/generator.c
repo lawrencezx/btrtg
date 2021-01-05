@@ -291,6 +291,9 @@ bool one_insn_gen(const insn_seed *seed, insn *result)
         return false;
     i = get_token(&tokval);
 
+    if (stat_get_opcode() == I_none)
+        stat_set_opcode(tokval.t_integer);
+
     result->opcode = tokval.t_integer;
     result->condition = tokval.t_inttwo;
 
