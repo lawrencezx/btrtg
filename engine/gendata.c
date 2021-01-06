@@ -742,8 +742,6 @@ bool gen_operand(const insn_seed *seed, int opi, bool *label_consumer)
 {
     operand_seed opnd_seed;
 
-    init_opnd_seed(&opnd_seed);
-
     if (seed == NULL) {
         char *opnd_start, *opnd_end;
         char asm_opnd[128];
