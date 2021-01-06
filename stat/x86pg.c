@@ -3,6 +3,7 @@
 #include "nasm.h"
 #include "insns.h"
 #include "seed.h"
+#include "tmplt.h"
 #include "x86pg.h"
 
 struct X86PGState X86PGState;
@@ -39,6 +40,16 @@ void reset_x86pgstate(void)
     X86PGState.lock_edx = false;
     X86PGState.lock_ebx = false;
     X86PGState.lock_ecx = false;
+}
+
+blk_struct *stat_get_curr_blk(void)
+{
+    return X86PGState.curr_blk;
+}
+
+void stat_set_curr_blk(blk_struct *blk)
+{
+    X86PGState.curr_blk = blk;
 }
 
 int stat_get_labeli(void)

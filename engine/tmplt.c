@@ -12,10 +12,9 @@ tmplt_struct tmpltm;
 void init_blk_struct(blk_struct *blk)
 {
     blk->type = -1;
-    blk->num = 0;
     blk->xfrName = NULL;
     blk->times = 0;
-    blk->blks = NULL;
+    blk->blks = g_array_new(FALSE, FALSE, sizeof(void *));
 }
 
 static void walkSeqBlk(blk_struct *blk);
@@ -35,8 +34,8 @@ static void (*walkBlkFuncs[])(blk_struct *) =
 
 static void walkSeqBlk(blk_struct *blk)
 {
-    for (int i = 0; i < blk->num; i++) {
-        blk_struct *subblk = blk->blks[i];
+    for (guint i = 0; i < blk->blks->len; i++) {
+        blk_struct *subblk = g_array_index(blk->blks, blk_struct *, i);
         walkBlkFuncs[subblk->type](subblk);
     }
 }
@@ -48,7 +47,7 @@ static void walkSelBlk(blk_struct *blk)
     insn_seed seed;
     insn inst;
 
-    wdtree = (WDTree *)blk->blks[0];
+    wdtree = g_array_index(blk->blks, WDTree *, 0);
     cVal = wdtree_select_constval(wdtree);
     
     create_insn_seed(&seed, cVal->instName);
@@ -63,8 +62,8 @@ static void walkXfrBlk(blk_struct *blk)
 static void walkRptBlk(blk_struct *blk)
 {
     for (int k = 0; k < blk->times; k++) {
-        for (int i = 0; i < blk->num; i++) {
-            blk_struct *subblk = blk->blks[i];
+        for (guint i = 0; i < blk->blks->len; i++) {
+            blk_struct *subblk = g_array_index(blk->blks, blk_struct *, i);
             walkBlkFuncs[subblk->type](subblk);
         }
     }
@@ -177,7 +176,7 @@ static void walkIElem(elem_struct *i_e)
 static void walkElemBlk(blk_struct *blk)
 {
     stat_set_opcode(I_none);
-    elem_struct *elem = (elem_struct *)blk->blks[0];
+    elem_struct *elem = g_array_index(blk->blks, elem_struct *, 0);
     walkElemFuncs[elem->type](elem);
 }
 
@@ -200,14 +199,14 @@ static void blk_free(blk_struct *blk)
         return;
     if (blk->type == SEL_BLK) {
     } else if (blk->type == ELEM_BLK) {
-        elem_free((elem_struct *)blk->blks[0]);
+        elem_free(g_array_index(blk->blks, elem_struct *, 0));
     } else {
-        for (int i = 0; i < blk->num; i++) {
-            blk_free(blk->blks[i]);
+        for (guint i = 0; i < blk->blks->len; i++) {
+            blk_free(g_array_index(blk->blks, void *, i));
         }
     }
     free(blk->xfrName);
-    free(blk->blks);
+    g_array_free(blk->blks, true);
     free(blk);
 }
 

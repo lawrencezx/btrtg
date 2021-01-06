@@ -105,6 +105,8 @@
 # include <machine/endian.h>
 #endif
 
+# include<gmodule.h>
+
 /*
  * If we have BYTE_ORDER defined, or the compiler provides
  * __BIG_ENDIAN__ or __LITTLE_ENDIAN__, trust it over what autoconf

@@ -100,10 +100,8 @@ static void parseSelBlk(xmlNodePtr selNode, blk_struct *blk)
         free(key);
     }
 
-    blk->num = 1;
     blk->type = SEL_BLK;
-    blk->blks = (void **)nasm_malloc(sizeof(void *));
-    blk->blks[0] = (void *)selTree;
+    g_array_append_val(blk->blks, selTree);
 }
 
 static void parseXfrBlk(xmlNodePtr xfrNode, blk_struct *blk)
@@ -163,10 +161,8 @@ static void parseG(xmlNodePtr GNode, blk_struct *blk)
     g_e->wdtree = *(WDTree **)hash_find(&hash_wdtrees, gType, &hi);
     g_e->inip = (prop_inip == NULL) ? 0.0 : atof(prop_inip);
 
-    blk->num = 1;
     blk->type = ELEM_BLK;
-    blk->blks = (void **)nasm_malloc(sizeof(void *));
-    blk->blks[0] = (void *)g_e;
+    g_array_append_val(blk->blks, g_e);
 
     free(prop_type);
     free(prop_inip);
@@ -204,10 +200,8 @@ static void parseP(xmlNodePtr PNode, blk_struct *blk)
         nasm_fatal("Unsupported p type: %s", pType);
     }
 
-    blk->num = 1;
     blk->type = ELEM_BLK;
-    blk->blks = (void **)nasm_malloc(sizeof(void *));
-    blk->blks[0] = (void *)p_e;
+    g_array_append_val(blk->blks, p_e);
 
     free(prop_type);
 }
@@ -237,10 +231,8 @@ static void parseI(xmlNodePtr INode, blk_struct *blk)
     i_e->inst = nasm_strdup(nasm_trim(prop_type));
     i_e->inip = (prop_inip == NULL) ? 0.0 : atof(prop_inip);
 
-    blk->num = 1;
     blk->type = ELEM_BLK;
-    blk->blks = (void **)nasm_malloc(sizeof(void *));
-    blk->blks[0] = (void *)i_e;
+    g_array_append_val(blk->blks, i_e);
 
     free(prop_type);
     free(prop_inip);
@@ -277,14 +269,7 @@ static void parseBlk(xmlNodePtr blkNodeStart, blk_struct *blk)
             nasm_fatal("Unsupported statement type: %s", blkName);
         }
 
-        if (blk->blks == NULL) {
-            blk->blks = (void **)nasm_malloc(sizeof(void *));
-        } else {
-            blk->blks = (void **)nasm_realloc(blk->blks,
-                (blk->num + 1) * sizeof(void *));
-        }
-        blk->blks[blk->num] = (void *)subblk;
-        blk->num++;
+        g_array_append_val(blk->blks, subblk);
     }
 }
 

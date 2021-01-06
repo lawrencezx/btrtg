@@ -241,15 +241,18 @@ static inline bool is_reg_class(opflags_t class, opflags_t reg)
 #define REG_AL                  (GEN_SUBCLASS(1)                   | REG_CLASS_GPR | BITS8   | REGMEM | REGISTER)
 #define REG_AX                  (GEN_SUBCLASS(1)                   | REG_CLASS_GPR | BITS16  | REGMEM | REGISTER)
 #define REG_EAX                 (GEN_SUBCLASS(1)                   | REG_CLASS_GPR | BITS32  | REGMEM | REGISTER)
+#undef REG_RAX
 #define REG_RAX                 (GEN_SUBCLASS(1)                   | REG_CLASS_GPR | BITS64  | REGMEM | REGISTER)
 #define REG_COUNT               (GEN_SUBCLASS(5) | GEN_SUBCLASS(2) | REG_CLASS_GPR           | REGMEM | REGISTER)       /* counter: CL, CX, ECX, RCX */
 #define REG_CL                  (GEN_SUBCLASS(5) | GEN_SUBCLASS(2) | REG_CLASS_GPR | BITS8   | REGMEM | REGISTER)
 #define REG_CX                  (GEN_SUBCLASS(5) | GEN_SUBCLASS(2) | REG_CLASS_GPR | BITS16  | REGMEM | REGISTER)
 #define REG_ECX                 (GEN_SUBCLASS(5) | GEN_SUBCLASS(2) | REG_CLASS_GPR | BITS32  | REGMEM | REGISTER)
+#undef REG_RCX
 #define REG_RCX                 (GEN_SUBCLASS(5) | GEN_SUBCLASS(2) | REG_CLASS_GPR | BITS64  | REGMEM | REGISTER)
 #define REG_DL                  (GEN_SUBCLASS(5) | GEN_SUBCLASS(3) | REG_CLASS_GPR | BITS8   | REGMEM | REGISTER)       /* data: DL, DX, EDX, RDX */
 #define REG_DX                  (GEN_SUBCLASS(5) | GEN_SUBCLASS(3) | REG_CLASS_GPR | BITS16  | REGMEM | REGISTER)
 #define REG_EDX                 (GEN_SUBCLASS(5) | GEN_SUBCLASS(3) | REG_CLASS_GPR | BITS32  | REGMEM | REGISTER)
+#undef REG_RDX
 #define REG_RDX                 (GEN_SUBCLASS(5) | GEN_SUBCLASS(3) | REG_CLASS_GPR | BITS64  | REGMEM | REGISTER)
 #define REG_HIGH                (GEN_SUBCLASS(5) | GEN_SUBCLASS(4) | REG_CLASS_GPR | BITS8   | REGMEM | REGISTER)       /* high regs: AH, CH, DH, BH */
 #define REG_NOTACC              GEN_SUBCLASS(5)                                                                         /* non-accumulator register */

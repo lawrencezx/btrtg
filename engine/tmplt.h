@@ -54,12 +54,18 @@ typedef enum blk_type {
     ELEM_BLK
 } blk_type;
 
+typedef struct blk_var {
+    char        *name;
+    opflags_t   opndflags;
+    char        *asm_var;
+} blk_var;
+
 typedef struct blk_struct {
     blk_type type;
-    int num;
     char *xfrName;
     int times;          /* RPT_BLK, XFR_BLK */
-    void **blks;
+    GArray *vars;
+    GArray *blks;
 } blk_struct;
 
 /* template

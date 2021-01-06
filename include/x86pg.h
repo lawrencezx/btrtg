@@ -5,6 +5,7 @@
 #include "insnlist.h"
 #include "section.h"
 #include "seed.h"
+#include "tmplt.h"
 
 
 /* big sequence index
@@ -68,6 +69,8 @@ struct X86PGState {
         bool need_init;
     }; /* current instruction */
 
+    blk_struct *curr_blk;
+
     int labeli;
     insnlist_entry_t **labelspos;
     bool lock_ctrl;
@@ -92,6 +95,8 @@ enum position {
 
 void stat_insert_insn(insn *inst, enum position pos);
 
+blk_struct *stat_get_curr_blk(void);
+void stat_set_curr_blk(blk_struct *blk);
 int stat_get_labeli(void);
 void stat_inc_labeli(void);
 enum opcode stat_get_opcode(void);
