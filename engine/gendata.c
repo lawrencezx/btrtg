@@ -11,7 +11,7 @@
 #include "x86pg.h"
 #include "buf2token.h"
 #include "tk.h"
-#include <string.h>
+#include "asmlib.h"
 
 
 static bool is_label_consumer(operand_seed *opnd_seed)
@@ -741,22 +741,60 @@ static bool gen_operand_internal(operand_seed *opnd_seed, char *buffer)
 bool gen_operand(const insn_seed *seed, int opi, bool *label_consumer)
 {
     operand_seed opnd_seed;
+    char *token_bufptr;
+
+    token_bufptr = get_token_bufptr();
 
     if (seed == NULL) {
-        char *opnd_start, *opnd_end;
+        char *opnd_start, *opnd_end, *next_opnd;
         char asm_opnd[128];
-        opnd_end = opnd_start = nasm_skip_spaces(get_token_bufptr());
+        opnd_end = opnd_start = nasm_skip_spaces(token_bufptr);
         while (*opnd_end != 0 && *opnd_end != '\n' && *opnd_end != ',') {
             asm_opnd[opnd_end - opnd_start] = *opnd_end;
             opnd_end++;
         }
         asm_opnd[opnd_end - opnd_start] = '\0';
+
         create_opnd_seed(&opnd_seed, asm_opnd);
-        if (opnd_seed.opndflags) {
-            memset(asm_opnd, '\0', sizeof(asm_opnd));
+
+        if (opnd_seed.is_var) {
+            blk_var *var = blk_search_var(stat_get_curr_blk(), asm_opnd + 1);
+            if (!var->valid) {
+                /* generate variable and store it to var->asm_var
+                 */
+                memset(asm_opnd, '\0', ARRAY_SIZE(asm_opnd));
+                if (!gen_operand_internal(&opnd_seed, asm_opnd))
+                    return false;
+                free(var->asm_var);
+                var->opndflags = opnd_seed.opndflags;
+                var->asm_var = nasm_strdup(nasm_trim(asm_opnd));
+                var->valid = true;
+            }
+
+            nasm_strrplc(opnd_start, opnd_end - opnd_start, var->asm_var,
+                strlen(var->asm_var));
+
+            /* specify the fundamental data item size for a memory operand
+             */
+            next_opnd = nasm_skip_a_comma(opnd_start);
+            if (opi == 0 && is_class(MEMORY, var->opndflags) &&
+                (asm_is_blank(next_opnd) || asm_is_immediate(next_opnd))) {
+                preappend_mem_size(opnd_start, var->opndflags & SIZE_MASK);
+            }
+        } else if (opnd_seed.opndflags) {
+            memset(asm_opnd, '\0', ARRAY_SIZE(asm_opnd));
             if (!gen_operand_internal(&opnd_seed, asm_opnd))
                 return false;
-            nasm_strrplc(opnd_start, opnd_end - opnd_start, asm_opnd, strlen(asm_opnd));
+            nasm_strrplc(opnd_start, opnd_end - opnd_start, asm_opnd,
+                strlen(asm_opnd));
+
+            /* specify the fundamental data item size for a memory operand
+             */
+            next_opnd = nasm_skip_a_comma(opnd_start);
+            if (opi == 0 && is_class(MEMORY, opnd_seed.opndflags) &&
+                (asm_is_blank(next_opnd) || asm_is_immediate(next_opnd))) {
+                preappend_mem_size(opnd_start, opnd_seed.opdsize);
+            }
         }
     } else {
         if (seed->opd[opi] == 0)
@@ -766,23 +804,20 @@ bool gen_operand(const insn_seed *seed, int opi, bool *label_consumer)
         opnd_seed.srcdestflags = calSrcDestFlags(seed, opi);
         opnd_seed.opdsize = calOperandSize(seed, opi);
 
-        /* specify the fundamental data item size for a memory operand
-         * for example: byte, word, dword, etc.
-         */
-        if ((opi == 0 && is_class(IMMEDIATE, seed->opd[1])) ||
-            seed->opd[1] == 0) {
-            opnd_seed.explicitmemsize = true;
-        } else {
-            opnd_seed.explicitmemsize = false;
-        }
-
         if (opi != 0) {
-            gen_comma(get_token_bufptr());
-            set_token_bufptr(get_token_bufptr() + 1);
+            gen_comma(token_bufptr);
+            set_token_bufptr(++token_bufptr);
         }
 
-        if (!gen_operand_internal(&opnd_seed, get_token_bufptr()))
+        if (!gen_operand_internal(&opnd_seed, token_bufptr))
             return false;
+
+        /* specify the fundamental data item size for a memory operand
+         */
+        if (opi == 0 && is_class(MEMORY, opnd_seed.opndflags) &&
+            (seed->opd[1] == 0 || is_class(IMMEDIATE, seed->opd[1]))) {
+            preappend_mem_size(token_bufptr, opnd_seed.opdsize);
+        }
 
         if (is_label_consumer(&opnd_seed)) {
             *label_consumer = true;

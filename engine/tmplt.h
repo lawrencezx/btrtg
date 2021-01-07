@@ -51,16 +51,19 @@ typedef enum blk_type {
     SEL_BLK,
     XFR_BLK,
     RPT_BLK,
+    TRV_BLK,
     ELEM_BLK
 } blk_type;
 
 typedef struct blk_var {
+    bool        valid;
     char        *name;
     opflags_t   opndflags;
     char        *asm_var;
 } blk_var;
 
 typedef struct blk_struct {
+    struct blk_struct *parent;
     blk_type type;
     char *xfrName;
     int times;          /* RPT_BLK, XFR_BLK */
@@ -75,6 +78,8 @@ typedef struct tmplt_struct {
 } tmplt_struct;
 
 void init_blk_struct(blk_struct *blk);
+void init_blk_var(blk_var *var);
+blk_var *blk_search_var(blk_struct *blk, const char *var_name);
 void walk_tmplt(void);
 void tmplt_clear(tmplt_struct *tmpltm);
 void tmplt_free(tmplt_struct *tmpltm);

@@ -1,5 +1,12 @@
 <Template>
     <I type = "add reg32, imm32" inip = "1.0"> </I>
+    <traverse var = "mem" type = "mem16">
+        <I type = "lea bx, @mem"></I>
+        <I type = "add @mem, imm16"></I>
+        <sequence>
+            <I type = "sub @mem, imm16"></I>
+        </sequence>
+    </traverse>
     <repeat times = "10">
         <select>
             <G type = "BinaryArithmetic" weight = "35"> </G>
@@ -7,6 +14,5 @@
             <G type = "ShiftRotate" weight = "15"> </G>
             <G type = "DataTransfer" weight = "25"> </G>
         </select>
-        <P type = "all_state"> </P>
     </repeat>
 </Template>

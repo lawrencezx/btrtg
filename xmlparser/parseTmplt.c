@@ -106,31 +106,51 @@ static void parseSelBlk(xmlNodePtr selNode, blk_struct *blk)
 
 static void parseXfrBlk(xmlNodePtr xfrNode, blk_struct *blk)
 {
-    char *propTimes, *propXfrName;
+    char *prop_times, *propXfrName;
 
-    propTimes = (char *)xmlGetProp(xfrNode, (const unsigned char*)"times");
+    prop_times = (char *)xmlGetProp(xfrNode, (const unsigned char*)"times");
     propXfrName = (char *)xmlGetProp(xfrNode, (const unsigned char*)"type");
 
     blk->type = XFR_BLK;
-    blk->times = atoi(propTimes);
+    blk->times = atoi(prop_times);
     blk->xfrName = nasm_strdup(nasm_trim(propXfrName));
     parseBlk(xfrNode->children, blk);
 
-    free(propTimes);
+    free(prop_times);
     free(propXfrName);
 }
 
 static void parseRptBlk(xmlNodePtr rptNode, blk_struct *blk)
 {
-    char *propTimes;
+    char *prop_times;
 
-    propTimes = (char *)xmlGetProp(rptNode, (const unsigned char*)"times");
+    prop_times = (char *)xmlGetProp(rptNode, (const unsigned char*)"times");
 
     blk->type = RPT_BLK;
-    blk->times = atoi(propTimes);
+    blk->times = atoi(prop_times);
     parseBlk(rptNode->children, blk);
 
-    free(propTimes);
+    free(prop_times);
+}
+
+static void parseTrvBlk(xmlNodePtr trvNode, blk_struct *blk)
+{
+    char *prop_var, *prop_var_type;
+
+    prop_var = (char *)xmlGetProp(trvNode, (const unsigned char*)"var");
+    prop_var_type = (char *)xmlGetProp(trvNode, (const unsigned char*)"type");
+
+    blk_var var;
+    init_blk_var(&var);
+    var.name = nasm_strdup(prop_var);
+    var.asm_var = nasm_strdup(prop_var_type);
+    g_array_append_val(blk->vars, var);
+
+    blk->type = TRV_BLK;
+    parseBlk(trvNode->children, blk);
+
+    free(prop_var);
+    free(prop_var_type);
 }
 
 /******************************************************************************
@@ -251,6 +271,7 @@ static void parseBlk(xmlNodePtr blkNodeStart, blk_struct *blk)
         blkName = (const char *)blkNode->name;
         subblk = (blk_struct *)nasm_malloc(sizeof(blk_struct));
         init_blk_struct(subblk);
+        subblk->parent = blk;
         if (strcmp(blkName, "sequence") == 0) {
             parseSeqBlk(blkNode, subblk);
         } else if (strcmp(blkName, "select") == 0) {
@@ -259,6 +280,8 @@ static void parseBlk(xmlNodePtr blkNodeStart, blk_struct *blk)
             parseXfrBlk(blkNode, subblk);
         } else if (strcmp(blkName, "repeat") == 0) {
             parseRptBlk(blkNode, subblk);
+        } else if (strcmp(blkName, "traverse") == 0) {
+            parseTrvBlk(blkNode, subblk);
         } else if (strcmp(blkName, "G") == 0) {
             parseG(blkNode, subblk);
         } else if (strcmp(blkName, "P") == 0) {

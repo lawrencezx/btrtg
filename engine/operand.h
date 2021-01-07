@@ -10,5 +10,6 @@ bool create_immediate(operand_seed *opnd_seed, char *buffer);
 bool create_memory(operand_seed *opnd_seed, char *buffer);
 bool create_memoffs(operand_seed *opnd_seed, char *buffer);
 bool init_specific_register(enum reg_enum R_reg, bool isDest);
+char *preappend_mem_size(char *asm_mem, opflags_t opdsize);
 
 #endif

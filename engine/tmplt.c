@@ -11,16 +11,39 @@ tmplt_struct tmpltm;
 
 void init_blk_struct(blk_struct *blk)
 {
+    blk->parent = NULL;
     blk->type = -1;
     blk->xfrName = NULL;
     blk->times = 0;
     blk->blks = g_array_new(FALSE, FALSE, sizeof(void *));
+    blk->vars = g_array_new(FALSE, FALSE, sizeof(blk_var));
+}
+
+void init_blk_var(blk_var *var)
+{
+    var->valid = false;
+    var->name = NULL;
+    var->opndflags = 0;
+    var->asm_var = NULL;
+}
+
+blk_var *blk_search_var(blk_struct *blk, const char *var_name)
+{
+    if (blk == NULL)
+        return NULL;
+    for (guint i = 0; i < blk->vars->len; i++) {
+        if (strcmp(g_array_index(blk->vars, blk_var, i).name, var_name) == 0) {
+            return &g_array_index(blk->vars, blk_var, i);
+        }
+    }
+    return blk_search_var(blk->parent, var_name);
 }
 
 static void walkSeqBlk(blk_struct *blk);
 static void walkSelBlk(blk_struct *blk);
 static void walkXfrBlk(blk_struct *blk);
 static void walkRptBlk(blk_struct *blk);
+static void walkTrvBlk(blk_struct *blk);
 static void walkElemBlk(blk_struct *blk);
 
 static void (*walkBlkFuncs[])(blk_struct *) =
@@ -29,11 +52,14 @@ static void (*walkBlkFuncs[])(blk_struct *) =
     walkSelBlk,
     walkXfrBlk,
     walkRptBlk,
+    walkTrvBlk,
     walkElemBlk
 };
 
 static void walkSeqBlk(blk_struct *blk)
 {
+    stat_set_curr_blk(blk);
+
     for (guint i = 0; i < blk->blks->len; i++) {
         blk_struct *subblk = g_array_index(blk->blks, blk_struct *, i);
         walkBlkFuncs[subblk->type](subblk);
@@ -47,6 +73,8 @@ static void walkSelBlk(blk_struct *blk)
     insn_seed seed;
     insn inst;
 
+    stat_set_curr_blk(blk);
+
     wdtree = g_array_index(blk->blks, WDTree *, 0);
     cVal = wdtree_select_constval(wdtree);
     
@@ -56,16 +84,29 @@ static void walkSelBlk(blk_struct *blk)
 
 static void walkXfrBlk(blk_struct *blk)
 {
+    stat_set_curr_blk(blk);
     /* TODO */
 }
 
 static void walkRptBlk(blk_struct *blk)
 {
+    stat_set_curr_blk(blk);
+
     for (int k = 0; k < blk->times; k++) {
         for (guint i = 0; i < blk->blks->len; i++) {
             blk_struct *subblk = g_array_index(blk->blks, blk_struct *, i);
             walkBlkFuncs[subblk->type](subblk);
         }
+    }
+}
+
+static void walkTrvBlk(blk_struct *blk)
+{
+    stat_set_curr_blk(blk);
+
+    for (guint i = 0; i < blk->blks->len; i++) {
+        blk_struct *subblk = g_array_index(blk->blks, blk_struct *, i);
+        walkBlkFuncs[subblk->type](subblk);
     }
 }
 

@@ -139,6 +139,17 @@ char *nasm_skip_string(const char *p)
     return (char *)p;
 }
 
+/* skip the first comma */
+char *nasm_skip_a_comma(const char *p)
+{
+    if (p)
+        while (*p && *p != ',')
+            p++;
+    if (p && *p == ',')
+        p++;
+    return (char *)p;
+}
+
 /* zap leading spaces with zero */
 char *nasm_zap_spaces_fwd(char *p)
 {
@@ -240,18 +251,44 @@ char *nasm_opt_val(char *p, char **val, char **next)
     return p;
 }
 
+/*
+ * Copy src to string dst of size siz.  At most siz characters
+ * will be copied.  No NULL terminates.
+ * Returns strlen(src); if retval >= siz, truncation occurred.
+ */
+static char *strlcpyn(char *dst, const char *src, size_t siz)
+{
+    char *d = dst;
+    const char *s = src;
+    size_t n = siz;
+
+    if (s < d && s + n > d) {
+        d += n - 1;
+        s += n - 1;
+        while (n-- != 0)
+            *d-- = *s--;
+    } else {
+        while (n-- != 0)
+            *d++ = *s++;
+    }
+
+    return dst;
+}
+
 /* replace [dest, dest + dest_size) with [src, src + src_size)
  */
-char *nasm_strrplc(char *dest, int dest_size, char *src, int src_size)
+char *nasm_strrplc(char *dest, int dest_size, const char *src, int src_size)
 {
     if (dest_size < 0 || src_size < 0)
         return NULL;
+    size_t len = strlen(dest + dest_size) + strlen(src);
     if (src_size <= dest_size) {
-        strcpy(dest, src);
-        strcpy(dest + src_size, dest + dest_size);
+        strlcpyn(dest, src, strlen(src));
+        strlcpyn(dest + src_size, dest + dest_size, strlen(dest + dest_size));
     } else {
-        strcpy(dest + src_size, dest + dest_size);
-        strcpy(dest, src);
+        strlcpyn(dest + src_size, dest + dest_size, strlen(dest + dest_size));
+        strlcpyn(dest, src, strlen(src));
     }
+    *(dest + len) = '\0';
     return dest;
 }

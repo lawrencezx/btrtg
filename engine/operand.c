@@ -342,3 +342,14 @@ bool init_specific_register(enum reg_enum R_reg, bool isDest)
     one_insn_gen_const(buffer);
     return true;
 }
+
+/* specify the fundamental data item size for a memory operand
+ * for example: byte, word, dword, etc.
+ */
+char *preappend_mem_size(char *asm_mem, opflags_t opdsize)
+{
+    static const char *memsize[3] = {"byte ", "word ", "dword "};
+    int i = opdsize == BITS8 ? 0 :
+            opdsize == BITS16 ? 1 : 2;
+    return nasm_strrplc(asm_mem, 0, memsize[i], strlen(memsize[i]));
+}

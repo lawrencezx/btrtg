@@ -340,13 +340,14 @@ int bsii(const char *string, const char **array, int size);
 char *nasm_skip_spaces(const char *p);
 char *nasm_skip_word(const char *p);
 char *nasm_skip_string(const char *p);
+char *nasm_skip_a_comma(const char *p);
 char *nasm_zap_spaces_fwd(char *p);
 char *nasm_zap_spaces_rev(char *p);
 char *nasm_trim_spaces(char *p);
 char *nasm_trim(char *p);
 char *nasm_get_word(char *p, char **tail);
 char *nasm_opt_val(char *p, char **opt, char **val);
-char *nasm_strrplc(char *dest, int dest_size, char *src, int src_size);
+char *nasm_strrplc(char *dest, int dest_size, const char *src, int src_size);
 
 /*
  * Converts a relative pathname rel_path into an absolute path name.
