@@ -549,7 +549,7 @@ static opflags_t calOperandSize(const insn_seed *seed, int opdi)
     return opdsize;
 }
 
-static void init_implied_operands(const insn_seed *seed)
+static void init_implicit_operands(const insn_seed *seed)
 {
     if (seed->opcode == I_DIV ||
         seed->opcode == I_IDIV) {
@@ -591,9 +591,9 @@ bool gen_opcode(const insn_seed *seed)
     inst_name = nasm_insn_names[seed->opcode];
     sprintf(get_token_cbufptr(), "%s ", inst_name);
 
-    /* initialize implied operands, exp: eax in mul  */
+    /* initialize implicit operands, exp: eax in mul  */
     if (X86PGState.need_init)
-        init_implied_operands(seed);
+        init_implicit_operands(seed);
 
     return true;
 }
