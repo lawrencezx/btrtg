@@ -15,4 +15,5 @@
             <G type = "DataTransfer" weight = "25"> </G>
         </select>
     </repeat>
+    <P type = "all_state"> </P>
 </Template>

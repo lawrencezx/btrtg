@@ -157,7 +157,6 @@ static void gen_call_print_x86_state(void)
     one_insn_gen_const("pop eax");
     one_insn_gen_const("popfd");
     one_insn_gen_const("popad");
-    one_insn_gen_const("popa");
 }
 static void gen_call_print_x87_state(void)
 {
@@ -191,7 +190,6 @@ static void gen_call_print_all_state(void)
     one_insn_gen_const("pop eax");
     one_insn_gen_const("popfd");
     one_insn_gen_const("popad");
-    one_insn_gen_const("popa");
 }
 
 static void walkPElem(elem_struct *p_e)
