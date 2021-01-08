@@ -236,6 +236,11 @@ static void blk_free(blk_struct *blk)
 {
     if (blk == NULL)
         return;
+    for (guint i = 0; i < blk->vars->len; i++) {
+        blk_var *var = &g_array_index(blk->vars, blk_var, i);
+        free(var->name);
+        free(var->asm_var);
+    }
     if (blk->type == SEL_BLK) {
     } else if (blk->type == ELEM_BLK) {
         elem_free(g_array_index(blk->blks, elem_struct *, 0));
@@ -245,6 +250,7 @@ static void blk_free(blk_struct *blk)
         }
     }
     free(blk->xfrName);
+    g_array_free(blk->vars, true);
     g_array_free(blk->blks, true);
     free(blk);
 }
