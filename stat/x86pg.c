@@ -5,6 +5,7 @@
 #include "seed.h"
 #include "tmplt.h"
 #include "x86pg.h"
+#include "reg.h"
 
 struct X86PGState X86PGState;
 
@@ -21,9 +22,9 @@ void init_x86pgstate(void)
     X86PGState.instlist = insnlist_create();
     X86PGState.insertpos = NULL;
     X86PGState.lock_ctrl = false;
-    X86PGState.lock_edx = false;
-    X86PGState.lock_ebx = false;
-    X86PGState.lock_ecx = false;
+    for (int i = 0; i < LOCK_REG_NUM; i++) {
+        X86PGState.lock_reg_cases[i] = LOCK_REG_CASE_NULL;
+    }
 }
 
 void reset_x86pgstate(void)
@@ -37,9 +38,14 @@ void reset_x86pgstate(void)
     X86PGState.need_init = false;
     X86PGState.insertpos = NULL;
     X86PGState.lock_ctrl = false;
-    X86PGState.lock_edx = false;
-    X86PGState.lock_ebx = false;
-    X86PGState.lock_ecx = false;
+    for (int i = 0; i < LOCK_REG_NUM; i++) {
+        X86PGState.lock_reg_cases[i] = LOCK_REG_CASE_NULL;
+    }
+}
+
+struct section *stat_get_data_sec(void)
+{
+    return &X86PGState.data_sec;
 }
 
 blk_struct *stat_get_curr_blk(void)
@@ -97,49 +103,45 @@ bool stat_ctrl_locked(void)
     return X86PGState.lock_ctrl == true;
 }
 
-void stat_lock_edx(void)
+static uint32_t get_lock_reg_type(enum reg_enum reg)
 {
-    X86PGState.lock_edx = true;
+    if (is_reg_ax(reg)) {
+        return LOCK_REG_AX;
+    } else if (is_reg_bx(reg)) {
+        return LOCK_REG_BX;
+    } else if (is_reg_cx(reg)) {
+        return LOCK_REG_CX;
+    } else if (is_reg_dx(reg)) {
+        return LOCK_REG_DX;
+    } else if (is_reg_si(reg)) {
+        return LOCK_REG_SI;
+    } else if (is_reg_di(reg)) {
+        return LOCK_REG_DI;
+    }
+    return 0;
 }
 
-void stat_unlock_edx(void)
+void stat_lock_reg(enum reg_enum reg, enum lock_reg_case lr_case)
 {
-    X86PGState.lock_edx = false;
+    enum lock_reg_type lock_reg_type;
+    lock_reg_type = get_lock_reg_type(reg);
+    X86PGState.lock_reg_cases[lock_reg_type] = lr_case;
 }
 
-bool stat_edx_locked(void)
+void stat_unlock_reg(enum lock_reg_case lr_case)
 {
-    return X86PGState.lock_edx == true;
+    for (int i = 0; i < LOCK_REG_NUM; i++) {
+        if (X86PGState.lock_reg_cases[i] == lr_case) {
+            X86PGState.lock_reg_cases[i] = LOCK_REG_CASE_NULL;
+        }
+    }
 }
 
-void stat_lock_ebx(void)
+bool stat_reg_locked(enum reg_enum reg)
 {
-    X86PGState.lock_ebx = true;
-}
-
-void stat_unlock_ebx(void)
-{
-    X86PGState.lock_ebx = false;
-}
-
-bool stat_ebx_locked(void)
-{
-    return X86PGState.lock_ebx == true;
-}
-
-void stat_lock_ecx(void)
-{
-    X86PGState.lock_ecx = true;
-}
-
-void stat_unlock_ecx(void)
-{
-    X86PGState.lock_ecx = false;
-}
-
-bool stat_ecx_locked(void)
-{
-    return X86PGState.lock_ecx == true;
+    enum lock_reg_type lock_reg_type;
+    lock_reg_type = get_lock_reg_type(reg);
+    return X86PGState.lock_reg_cases[lock_reg_type] != LOCK_REG_CASE_NULL;
 }
 
 void stat_insert_insn(insn *inst, enum position pos) {

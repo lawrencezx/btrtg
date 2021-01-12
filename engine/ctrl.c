@@ -130,7 +130,7 @@ bool gen_control_transfer_insn(const insn_seed *seed)
 
         gen_label(INSERT_BEFORE);
         stat_lock_ctrl();
-        stat_lock_ecx();
+        stat_lock_reg(R_ECX, LOCK_REG_CASE_LOOP);
         return true;
     } else if (seed->opcode == I_CALL) {
         /* call lable(n+1) */

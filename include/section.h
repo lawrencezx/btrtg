@@ -1,7 +1,7 @@
 #ifndef NASM_SECTION_H
 #define NASM_SECTION_H
 
-#define SECTION_DATA_NUM 10
+#define SECTION_DATA_NUM 5
 
 enum secType {
     TEXT_SEC,
@@ -12,7 +12,6 @@ enum secType {
 struct section {
     enum secType type;
     int datanum;
-    int dataoffs[SECTION_DATA_NUM];
     int datasizes[SECTION_DATA_NUM];
 };
 

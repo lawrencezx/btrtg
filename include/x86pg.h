@@ -54,6 +54,22 @@ bseqiflags_t bseqi_flags(opflags_t opndflags);
 bool bseqi_inc(big_sequence_index *bseqi, const insn_seed *seed, int opnum);
 
 
+enum lock_reg_type {
+  LOCK_REG_AX = 0,
+  LOCK_REG_BX,
+  LOCK_REG_CX,
+  LOCK_REG_DX,
+  LOCK_REG_SI,
+  LOCK_REG_DI,
+  LOCK_REG_NUM
+};
+
+enum lock_reg_case {
+    LOCK_REG_CASE_NULL,
+    LOCK_REG_CASE_MEM,
+    LOCK_REG_CASE_LOOP
+};
+
 /* global program generator state
  */
 struct X86PGState {
@@ -74,9 +90,7 @@ struct X86PGState {
     int labeli;
     insnlist_entry_t **labelspos;
     bool lock_ctrl;
-    bool lock_ecx;
-    bool lock_ebx;
-    bool lock_edx;
+    enum lock_reg_case lock_reg_cases[6];
 
     insnlist_t *instlist;
     insnlist_entry_t *insertpos;
@@ -95,6 +109,7 @@ enum position {
 
 void stat_insert_insn(insn *inst, enum position pos);
 
+struct section *stat_get_data_sec(void);
 blk_struct *stat_get_curr_blk(void);
 void stat_set_curr_blk(blk_struct *blk);
 int stat_get_labeli(void);
@@ -107,14 +122,8 @@ void stat_set_need_init(bool need_init);
 void stat_lock_ctrl(void);
 void stat_unlock_ctrl(void);
 bool stat_ctrl_locked(void);
-void stat_lock_edx(void);
-void stat_unlock_edx(void);
-bool stat_edx_locked(void);
-void stat_lock_ebx(void);
-void stat_unlock_ebx(void);
-bool stat_ebx_locked(void);
-void stat_lock_ecx(void);
-void stat_unlock_ecx(void);
-bool stat_ecx_locked(void);
+void stat_lock_reg(enum reg_enum reg, enum lock_reg_case lr_case);
+void stat_unlock_reg(enum lock_reg_case lr_case);
+bool stat_reg_locked(enum reg_enum reg);
 
 #endif

@@ -12,7 +12,6 @@
 #include "dfmt.h"
 #include "tk.h"
 #include "generator.h"
-#include "check.h"
 
 bool create_specific_register(enum reg_enum R_reg, operand_seed *opnd_seed, char *buffer)
 {
@@ -122,7 +121,7 @@ gen_gpr:
             gpr = nasm_rd_reg32[gpri];
             break;
     }
-    if (!check_reg_valid(gpr))
+    if (stat_reg_locked(gpr))
         goto gen_gpr;  
 
     src = nasm_reg_names[gpr - EXPR_REG_START];
@@ -175,101 +174,61 @@ bool create_immediate(operand_seed* opnd_seed, char *buffer)
     return true;
 }
 
-static void create_random_sib(char *buffer)
-{
-    int bi, si;
-    const char *base[8] = {
-        "eax",   "ecx",   "edx",   "ebx",   "esp", "",      "esi",   "edi"
-    };
-    const char *scaledIndex[32] = {
-        "eax",   "ecx",   "edx",   "ebx",   "",    "ebp",   "esi",   "edi",
-        "eax*2", "ecx*2", "edx*2", "ebx*2", "",    "ebp*2", "esi*2", "edi*2",
-        "eax*4", "ecx*4", "edx*4", "ebx*4", "",    "ebp*4", "esi*4", "edi*4",
-        "eax*8", "ecx*8", "edx*8", "ebx*8", "",    "ebp*8", "esi*8", "edi*8",
-    };
-    bi = nasm_random32((int)ARRAY_SIZE(base));
-    si = nasm_random32((int)ARRAY_SIZE(scaledIndex));
-    if (strcmp(base[bi], "") == 0 && strcmp(scaledIndex[si], "") == 0) {
-    } else if (strcmp(base[bi], "") == 0) {
-        sprintf(buffer, "%s", scaledIndex[si]);
-    } else if (strcmp(scaledIndex[si], "") == 0) {
-        sprintf(buffer, "%s", base[bi]);
-    } else {
-        sprintf(buffer, "%s + %s", base[bi], scaledIndex[si]);
-    }
-}
-
-static int random_disp8()
-{
-    return nasm_random32(0x80);
-}
-
-static int random_disp32()
-{
-    return (int)nasm_random64(0x80000000);
-}
-
 static void create_random_modrm(char *buffer)
 {
-    int modrmi, disp = 0;
-    char sib[32];
-    /* [ebx + disp8] */
-    modrmi = 013;
-
+    struct random_mem_addr mem_addr;
     insn lea;
-    sprintf(buffer, "  lea ebx, data0");
-    lea.ctrl = buffer;
-    stat_insert_insn(&lea, INSERT_AFTER);
-    stat_lock_ebx();
+    enum reg_enum baseregs[6] = {R_EAX, R_ECX, R_EDX, R_EBX, R_ESI, R_EDI};
+    enum reg_enum indexregs[6] = {R_EAX, R_ECX, R_EDX, R_EBX, R_ESI, R_EDI};
+    enum reg_enum basereg, indexreg;
 
-    //const int modrmn = 24;
-    //modrmi = nasm_random32(modrmn);
-    if (modrmi == 004 || modrmi == 014 || modrmi == 024) {
-        create_random_sib(sib);
+    /* data section */
+    if (true) {
+        do {
+            basereg = baseregs[nasm_random32(6)];
+        } while (stat_reg_locked(basereg));
+        do {
+            indexreg = indexregs[nasm_random32(6)];
+        } while (stat_reg_locked(indexreg));
+        random_mem_addr_from_data(&mem_addr);
+
+        int modes = nasm_random32(4);
+        const char *base_reg_name = nasm_reg_names[basereg - EXPR_REG_START];
+        const char *index_reg_name = nasm_reg_names[basereg - EXPR_REG_START];
+
+        /* initialize base register and index register */
+        lea.ctrl = buffer;
+        sprintf(buffer, "  lea %s, data%d", base_reg_name, mem_addr.base);
+        stat_insert_insn(&lea, INSERT_AFTER);
+        stat_lock_reg(basereg, LOCK_REG_CASE_MEM);
+        if (modes == 2 || modes == 3) {
+            sprintf(buffer, "  mov %s, 0x%x", index_reg_name, mem_addr.index);
+            stat_insert_insn(&lea, INSERT_AFTER);
+            stat_lock_reg(indexreg, LOCK_REG_CASE_MEM);
+        }
+
+        switch (modes) {
+            case 0:   /* base */
+                sprintf(buffer, "[%s]", base_reg_name);
+                break;
+            case 1:   /* base + disp */
+                sprintf(buffer, "[%s + 0x%x]", base_reg_name, mem_addr.disp);
+                break;
+            case 2:   /* base + index + disp */
+                sprintf(buffer, "[%s + %s + 0x%x]", base_reg_name,
+                    index_reg_name, mem_addr.disp);
+                break;
+            case 3:   /* base + index * scale + disp */
+                sprintf(buffer, "[%s + %s*%d + 0x%x]", base_reg_name,
+                    index_reg_name, mem_addr.scale, mem_addr.disp);
+                break;
+            default:
+                break;
+            /* disp */
+            /* index * scale + disp */
+        }
     }
-    if ((modrmi & 030) == 010) {
-        disp = random_disp8();
-    } else if ((modrmi & 030) == 020 || modrmi == 005) {
-        disp = random_disp32();
-    }
-    switch (modrmi & 007) {
-        /* mod 00 */
-        case 000:
-            sprintf(buffer, "[eax + 0x%x]", disp);
-            break;
-        case 001:
-            sprintf(buffer, "[ecx + 0x%x]", disp);
-            break;
-        case 002:
-            sprintf(buffer, "[edx + 0x%x]", disp);
-            break;
-        case 003:
-            sprintf(buffer, "[ebx + 0x%x]", disp);
-            break;
-        case 004:
-            if (strcmp(sib, "")) {
-                sprintf(buffer, "[0x%x]", disp);
-            } else {
-                sprintf(buffer, "[%s + 0x%x]", sib, disp);
-            }
-            break;
-        case 005:
-            if (modrmi == 005) {
-                sprintf(buffer, "0x%x", disp);
-            } else {
-                sprintf(buffer, "[ebp + 0x%x]", disp);
-            }
-            break;
-        case 006:
-            sprintf(buffer, "[esi + 0x%x]", disp);
-            break;
-        case 007:
-            sprintf(buffer, "[edi + 0x%x]", disp);
-            break;
-        default:
-            nasm_nonfatal("unsupported modr/m form");
-            break;
-    }
+    /* else stack */
 }
 
 bool create_memory(operand_seed *opnd_seed, char *buffer)
@@ -284,11 +243,7 @@ bool create_memory(operand_seed *opnd_seed, char *buffer)
         nasm_fatal("unsupported 16-bit memory type");
     } else {
         create_random_modrm(modrm);
-        if (opnd_seed->explicitmemsize) {
-            sprintf(src, "%s %s", memsize[whichmemsize], modrm);
-        } else {
-            sprintf(src, "%s", modrm);
-        }
+        sprintf(src, "%s", modrm);
     }
     if (stat_get_need_init()) {
         const char *instName = nasm_insn_names[stat_get_opcode()];
@@ -313,11 +268,7 @@ bool create_memoffs(operand_seed *opnd_seed, char *buffer)
         nasm_fatal("unsupported 16-bit memory type");
     } else {
         datai = nasm_random32(X86PGState.data_sec.datanum);
-        if (opnd_seed->explicitmemsize) {
-            sprintf(src, "%s [data%d]", memsize[whichmemsize], datai);
-        } else {
-            sprintf(src, "[data%d]", datai);
-        }
+        sprintf(src, "[data%d]", datai);
     }
     if (stat_get_need_init()) {
         const char *instName = nasm_insn_names[stat_get_opcode()];

@@ -178,11 +178,14 @@
         <I> loopne </I>
         <I> call </I>
         <I> ret </I>
-        <I> int </I>
-        <I> into </I>
-        <I> bound </I>
         <I> enter </I>
         <I> leave </I>
+    </IG>
+    <IG name = "interrupt">
+        <I> int </I>
+        <I> int3 </I>
+        <I> into </I>
+        <I> bound </I>
     </IG>
     <IG name = "String">
         <I> movsb </I>

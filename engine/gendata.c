@@ -584,7 +584,7 @@ bool gen_opcode(const insn_seed *seed)
     const char *inst_name;
 
     /* reset global state */
-    stat_unlock_ebx();
+    stat_unlock_reg(LOCK_REG_CASE_MEM);
     token_reset();
 
     /* write instruction name to token_buf */
