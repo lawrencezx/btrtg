@@ -12,12 +12,12 @@
 [esi]       0x%08" PRIx32 "\n\
 [edi]       0x%08" PRIx32 "\n\
 [eflags]    0x%08" PRIx32 "\n\
-[cs]        0x%08" PRIx32 "\n\
-[ss]        0x%08" PRIx32 "\n\
-[ds]        0x%08" PRIx32 "\n\
-[es]        0x%08" PRIx32 "\n\
-[fs]        0x%08" PRIx32 "\n\
-[gs]        0x%08" PRIx32 "\n"
+[cs]        0x%04" PRIx16 "\n\
+[ss]        0x%04" PRIx16 "\n\
+[ds]        0x%04" PRIx16 "\n\
+[es]        0x%04" PRIx16 "\n\
+[fs]        0x%04" PRIx16 "\n\
+[gs]        0x%04" PRIx16 "\n"
 
 #define X87FPFormat "==========X87 FP STATE==========\n\
 [ FCW | FSW  | FTW|Rsvd |  FOP  |     FIP     |  FCS  | Rsvd  ]  \n\
@@ -88,12 +88,18 @@ struct X87LegacyXSaveArea {
 };
 
 struct X86StandardRegisters {
-    uint32_t gs;
-    uint32_t fs;
-    uint32_t es;
-    uint32_t ds;
-    uint32_t ss;
-    uint32_t cs;
+    uint16_t gs;
+    uint16_t gs_padding;
+    uint16_t fs;
+    uint16_t fs_padding;
+    uint16_t es;
+    uint16_t es_padding;
+    uint16_t ds;
+    uint16_t ds_padding;
+    uint16_t ss;
+    uint16_t ss_padding;
+    uint16_t cs;
+    uint16_t cs_padding;
     uint32_t eflags;
     uint32_t edi;
     uint32_t esi;
@@ -104,37 +110,6 @@ struct X86StandardRegisters {
     uint32_t ecx;
     uint32_t eax;
 };
-
-void print_x86_state(struct X86StandardRegisters x86regs)
-{
-    printf(X86RegsFormat,
-        x86regs.eax, x86regs.ecx, x86regs.edx, x86regs.ebx, x86regs.esp, x86regs.ebp, x86regs.esi, x86regs.edi,
-        x86regs.eflags,
-        x86regs.cs, x86regs.ss, x86regs.ds, x86regs.es, x86regs.fs, x86regs.gs);
-}
-
-void print_x87_state(struct X87LegacyXSaveArea x87fpstate)
-{
-    printf(X87FPFormat,
-        x87fpstate.fcw, x87fpstate.fsw, x87fpstate.ftw, x87fpstate.fpop, x87fpstate.fpip, x87fpstate.fpcs,
-        x87fpstate.fpdp, x87fpstate.fpds, x87fpstate.mxcsr, x87fpstate.mxcsr_mask,
-        x87fpstate.fpregs[0].d.high, x87fpstate.fpregs[0].d.low,
-        x87fpstate.fpregs[1].d.high, x87fpstate.fpregs[1].d.low,
-        x87fpstate.fpregs[2].d.high, x87fpstate.fpregs[2].d.low,
-        x87fpstate.fpregs[3].d.high, x87fpstate.fpregs[3].d.low,
-        x87fpstate.fpregs[4].d.high, x87fpstate.fpregs[4].d.low,
-        x87fpstate.fpregs[5].d.high, x87fpstate.fpregs[5].d.low,
-        x87fpstate.fpregs[6].d.high, x87fpstate.fpregs[6].d.low,
-        x87fpstate.fpregs[7].d.high, x87fpstate.fpregs[7].d.low,
-        *(uint64_t *)&x87fpstate.xmm_regs[0][8], *(uint64_t *)&x87fpstate.xmm_regs[0][0], 
-        *(uint64_t *)&x87fpstate.xmm_regs[1][8], *(uint64_t *)&x87fpstate.xmm_regs[1][0], 
-        *(uint64_t *)&x87fpstate.xmm_regs[2][8], *(uint64_t *)&x87fpstate.xmm_regs[2][0], 
-        *(uint64_t *)&x87fpstate.xmm_regs[3][8], *(uint64_t *)&x87fpstate.xmm_regs[3][0], 
-        *(uint64_t *)&x87fpstate.xmm_regs[4][8], *(uint64_t *)&x87fpstate.xmm_regs[4][0], 
-        *(uint64_t *)&x87fpstate.xmm_regs[5][8], *(uint64_t *)&x87fpstate.xmm_regs[5][0], 
-        *(uint64_t *)&x87fpstate.xmm_regs[6][8], *(uint64_t *)&x87fpstate.xmm_regs[6][0], 
-        *(uint64_t *)&x87fpstate.xmm_regs[7][8], *(uint64_t *)&x87fpstate.xmm_regs[7][0]);
-}
 
 void print_all_state(struct X87LegacyXSaveArea x87fpstate, struct X86StandardRegisters x86regs)
 {
@@ -161,4 +136,5 @@ void print_all_state(struct X87LegacyXSaveArea x87fpstate, struct X86StandardReg
         *(uint64_t *)&x87fpstate.xmm_regs[5][8], *(uint64_t *)&x87fpstate.xmm_regs[5][0], 
         *(uint64_t *)&x87fpstate.xmm_regs[6][8], *(uint64_t *)&x87fpstate.xmm_regs[6][0], 
         *(uint64_t *)&x87fpstate.xmm_regs[7][8], *(uint64_t *)&x87fpstate.xmm_regs[7][0]);
+    printf("\n");
 }

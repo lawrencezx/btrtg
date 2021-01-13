@@ -187,6 +187,7 @@ static void create_random_modrm(char *buffer)
         do {
             basereg = baseregs[nasm_random32(6)];
         } while (stat_reg_locked(basereg));
+        stat_lock_reg(basereg, LOCK_REG_CASE_MEM);
         do {
             indexreg = indexregs[nasm_random32(6)];
         } while (stat_reg_locked(indexreg));
@@ -194,13 +195,12 @@ static void create_random_modrm(char *buffer)
 
         int modes = nasm_random32(4);
         const char *base_reg_name = nasm_reg_names[basereg - EXPR_REG_START];
-        const char *index_reg_name = nasm_reg_names[basereg - EXPR_REG_START];
+        const char *index_reg_name = nasm_reg_names[indexreg - EXPR_REG_START];
 
         /* initialize base register and index register */
         lea.ctrl = buffer;
         sprintf(buffer, "  lea %s, data%d", base_reg_name, mem_addr.base);
         stat_insert_insn(&lea, INSERT_AFTER);
-        stat_lock_reg(basereg, LOCK_REG_CASE_MEM);
         if (modes == 2 || modes == 3) {
             sprintf(buffer, "  mov %s, 0x%x", index_reg_name, mem_addr.index);
             stat_insert_insn(&lea, INSERT_AFTER);
