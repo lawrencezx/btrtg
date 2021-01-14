@@ -1,11 +1,11 @@
 <TestingKnowledges>
     <!--  data transfer instructions  -->
     <TK inst = "fadd">
-        <Node name = "arith" weight="100"> </Node>
+        <Node name = "farith" weight="100"> </Node>
         <Node name = "normal" weight="0"> </Node>
     </TK>
 	<TK inst = "fld">
-		<Node name = "arith" weight="100"> </Node>
+		<Node name = "farith" weight="100"> </Node>
         <Node name = "normal" weight="0"> </Node>
 	</TK>
 
