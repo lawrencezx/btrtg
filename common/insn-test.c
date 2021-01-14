@@ -9,8 +9,8 @@
 #include "insn-test.h"
 #include "x86pg.h"
 
-static const char fout_head[] = "  GLOBAL main\nmain:\n";
-static const char fout_tail[] = "\n  mov eax,1\n  mov ebx,0\n  int 80h";
+static const char fout_head[] = "  GLOBAL main\nmain:\n  mov edx,0x0\n";
+static const char fout_tail[] = "\n  call finish_test\n  mov eax,1\n  mov ebx,0\n  int 80h";
 
 void gsp_init(void)
 {

@@ -39,6 +39,7 @@ static void asm_out_sec(struct section *sec)
             fprintf(asmfp, "EXTERN print_x86_state\n");
             fprintf(asmfp, "EXTERN print_x87_state\n");
             fprintf(asmfp, "EXTERN print_all_state\n");
+            fprintf(asmfp, "EXTERN finish_test\n");
             fprintf(asmfp, "\n");
             /* data section */
             fprintf(asmfp, "SECTION .DATA write\n");
