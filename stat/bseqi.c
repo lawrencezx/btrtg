@@ -20,7 +20,9 @@ bseqiflags_t bseqi_flags(opflags_t opndflags)
         {RM_GPR|BITS16,     GEN_INDEXPOS(5) | GEN_INDEXSIZE(4)},
         {REG_GPR|BITS32,    GEN_INDEXPOS(6) | GEN_INDEXSIZE(4)},
         {RM_GPR|BITS32,     GEN_INDEXPOS(7) | GEN_INDEXSIZE(4)},
-        {IMMEDIATE,         GEN_INDEXPOS(8) | GEN_INDEXSIZE(14)}
+        {IMMEDIATE,         GEN_INDEXPOS(8) | GEN_INDEXSIZE(14)},
+        {FPUREG,            GEN_INDEXPOS(9) | GEN_INDEXSIZE(8)}
+        /* TODO */
     };
 
     for (size_t i = 0; i < ARRAY_SIZE(sequence_indexes); i++) {

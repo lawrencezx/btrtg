@@ -19,6 +19,9 @@
         <Imm32> 0x12345678 </Imm32>
         <Imm32> 0xabcdef01 </Imm32>
     </CG>
+	<CG name = "farith">
+		<Imm64> 0x400921fb54411744 </Imm64>
+	</CG>
     <CG name = "normal">
     </CG>
     <CG name = "divdest">

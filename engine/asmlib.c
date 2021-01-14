@@ -6,7 +6,11 @@
 #include "nctype.h"
 #include "asmlib.h"
 
+<<<<<<< HEAD
 opflags_t parse_asm_opnd_type_opflags(const char *asm_opnd)
+=======
+opflags_t   asm_parse_opflags(const char *asm_opnd)
+>>>>>>> 93fe5193... bug:gen-two-move
 {
     opflags_t opflags = 0;
     char opnd_id[128];
@@ -32,6 +36,9 @@ opflags_t parse_asm_opnd_type_opflags(const char *asm_opnd)
         {"reg_sreg", REG_SREG},
         {"reg_creg", REG_CREG},
         {"reg_dreg", REG_DREG},
+        {"fpureg", FPUREG},
+        {"fpu", FPU0}
+        /* TODO */
     };
 
     for (i = 0; i < ARRAY_SIZE(opnd_ids); i++) {

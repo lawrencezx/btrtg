@@ -247,4 +247,7 @@
         <I> xrstor </I>
         <I> xgetbv </I>
     </IG>
+	<IG name = "FloatArithmetic">
+		<I> fadd </I>
+	</IG>
 </InsnGroups>

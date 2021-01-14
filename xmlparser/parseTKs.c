@@ -10,8 +10,10 @@
 static const char *xmlfiles[2] =
 {
     /* must put Consts before TK, so the TK can find relevant constGroup */
-    "fixedpointConsts.xml",
-    "fixedpointTK.xml"
+    //"fixedpointConsts.xml",
+    //"fixedpointTK.xml"
+    "floatpointConsts.xml",
+    "floatpointTK.xml"
 };
 char *TKpath = "../xmlmodel/tks";
 
@@ -36,7 +38,23 @@ static void parseCGs(xmlNodePtr cgsNode)
             if (cNode->type != XML_ELEMENT_NODE)
                 continue;
 
+
             imm = hex2dec((const char *)cNode->children->content);
+            const char *cNodeName = (const char *)cNode->name;
+            if(strcmp(cNodeName, "Imm64") == 0){
+                val_node.type = CONST_IMM64;
+                hex2double((const char *)cNode->children->content, val_node.imm64);
+                g_array_append_val(cg_tree_node->const_nodes, val_node);
+            }else if(strcmp(cNodeName, "Imm80")==0){
+                val_node.type = CONST_IMM80;
+                hex2ldouble((const char *)cNode->children->content, val_node.imm80);
+                g_array_append_val(cg_tree_node->const_nodes, val_node);
+            }else{
+                val_node.type = CONST_IMM32;
+                val_node.imm32 = (uint32_t)imm;
+                g_array_append_val(cg_tree_node->const_nodes, val_node);
+            }
+
             //const char *cNodeName = (const char *)cNode->name;
             //if (strcmp(cNodeName, "Imm8") == 0) {
             //    cgVal[i].imm8 = (uint8_t)imm;
@@ -45,9 +63,6 @@ static void parseCGs(xmlNodePtr cgsNode)
             //} else if (strcmp(cNodeName, "Imm16") == 0) {
             //    cgVal[i].imm16 = (uint16_t)imm;
             //} else if (strcmp(cNodeName, "Imm32") == 0) {
-            val_node.type = CONST_IMM32;
-            val_node.imm32 = (uint32_t)imm;
-            g_array_append_val(cg_tree_node->const_nodes, val_node);
             //} else {
             //    printf("0x%x\n", imm);
             //}

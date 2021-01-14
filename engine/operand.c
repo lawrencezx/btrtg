@@ -65,6 +65,33 @@ bool create_segment_register(operand_seed *opnd_seed, char *buffer)
     return true;
 }
 
+bool create_fpu_register(operand_seed *opnd_seed, char *buffer){
+    dfmt->print("    try> create fpureg\n");
+    int fpuregi, fpuregn;
+    enum reg_enum fpureg;
+    const char *src;
+
+    bseqiflags_t bseqiflags = bseqi_flags(opnd_seed->opndflags);
+
+    fpuregn = BSEQIFLAG_INDEXSIZE(bseqiflags);
+    fpuregi = nasm_random32(fpuregn);
+    fpureg = nasm_rd_fpureg[fpuregi];
+    src = nasm_reg_names[fpureg - EXPR_REG_START];
+    /*
+    if (stat_get_need_init()) {
+        const char *instName = nasm_insn_names[stat_get_opcode()];
+        constVal *cVal = request_constVal(instName, opnd_seed->srcdestflags & OPDEST);
+        sprintf(buffer, "mov %s, 0x%x", src, (cVal == NULL) ? (int)nasm_random64(0x100000000) : cVal->imm32);
+        one_insn_gen_const(buffer);
+    }
+    */
+    sprintf(buffer, " %s", src);
+    dfmt->print("    done> new fpureg: %s\n", buffer);
+    
+    
+    return true;
+}
+
 bool create_unity(operand_seed *opnd_seed, char *buffer)
 {
     dfmt->print("    try> create unity\n");
@@ -209,6 +236,7 @@ bool create_memory(operand_seed *opnd_seed, char *buffer)
     (void)opnd_seed;
     dfmt->print("    try> create memory\n");
     char modrm[64];
+
     if (globalbits == 16) {
         nasm_fatal("unsupported 16-bit memory type");
     } else {

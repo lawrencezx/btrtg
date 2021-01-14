@@ -1,0 +1,21 @@
+<TestingKnowledges>
+    <!--  data transfer instructions  -->
+    <TK inst = "fadd">
+        <Node name = "arith" weight="100"> </Node>
+        <Node name = "normal" weight="0"> </Node>
+    </TK>
+	<TK inst = "fld">
+		<Node name = "arith" weight="100"> </Node>
+        <Node name = "normal" weight="0"> </Node>
+	</TK>
+
+    <!-- user mode extended sate save/restore instructions -->
+    <!-- TODO -->
+
+    <!-- random number generator instructions -->
+    <!-- TODO -->
+
+    <!-- bmi1, bmi2 -->
+    <!-- TODO -->
+
+</TestingKnowledges>

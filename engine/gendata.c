@@ -741,7 +741,7 @@ static bool gen_register(operand_seed *opnd_seed, char *buffer)
     } else if (is_class(REG_CLASS_SREG, opndflags)) {
         return create_segment_register(opnd_seed, buffer);
     } else if (is_class(REG_CLASS_FPUREG, opndflags)) {
-        /* TODO */
+        return create_fpu_register(opnd_seed, buffer);
     } else if (is_class(REG_CLASS_RM_MMX, opndflags)) {
         /* TODO */
     } else if (is_class(REG_CLASS_RM_XMM, opndflags)) {
