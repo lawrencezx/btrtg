@@ -176,7 +176,7 @@ static void parseG(xmlNodePtr GNode, blk_struct *blk)
     prop_inip = (char *)xmlGetProp(GNode, (const unsigned char*)"inip");
 
     g_e = (elem_struct *)nasm_malloc(sizeof(elem_struct));
-    g_e->type = ISET_ELEM;
+    g_e->type = G_ELEM;
     gType = nasm_trim(prop_type);
     g_e->wdtree = *(WDTree **)hash_find(&hash_wdtrees, gType, &hi);
     g_e->inip = (prop_inip == NULL) ? 0.0 : atof(prop_inip);
@@ -190,38 +190,30 @@ static void parseG(xmlNodePtr GNode, blk_struct *blk)
 
 /******************************************************************************
 *
-* Function name: parseP
-* Description: parse an <P> tag into a blk_struct
-*              An <P> tag has one attribute:
-*              (1) type: string, printing type
+* Function name: parseC
+* Description: parse an <C> tag into a blk_struct
+*              An <C> tag has one attribute:
+*              (1) type: string, checking value
 * Parameter:
-*       @GNode: input, a xml printing node
+*       @GNode: input, a xml checking node
 *       @blk: return, the return blk_struct
 * Return: none
 ******************************************************************************/
-static void parseP(xmlNodePtr PNode, blk_struct *blk)
+static void parseC(xmlNodePtr CNode, blk_struct *blk)
 {
-    char *pType;
-    elem_struct *p_e;
+    char *checkType;
+    elem_struct *c_e;
     char *prop_type;
 
-    prop_type = (char *)xmlGetProp(PNode, (const unsigned char*)"type");
+    prop_type = (char *)xmlGetProp(CNode, (const unsigned char*)"type");
 
-    p_e = (elem_struct *)nasm_malloc(sizeof(elem_struct));
-    p_e->type = PRINT_ELEM;
-    pType = nasm_trim(prop_type);
-    if (strcmp(pType, "all_state") == 0) {
-        p_e->pType = ALL_STATE;
-    } else if (strcmp(pType, "x86_state") == 0) {
-        p_e->pType = X86_STATE;
-    } else if (strcmp(pType, "x87_state") == 0) {
-        p_e->pType = X87_STATE;
-    } else {
-        nasm_fatal("Unsupported p type: %s", pType);
-    }
+    c_e = (elem_struct *)nasm_malloc(sizeof(elem_struct));
+    c_e->type = C_ELEM;
+    checkType = nasm_trim(prop_type);
+    c_e->checkType = nasm_strdup(checkType);
 
     blk->type = ELEM_BLK;
-    g_array_append_val(blk->blks, p_e);
+    g_array_append_val(blk->blks, c_e);
 
     free(prop_type);
 }
@@ -247,7 +239,7 @@ static void parseI(xmlNodePtr INode, blk_struct *blk)
     prop_inip = (char *)xmlGetProp(INode, (const unsigned char*)"inip");
 
     i_e = (elem_struct *)nasm_malloc(sizeof(elem_struct));
-    i_e->type = INSN_ELEM;
+    i_e->type = I_ELEM;
     i_e->inst = nasm_strdup(nasm_trim(prop_type));
     i_e->inip = (prop_inip == NULL) ? 0.0 : atof(prop_inip);
 
@@ -284,8 +276,8 @@ static void parseBlk(xmlNodePtr blkNodeStart, blk_struct *blk)
             parseTrvBlk(blkNode, subblk);
         } else if (strcmp(blkName, "G") == 0) {
             parseG(blkNode, subblk);
-        } else if (strcmp(blkName, "P") == 0) {
-            parseP(blkNode, subblk);
+        } else if (strcmp(blkName, "C") == 0) {
+            parseC(blkNode, subblk);
         } else if (strcmp(blkName, "I") == 0) {
             parseI(blkNode, subblk);
         } else {

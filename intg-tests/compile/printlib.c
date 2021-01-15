@@ -70,7 +70,7 @@ void print_all_state(struct X87LegacyXSaveArea x87fpstate, struct X86StandardReg
     printf("\n");
 }
 
-void finish_test(void)
+void check_point_end(void)
 {
     fclose(stdout);
 }

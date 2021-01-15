@@ -86,3 +86,10 @@ target_link_libraries(nasmlib xml2)
 add_dependencies(nasmlib perlreq)
 
 add_subdirectory(intg-tests)
+
+configure_file(./intg-tests/compile/ld.script ld.script COPYONLY)
+configure_file(./intg-tests/compile/compile.sh compile.sh COPYONLY)
+configure_file(./intg-tests/compile/verification.h verification.h COPYONLY)
+configure_file(./intg-tests/compile/outputlib.c outputlib.c COPYONLY)
+configure_file(./intg-tests/compile/checklib.c checklib.c COPYONLY)
+configure_file(./intg-tests/compile/checkfunctions.h checkfunctions.h COPYONLY)

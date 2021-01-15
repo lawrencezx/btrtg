@@ -35,12 +35,6 @@ static void asm_out_sec(struct section *sec)
             fprintf(asmfp, "SECTION .TEXT\n");
             break;
         case DATA_SEC:
-            /* symbols */
-            fprintf(asmfp, "EXTERN print_x86_state\n");
-            fprintf(asmfp, "EXTERN print_x87_state\n");
-            fprintf(asmfp, "EXTERN print_all_state\n");
-            fprintf(asmfp, "EXTERN finish_test\n");
-            fprintf(asmfp, "\n");
             /* data section */
             fprintf(asmfp, "SECTION .DATA write\n");
             for (int i = 0; i < sec->datanum; i++) {
@@ -67,6 +61,9 @@ static void asm_out(struct output_data* data)
             break;
         case OUTPUT_INSN:
             fprintf(asmfp, "  %s\n", (const char *)data->buf);
+            break;
+        case OUTPUT_EXTERN:
+            fprintf(asmfp, "EXTERN %s\n", (const char *)data->buf);
             break;
         case OUTPUT_SECTION:
         {

@@ -47,6 +47,10 @@ struct X87LegacyXSaveArea {
     uint8_t available[3][16];
 };
 
+typedef uint8_t Reg8;
+typedef uint16_t Reg16;
+typedef uint32_t Reg32;
+
 struct X86StandardRegisters {
     uint16_t gs;
     uint16_t gs_padding;
@@ -61,14 +65,86 @@ struct X86StandardRegisters {
     uint16_t cs;
     uint16_t cs_padding;
     uint32_t eflags;
-    uint32_t edi;
-    uint32_t esi;
-    uint32_t ebp;
-    uint32_t esp;
-    uint32_t ebx;
-    uint32_t edx;
-    uint32_t ecx;
-    uint32_t eax;
+    union {
+        uint32_t edi;
+        struct {
+            uint16_t di;
+            uint16_t di_padding;
+        };
+    };
+    union {
+        uint32_t esi;
+        struct {
+            uint16_t si;
+            uint16_t si_padding;
+        };
+    };
+    union {
+        uint32_t ebp;
+        struct {
+            uint16_t bp;
+            uint16_t bp_padding;
+        };
+    };
+    union {
+        uint32_t esp;
+        struct {
+            uint16_t sp;
+            uint16_t sp_padding;
+        };
+    };
+    union {
+        uint32_t ebx;
+        struct {
+            union {
+                uint16_t bx;
+                struct {
+                    uint8_t bl;
+                    uint8_t bh;
+                };
+            };
+            uint16_t bx_padding;
+        };
+    };
+    union {
+        uint32_t edx;
+        struct {
+            union {
+                uint16_t dx;
+                struct {
+                    uint8_t dl;
+                    uint8_t dh;
+                };
+            };
+            uint16_t dx_padding;
+        };
+    };
+    union {
+        uint32_t ecx;
+        struct {
+            union {
+                uint16_t cx;
+                struct {
+                    uint8_t cl;
+                    uint8_t ch;
+                };
+            };
+            uint16_t cx_padding;
+        };
+    };
+    union {
+        uint32_t eax;
+        struct {
+            union {
+                uint16_t ax;
+                struct {
+                    uint8_t al;
+                    uint8_t ah;
+                };
+            };
+            uint16_t ax_padding;
+        };
+    };
 };
 
 #endif

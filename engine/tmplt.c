@@ -113,13 +113,13 @@ static void walkTrvBlk(blk_struct *blk)
 /* walk element
  */
 static void walkGElem(elem_struct *g_e);
-static void walkPElem(elem_struct *p_e);
+static void walkCElem(elem_struct *p_e);
 static void walkIElem(elem_struct *i_e);
 
 static void (*walkElemFuncs[])(elem_struct *elem) =
 {
     walkGElem,
-    walkPElem,
+    walkCElem,
     walkIElem
 };
 
@@ -138,71 +138,44 @@ static void walkGElem(elem_struct *g_e)
     stat_set_need_init(false);
 }
 
-static void gen_call_print_x86_state(void)
+static void gen_call_check_function(char *checkType)
 {
-    one_insn_gen_const("pushad");
-    one_insn_gen_const("pushfd");
-    one_insn_gen_const("push cs");
-    one_insn_gen_const("push ss");
-    one_insn_gen_const("push ds");
-    one_insn_gen_const("push es");
-    one_insn_gen_const("push fs");
-    one_insn_gen_const("push gs");
-    one_insn_gen_ctrl("  call print_x86_state", INSERT_AFTER);
-    one_insn_gen_const("pop eax");
-    one_insn_gen_const("pop eax");
-    one_insn_gen_const("pop eax");
-    one_insn_gen_const("pop eax");
-    one_insn_gen_const("pop eax");
-    one_insn_gen_const("pop eax");
-    one_insn_gen_const("popfd");
-    one_insn_gen_const("popad");
-}
-static void gen_call_print_x87_state(void)
-{
-    one_insn_gen_const("sub esp, 0x200");
-    one_insn_gen_const("fxsave [esp]");
-    one_insn_gen_ctrl("  call print_x87_state", INSERT_AFTER);
-    one_insn_gen_const("add esp, 0x200");
-    one_insn_gen_const("fxrstor [esp]");
-}
-
-static void gen_call_print_all_state(void)
-{
-    one_insn_gen_const("pushad");
-    one_insn_gen_const("pushfd");
-    one_insn_gen_const("push cs");
-    one_insn_gen_const("push ss");
-    one_insn_gen_const("push ds");
-    one_insn_gen_const("push es");
-    one_insn_gen_const("push fs");
-    one_insn_gen_const("push gs");
-    one_insn_gen_const("sub esp, 0x200");
-    one_insn_gen_const("fxsave [esp]");
-    one_insn_gen_ctrl("  call print_all_state", INSERT_AFTER);
-    one_insn_gen_const("add esp, 0x200");
-    one_insn_gen_const("fxrstor [esp]");
-    one_insn_gen_const("pop eax");
-    one_insn_gen_const("pop eax");
-    one_insn_gen_const("pop eax");
-    one_insn_gen_const("pop eax");
-    one_insn_gen_const("pop eax");
-    one_insn_gen_const("pop eax");
-    one_insn_gen_const("popfd");
-    one_insn_gen_const("popad");
-}
-
-static void walkPElem(elem_struct *p_e)
-{
-    if (p_e->pType == X86_STATE) {
-        gen_call_print_x86_state();
-    } else if (p_e->pType == X87_STATE) {
-        gen_call_print_x87_state();
-    } else if (p_e->pType == ALL_STATE) {
-        gen_call_print_all_state();
-    } else {
-        nasm_fatal("Unsupported print type: %d", p_e->pType);
+    char call_check_function[128];
+    if (checkType == NULL)
+        nasm_fatal("no check point\n");
+    if (checkType[0] == '@') {
+        blk_var *var = blk_search_var(stat_get_curr_blk(), checkType + 1);
+        if (!var->valid)
+            nasm_fatal("checking value: %s has not been initialized", checkType);
+        checkType = var->asm_var;
     }
+    sprintf(call_check_function, "  call check_point_%s", checkType);
+    one_insn_gen_const("pushad");
+    one_insn_gen_const("pushfd");
+    one_insn_gen_const("push cs");
+    one_insn_gen_const("push ss");
+    one_insn_gen_const("push ds");
+    one_insn_gen_const("push es");
+    one_insn_gen_const("push fs");
+    one_insn_gen_const("push gs");
+    one_insn_gen_const("sub esp, 0x200");
+    one_insn_gen_const("fxsave [esp]");
+    one_insn_gen_ctrl(call_check_function, INSERT_AFTER);
+    one_insn_gen_const("add esp, 0x200");
+    one_insn_gen_const("fxrstor [esp]");
+    one_insn_gen_const("pop eax");
+    one_insn_gen_const("pop eax");
+    one_insn_gen_const("pop eax");
+    one_insn_gen_const("pop eax");
+    one_insn_gen_const("pop eax");
+    one_insn_gen_const("pop eax");
+    one_insn_gen_const("popfd");
+    one_insn_gen_const("popad");
+}
+
+static void walkCElem(elem_struct *c_e)
+{
+    gen_call_check_function(c_e->checkType);
 }
 
 static void walkIElem(elem_struct *i_e)
@@ -227,7 +200,7 @@ void walk_tmplt(void)
 
 static void elem_free(elem_struct *elem)
 {
-    if (elem->type == INSN_ELEM)
+    if (elem->type == I_ELEM)
         free(elem->inst);
     free(elem);
 }

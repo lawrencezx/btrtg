@@ -15,31 +15,25 @@
  * 5) elem_statement: repeat generating instruction statements
  *
  * element statement types
- * 1) Iset: instructin set/group
- * 2) Print: print test information
- * 3) Insn: a single instruction
+ * 1) G: instructin set/group
+ * 2) C: check a value
+ * 3) I: a single instruction
  */
 
 /* element structure
  */
 typedef enum elem_type {
-    ISET_ELEM,
-    PRINT_ELEM,
-    INSN_ELEM
+    G_ELEM,
+    C_ELEM,
+    I_ELEM
 } elem_type;
-
-typedef enum print_type {
-    X86_STATE, /* x86 register information */
-    X87_STATE, /* x87 state information */
-    ALL_STATE  /* all information */
-} print_type;
 
 typedef struct elem_struct {
     double inip;
     elem_type type;
     union {
         WDTree *wdtree;
-        print_type pType;
+        char *checkType;
         char *inst;
     };
 } elem_struct;

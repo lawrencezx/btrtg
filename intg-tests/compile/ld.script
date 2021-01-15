@@ -150,6 +150,7 @@ SECTIONS
   .dynamic        : { *(.dynamic) }
   .got            : { *(.got) *(.igot) }
   . = DATA_SEGMENT_RELRO_END (SIZEOF (.got.plt) >= 12 ? 12 : 0, .);
+  . = 0x09000000;
   .got.plt        : { *(.got.plt) *(.igot.plt) }
   .data           :
   {
@@ -220,5 +221,3 @@ SECTIONS
   .gnu.attributes 0 : { KEEP (*(.gnu.attributes)) }
   /DISCARD/ : { *(.note.GNU-stack) *(.gnu_debuglink) *(.gnu.lto_*) }
 }
-
-

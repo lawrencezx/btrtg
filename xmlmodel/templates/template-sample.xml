@@ -15,5 +15,15 @@
             <G type = "DataTransfer" weight = "25"> </G>
         </select>
     </repeat>
-    <P type = "all_state"> </P>
+    <C type = "x86_state"> </C>
+    <C type = "al"> </C>
+    <C type = "ah"> </C>
+    <C type = "ax"> </C>
+    <C type = "eax"> </C>
+    <C type = "cs"> </C>
+    <C type = "eflags"> </C>
+    <traverse var = "reg" type = "reg16">
+        <I type = "add @reg,imm16"></I>
+        <C type = "@reg"></C>
+    </traverse>
 </Template>

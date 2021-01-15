@@ -4,6 +4,7 @@
 enum output_type {
     OUTPUT_RAWDATA,
     OUTPUT_SECTION,
+    OUTPUT_EXTERN,
     OUTPUT_INSN
 };
 
