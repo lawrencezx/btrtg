@@ -8,7 +8,7 @@ enum const_type {
     CONST_IMM16,
     CONST_IMM32,
     CONST_IMM64,
-    CONST_IMM80,
+    CONST_FLOAT,
     CONST_UNITY,
     CONST_ASM_OP
 };
@@ -19,8 +19,8 @@ struct const_node {
         int8_t imm8;
         int16_t imm16;
         int32_t imm32;
-        int32_t imm64[2];
-        int32_t imm80[3];
+        int64_t imm64;
+        int32_t immf[6];
         int8_t unity;
         char *asm_op;
     };

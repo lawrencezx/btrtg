@@ -18,9 +18,21 @@ bool create_specific_register(enum reg_enum R_reg, operand_seed *opnd_seed, char
     dfmt->print("    try> create specific register\n");
     if (is_class(REG_CLASS_SREG, opnd_seed->opndflags) && (opnd_seed->srcdestflags & OPDEST))
         return false;
+<<<<<<< HEAD
 
     const char *src = nasm_reg_names[R_reg - EXPR_REG_START];
     sprintf(buffer, "%s", src);
+=======
+    }
+    src = nasm_reg_names[R_reg - EXPR_REG_START];
+    if (stat_get_need_init()) {
+        const char *instName = nasm_insn_names[stat_get_opcode()];
+        constVal *cVal = request_constVal(instName, opnd_seed->srcdestflags & OPDEST);
+        //sprintf(buffer, "mov %s, 0x%x", src, (cVal == NULL) ? (int)nasm_random64(0x100000000) : cVal->imm32);
+        //one_insn_gen_const(buffer);
+    }
+    sprintf(buffer, " %s", src);
+>>>>>>> 4bffb23a... feat:Add Immf in templete to distinguish fixedpoint and floatpoint numbers and support dec floatpoint number
     dfmt->print("    done> new specific register: %s\n", buffer);
     return true;
 }
@@ -85,6 +97,7 @@ bool create_fpu_register(operand_seed *opnd_seed, char *buffer){
         one_insn_gen_const(buffer);
     }
     */
+    
     sprintf(buffer, " %s", src);
     dfmt->print("    done> new fpureg: %s\n", buffer);
     
@@ -242,6 +255,7 @@ bool create_memory(operand_seed *opnd_seed, char *buffer)
     } else {
         create_random_modrm(modrm);
     }
+
     sprintf(buffer, "%s", modrm);
     dfmt->print("    done> new memory: %s\n", buffer);
     return true;
