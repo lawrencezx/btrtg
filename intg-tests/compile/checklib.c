@@ -6,7 +6,7 @@
 
 struct X86StandardRegisters output[] =
 {
-#include "output.h"
+#include "stdoutput.rst"
     {}
 };
 
