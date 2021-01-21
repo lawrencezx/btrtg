@@ -1,3 +1,6 @@
 <Template>
-	<I type = "fld mem64" inip = "1.0"> </I>
+	<I type = "fcmovb fpu0, fpureg" inip = "1.0"> </I>
+	<I type = "fcmovb fpureg" inip = "1.0"> </I>
+	<I type = "fcmovb" inip = "1.0"> </I>
+	<I type = "fadd" inip = "1.0"> </I>
 </Template>

@@ -20,7 +20,7 @@
         <Imm32> 0xabcdef01 </Imm32>
     </CG>
 	<CG name = "farith">
-		<Imm64> 0x400921fb54411744 </Imm64>
+		<Immf> 3.14159265358979323846264338 </Immf>
 	</CG>
     <CG name = "normal">
     </CG>

@@ -12,7 +12,12 @@
 #include "dfmt.h"
 #include "tk.h"
 #include "generator.h"
+<<<<<<< HEAD
 
+=======
+#include "check.h"
+static void create_random_modrm(char *buffer);
+>>>>>>> efe0714e... feat-change initialization
 bool create_specific_register(enum reg_enum R_reg, operand_seed *opnd_seed, char *buffer)
 {
     dfmt->print("    try> create specific register\n");
@@ -29,9 +34,17 @@ bool create_specific_register(enum reg_enum R_reg, operand_seed *opnd_seed, char
         const char *instName = nasm_insn_names[stat_get_opcode()];
         constVal *cVal = request_constVal(instName, opnd_seed->srcdestflags & OPDEST);
         if(R_ST0 == R_reg){
-            sprintf(buffer, "fstp %s",src);
+            char modrm[64];
+            create_random_modrm(modrm);
+            const char *instName = nasm_insn_names[stat_get_opcode()];
+            constVal *cVal = request_constVal(instName, opnd_seed->srcdestflags & OPDEST);
+            sprintf(buffer, "mov dword %s, 0x%x", modrm, cVal->immf[0]);
             one_insn_gen_const(buffer);
-            sprintf(buffer, "fld mem64");
+            sprintf(buffer, "fstp %s",src);
+            //sprintf(buffer, "fincstp");
+            one_insn_gen_const(buffer);
+            sprintf(buffer, "fld dword %s",modrm);
+            //sprintf(buffer, "fld mem64");
             one_insn_gen_const(buffer);
             
         }else{
@@ -99,15 +112,37 @@ bool create_fpu_register(operand_seed *opnd_seed, char *buffer){
     fpureg = nasm_rd_fpureg[fpuregi];
     src = nasm_reg_names[fpureg - EXPR_REG_START];
     if(stat_get_need_init()){
-        char fstp_src[10];
-        strcpy(fstp_src, src);
-        char *num = fstp_src + strlen(fstp_src) - 1;
-        *num = (*num ==7) ? '0' : *num +1;
-        sprintf(buffer, "fld mem64");
+        // char fstp_src[10];
+        // strcpy(fstp_src, src);
+        // char *num = fstp_src + strlen(fstp_src) - 1;
+        // *num = (*num ==7) ? '0' : *num +1;
+
+        // char modrm[64];
+        // create_random_modrm(modrm);
+        // const char *instName = nasm_insn_names[stat_get_opcode()];
+        // constVal *cVal = request_constVal(instName, opnd_seed->srcdestflags & OPDEST);
+        // sprintf(buffer, "mov dword %s, 0x%x", modrm, cVal->immf[0]);
+        // one_insn_gen_const(buffer);
+        // //sprintf(buffer, "fld mem64");
+        // sprintf(buffer, "fld dword %s",modrm);
+        // one_insn_gen_const(buffer);
+        // sprintf(buffer, "fstp %s",fstp_src);
+        // one_insn_gen_const(buffer);
+        char modrm[64];
+        create_random_modrm(modrm);
+        const char *instName = nasm_insn_names[stat_get_opcode()];
+        constVal *cVal = request_constVal(instName, opnd_seed->srcdestflags & OPDEST);
+        sprintf(buffer, "fxch %s", src);
         one_insn_gen_const(buffer);
-        sprintf(buffer, "fstp %s",fstp_src);
+        sprintf(buffer, "fstp st0");
+        //sprintf(buffer, "fincstp");
         one_insn_gen_const(buffer);
-        
+        sprintf(buffer, "mov dword %s, 0x%x", modrm, cVal->immf[0]);
+        one_insn_gen_const(buffer); 
+        sprintf(buffer, "fld dword %s",modrm);
+        one_insn_gen_const(buffer);
+        sprintf(buffer, "fxch %s", src);
+        one_insn_gen_const(buffer);  
     }
     /*
     if (stat_get_need_init()) {

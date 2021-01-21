@@ -250,4 +250,7 @@
 	<IG name = "FloatArithmetic">
 		<I> fadd </I>
 	</IG>
+	<IG name = "AddForTest">
+		<I> add </I>
+	</IG>
 </InsnGroups>

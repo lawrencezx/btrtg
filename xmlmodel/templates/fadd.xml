@@ -1,4 +1,4 @@
 <Template>
-	
+	<G type = "AddForTest" > </G>
 	<G type = "FloatArithmetic" > </G>
 </Template>
