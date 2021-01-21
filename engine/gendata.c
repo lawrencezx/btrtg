@@ -569,6 +569,105 @@ static void init_implicit_operands(const insn_seed *seed)
             default:
                 break;
         }
+    }else{
+        int operands = 0;
+        while (seed->opd[operands]) {
+            operands++;
+        }
+        switch(seed->opcode){
+            case I_FBSTP:
+            case I_FCHS:
+            case I_FCOS:
+            case I_FIADD:
+            case I_FICOM:
+            case I_FICOMP:
+            case I_FIDIV:
+            case I_FIDIVR:
+            case I_FIMUL:
+            case I_FIST:
+            case I_FISTP:
+            case I_FISUB:
+            case I_FISUBR:
+            case I_FPTAN:
+            case I_FRNDINT:
+            case I_FSIN:
+            case I_FSINCOS:
+            case I_FSQRT:
+            case I_FTST:
+            case I_FXCH:
+            case I_FXTRACT:
+
+                init_specific_register(R_ST0, true);
+                break;
+            
+            case I_FADD:
+            case I_FADDP:
+            case I_FCMOVB:
+            case I_FCMOVBE:
+            case I_FCMOVE:
+            case I_FCMOVNB:
+            case I_FCMOVNBE:
+            case I_FCMOVNE:
+            case I_FCMOVNU:
+            case I_FCMOVU:
+            case I_FCOM:
+            case I_FCOMI:
+            case I_FCOMIP:
+            case I_FCOMP:
+            case I_FCOMPP:
+            case I_FDIV:
+            case I_FDIVP:
+            case I_FDIVR:
+            case I_FDIVRP:
+            case I_FMUL:
+            case I_FMULP:
+            case I_FST:
+            case I_FSTP:
+            case I_FSUB:
+            case I_FSUBP:
+            case I_FSUBR:
+            case I_FSUBRP:
+            case I_FUCOM:
+            case I_FUCOMI:
+            case I_FUCOMIP:
+            case I_FUCOMP:
+            case I_FUCOMPP:
+
+                if(operands == 1){
+                    init_specific_register(R_ST0, true);
+                }else if(operands == 0){
+                    init_specific_register(R_ST0, true);
+                    init_specific_register(R_ST1, true);
+                }
+                break;
+
+            case I_FFREE:
+                if(operands == 0){
+                    init_specific_register(R_ST0, true);
+                }
+                break;
+
+            case I_FLD:
+                if(operands == 0){
+                    init_specific_register(R_ST1, true);
+                }
+                break;
+
+            case I_FPATAN:
+            case I_FPREM:
+            case I_FPREM1:
+            case I_FSCALE:
+            case I_FYL2X:
+            case I_FYL2XP1:
+                init_specific_register(R_ST0, true);
+                init_specific_register(R_ST1, true);
+                break;
+            default:
+                break;
+            
+
+
+        }
     }
 }
 
