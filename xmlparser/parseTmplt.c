@@ -155,6 +155,35 @@ static void parseTrvBlk(xmlNodePtr trvNode, blk_struct *blk)
 
 /******************************************************************************
 *
+* Function name: parseV
+* Description: parse an <V> tag and append it to blk_struct->vars
+*              An <V> tag has two attribute:
+*              (1) var: string, name of the variable
+*              (2) type: string, type of the variable
+* Parameter:
+*       @VNode: input, a xml variable node
+*       @blk: return, the parent blk_struct
+* Return: none
+******************************************************************************/
+static void parseV(xmlNodePtr VNode, blk_struct *blk)
+{
+    char *prop_var, *prop_var_type;
+
+    prop_var = (char *)xmlGetProp(VNode, (const unsigned char*)"var");
+    prop_var_type = (char *)xmlGetProp(VNode, (const unsigned char*)"type");
+
+    blk_var var;
+    init_blk_var(&var);
+    var.name = nasm_strdup(prop_var);
+    var.asm_var = nasm_strdup(prop_var_type);
+    g_array_append_val(blk->vars, var);
+
+    free(prop_var);
+    free(prop_var_type);
+}
+
+/******************************************************************************
+*
 * Function name: parseG
 * Description: parse an <G> tag into a blk_struct
 *              An <G> tag has two attribute:
@@ -274,6 +303,10 @@ static void parseBlk(xmlNodePtr blkNodeStart, blk_struct *blk)
             parseRptBlk(blkNode, subblk);
         } else if (strcmp(blkName, "traverse") == 0) {
             parseTrvBlk(blkNode, subblk);
+        } else if (strcmp(blkName, "V") == 0) {
+            parseV(blkNode, blk);
+            nasm_free(subblk);
+            continue;
         } else if (strcmp(blkName, "G") == 0) {
             parseG(blkNode, subblk);
         } else if (strcmp(blkName, "C") == 0) {

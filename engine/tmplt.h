@@ -15,14 +15,16 @@
  * 5) elem_statement: repeat generating instruction statements
  *
  * element statement types
- * 1) G: instructin set/group
- * 2) C: check a value
- * 3) I: a single instruction
+ * 1) V: a variable
+ * 2) G: instructin set/group
+ * 3) C: check a value
+ * 4) I: a single instruction
  */
 
 /* element structure
  */
 typedef enum elem_type {
+    V_ELEM,
     G_ELEM,
     C_ELEM,
     I_ELEM
