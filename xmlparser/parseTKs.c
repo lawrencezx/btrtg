@@ -24,15 +24,12 @@ static void parseCGs(xmlNodePtr cgsNode)
 
         int i = 0;
         WDTree *cgTree;
-        constVal *cgVal;
         char *key;
         struct hash_insert hi;
 
         cgTree = wdtree_create();
         cgTree->isleaf = true;
         cgTree->size = getElemsSize(cgNode->children);
-        cgTree->consts = (constVal *)nasm_malloc(cgTree->size * sizeof(constVal));
-        cgVal = cgTree->consts;
 
         for (xmlNodePtr cNode = cgNode->children; cNode != NULL; cNode = cNode->next) {
             if (cNode->type != XML_ELEMENT_NODE)
@@ -47,8 +44,10 @@ static void parseCGs(xmlNodePtr cgsNode)
             //} else if (strcmp(cNodeName, "Imm16") == 0) {
             //    cgVal[i].imm16 = (uint16_t)imm;
             //} else if (strcmp(cNodeName, "Imm32") == 0) {
-                cgVal[i].type = CONST_IMM32;
-                cgVal[i].imm32 = (uint32_t)imm;
+            constVal cgVal;
+            cgVal.type = CONST_IMM32;
+            cgVal.imm32 = (uint32_t)imm;
+            g_array_append_val(cgTree->consts, cgVal);
             //} else {
             //    printf("0x%x\n", imm);
             //}
@@ -64,17 +63,13 @@ static void parseCGs(xmlNodePtr cgsNode)
 static WDTree *parseTK(xmlNodePtr tkNode)
 {
     int i = 0;
-    int *weights;
     struct hash_insert hi;
     WDTree *tkTree;
-    WDTree **subtrees;
 
     tkTree = wdtree_create();
     tkTree->size = getElemsSize(tkNode->children);
-    tkTree->weights = (int *)nasm_malloc(tkTree->size * sizeof(int));
-    tkTree->children = (WDTree **)nasm_malloc(tkTree->size * sizeof(WDTree *));
-    weights = tkTree->weights;
-    subtrees = tkTree->children;
+    GArray *weights = tkTree->weights;
+    GArray *subtrees = tkTree->subtrees;
 
     for (xmlNodePtr nNode = tkNode->children; nNode != NULL; nNode = nNode->next) {
         if (nNode->type != XML_ELEMENT_NODE)
@@ -84,9 +79,9 @@ static WDTree *parseTK(xmlNodePtr tkNode)
 
         propWeight = (char *)xmlGetProp(nNode, (const unsigned char*)"weight");
         propKey = (char *)xmlGetProp(nNode, (const unsigned char*)"name");
-
-        weights[i] = atoi(propWeight);
-        subtrees[i] = *(WDTree **)hash_find(&hash_wdtrees, propKey, &hi);
+        int weight = atoi(propWeight);
+        g_array_append_val(weights, weight);
+        g_array_append_val(subtrees, *(WDTree **)hash_find(&hash_wdtrees, propKey, &hi));
         i++;
 
         free(propWeight);

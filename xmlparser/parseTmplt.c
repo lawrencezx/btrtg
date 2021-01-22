@@ -33,22 +33,21 @@ static void parseClasses(xmlNodePtr classesNode)
 
         int i = 0;
         WDTree *classTree;
-        constVal *classVal;
         const char *key;
         struct hash_insert hi;
 
         classTree = wdtree_create();
         classTree->isleaf = true;
         classTree->size = getElemsSize(classNode->children);
-        classTree->consts = (constVal *)nasm_malloc(classTree->size * sizeof(constVal));
-        classVal = classTree->consts;
 
         for (xmlNodePtr iNode = classNode->children; iNode != NULL; iNode = iNode->next) {
             if (iNode->type != XML_ELEMENT_NODE)
                 continue;
 
-            classVal[i].type = CONST_INSN;
-            classVal[i].instName = nasm_strdup(nasm_trim((char *)iNode->children->content));
+            constVal classVal;
+            classVal.type = CONST_INSN;
+            classVal.instName = nasm_strdup(nasm_trim((char *)iNode->children->content));
+            g_array_append_val(classTree->consts, classVal);
             i++;
         }
 
@@ -69,18 +68,14 @@ static void parseSeqBlk(xmlNodePtr seqNode, blk_struct *blk)
 static void parseSelBlk(xmlNodePtr selNode, blk_struct *blk)
 {
     int i = 0;
-    int *weights;
     char *key;
     struct hash_insert hi;
     WDTree *selTree;
-    WDTree **subtrees;
 
     selTree = wdtree_create();
     selTree->size = getElemsSize(selNode->children);
-    selTree->weights = (int *)nasm_malloc(selTree->size * sizeof(int));
-    selTree->children = (WDTree **)nasm_malloc(selTree->size * sizeof(WDTree *));
-    weights = selTree->weights;
-    subtrees = selTree->children;
+    GArray *weights = selTree->weights;
+    GArray *subtrees = selTree->subtrees;
 
     for (xmlNodePtr blkNode = selNode->children; blkNode != NULL;
         blkNode = blkNode->next) {
@@ -90,10 +85,10 @@ static void parseSelBlk(xmlNodePtr selNode, blk_struct *blk)
         char *prop_weight;
 
         prop_weight = (char *)xmlGetProp(blkNode, (const unsigned char*)"weight");
-
-        weights[i] = atoi(prop_weight);
+        int weight = atoi(prop_weight);
+        g_array_append_val(weights, weight);
         key = (char *)xmlGetProp(blkNode, (const unsigned char*)"type");
-        subtrees[i] = *(WDTree **)hash_find(&hash_wdtrees, key, &hi);
+        g_array_append_val(subtrees, *(WDTree **)hash_find(&hash_wdtrees, key, &hi));
         i++;
 
         free(prop_weight);

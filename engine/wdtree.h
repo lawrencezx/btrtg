@@ -27,11 +27,9 @@ typedef struct constVal {
 typedef struct WDTree {
     bool isleaf;
     int size;
-    int *weights;
-    union {
-        struct WDTree **children;
-        constVal *consts;
-    };
+    GArray *weights;
+    GArray *subtrees;
+    GArray *consts;
 } WDTree;
 
 typedef struct Tmpltmodel {

@@ -16,9 +16,9 @@ WDTree *wdtree_create(void)
     tree = (WDTree *)nasm_malloc(sizeof(WDTree));
     tree->isleaf = false;
     tree->size = 0;
-    tree->weights = NULL;
-    tree->children = NULL;
-    tree->consts = NULL;
+    tree->weights = g_array_new(FALSE, FALSE, sizeof(int));
+    tree->subtrees = g_array_new(FALSE, FALSE, sizeof(WDTree *));
+    tree->consts = g_array_new(FALSE, FALSE, sizeof(constVal));
 
     if (wdtrees_templen >= wdtrees_tempsize) {
         wdtrees_tempsize += WDTREES_TEMP_DELTA;
@@ -40,14 +40,14 @@ static void constVal_clear(constVal *cVal)
 
 void wdtree_clear(WDTree *tree)
 {
-    free(tree->weights);
+    g_array_free(tree->weights, true);
     if (tree->isleaf == true) {
         for (int i = 0; i < tree->size; i++) {
-            constVal_clear(&tree->consts[i]);
+            constVal_clear(&g_array_index(tree->consts, constVal, i));
         }
-        free(tree->consts);
+        g_array_free(tree->consts, true);
     } else {
-        free(tree->children);
+        g_array_free(tree->subtrees, true);
     }
 }
 
@@ -75,16 +75,16 @@ void wdtrees_free_all(void)
     hash_wdtrees_clear();
 }
 
-static int select_subtree(int *weights, int len)
+static int select_subtree(GArray *weights, int len)
 {
-    if (weights == NULL) {
+    if (weights->len == 0) {
         return nasm_random32(len);
     }
     static const int total_weight = 100;
     int subtree, accWeight = 0;
     int random_chi = nasm_random32(total_weight);
     for (subtree = 0; subtree < len; subtree++) {
-        accWeight += weights[subtree];
+        accWeight += g_array_index(weights, int, subtree);
         if (random_chi < accWeight)
             break;
     }
@@ -100,8 +100,8 @@ constVal *wdtree_select_constval(WDTree *tree)
     }
     subtree = select_subtree(tree->weights, tree->size);
     if (tree->isleaf) {
-        return &tree->consts[subtree];
+        return &g_array_index(tree->consts, constVal, subtree);
     }
-    return wdtree_select_constval(tree->children[subtree]);
+    return wdtree_select_constval(g_array_index(tree->subtrees, WDTree *, subtree));
 }
 
