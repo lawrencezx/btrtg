@@ -9,8 +9,43 @@
 #include "insn-test.h"
 #include "x86pg.h"
 
-static const char fout_head[] = "  GLOBAL main\nmain:\n  mov edx,0x0\n";
-static const char fout_tail[] = "\n  call check_point_end\n  mov eax,1\n  mov ebx,0\n  int 80h";
+static const char main_label[] = "\
+  GLOBAL main\n\
+main:\n";
+
+static const char init_regs[] = "\
+  mov edx,0x0\n";
+
+static const char check_macro[] = "\
+%macro check 1\n\
+  pusha\n\
+  pushf\n\
+  push cs\n\
+  push ss\n\
+  push ds\n\
+  push es\n\
+  push fs\n\
+  push gs\n\
+  sub esp,0x200\n\
+  fxsave [esp]\n\
+  call check_point_%1\n\
+  add esp,0x200\n\
+  fxrstor [esp]\n\
+  pop eax\n\
+  pop eax\n\
+  pop eax\n\
+  pop eax\n\
+  pop eax\n\
+  pop eax\n\
+  popf\n\
+  popa\n\
+%endmacro\n";
+
+static const char safe_exit[] = "\n\
+  call check_point_end\n\
+  mov eax,1\n\
+  mov ebx,0\n\
+  int 80h";
 
 static char *check_function_names[] =
 {
@@ -33,6 +68,8 @@ void gsp_init(void)
     data.type = OUTPUT_RAWDATA;
     data.buf = "";
     ofmt->output(&data);
+    data.buf = (const void *)check_macro;
+    ofmt->output(&data);
 
     data.type = OUTPUT_SECTION;
     data.buf = (const void *)&X86PGState.data_sec;
@@ -43,7 +80,9 @@ void gsp_init(void)
     ofmt->output(&data);
 
     data.type = OUTPUT_RAWDATA;
-    data.buf = (const void *)fout_head;
+    data.buf = (const void *)main_label;
+    ofmt->output(&data);
+    data.buf = (const void *)init_regs;
     ofmt->output(&data);
 
     reset_x86pgstate();
@@ -58,6 +97,6 @@ void gsp_finish(void)
 
     struct output_data data;
     data.type = OUTPUT_RAWDATA;
-    data.buf = (const void *)fout_tail;
+    data.buf = (const void *)safe_exit;
     ofmt->output(&data);
 }

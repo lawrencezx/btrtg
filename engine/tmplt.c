@@ -118,6 +118,7 @@ static void walkIElem(elem_struct *i_e);
 
 static void (*walkElemFuncs[])(elem_struct *elem) =
 {
+    NULL, /* variable element */
     walkGElem,
     walkCElem,
     walkIElem
@@ -149,28 +150,8 @@ static void gen_call_check_function(char *checkType)
             nasm_fatal("checking value: %s has not been initialized", checkType);
         checkType = var->asm_var;
     }
-    sprintf(call_check_function, "  call check_point_%s", checkType);
-    one_insn_gen_const("pushad");
-    one_insn_gen_const("pushfd");
-    one_insn_gen_const("push cs");
-    one_insn_gen_const("push ss");
-    one_insn_gen_const("push ds");
-    one_insn_gen_const("push es");
-    one_insn_gen_const("push fs");
-    one_insn_gen_const("push gs");
-    one_insn_gen_const("sub esp, 0x200");
-    one_insn_gen_const("fxsave [esp]");
+    sprintf(call_check_function, "  check %s", checkType);
     one_insn_gen_ctrl(call_check_function, INSERT_AFTER);
-    one_insn_gen_const("add esp, 0x200");
-    one_insn_gen_const("fxrstor [esp]");
-    one_insn_gen_const("pop eax");
-    one_insn_gen_const("pop eax");
-    one_insn_gen_const("pop eax");
-    one_insn_gen_const("pop eax");
-    one_insn_gen_const("pop eax");
-    one_insn_gen_const("pop eax");
-    one_insn_gen_const("popfd");
-    one_insn_gen_const("popad");
 }
 
 static void walkCElem(elem_struct *c_e)
