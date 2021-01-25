@@ -16,6 +16,7 @@
 #include "parseXML.h"
 #include "error.h"
 #include "tmplt.h"
+#include "tk.h"
 
 static const char *xmlfiles[1] =
 {
@@ -24,6 +25,7 @@ static const char *xmlfiles[1] =
 };
 char *tmpltpath = "../xmlmodel/templates";
 
+static struct trv_state *trv_state = NULL;
 
 static void parseClasses(xmlNodePtr classesNode)
 {
@@ -130,22 +132,10 @@ static void parseRptBlk(xmlNodePtr rptNode, blk_struct *blk)
 
 static void parseTrvBlk(xmlNodePtr trvNode, blk_struct *blk)
 {
-    char *prop_var, *prop_var_type;
-
-    prop_var = (char *)xmlGetProp(trvNode, (const unsigned char*)"var");
-    prop_var_type = (char *)xmlGetProp(trvNode, (const unsigned char*)"type");
-
-    blk_var var;
-    init_blk_var(&var);
-    var.name = nasm_strdup(prop_var);
-    var.asm_var = nasm_strdup(prop_var_type);
-    g_array_append_val(blk->vars, var);
-
     blk->type = TRV_BLK;
     parseBlk(trvNode->children, blk);
-
-    free(prop_var);
-    free(prop_var_type);
+    blk->trv_state = trv_state;
+    trv_state = NULL;
 }
 
 /******************************************************************************
@@ -257,21 +247,30 @@ static void parseC(xmlNodePtr CNode, blk_struct *blk)
 static void parseI(xmlNodePtr INode, blk_struct *blk)
 {
     elem_struct *i_e;
-    char *prop_type, *prop_inip;
+    char *prop_type, *prop_inip, *prop_trv;
 
     prop_type = (char *)xmlGetProp(INode, (const unsigned char*)"type");
     prop_inip = (char *)xmlGetProp(INode, (const unsigned char*)"inip");
+    prop_trv = (char *)xmlGetProp(INode, (const unsigned char*)"trv");
 
     i_e = (elem_struct *)nasm_malloc(sizeof(elem_struct));
     i_e->type = I_ELEM;
     i_e->inst = nasm_strdup(nasm_trim(prop_type));
     i_e->inip = (prop_inip == NULL) ? 0.0 : atof(prop_inip);
+    if (prop_trv != NULL && strcmp(nasm_trim(prop_trv), "true") == 0) {
+        trv_state = (struct trv_state *)nasm_malloc(sizeof(struct trv_state));
+        init_trv_state(trv_state);
+        create_trv_state(i_e->inst, trv_state);
+        i_e->constVals = trv_state->constVals;
+        i_e->inip = 1.0;
+    }
 
     blk->type = ELEM_BLK;
     g_array_append_val(blk->blks, i_e);
 
     free(prop_type);
     free(prop_inip);
+    free(prop_trv);
 }
 
 static void parseBlk(xmlNodePtr blkNodeStart, blk_struct *blk)
@@ -329,6 +328,10 @@ void parse_tmplts_file(const char *fname)
     xmlDocPtr doc = xmlParseFile(fname);
     if (doc != NULL) {
         xmlNodePtr node = doc->children;
+        while (node != NULL && node->type != XML_ELEMENT_NODE)
+            node = node->next;
+        if (node == NULL)
+            return;
         if (node->type == XML_ELEMENT_NODE) {
             const char *nodeName = (const char *)node->name;
             if (strcmp(nodeName, "InsnGroups") == 0) {

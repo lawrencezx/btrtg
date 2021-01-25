@@ -270,6 +270,8 @@ bool one_insn_gen(const insn_seed *seed, insn *result)
     else
         dfmt->print("\033[31m Gen const inst\033[m: %s\n", get_token_bufptr());
 
+    token_reset();
+
     if (gen_control_transfer_insn(seed))
         return true;
     likely_gen_label();

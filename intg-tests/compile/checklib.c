@@ -17,7 +17,7 @@ static int point = 0;
     (struct X87LegacyXSaveArea x87fpstate, \
      struct X86StandardRegisters x86regs) \
 { \
-    static int diff = 0; \
+    int diff = 0; \
     Reg8 std_##gprhi = x86regs.gprhi; \
     Reg8 check_##gprhi = output[point].gprhi; \
     if (std_##gprhi != check_##gprhi) { \
@@ -38,7 +38,7 @@ check_point_gprhi(dh)
     (struct X87LegacyXSaveArea x87fpstate, \
      struct X86StandardRegisters x86regs) \
 { \
-    static int diff = 0; \
+    int diff = 0; \
     Reg8 std_##gprlo = x86regs.gprlo; \
     Reg8 check_##gprlo = output[point].gprlo; \
     if (std_##gprlo != check_##gprlo) { \
@@ -59,7 +59,7 @@ check_point_gprlo(dl)
     (struct X87LegacyXSaveArea x87fpstate, \
      struct X86StandardRegisters x86regs) \
 { \
-    static int diff = 0; \
+    int diff = 0; \
     Reg16 std_##reg16 = x86regs.reg16; \
     Reg16 check_##reg16 = output[point].reg16; \
     if (std_##reg16 != check_##reg16) { \
@@ -91,7 +91,7 @@ check_point_reg16(gs)
     (struct X87LegacyXSaveArea x87fpstate, \
      struct X86StandardRegisters x86regs) \
 { \
-    static int diff = 0; \
+    int diff = 0; \
     Reg32 std_##reg32 = x86regs.reg32; \
     Reg32 check_##reg32 = output[point].reg32; \
     if (std_##reg32 != check_##reg32) { \
@@ -116,7 +116,7 @@ check_point_reg32(eflags)
 void check_point_x86_state(struct X87LegacyXSaveArea x87fpstate,
      struct X86StandardRegisters x86regs)
 {
-    static int diff = 0;
+    int diff = 0;
     if (x86regs.gs != output[point].gs) {
         printf("diff [gs]: %x, should be: 0x%x\n", x86regs.gs, output[point].gs);
         diff = 1;

@@ -19,6 +19,8 @@ void init_x86pgstate(void)
     X86PGState.opcode = I_none;
     X86PGState.curr_inst = NULL;
     X86PGState.need_init = false;
+    X86PGState.opi = 0;
+    X86PGState.constVals = NULL;
     X86PGState.instlist = insnlist_create();
     X86PGState.insertpos = NULL;
     X86PGState.lock_ctrl = false;
@@ -36,6 +38,8 @@ void reset_x86pgstate(void)
     X86PGState.opcode = I_none;
     X86PGState.curr_inst = NULL;
     X86PGState.need_init = false;
+    X86PGState.opi = 0;
+    X86PGState.constVals = NULL;
     X86PGState.insertpos = NULL;
     X86PGState.lock_ctrl = false;
     for (int i = 0; i < LOCK_REG_NUM; i++) {
@@ -86,6 +90,26 @@ bool stat_get_need_init(void)
 void stat_set_need_init(bool need_init)
 {
     X86PGState.need_init = need_init;
+}
+
+int stat_get_opi(void)
+{
+    return X86PGState.opi;
+}
+
+void stat_set_opi(int opi)
+{
+    X86PGState.opi = opi;
+}
+
+GArray *stat_get_constVals(void)
+{
+    return X86PGState.constVals;
+}
+
+void stat_set_constVals(GArray *constVals)
+{
+    X86PGState.constVals = constVals;
 }
 
 void stat_lock_ctrl(void)

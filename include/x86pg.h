@@ -83,6 +83,8 @@ struct X86PGState {
         enum opcode opcode;
         insn *curr_inst;
         bool need_init;
+        int opi;
+        GArray *constVals;
     }; /* current instruction */
 
     blk_struct *curr_blk;
@@ -118,6 +120,10 @@ enum opcode stat_get_opcode(void);
 void stat_set_opcode(enum opcode opcode);
 bool stat_get_need_init(void);
 void stat_set_need_init(bool need_init);
+int stat_get_opi(void);
+void stat_set_opi(int opi);
+GArray *stat_get_constVals(void);
+void stat_set_constVals(GArray *constVals);
 
 void stat_lock_ctrl(void);
 void stat_unlock_ctrl(void);

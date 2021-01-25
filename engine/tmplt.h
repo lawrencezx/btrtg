@@ -34,11 +34,30 @@ typedef struct elem_struct {
     double inip;
     elem_type type;
     union {
-        WDTree *wdtree;
-        char *checkType;
-        char *inst;
+        WDTree *wdtree;     /* G_ELEM */
+        char *checkType;    /* C_ELEM */
+        struct {
+            char *inst;
+            GArray *constVals;
+        };
     };
 } elem_struct;
+
+/* traversing state of TRV_BLK block
+ */
+struct trv_state {
+    GArray *wdtrees;
+    GArray *constVals;
+};
+
+/* block variable structure
+ */
+typedef struct blk_var {
+    bool        valid;
+    char        *name;
+    opflags_t   opndflags;
+    char        *asm_var;
+} blk_var;
 
 /* block statement structure
  */
@@ -51,18 +70,12 @@ typedef enum blk_type {
     ELEM_BLK
 } blk_type;
 
-typedef struct blk_var {
-    bool        valid;
-    char        *name;
-    opflags_t   opndflags;
-    char        *asm_var;
-} blk_var;
-
 typedef struct blk_struct {
     struct blk_struct *parent;
     blk_type type;
-    char *xfrName;
-    int times;          /* RPT_BLK, XFR_BLK */
+    char *xfrName;                  /* XFR_BLK */
+    int times;                      /* RPT_BLK, XFR_BLK */
+    struct trv_state *trv_state;    /* TRV_BLK */
     GArray *vars;
     GArray *blks;
 } blk_struct;
@@ -75,6 +88,7 @@ typedef struct tmplt_struct {
 
 void init_blk_struct(blk_struct *blk);
 void init_blk_var(blk_var *var);
+void init_trv_state(struct trv_state *trv_state);
 blk_var *blk_search_var(blk_struct *blk, const char *var_name);
 void walk_tmplt(void);
 void tmplt_clear(tmplt_struct *tmpltm);

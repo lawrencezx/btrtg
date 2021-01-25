@@ -743,6 +743,7 @@ bool gen_operand(const insn_seed *seed, int opi, bool *label_consumer)
     operand_seed opnd_seed;
     char *token_bufptr;
 
+    stat_set_opi(opi);
     token_bufptr = get_token_bufptr();
 
     if (seed == NULL) {

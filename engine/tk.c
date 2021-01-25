@@ -28,6 +28,22 @@ static TKmodel *get_tkm_from_hashtbl(const char *instName)
     return tkmpp == NULL ? NULL : *(TKmodel **)tkmpp;
 }
 
+void create_trv_state(char *asm_inst, struct trv_state *trv_state)
+{
+    char inst_name[128];
+    int i = 0;
+    while (asm_inst[i] != ' ' && asm_inst[i] != '\n') {
+        inst_name[i] = asm_inst[i];
+        i++;
+    }
+    inst_name[i] = '\0';
+    TKmodel *tkm = get_tkm_from_hashtbl(inst_name);
+    g_array_append_val(trv_state->wdtrees, tkm->wdtree);
+    while (asm_inst[i] != '\0' && asm_inst[i] != '\n')
+        if (asm_inst[i++] == ',')
+            g_array_append_val(trv_state->wdtrees, tkm->wdtree);
+}
+
 constVal *request_constVal(const char *instName, bool isDest)
 {
     constVal *cVal;
