@@ -25,7 +25,8 @@ void init_blk_var(blk_var *var)
     var->valid = false;
     var->name = NULL;
     var->opndflags = 0;
-    var->asm_var = NULL;
+    var->var_type = NULL;
+    var->var_val = NULL;
 }
 
 void init_trv_state(struct trv_state *trv_state)
@@ -51,6 +52,14 @@ static void init_elem_gen_state(void)
     stat_unlock_reg(LOCK_REG_CASE_MEM);
 }
 
+static void blk_invalid_var_all(blk_struct *blk)
+{
+    if (blk == NULL)
+        return;
+    for (guint i = 0; i < blk->vars->len; i++)
+        g_array_index(blk->vars, blk_var, i).valid = false;
+}
+
 static void walkSeqBlk(blk_struct *blk);
 static void walkSelBlk(blk_struct *blk);
 static void walkXfrBlk(blk_struct *blk);
@@ -71,6 +80,7 @@ static void (*walkBlkFuncs[])(blk_struct *) =
 static void walkSeqBlk(blk_struct *blk)
 {
     stat_set_curr_blk(blk);
+    blk_invalid_var_all(blk);
 
     for (guint i = 0; i < blk->blks->len; i++) {
         blk_struct *subblk = g_array_index(blk->blks, blk_struct *, i);
@@ -86,6 +96,7 @@ static void walkSelBlk(blk_struct *blk)
     insn inst;
 
     stat_set_curr_blk(blk);
+    blk_invalid_var_all(blk);
     init_elem_gen_state();
 
     wdtree = g_array_index(blk->blks, WDTree *, 0);
@@ -98,6 +109,7 @@ static void walkSelBlk(blk_struct *blk)
 static void walkXfrBlk(blk_struct *blk)
 {
     stat_set_curr_blk(blk);
+    blk_invalid_var_all(blk);
     /* TODO */
 }
 
@@ -106,6 +118,7 @@ static void walkRptBlk(blk_struct *blk)
     stat_set_curr_blk(blk);
 
     for (int k = 0; k < blk->times; k++) {
+        blk_invalid_var_all(blk);
         for (guint i = 0; i < blk->blks->len; i++) {
             blk_struct *subblk = g_array_index(blk->blks, blk_struct *, i);
             walkBlkFuncs[subblk->type](subblk);
@@ -125,6 +138,7 @@ static void pre_order_traverse_trv_state(blk_struct *blk, WDTree *tree, int num)
             constVal *const_val = &g_array_index(tree->consts, constVal, i);
             g_array_append_val(trv_state->constVals, const_val);
             if ((size_t)num + 1 == trv_state->wdtrees->len) {
+                blk_invalid_var_all(blk);
                 for (guint i = 0; i < blk->blks->len; i++) {
                     blk_struct *subblk = g_array_index(blk->blks, blk_struct *, i);
                     walkBlkFuncs[subblk->type](subblk);
@@ -189,7 +203,7 @@ static void walkCElem(elem_struct *c_e)
         blk_var *var = blk_search_var(stat_get_curr_blk(), checkType + 1);
         if (!var->valid)
             nasm_fatal("checking value: %s has not been initialized", checkType);
-        checkType = var->asm_var;
+        checkType = var->var_val;
     }
     sprintf(call_check_function, "  check %s", checkType);
     one_insn_gen_ctrl(call_check_function, INSERT_AFTER);
@@ -235,7 +249,8 @@ static void blk_free(blk_struct *blk)
     for (guint i = 0; i < blk->vars->len; i++) {
         blk_var *var = &g_array_index(blk->vars, blk_var, i);
         free(var->name);
-        free(var->asm_var);
+        free(var->var_type);
+        free(var->var_val);
     }
     if (blk->type == SEL_BLK) {
     } else if (blk->type == ELEM_BLK) {

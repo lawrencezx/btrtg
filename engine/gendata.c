@@ -761,19 +761,19 @@ bool gen_operand(const insn_seed *seed, int opi, bool *label_consumer)
         if (opnd_seed.is_var) {
             blk_var *var = blk_search_var(stat_get_curr_blk(), asm_opnd + 1);
             if (!var->valid) {
-                /* generate variable and store it to var->asm_var
+                /* generate variable and store it to var->var_val
                  */
                 memset(asm_opnd, '\0', ARRAY_SIZE(asm_opnd));
                 if (!gen_operand_internal(&opnd_seed, asm_opnd))
                     return false;
-                free(var->asm_var);
+                free(var->var_val);
                 var->opndflags = opnd_seed.opndflags;
-                var->asm_var = nasm_strdup(nasm_trim(asm_opnd));
+                var->var_val = nasm_strdup(nasm_trim(asm_opnd));
                 var->valid = true;
             }
 
-            nasm_strrplc(opnd_start, opnd_end - opnd_start, var->asm_var,
-                strlen(var->asm_var));
+            nasm_strrplc(opnd_start, opnd_end - opnd_start, var->var_val,
+                strlen(var->var_val));
 
             /* specify the fundamental data item size for a memory operand
              */

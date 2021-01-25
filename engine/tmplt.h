@@ -56,7 +56,8 @@ typedef struct blk_var {
     bool        valid;
     char        *name;
     opflags_t   opndflags;
-    char        *asm_var;
+    char        *var_type;
+    char        *var_val;
 } blk_var;
 
 /* block statement structure

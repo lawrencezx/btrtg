@@ -66,7 +66,7 @@ void create_opnd_seed(operand_seed *opnd_seed, const char *asm_opnd)
         if (var == NULL)
             nasm_fatal("var: %s not defined\n", asm_opnd);
         if (!var->valid)
-            opnd_seed->opndflags = asm_parse_opflags(var->asm_var);
+            opnd_seed->opndflags = asm_parse_opflags(var->var_type);
     } else {
         opnd_seed->opndflags = asm_parse_opflags(asm_opnd);
     }

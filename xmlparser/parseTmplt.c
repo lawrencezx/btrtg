@@ -160,7 +160,7 @@ static void parseV(xmlNodePtr VNode, blk_struct *blk)
     blk_var var;
     init_blk_var(&var);
     var.name = nasm_strdup(prop_var);
-    var.asm_var = nasm_strdup(prop_var_type);
+    var.var_type = nasm_strdup(prop_var_type);
     g_array_append_val(blk->vars, var);
 
     free(prop_var);
