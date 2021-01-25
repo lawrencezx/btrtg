@@ -201,7 +201,6 @@ bool create_immediate(operand_seed* opnd_seed, char *buffer)
 static void create_random_modrm(char *buffer)
 {
     struct random_mem_addr mem_addr;
-    insn lea;
     enum reg_enum baseregs[6] = {R_EAX, R_ECX, R_EDX, R_EBX, R_ESI, R_EDI};
     enum reg_enum indexregs[6] = {R_EAX, R_ECX, R_EDX, R_EBX, R_ESI, R_EDI};
     enum reg_enum basereg, indexreg;
@@ -215,6 +214,7 @@ static void create_random_modrm(char *buffer)
         do {
             indexreg = indexregs[nasm_random32(6)];
         } while (stat_reg_locked(indexreg));
+        stat_unlock_reg(LOCK_REG_CASE_MEM);
         random_mem_addr_from_data(&mem_addr);
 
         int modes = nasm_random32(4);
@@ -222,14 +222,11 @@ static void create_random_modrm(char *buffer)
         const char *index_reg_name = nasm_reg_names[indexreg - EXPR_REG_START];
 
         /* initialize base register and index register */
-        lea.ctrl = buffer;
-        sprintf(buffer, "  lea %s, data%d", base_reg_name, mem_addr.base);
-        stat_insert_insn(&lea, INSERT_AFTER);
-        if (modes == 2 || modes == 3) {
-            sprintf(buffer, "  mov %s, 0x%x", index_reg_name, mem_addr.index);
-            stat_insert_insn(&lea, INSERT_AFTER);
-            stat_lock_reg(indexreg, LOCK_REG_CASE_MEM);
-        }
+        char *init_mem_addr = stat_get_init_mem_addr();
+        sprintf(init_mem_addr, "  lea %s, data%d", base_reg_name, mem_addr.base);
+        if (modes == 2 || modes == 3)
+            sprintf(init_mem_addr + strlen(init_mem_addr), "\n  mov %s, 0x%x",
+                    index_reg_name, mem_addr.index);
 
         switch (modes) {
             case 0:   /* base */
@@ -278,6 +275,7 @@ bool create_memory(operand_seed *opnd_seed, char *buffer)
         } else {
             cVal = g_array_index(constVals, constVal *, stat_get_opi());
         }
+        one_insn_gen_ctrl(stat_get_init_mem_addr(), INSERT_AFTER);
         sprintf(buffer, "mov %s %s, 0x%x", memsize[whichmemsize], modrm, (cVal == NULL) ? (int)nasm_random64(0x100000000) : cVal->imm32);
         one_insn_gen_const(buffer);
     }

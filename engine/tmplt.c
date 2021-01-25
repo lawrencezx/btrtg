@@ -27,6 +27,7 @@ void init_blk_var(blk_var *var)
     var->opndflags = 0;
     var->var_type = NULL;
     var->var_val = NULL;
+    var->init_mem_addr = NULL;
 }
 
 void init_trv_state(struct trv_state *trv_state)
@@ -47,17 +48,18 @@ blk_var *blk_search_var(blk_struct *blk, const char *var_name)
     return blk_search_var(blk->parent, var_name);
 }
 
-static void init_elem_gen_state(void)
-{
-    stat_unlock_reg(LOCK_REG_CASE_MEM);
-}
-
 static void blk_invalid_var_all(blk_struct *blk)
 {
     if (blk == NULL)
         return;
-    for (guint i = 0; i < blk->vars->len; i++)
-        g_array_index(blk->vars, blk_var, i).valid = false;
+    for (guint i = 0; i < blk->vars->len; i++) {
+        blk_var *var = &g_array_index(blk->vars, blk_var, i);
+        free(var->var_val);
+        free(var->init_mem_addr);
+        var->valid = false;
+        var->var_val = NULL;
+        var->init_mem_addr = NULL;
+    }
 }
 
 static void walkSeqBlk(blk_struct *blk);
@@ -97,7 +99,6 @@ static void walkSelBlk(blk_struct *blk)
 
     stat_set_curr_blk(blk);
     blk_invalid_var_all(blk);
-    init_elem_gen_state();
 
     wdtree = g_array_index(blk->blks, WDTree *, 0);
     cVal = wdtree_select_constval(wdtree);
@@ -183,7 +184,6 @@ static void walkGElem(elem_struct *g_e)
     insn inst;
 
     stat_set_need_init(likely_happen_p(g_e->inip));
-    init_elem_gen_state();
 
     cVal = wdtree_select_constval(g_e->wdtree);
     
@@ -212,7 +212,6 @@ static void walkCElem(elem_struct *c_e)
 static void walkIElem(elem_struct *i_e)
 {
     stat_set_need_init(likely_happen_p(i_e->inip));
-    init_elem_gen_state();
     stat_set_constVals(i_e->constVals);
 
     one_insn_gen_const(i_e->inst);
@@ -251,6 +250,7 @@ static void blk_free(blk_struct *blk)
         free(var->name);
         free(var->var_type);
         free(var->var_val);
+        free(var->init_mem_addr);
     }
     if (blk->type == SEL_BLK) {
     } else if (blk->type == ELEM_BLK) {

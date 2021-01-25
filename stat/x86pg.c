@@ -17,7 +17,6 @@ void init_x86pgstate(void)
     init_data_sec(&X86PGState.data_sec);
     X86PGState.labeli = 0;
     X86PGState.opcode = I_none;
-    X86PGState.curr_inst = NULL;
     X86PGState.need_init = false;
     X86PGState.opi = 0;
     X86PGState.constVals = NULL;
@@ -36,7 +35,6 @@ void reset_x86pgstate(void)
     init_data_sec(&X86PGState.data_sec);
     X86PGState.labeli = 0;
     X86PGState.opcode = I_none;
-    X86PGState.curr_inst = NULL;
     X86PGState.need_init = false;
     X86PGState.opi = 0;
     X86PGState.constVals = NULL;
@@ -100,6 +98,21 @@ int stat_get_opi(void)
 void stat_set_opi(int opi)
 {
     X86PGState.opi = opi;
+}
+
+bool stat_get_has_mem_opnd(void)
+{
+    return X86PGState.has_mem_opnd;
+}
+
+void stat_set_has_mem_opnd(bool has_mem_opnd)
+{
+    X86PGState.has_mem_opnd = has_mem_opnd;
+}
+
+char *stat_get_init_mem_addr(void)
+{
+    return (char *)X86PGState.init_mem_addr;
 }
 
 GArray *stat_get_constVals(void)

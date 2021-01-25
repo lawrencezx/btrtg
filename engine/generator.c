@@ -457,6 +457,9 @@ bool one_insn_gen(const insn_seed *seed, insn *result)
         result->ctrl = get_token_buf();
     }
 
+    if (stat_get_has_mem_opnd())
+        one_insn_gen_ctrl(stat_get_init_mem_addr(), INSERT_AFTER);
+
     stat_insert_insn(result, INSERT_AFTER);
 
     return true;

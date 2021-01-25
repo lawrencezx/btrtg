@@ -79,23 +79,25 @@ struct X86PGState {
     struct section text_sec;
     struct section data_sec;
 
-    struct {
-        enum opcode opcode;
-        insn *curr_inst;
-        bool need_init;
-        int opi;
-        GArray *constVals;
-    }; /* current instruction */
-
-    blk_struct *curr_blk;
+    insnlist_t *instlist;
+    insnlist_entry_t *insertpos;
 
     int labeli;
     insnlist_entry_t **labelspos;
+
     bool lock_ctrl;
     enum lock_reg_case lock_reg_cases[6];
 
-    insnlist_t *instlist;
-    insnlist_entry_t *insertpos;
+    blk_struct *curr_blk;
+
+    struct {
+        enum opcode opcode;
+        bool need_init;
+        int opi;
+        bool has_mem_opnd;
+        char init_mem_addr[128];
+        GArray *constVals;
+    }; /* current instruction */
 };
 
 extern struct X86PGState X86PGState;
@@ -112,19 +114,31 @@ enum position {
 void stat_insert_insn(insn *inst, enum position pos);
 
 struct section *stat_get_data_sec(void);
+/* curr_blk */
 blk_struct *stat_get_curr_blk(void);
 void stat_set_curr_blk(blk_struct *blk);
+/* labeli */
 int stat_get_labeli(void);
 void stat_inc_labeli(void);
+/* opcode */
 enum opcode stat_get_opcode(void);
 void stat_set_opcode(enum opcode opcode);
+/* need_init */
 bool stat_get_need_init(void);
 void stat_set_need_init(bool need_init);
+/* opi */
 int stat_get_opi(void);
 void stat_set_opi(int opi);
+/* has_mem_opnd */
+bool stat_get_has_mem_opnd(void);
+void stat_set_has_mem_opnd(bool has_mem_opnd);
+/* init_mem_addr */
+char *stat_get_init_mem_addr(void);
+/* constVals */
 GArray *stat_get_constVals(void);
 void stat_set_constVals(GArray *constVals);
 
+/* global lock */
 void stat_lock_ctrl(void);
 void stat_unlock_ctrl(void);
 bool stat_ctrl_locked(void);

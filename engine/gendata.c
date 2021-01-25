@@ -583,10 +583,6 @@ bool gen_opcode(const insn_seed *seed)
         return true;
     const char *inst_name;
 
-    /* reset global state */
-    stat_unlock_reg(LOCK_REG_CASE_MEM);
-    token_reset();
-
     /* write instruction name to token_buf */
     inst_name = nasm_insn_names[seed->opcode];
     sprintf(get_token_cbufptr(), "%s ", inst_name);
@@ -688,6 +684,7 @@ static bool gen_reg_mem(operand_seed *opnd_seed, char *buffer)
     opndflags = opnd_seed->opndflags;
 
     if (is_class(MEMORY, opndflags)) {
+        stat_set_has_mem_opnd(true);
         if (is_class(MEM_OFFS, opndflags)) {
             return create_memoffs(opnd_seed, buffer);
         } else {
@@ -696,6 +693,7 @@ static bool gen_reg_mem(operand_seed *opnd_seed, char *buffer)
     } else {
         bool select_mem = likely_happen_p(0.5);
         if (select_mem) {
+            stat_set_has_mem_opnd(true);
             return create_memory(opnd_seed, buffer);
         } else {
             return gen_register(opnd_seed, buffer);
@@ -769,6 +767,8 @@ bool gen_operand(const insn_seed *seed, int opi, bool *label_consumer)
                 free(var->var_val);
                 var->opndflags = opnd_seed.opndflags;
                 var->var_val = nasm_strdup(nasm_trim(asm_opnd));
+                if (is_class(MEMORY, var->opndflags))
+                    var->init_mem_addr = nasm_strdup(stat_get_init_mem_addr());
                 var->valid = true;
             }
 

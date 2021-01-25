@@ -58,6 +58,7 @@ typedef struct blk_var {
     opflags_t   opndflags;
     char        *var_type;
     char        *var_val;
+    char        *init_mem_addr;
 } blk_var;
 
 /* block statement structure
