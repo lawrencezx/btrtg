@@ -33,7 +33,7 @@ void init_blk_var(blk_var *var)
 void init_trv_state(struct trv_state *trv_state)
 {
     trv_state->wdtrees = g_array_new(FALSE, FALSE, sizeof(WDTree *));
-    trv_state->constVals = g_array_new(FALSE, FALSE, sizeof(constVal *));
+    trv_state->val_nodes = g_array_new(FALSE, FALSE, sizeof(struct const_node *));
 }
 
 blk_var *blk_search_var(blk_struct *blk, const char *var_name)
@@ -96,7 +96,7 @@ static void walkSeqBlk(blk_struct *blk)
 static void walkSelBlk(blk_struct *blk)
 {
     WDTree *wdtree;
-    constVal *cVal;
+    struct const_node *inst_node;
     insn_seed seed;
     insn inst;
 
@@ -104,9 +104,9 @@ static void walkSelBlk(blk_struct *blk)
     blk_invalid_var_all(blk);
 
     wdtree = g_array_index(blk->blks, WDTree *, 0);
-    cVal = wdtree_select_constval(wdtree);
+    inst_node = wdtree_select_leaf_node(wdtree);
     
-    create_insn_seed(&seed, cVal->instName);
+    create_insn_seed(&seed, inst_node->instName);
     one_insn_gen(&seed, &inst);
 }
 
@@ -139,8 +139,8 @@ static void pre_order_traverse_trv_state(blk_struct *blk, WDTree *tree, int num)
 
     for (int i = 0; i < tree->size; i++) {
         if (tree->isleaf) {
-            constVal *const_val = &g_array_index(tree->consts, constVal, i);
-            g_array_append_val(trv_state->constVals, const_val);
+            struct const_node *val_node = &g_array_index(tree->consts, struct const_node, i);
+            g_array_append_val(trv_state->val_nodes, val_node);
             if ((size_t)num + 1 == trv_state->wdtrees->len) {
                 blk_invalid_var_all(blk);
                 for (guint i = 0; i < blk->blks->len; i++) {
@@ -150,7 +150,7 @@ static void pre_order_traverse_trv_state(blk_struct *blk, WDTree *tree, int num)
             } else
                 pre_order_traverse_trv_state(blk, g_array_index(trv_state->wdtrees, 
                             WDTree *, num + 1), num + 1);
-            g_array_remove_index(trv_state->constVals, num);
+            g_array_remove_index(trv_state->val_nodes, num);
         } else
             pre_order_traverse_trv_state(blk, g_array_index(tree->subtrees,
                         WDTree *, i), num);
@@ -182,15 +182,15 @@ static void (*walkElemFuncs[])(elem_struct *elem) =
 
 static void walkGElem(elem_struct *g_e)
 {
-    constVal *cVal;
+    struct const_node *inst_node;
     insn_seed seed;
     insn inst;
 
     stat_set_need_init(likely_happen_p(g_e->inip));
 
-    cVal = wdtree_select_constval(g_e->wdtree);
+    inst_node = wdtree_select_leaf_node(g_e->wdtree);
     
-    create_insn_seed(&seed, cVal->instName);
+    create_insn_seed(&seed, inst_node->instName);
     one_insn_gen(&seed, &inst);
     stat_set_need_init(false);
 }
@@ -215,12 +215,12 @@ static void walkCElem(elem_struct *c_e)
 static void walkIElem(elem_struct *i_e)
 {
     stat_set_need_init(likely_happen_p(i_e->inip));
-    stat_set_constVals(i_e->constVals);
+    stat_set_val_nodes(i_e->val_nodes);
 
     one_insn_gen_const(i_e->inst);
 
     stat_set_need_init(false);
-    stat_set_constVals(NULL);
+    stat_set_val_nodes(NULL);
 }
 
 static void walkElemBlk(blk_struct *blk)

@@ -44,19 +44,19 @@ void create_trv_state(char *asm_inst, struct trv_state *trv_state)
             g_array_append_val(trv_state->wdtrees, tkm->wdtree);
 }
 
-constVal *request_constVal(const char *instName, bool isDest)
+struct const_node *request_val_node(const char *instName, bool isDest)
 {
-    constVal *cVal;
+    struct const_node *val_node;
     TKmodel *tkm;
     tkm = get_tkm_from_hashtbl(instName);
 //if (tkm->diffSrcDest == false) {
-        cVal = wdtree_select_constval(tkm->wdtree);
+        val_node = wdtree_select_leaf_node(tkm->wdtree);
 //    } else {
 //        if (isDest) {
-//            cVal = wdtree_select_constval(tkm->wddesttree);
+//            cVal = wdtree_select_leaf_node(tkm->wddesttree);
 //        } else {
-//            cVal = wdtree_select_constval(tkm->wdsrctree);
+//            cVal = wdtree_select_leaf_node(tkm->wdsrctree);
 //        }
 //    }
-    return cVal;
+    return val_node;
 }

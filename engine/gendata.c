@@ -589,7 +589,7 @@ bool gen_opcode(const insn_seed *seed)
     sprintf(get_token_cbufptr(), "%s ", inst_name);
 
     /* initialize implicit operands, exp: eax in mul  */
-    if (X86PGState.need_init)
+    if (stat_get_need_init())
         init_implicit_operands(seed);
 
     return true;
@@ -598,32 +598,32 @@ bool gen_opcode(const insn_seed *seed)
 static void init_register_opnd(char *asm_opnd, operand_seed *opnd_seed)
 {
     char asm_mov_inst[128];
-    constVal *cVal;
-    GArray *constVals = stat_get_constVals();
-    if (constVals == NULL) {
+    struct const_node *val_node;
+    GArray *val_nodes = stat_get_val_nodes();
+    if (val_nodes == NULL) {
         const char *instName = nasm_insn_names[stat_get_opcode()];
-        cVal = request_constVal(instName, opnd_seed->srcdestflags & OPDEST);
+        val_node = request_val_node(instName, opnd_seed->srcdestflags & OPDEST);
     } else {
-        cVal = g_array_index(constVals, constVal *, stat_get_opi());
+        val_node = g_array_index(val_nodes, struct const_node *, stat_get_opi());
     }
     sprintf(asm_mov_inst, "mov %s, 0x%x", asm_opnd,
-            (cVal == NULL) ? (int)nasm_random64(0x100000000) : cVal->imm32);
+            (val_node == NULL) ? (int)nasm_random64(0x100000000) : val_node->imm32);
     one_insn_gen_const(asm_mov_inst);
 }
 
 static void init_immediate_opnd(char *asm_opnd, operand_seed *opnd_seed)
 {
     int immediate = 0;
-    constVal *cVal;
-    GArray *constVals = stat_get_constVals();
-    if (constVals == NULL) {
+    struct const_node *val_node;
+    GArray *val_nodes = stat_get_val_nodes();
+    if (val_nodes == NULL) {
         const char *instName = nasm_insn_names[stat_get_opcode()];
-        cVal = request_constVal(instName, opnd_seed->srcdestflags & OPDEST);
+        val_node = request_val_node(instName, opnd_seed->srcdestflags & OPDEST);
     } else {
-        cVal = g_array_index(constVals, constVal *, stat_get_opi());
+        val_node = g_array_index(val_nodes, struct const_node *, stat_get_opi());
     }
-    if (cVal != NULL) {
-        immediate = cVal->imm32;
+    if (val_node != NULL) {
+        immediate = val_node->imm32;
         sprintf(asm_opnd, "0x%x", immediate);
     }
 }
@@ -631,16 +631,16 @@ static void init_immediate_opnd(char *asm_opnd, operand_seed *opnd_seed)
 static void init_memory_opnd(char *asm_opnd, operand_seed *opnd_seed)
 {
     char asm_mov_inst[128];
-    constVal *cVal;
-    GArray *constVals = stat_get_constVals();
-    if (constVals == NULL) {
+    struct const_node *val_node;
+    GArray *val_nodes = stat_get_val_nodes();
+    if (val_nodes == NULL) {
         const char *instName = nasm_insn_names[stat_get_opcode()];
-        cVal = request_constVal(instName, opnd_seed->srcdestflags & OPDEST);
+        val_node = request_val_node(instName, opnd_seed->srcdestflags & OPDEST);
     } else {
-        cVal = g_array_index(constVals, constVal *, stat_get_opi());
+        val_node = g_array_index(val_nodes, struct const_node *, stat_get_opi());
     }
-    sprintf(asm_mov_inst, "mov %s, 0x%x", asm_opnd, (cVal == NULL) ?
-            (int)nasm_random64(0x100000000) : cVal->imm32);
+    sprintf(asm_mov_inst, "mov %s, 0x%x", asm_opnd, (val_node == NULL) ?
+            (int)nasm_random64(0x100000000) : val_node->imm32);
     preappend_mem_size(asm_mov_inst + 4, opnd_seed->opdsize);
     one_insn_gen_const(asm_mov_inst);
 }
@@ -648,16 +648,16 @@ static void init_memory_opnd(char *asm_opnd, operand_seed *opnd_seed)
 static void init_memoffs_opnd(char *asm_opnd, operand_seed *opnd_seed)
 {
     char asm_mov_inst[128];
-    constVal *cVal;
-    GArray *constVals = stat_get_constVals();
-    if (constVals == NULL) {
+    struct const_node *val_node;
+    GArray *val_nodes = stat_get_val_nodes();
+    if (val_nodes == NULL) {
         const char *instName = nasm_insn_names[stat_get_opcode()];
-        cVal = request_constVal(instName, opnd_seed->srcdestflags & OPDEST);
+        val_node = request_val_node(instName, opnd_seed->srcdestflags & OPDEST);
     } else {
-        cVal = g_array_index(constVals, constVal *, stat_get_opi());
+        val_node = g_array_index(val_nodes, struct const_node *, stat_get_opi());
     }
-    sprintf(asm_mov_inst, "mov %s, 0x%x", asm_opnd, (cVal == NULL) ?
-            (int)nasm_random64(0x100000000) : cVal->imm32);
+    sprintf(asm_mov_inst, "mov %s, 0x%x", asm_opnd, (val_node == NULL) ?
+            (int)nasm_random64(0x100000000) : val_node->imm32);
     preappend_mem_size(asm_mov_inst + 4, opnd_seed->opdsize);
     one_insn_gen_const(asm_mov_inst);
 }
@@ -852,6 +852,22 @@ static bool gen_operand_internal(operand_seed *opnd_seed, char *buffer)
 //TODO:    case MEMORY|FAR:
 }
 
+/******************************************************************************
+*
+* Function name: gen_operand
+* Description: generate an assembly operand into token_bufptr
+*              We can generate it from these cases:
+*              1. instruction seed
+*              2. an existed variable
+*              3. pseudo code of operand type
+*              4. pseudo code of operand
+* Parameter:
+*       @seed: instruction seed
+*       @opi: operand index in current instruction
+*       @label_consumer: true if current instruction use an assembly label as
+*       it's operand
+* Return: success or fail
+******************************************************************************/
 bool gen_operand(const insn_seed *seed, int opi, bool *label_consumer)
 {
     operand_seed opnd_seed;

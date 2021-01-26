@@ -46,10 +46,10 @@ static void parseClasses(xmlNodePtr classesNode)
             if (iNode->type != XML_ELEMENT_NODE)
                 continue;
 
-            constVal classVal;
-            classVal.type = CONST_INSN;
-            classVal.instName = nasm_strdup(nasm_trim((char *)iNode->children->content));
-            g_array_append_val(classTree->consts, classVal);
+            struct const_node inst_node;
+            inst_node.type = CONST_INSN;
+            inst_node.instName = nasm_strdup(nasm_trim((char *)iNode->children->content));
+            g_array_append_val(classTree->consts, inst_node);
             i++;
         }
 
@@ -261,7 +261,7 @@ static void parseI(xmlNodePtr INode, blk_struct *blk)
         trv_state = (struct trv_state *)nasm_malloc(sizeof(struct trv_state));
         init_trv_state(trv_state);
         create_trv_state(i_e->inst, trv_state);
-        i_e->constVals = trv_state->constVals;
+        i_e->val_nodes = trv_state->val_nodes;
         i_e->inip = 1.0;
     }
 

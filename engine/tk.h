@@ -21,7 +21,7 @@ typedef struct TKmodel {
 
 TKmodel *tkmodel_create(void);
 void tks_free_all(void);
-constVal *request_constVal(const char *instName, bool isDest);
+struct const_node *request_val_node(const char *instName, bool isDest);
 void create_trv_state(char *asm_inst, struct trv_state *trv_state);
 
 extern struct hash_table hash_tks;

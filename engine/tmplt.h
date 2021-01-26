@@ -38,7 +38,7 @@ typedef struct elem_struct {
         char *checkType;    /* C_ELEM */
         struct {
             char *inst;
-            GArray *constVals;
+            GArray *val_nodes;
         };
     };
 } elem_struct;
@@ -47,7 +47,7 @@ typedef struct elem_struct {
  */
 struct trv_state {
     GArray *wdtrees;
-    GArray *constVals;
+    GArray *val_nodes;
 };
 
 /* block variable structure

@@ -18,7 +18,7 @@ WDTree *wdtree_create(void)
     tree->size = 0;
     tree->weights = g_array_new(FALSE, FALSE, sizeof(int));
     tree->subtrees = g_array_new(FALSE, FALSE, sizeof(WDTree *));
-    tree->consts = g_array_new(FALSE, FALSE, sizeof(constVal));
+    tree->consts = g_array_new(FALSE, FALSE, sizeof(struct const_node));
 
     if (wdtrees_templen >= wdtrees_tempsize) {
         wdtrees_tempsize += WDTREES_TEMP_DELTA;
@@ -31,10 +31,10 @@ WDTree *wdtree_create(void)
     return tree;
 }
 
-static void constVal_clear(constVal *cVal)
+static void const_node_clear(struct const_node *const_node)
 {
-    if (cVal->type == CONST_INSN) {
-        free(cVal->instName);
+    if (const_node->type == CONST_INSN) {
+        free(const_node->instName);
     }
 }
 
@@ -43,7 +43,7 @@ void wdtree_clear(WDTree *tree)
     g_array_free(tree->weights, true);
     if (tree->isleaf == true) {
         for (int i = 0; i < tree->size; i++) {
-            constVal_clear(&g_array_index(tree->consts, constVal, i));
+            const_node_clear(&g_array_index(tree->consts, struct const_node, i));
         }
         g_array_free(tree->consts, true);
     } else {
@@ -91,7 +91,7 @@ static int select_subtree(GArray *weights, int len)
     return subtree;
 }
 
-constVal *wdtree_select_constval(WDTree *tree)
+struct const_node *wdtree_select_leaf_node(WDTree *tree)
 {
     int subtree;
 
@@ -100,8 +100,8 @@ constVal *wdtree_select_constval(WDTree *tree)
     }
     subtree = select_subtree(tree->weights, tree->size);
     if (tree->isleaf) {
-        return &g_array_index(tree->consts, constVal, subtree);
+        return &g_array_index(tree->consts, struct const_node, subtree);
     }
-    return wdtree_select_constval(g_array_index(tree->subtrees, WDTree *, subtree));
+    return wdtree_select_leaf_node(g_array_index(tree->subtrees, WDTree *, subtree));
 }
 

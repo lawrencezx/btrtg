@@ -242,8 +242,9 @@ bool init_specific_register(enum reg_enum R_reg, bool isDest)
     const char *instName = nasm_insn_names[stat_get_opcode()];
     const char *src;
     src = nasm_reg_names[R_reg - EXPR_REG_START];
-    constVal *cVal = request_constVal(instName, isDest);
-    sprintf(buffer, "mov %s, 0x%x", src, (cVal == NULL) ? (int)nasm_random64(0x100000000) : cVal->imm32);
+    struct const_node *val_node = request_val_node(instName, isDest);
+    sprintf(buffer, "mov %s, 0x%x", src, (val_node == NULL) ?
+            (int)nasm_random64(0x100000000) : val_node->imm32);
     one_insn_gen_const(buffer);
     return true;
 }

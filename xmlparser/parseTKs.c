@@ -44,10 +44,10 @@ static void parseCGs(xmlNodePtr cgsNode)
             //} else if (strcmp(cNodeName, "Imm16") == 0) {
             //    cgVal[i].imm16 = (uint16_t)imm;
             //} else if (strcmp(cNodeName, "Imm32") == 0) {
-            constVal cgVal;
-            cgVal.type = CONST_IMM32;
-            cgVal.imm32 = (uint32_t)imm;
-            g_array_append_val(cgTree->consts, cgVal);
+            struct const_node val_node;
+            val_node.type = CONST_IMM32;
+            val_node.imm32 = (uint32_t)imm;
+            g_array_append_val(cgTree->consts, val_node);
             //} else {
             //    printf("0x%x\n", imm);
             //}
