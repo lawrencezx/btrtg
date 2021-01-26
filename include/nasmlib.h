@@ -58,6 +58,10 @@ typedef union intorptr intorptr;
  * 32bit: RAND_MAX = 0x7fffffff
  * 64bit: RAND_MAX = 0x7fffffffffffffff
  */
+#define RAND_BITS8_BND 0x10000
+#define RAND_BITS16_BND 0x10000
+#define RAND_BITS32_BND 0x100000000
+
 int nasm_random32(int bound);
 long long nasm_random64(long long bound);
 

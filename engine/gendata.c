@@ -606,8 +606,8 @@ static void init_register_opnd(char *asm_opnd, operand_seed *opnd_seed)
     } else {
         val_node = g_array_index(val_nodes, struct const_node *, stat_get_opi());
     }
-    sprintf(asm_mov_inst, "mov %s, 0x%x", asm_opnd,
-            (val_node == NULL) ? (int)nasm_random64(0x100000000) : val_node->imm32);
+    sprintf(asm_mov_inst, "mov %s, 0x%x", asm_opnd, (val_node == NULL) ?
+            (int)nasm_random64(RAND_BITS32_BND) : val_node->imm32);
     one_insn_gen_const(asm_mov_inst);
 }
 
@@ -640,7 +640,7 @@ static void init_memory_opnd(char *asm_opnd, operand_seed *opnd_seed)
         val_node = g_array_index(val_nodes, struct const_node *, stat_get_opi());
     }
     sprintf(asm_mov_inst, "mov %s, 0x%x", asm_opnd, (val_node == NULL) ?
-            (int)nasm_random64(0x100000000) : val_node->imm32);
+            (int)nasm_random64(RAND_BITS32_BND) : val_node->imm32);
     preappend_mem_size(asm_mov_inst + 4, opnd_seed->opdsize);
     one_insn_gen_const(asm_mov_inst);
 }
@@ -657,7 +657,7 @@ static void init_memoffs_opnd(char *asm_opnd, operand_seed *opnd_seed)
         val_node = g_array_index(val_nodes, struct const_node *, stat_get_opi());
     }
     sprintf(asm_mov_inst, "mov %s, 0x%x", asm_opnd, (val_node == NULL) ?
-            (int)nasm_random64(0x100000000) : val_node->imm32);
+            (int)nasm_random64(RAND_BITS32_BND) : val_node->imm32);
     preappend_mem_size(asm_mov_inst + 4, opnd_seed->opdsize);
     one_insn_gen_const(asm_mov_inst);
 }

@@ -131,13 +131,13 @@ bool create_immediate(operand_seed* opnd_seed, char *buffer)
     long long immn;
     switch (opnd_seed->opdsize) {
         case BITS8:
-            immn = 0x100;
+            immn = RAND_BITS8_BND;
             break;
         case BITS16:
-            immn = 0x10000;
+            immn = RAND_BITS16_BND;
             break;
         case BITS32:
-            immn = 0x100000000;
+            immn = RAND_BITS32_BND;
             break;
         default:
             nasm_fatal("wrong immediate size");
