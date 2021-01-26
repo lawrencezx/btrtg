@@ -279,7 +279,7 @@ bool one_insn_gen(const insn_seed *seed, insn *result)
     int i;
     int opi = 0;
     struct eval_hints hints;
-    bool label_consumer = false;
+    bool has_label_operand = false;
 
     memset(result->prefixes, P_none, sizeof(result->prefixes));
     result->times       = 1;
@@ -313,7 +313,8 @@ bool one_insn_gen(const insn_seed *seed, insn *result)
         op = &result->oprs[opi];
         init_operand(op);
 
-        if (!gen_operand(seed, opi, &label_consumer))
+        stat_set_opi(opi);
+        if (!gen_operand(seed, &has_label_operand))
             return false;
         i = get_token(&tokval);
         if (i == TOKEN_EOS)
@@ -453,7 +454,7 @@ bool one_insn_gen(const insn_seed *seed, insn *result)
     /* clear remaining operands */
     while (opi < MAX_OPERANDS)
         result->oprs[opi++].type = 0;
-    if (label_consumer) {
+    if (has_label_operand) {
         result->ctrl = get_token_buf();
     }
 

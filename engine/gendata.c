@@ -15,7 +15,7 @@
 #include "generator.h"
 
 
-static bool is_label_consumer(operand_seed *opnd_seed)
+static bool is_label_operand(operand_seed *opnd_seed)
 {
     if (is_class(MEM_OFFS, opnd_seed->opndflags)) {
         return true;
@@ -572,11 +572,6 @@ static void init_implicit_operands(const insn_seed *seed)
     }
 }
 
-static void gen_comma(char *buffer)
-{
-    sprintf(buffer, ",");
-}
-
 /* Generate instruction opcode. */
 bool gen_opcode(const insn_seed *seed)
 {
@@ -852,6 +847,99 @@ static bool gen_operand_internal(operand_seed *opnd_seed, char *buffer)
 //TODO:    case MEMORY|FAR:
 }
 
+static bool gen_operand_pseudo_code(operand_seed *opnd_seed)
+{
+    int opi;
+    char *bufptr, *next_opnd;
+    char asm_opnd[128];
+    size_t opnd_len;
+    blk_var *var = NULL;
+
+    opi = stat_get_opi();
+    bufptr = nasm_skip_spaces(get_token_bufptr());
+    opnd_len = copy_asm_opnd(bufptr, asm_opnd);
+    create_opnd_seed(opnd_seed, asm_opnd);
+
+    if (opnd_seed->is_var) {  /* variable */
+        var = blk_search_var(stat_get_curr_blk(), asm_opnd);
+        if (!var->valid) {
+            /* generate variable and store it to var->var_val
+             */
+            if (!gen_operand_internal(opnd_seed, asm_opnd))
+                goto gen_new_operand_fail;
+            var->opndflags = opnd_seed->opndflags;
+            var->var_val = nasm_strdup(asm_opnd);
+            if (is_class(MEMORY, var->opndflags))
+                var->init_mem_addr = nasm_strdup(stat_get_init_mem_addr());
+            var->valid = true;
+        }
+
+        nasm_strrplc(bufptr, opnd_len, var->var_val, strlen(var->var_val));
+    } else if (opnd_seed->is_opnd_type) {  /* pseudo code, operand's type  */
+        if (!gen_operand_internal(opnd_seed, asm_opnd))
+            goto gen_new_operand_fail;
+
+        nasm_strrplc(bufptr, opnd_len, asm_opnd, strlen(asm_opnd));
+    } /* else pseudo code, a valid operand */
+
+    if (opnd_seed->is_var || opnd_seed->is_opnd_type) {
+        /* specify the fundamental data item size for a memory operand
+         */
+        next_opnd = nasm_skip_a_comma(bufptr);
+        if (opi == 0 && is_class(MEMORY, opnd_seed->opndflags) &&
+            (asm_is_blank(next_opnd) || asm_is_immediate(next_opnd)))
+            preappend_mem_size(bufptr, opnd_seed->opdsize);
+    }
+    
+    init_opnd(asm_opnd, opnd_seed, var);
+    
+    return true;
+
+gen_new_operand_fail:
+    return false;
+}
+
+static bool gen_operand_insn_seed(const insn_seed *seed, operand_seed *opnd_seed)
+{
+    int opi;
+    char *bufptr;
+    char asm_opnd[128];
+
+    opi = stat_get_opi();
+
+    if (seed->opd[opi] == 0)
+        return true;
+
+    opnd_seed->opndflags = seed->opd[opi];
+    opnd_seed->srcdestflags = calSrcDestFlags(seed, opi);
+    opnd_seed->opdsize = calOperandSize(seed, opi);
+
+    bufptr = get_token_bufptr();
+
+    if (opi != 0) {
+        *bufptr++ = ',';
+        set_token_bufptr(bufptr);
+    }
+
+    if (!gen_operand_internal(opnd_seed, asm_opnd))
+        goto gen_new_operand_fail;
+
+    nasm_strrplc(bufptr, 0, asm_opnd, strlen(asm_opnd));
+
+    /* specify the fundamental data item size for a memory operand
+     */
+    if (opi == 0 && is_class(MEMORY, opnd_seed->opndflags) &&
+        (seed->opd[1] == 0 || is_class(IMMEDIATE, seed->opd[1])))
+        preappend_mem_size(bufptr, opnd_seed->opdsize);
+
+    init_opnd(asm_opnd, opnd_seed, NULL);
+
+    return true;
+
+gen_new_operand_fail:
+    return false;
+}
+
 /******************************************************************************
 *
 * Function name: gen_operand
@@ -863,100 +951,26 @@ static bool gen_operand_internal(operand_seed *opnd_seed, char *buffer)
 *              4. pseudo code of operand
 * Parameter:
 *       @seed: instruction seed
-*       @opi: operand index in current instruction
-*       @label_consumer: true if current instruction use an assembly label as
+*       @is_label: true if current instruction use an assembly label as
 *       it's operand
 * Return: success or fail
 ******************************************************************************/
-bool gen_operand(const insn_seed *seed, int opi, bool *label_consumer)
+bool gen_operand(const insn_seed *seed, bool *is_label)
 {
+    bool success = false;
     operand_seed opnd_seed;
-    char asm_opnd[128];
 
     init_opnd_seed(&opnd_seed);
-    stat_set_opi(opi);
-    char *opnd_start = nasm_skip_spaces(get_token_bufptr());
 
-    if (seed == NULL) {  /* pseudo code */
-        char *next_opnd;
-        char asm_pseudo_opnd[128];
-        size_t opnd_len = copy_asm_opnd(opnd_start, asm_pseudo_opnd);
+    if (seed == NULL)
+        success = gen_operand_pseudo_code(&opnd_seed);
+    else
+        success = gen_operand_insn_seed(seed, &opnd_seed);
 
-        create_opnd_seed(&opnd_seed, asm_pseudo_opnd);
+    if (is_label_operand(&opnd_seed))
+        *is_label = true;
 
-        if (opnd_seed.is_var) {  /* variable */
-            blk_var *var = blk_search_var(stat_get_curr_blk(), asm_pseudo_opnd);
-            if (!var->valid) {
-                /* generate variable and store it to var->var_val
-                 */
-                if (!gen_operand_internal(&opnd_seed, asm_opnd))
-                    return false;
-                var->opndflags = opnd_seed.opndflags;
-                var->var_val = nasm_strdup(asm_opnd);
-                if (is_class(MEMORY, var->opndflags))
-                    var->init_mem_addr = nasm_strdup(stat_get_init_mem_addr());
-                var->valid = true;
-            }
-
-            nasm_strrplc(opnd_start, opnd_len, var->var_val, strlen(var->var_val));
-
-            /* specify the fundamental data item size for a memory operand
-             */
-            next_opnd = nasm_skip_a_comma(opnd_start);
-            if (opi == 0 && is_class(MEMORY, var->opndflags) &&
-                (asm_is_blank(next_opnd) || asm_is_immediate(next_opnd))) {
-                preappend_mem_size(opnd_start, var->opndflags & SIZE_MASK);
-            }
-
-            init_opnd(asm_opnd, &opnd_seed, var);
-        } else if (opnd_seed.is_opnd_type) {  /* pseudo code, operand's type  */
-            if (!gen_operand_internal(&opnd_seed, asm_opnd))
-                return false;
-            nasm_strrplc(opnd_start, opnd_len, asm_opnd, strlen(asm_opnd));
-
-            /* specify the fundamental data item size for a memory operand
-             */
-            next_opnd = nasm_skip_a_comma(opnd_start);
-            if (opi == 0 && is_class(MEMORY, opnd_seed.opndflags) &&
-                (asm_is_blank(next_opnd) || asm_is_immediate(next_opnd))) {
-                preappend_mem_size(opnd_start, opnd_seed.opdsize);
-            }
-
-            init_opnd(asm_opnd, &opnd_seed, NULL);
-        } else { /* pseudo code, a valid operand */
-            init_opnd(asm_pseudo_opnd, &opnd_seed, NULL);
-        }
-    } else {  /* instruction seed */
-        if (seed->opd[opi] == 0)
-            return true;
-
-        opnd_seed.opndflags = seed->opd[opi];
-        opnd_seed.srcdestflags = calSrcDestFlags(seed, opi);
-        opnd_seed.opdsize = calOperandSize(seed, opi);
-
-        if (opi != 0) {
-            gen_comma(opnd_start);
-            set_token_bufptr(++opnd_start);
-        }
-
-        if (!gen_operand_internal(&opnd_seed, asm_opnd))
-            return false;
-        nasm_strrplc(opnd_start, 0, asm_opnd, strlen(asm_opnd));
-
-        /* specify the fundamental data item size for a memory operand
-         */
-        if (opi == 0 && is_class(MEMORY, opnd_seed.opndflags) &&
-            (seed->opd[1] == 0 || is_class(IMMEDIATE, seed->opd[1]))) {
-            preappend_mem_size(opnd_start, opnd_seed.opdsize);
-        }
-
-        if (is_label_consumer(&opnd_seed)) {
-            *label_consumer = true;
-        }
-
-        init_opnd(asm_opnd, &opnd_seed, NULL);
-    }
-    return true;
+    return success;
 }
 
 void gendata_init(void)

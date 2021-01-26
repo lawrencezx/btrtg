@@ -3,6 +3,6 @@
 
 void gendata_init(void);
 bool gen_opcode(const insn_seed *seed);
-bool gen_operand(const insn_seed *seed, int opi, bool *label_consumer);
+bool gen_operand(const insn_seed *seed, bool *is_label);
 
 #endif
