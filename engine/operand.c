@@ -12,49 +12,14 @@
 #include "dfmt.h"
 #include "tk.h"
 #include "generator.h"
-<<<<<<< HEAD
-
-=======
-#include "check.h"
-static void create_random_modrm(char *buffer);
->>>>>>> efe0714e... feat-change initialization
 bool create_specific_register(enum reg_enum R_reg, operand_seed *opnd_seed, char *buffer)
 {
     dfmt->print("    try> create specific register\n");
     if (is_class(REG_CLASS_SREG, opnd_seed->opndflags) && (opnd_seed->srcdestflags & OPDEST))
         return false;
-<<<<<<< HEAD
 
     const char *src = nasm_reg_names[R_reg - EXPR_REG_START];
     sprintf(buffer, "%s", src);
-=======
-    }
-    src = nasm_reg_names[R_reg - EXPR_REG_START];
-    if (stat_get_need_init()) {
-        const char *instName = nasm_insn_names[stat_get_opcode()];
-        constVal *cVal = request_constVal(instName, opnd_seed->srcdestflags & OPDEST);
-        if(R_ST0 == R_reg){
-            char modrm[64];
-            create_random_modrm(modrm);
-            const char *instName = nasm_insn_names[stat_get_opcode()];
-            constVal *cVal = request_constVal(instName, opnd_seed->srcdestflags & OPDEST);
-            sprintf(buffer, "mov dword %s, 0x%x", modrm, cVal->immf[0]);
-            one_insn_gen_const(buffer);
-            sprintf(buffer, "fstp %s",src);
-            //sprintf(buffer, "fincstp");
-            one_insn_gen_const(buffer);
-            sprintf(buffer, "fld dword %s",modrm);
-            //sprintf(buffer, "fld mem64");
-            one_insn_gen_const(buffer);
-            
-        }else{
-            sprintf(buffer, "mov %s, 0x%x", src, (cVal == NULL) ? (int)nasm_random64(0x100000000) : cVal->imm32);
-            one_insn_gen_const(buffer);
-        }
-
-    }
-    sprintf(buffer, " %s", src);
->>>>>>> 4bffb23a... feat:Add Immf in templete to distinguish fixedpoint and floatpoint numbers and support dec floatpoint number
     dfmt->print("    done> new specific register: %s\n", buffer);
     return true;
 }
@@ -298,7 +263,26 @@ static void create_random_modrm(char *buffer)
     }
     /* else stack */
 }
-
+static void random_fp_number(operand_seed* opnd_seed, int *fp_number){
+    if(BITS32 == opnd_seed->opdsize){
+        int mantissa = nasm_random32(1<<23);
+        //Normalized number
+        int exponent = nasm_random32((1<<8)-2) + 1;
+        int sign = nasm_random32(2);
+        *fp_number = mantissa | exponent<<23 | sign<<31;
+    }else if(BITS64 == opnd_seed->opdsize){
+        long int mantissa = nasm_random64(1L<<52);
+        //Normalized number
+        long int exponent = nasm_random32((1<<11)-2) + 1;
+        long int sign = nasm_random32(2);
+        *(long int *)fp_number = mantissa | exponent<<52 | sign<<63;  
+    }else if(BITS80 == opnd_seed->opdsize){
+        fp_num[0] = rand();
+        fp_num[1] = rand() | 0x80000000;
+        //fp_num[2] = 0x00004000;
+        fp_num[2] = 0x0000ffff & (nasm_random32((1<<16)-2) + 1);
+    }
+}
 bool create_memory(operand_seed *opnd_seed, char *buffer)
 {
     (void)opnd_seed;
@@ -310,7 +294,6 @@ bool create_memory(operand_seed *opnd_seed, char *buffer)
     } else {
         create_random_modrm(modrm);
     }
-
     sprintf(buffer, "%s", modrm);
     dfmt->print("    done> new memory: %s\n", buffer);
     return true;
