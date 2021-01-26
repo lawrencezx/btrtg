@@ -9,10 +9,11 @@ typedef uint64_t srcdestflags_t;
 #define OPDEST      0x2
 
 typedef struct operand_seed {
+    bool            is_var;
+    bool            is_opnd_type;
     opflags_t       opndflags;
     srcdestflags_t  srcdestflags;         /* source and destination operand flag */
     opflags_t       opdsize;
-    bool            is_var;
 } operand_seed;
 
 typedef struct insn_seed {

@@ -20,10 +20,11 @@ static int itemplate_size(const struct itemplate *itmplt)
 
 void init_opnd_seed(operand_seed *opnd_seed)
 {
+    opnd_seed->is_var = false;
+    opnd_seed->is_opnd_type = false;
     opnd_seed->opndflags = 0;
     opnd_seed->srcdestflags = 0;
     opnd_seed->opdsize = 0;
-    opnd_seed->is_var = false;
 }
 
 void create_insn_seed(insn_seed *seed, const char *instname)
@@ -43,7 +44,7 @@ void create_insn_seed(insn_seed *seed, const char *instname)
 *              The operand can be:
 *              (1) a variable: like @var1 <reg8>, @var2 <imm32>, etc.
 *              (2) an operand type: like imm32, reg8, etc.
-*              (3) a real operand: like al, 0xffff, etc.
+*              (3) an operand: like al, 0xffff, etc.
 * Parameter:
 *       @opnd_seed: return, the operand seed
 *       @asm_opnd: input, the pseudo operand string
@@ -51,24 +52,22 @@ void create_insn_seed(insn_seed *seed, const char *instname)
 ******************************************************************************/
 void create_opnd_seed(operand_seed *opnd_seed, const char *asm_opnd)
 {
-    init_opnd_seed(opnd_seed);
-
     if (asm_opnd == NULL)
         return;
 
     if (*asm_opnd == '@') {
         opnd_seed->is_var = true;
-        asm_opnd++;
-    }
-
-    if (opnd_seed->is_var) {
         blk_var *var = blk_search_var(stat_get_curr_blk(), asm_opnd);
         if (var == NULL)
             nasm_fatal("var: %s not defined\n", asm_opnd);
         if (!var->valid)
-            opnd_seed->opndflags = asm_parse_opflags(var->var_type);
+            opnd_seed->opndflags = parse_asm_opnd_type_opflags(var->var_type);
     } else {
-        opnd_seed->opndflags = asm_parse_opflags(asm_opnd);
+        opnd_seed->opndflags = parse_asm_opnd_type_opflags(asm_opnd);
+        if (opnd_seed->opndflags != 0)
+            opnd_seed->is_opnd_type = true;
+        else
+            opnd_seed->opndflags = parse_asm_opnd_opflags(asm_opnd);
     }
     opnd_seed->opdsize = opnd_seed->opndflags & SIZE_MASK;
 }

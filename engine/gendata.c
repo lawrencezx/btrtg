@@ -12,6 +12,7 @@
 #include "buf2token.h"
 #include "tk.h"
 #include "asmlib.h"
+#include "generator.h"
 
 
 static bool is_label_consumer(operand_seed *opnd_seed)
@@ -594,6 +595,111 @@ bool gen_opcode(const insn_seed *seed)
     return true;
 }
 
+static void init_register_opnd(char *asm_opnd, operand_seed *opnd_seed)
+{
+    char asm_mov_inst[128];
+    constVal *cVal;
+    GArray *constVals = stat_get_constVals();
+    if (constVals == NULL) {
+        const char *instName = nasm_insn_names[stat_get_opcode()];
+        cVal = request_constVal(instName, opnd_seed->srcdestflags & OPDEST);
+    } else {
+        cVal = g_array_index(constVals, constVal *, stat_get_opi());
+    }
+    sprintf(asm_mov_inst, "mov %s, 0x%x", asm_opnd,
+            (cVal == NULL) ? (int)nasm_random64(0x100000000) : cVal->imm32);
+    one_insn_gen_const(asm_mov_inst);
+}
+
+static void init_immediate_opnd(char *asm_opnd, operand_seed *opnd_seed)
+{
+    int immediate = 0;
+    constVal *cVal;
+    GArray *constVals = stat_get_constVals();
+    if (constVals == NULL) {
+        const char *instName = nasm_insn_names[stat_get_opcode()];
+        cVal = request_constVal(instName, opnd_seed->srcdestflags & OPDEST);
+    } else {
+        cVal = g_array_index(constVals, constVal *, stat_get_opi());
+    }
+    if (cVal != NULL) {
+        immediate = cVal->imm32;
+        sprintf(asm_opnd, "0x%x", immediate);
+    }
+}
+
+static void init_memory_opnd(char *asm_opnd, operand_seed *opnd_seed)
+{
+    char asm_mov_inst[128];
+    constVal *cVal;
+    GArray *constVals = stat_get_constVals();
+    if (constVals == NULL) {
+        const char *instName = nasm_insn_names[stat_get_opcode()];
+        cVal = request_constVal(instName, opnd_seed->srcdestflags & OPDEST);
+    } else {
+        cVal = g_array_index(constVals, constVal *, stat_get_opi());
+    }
+    sprintf(asm_mov_inst, "mov %s, 0x%x", asm_opnd, (cVal == NULL) ?
+            (int)nasm_random64(0x100000000) : cVal->imm32);
+    preappend_mem_size(asm_mov_inst + 4, opnd_seed->opdsize);
+    one_insn_gen_const(asm_mov_inst);
+}
+
+static void init_memoffs_opnd(char *asm_opnd, operand_seed *opnd_seed)
+{
+    char asm_mov_inst[128];
+    constVal *cVal;
+    GArray *constVals = stat_get_constVals();
+    if (constVals == NULL) {
+        const char *instName = nasm_insn_names[stat_get_opcode()];
+        cVal = request_constVal(instName, opnd_seed->srcdestflags & OPDEST);
+    } else {
+        cVal = g_array_index(constVals, constVal *, stat_get_opi());
+    }
+    sprintf(asm_mov_inst, "mov %s, 0x%x", asm_opnd, (cVal == NULL) ?
+            (int)nasm_random64(0x100000000) : cVal->imm32);
+    preappend_mem_size(asm_mov_inst + 4, opnd_seed->opdsize);
+    one_insn_gen_const(asm_mov_inst);
+}
+
+/******************************************************************************
+*
+* Function name: init_opnd
+* Description: initialize the value of an operand
+*              Call the related initializing function according the operand type.
+* Parameter:
+*       @asm_opnd: string, an operand in assembly
+*       @opnd_seed: operand seed used to generate the operand
+*       @var: variable used to generate the operand, or NULL if the operand is 
+*             not generated from a variable. It is only used when the operand
+*             is MEMORY type.
+* Return: bool
+******************************************************************************/
+static void init_opnd(char *asm_opnd, operand_seed *opnd_seed, blk_var *var)
+{
+    if (!stat_get_need_init())
+        return;
+
+    stat_set_need_init(false);
+    opflags_t opndflags = opnd_seed->opndflags;
+    if (is_class(REGISTER, opndflags))
+        init_register_opnd(asm_opnd, opnd_seed);
+    else if (is_class(REGMEM, opndflags)) {
+        if (is_class(MEM_OFFS, opndflags)) {
+            init_memoffs_opnd(asm_opnd, opnd_seed);
+        } else {
+            stat_set_has_mem_opnd(false);
+            if (var)
+                one_insn_gen_ctrl(var->init_mem_addr, INSERT_AFTER);
+            else
+                one_insn_gen_ctrl(stat_get_init_mem_addr(), INSERT_AFTER);
+            init_memory_opnd(asm_opnd, opnd_seed);
+            stat_set_has_mem_opnd(true);
+        }
+    }
+    stat_set_need_init(true);
+}
+
 static bool gen_register(operand_seed *opnd_seed, char *buffer)
 {
     opflags_t opndflags;
@@ -665,12 +771,20 @@ static bool gen_immediate(operand_seed *opnd_seed, char *buffer)
     opndflags = opnd_seed->opndflags;
 
     if (is_class(UNITY, opndflags)) {
+        if (stat_get_need_init()) {
+            init_immediate_opnd(buffer, opnd_seed);
+            return true;
+        }
         return create_unity(opnd_seed, buffer);
     } else if (is_class(SBYTEDWORD, opndflags)) {
         /* TODO */
     } else if (is_class(SBYTEWORD, opndflags)) {
         /* TODO */
     } else if (is_class(IMMEDIATE, opndflags)) {
+        if (stat_get_need_init()) {
+            init_immediate_opnd(buffer, opnd_seed);
+            return true;
+        }
         return create_immediate(opnd_seed, buffer);
     } else {
         nasm_fatal("OPFLAGS: not immediate optype");
@@ -694,8 +808,10 @@ static bool gen_reg_mem(operand_seed *opnd_seed, char *buffer)
         bool select_mem = likely_happen_p(0.5);
         if (select_mem) {
             stat_set_has_mem_opnd(true);
+            opnd_seed->opndflags = (opnd_seed->opndflags & ~OPTYPE_MASK) | MEMORY;
             return create_memory(opnd_seed, buffer);
         } else {
+            opnd_seed->opndflags = (opnd_seed->opndflags & ~OPTYPE_MASK) | REGISTER;
             return gen_register(opnd_seed, buffer);
         }
     }
@@ -739,41 +855,34 @@ static bool gen_operand_internal(operand_seed *opnd_seed, char *buffer)
 bool gen_operand(const insn_seed *seed, int opi, bool *label_consumer)
 {
     operand_seed opnd_seed;
-    char *token_bufptr;
+    char asm_opnd[128];
 
+    init_opnd_seed(&opnd_seed);
     stat_set_opi(opi);
-    token_bufptr = get_token_bufptr();
+    char *opnd_start = nasm_skip_spaces(get_token_bufptr());
 
-    if (seed == NULL) {
-        char *opnd_start, *opnd_end, *next_opnd;
-        char asm_opnd[128];
-        opnd_end = opnd_start = nasm_skip_spaces(token_bufptr);
-        while (*opnd_end != 0 && *opnd_end != '\n' && *opnd_end != ',') {
-            asm_opnd[opnd_end - opnd_start] = *opnd_end;
-            opnd_end++;
-        }
-        asm_opnd[opnd_end - opnd_start] = '\0';
+    if (seed == NULL) {  /* pseudo code */
+        char *next_opnd;
+        char asm_pseudo_opnd[128];
+        size_t opnd_len = copy_asm_opnd(opnd_start, asm_pseudo_opnd);
 
-        create_opnd_seed(&opnd_seed, asm_opnd);
+        create_opnd_seed(&opnd_seed, asm_pseudo_opnd);
 
-        if (opnd_seed.is_var) {
-            blk_var *var = blk_search_var(stat_get_curr_blk(), asm_opnd + 1);
+        if (opnd_seed.is_var) {  /* variable */
+            blk_var *var = blk_search_var(stat_get_curr_blk(), asm_pseudo_opnd);
             if (!var->valid) {
                 /* generate variable and store it to var->var_val
                  */
-                memset(asm_opnd, '\0', ARRAY_SIZE(asm_opnd));
                 if (!gen_operand_internal(&opnd_seed, asm_opnd))
                     return false;
-                free(var->var_val);
                 var->opndflags = opnd_seed.opndflags;
-                var->var_val = nasm_strdup(nasm_trim(asm_opnd));
+                var->var_val = nasm_strdup(asm_opnd);
                 if (is_class(MEMORY, var->opndflags))
                     var->init_mem_addr = nasm_strdup(stat_get_init_mem_addr());
                 var->valid = true;
             }
 
-            nasm_strrplc(opnd_start, opnd_end - opnd_start, var->var_val,
-                strlen(var->var_val));
+            nasm_strrplc(opnd_start, opnd_len, var->var_val, strlen(var->var_val));
 
             /* specify the fundamental data item size for a memory operand
              */
@@ -782,12 +891,12 @@ bool gen_operand(const insn_seed *seed, int opi, bool *label_consumer)
                 (asm_is_blank(next_opnd) || asm_is_immediate(next_opnd))) {
                 preappend_mem_size(opnd_start, var->opndflags & SIZE_MASK);
             }
-        } else if (opnd_seed.opndflags) {
-            memset(asm_opnd, '\0', ARRAY_SIZE(asm_opnd));
+
+            init_opnd(asm_opnd, &opnd_seed, var);
+        } else if (opnd_seed.is_opnd_type) {  /* pseudo code, operand's type  */
             if (!gen_operand_internal(&opnd_seed, asm_opnd))
                 return false;
-            nasm_strrplc(opnd_start, opnd_end - opnd_start, asm_opnd,
-                strlen(asm_opnd));
+            nasm_strrplc(opnd_start, opnd_len, asm_opnd, strlen(asm_opnd));
 
             /* specify the fundamental data item size for a memory operand
              */
@@ -796,8 +905,12 @@ bool gen_operand(const insn_seed *seed, int opi, bool *label_consumer)
                 (asm_is_blank(next_opnd) || asm_is_immediate(next_opnd))) {
                 preappend_mem_size(opnd_start, opnd_seed.opdsize);
             }
+
+            init_opnd(asm_opnd, &opnd_seed, NULL);
+        } else { /* pseudo code, a valid operand */
+            init_opnd(asm_pseudo_opnd, &opnd_seed, NULL);
         }
-    } else {
+    } else {  /* instruction seed */
         if (seed->opd[opi] == 0)
             return true;
 
@@ -806,23 +919,26 @@ bool gen_operand(const insn_seed *seed, int opi, bool *label_consumer)
         opnd_seed.opdsize = calOperandSize(seed, opi);
 
         if (opi != 0) {
-            gen_comma(token_bufptr);
-            set_token_bufptr(++token_bufptr);
+            gen_comma(opnd_start);
+            set_token_bufptr(++opnd_start);
         }
 
-        if (!gen_operand_internal(&opnd_seed, token_bufptr))
+        if (!gen_operand_internal(&opnd_seed, asm_opnd))
             return false;
+        nasm_strrplc(opnd_start, 0, asm_opnd, strlen(asm_opnd));
 
         /* specify the fundamental data item size for a memory operand
          */
         if (opi == 0 && is_class(MEMORY, opnd_seed.opndflags) &&
             (seed->opd[1] == 0 || is_class(IMMEDIATE, seed->opd[1]))) {
-            preappend_mem_size(token_bufptr, opnd_seed.opdsize);
+            preappend_mem_size(opnd_start, opnd_seed.opdsize);
         }
 
         if (is_label_consumer(&opnd_seed)) {
             *label_consumer = true;
         }
+
+        init_opnd(asm_opnd, &opnd_seed, NULL);
     }
     return true;
 }

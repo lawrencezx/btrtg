@@ -40,8 +40,11 @@ blk_var *blk_search_var(blk_struct *blk, const char *var_name)
 {
     if (blk == NULL)
         return NULL;
+    var_name = nasm_skip_spaces(var_name);
+    if (*var_name != '@')
+        return NULL;
     for (guint i = 0; i < blk->vars->len; i++) {
-        if (strcmp(g_array_index(blk->vars, blk_var, i).name, var_name) == 0) {
+        if (strcmp(g_array_index(blk->vars, blk_var, i).name, var_name + 1) == 0) {
             return &g_array_index(blk->vars, blk_var, i);
         }
     }
@@ -200,7 +203,7 @@ static void walkCElem(elem_struct *c_e)
     if (checkType == NULL)
         nasm_fatal("no check point\n");
     if (checkType[0] == '@') {
-        blk_var *var = blk_search_var(stat_get_curr_blk(), checkType + 1);
+        blk_var *var = blk_search_var(stat_get_curr_blk(), checkType);
         if (!var->valid)
             nasm_fatal("checking value: %s has not been initialized", checkType);
         checkType = var->var_val;

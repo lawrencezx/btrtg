@@ -16,24 +16,11 @@
 bool create_specific_register(enum reg_enum R_reg, operand_seed *opnd_seed, char *buffer)
 {
     dfmt->print("    try> create specific register\n");
-    const char *src;
-    if (is_class(REG_CLASS_SREG, opnd_seed->opndflags) && (opnd_seed->srcdestflags & OPDEST)) {
+    if (is_class(REG_CLASS_SREG, opnd_seed->opndflags) && (opnd_seed->srcdestflags & OPDEST))
         return false;
-    }
-    src = nasm_reg_names[R_reg - EXPR_REG_START];
-    if (stat_get_need_init()) {
-        constVal *cVal;
-        GArray *constVals = stat_get_constVals();
-        if (constVals == NULL) {
-            const char *instName = nasm_insn_names[stat_get_opcode()];
-            cVal = request_constVal(instName, opnd_seed->srcdestflags & OPDEST);
-        } else {
-            cVal = g_array_index(constVals, constVal *, stat_get_opi());
-        }
-        sprintf(buffer, "mov %s, 0x%x", src, (cVal == NULL) ? (int)nasm_random64(0x100000000) : cVal->imm32);
-        one_insn_gen_const(buffer);
-    }
-    sprintf(buffer, " %s", src);
+
+    const char *src = nasm_reg_names[R_reg - EXPR_REG_START];
+    sprintf(buffer, "%s", src);
     dfmt->print("    done> new specific register: %s\n", buffer);
     return true;
 }
@@ -52,7 +39,7 @@ bool create_control_register(operand_seed *opnd_seed, char *buffer)
     cregi = nasm_random32(cregn);
     creg = nasm_rd_creg[cregi];
     src = nasm_reg_names[creg - EXPR_REG_START];
-    sprintf(buffer, " %s", src);
+    sprintf(buffer, "%s", src);
     dfmt->print("    done> new creg: %s\n", buffer);
     return true;
 }
@@ -73,7 +60,7 @@ bool create_segment_register(operand_seed *opnd_seed, char *buffer)
     sregi = nasm_random32(sregn);
     sreg = nasm_rd_sreg[sregi];
     src = nasm_reg_names[sreg - EXPR_REG_START];
-    sprintf(buffer, " %s", src);
+    sprintf(buffer, "%s", src);
     dfmt->print("    done> new sreg: %s\n", buffer);
     return true;
 }
@@ -92,19 +79,8 @@ bool create_unity(operand_seed *opnd_seed, char *buffer)
     }
 
     unity = nasm_random32(shiftCount + 1);
-    if (stat_get_need_init()) {
-        constVal *cVal;
-        GArray *constVals = stat_get_constVals();
-        if (constVals == NULL) {
-            const char *instName = nasm_insn_names[stat_get_opcode()];
-            cVal = request_constVal(instName, opnd_seed->srcdestflags & OPDEST);
-        } else {
-            cVal = g_array_index(constVals, constVal *, stat_get_opi());
-        }
-        if (cVal != NULL)
-            unity = cVal->imm32;
-    }
-    sprintf(buffer, " 0x%x", unity);
+
+    sprintf(buffer, "0x%x", unity);
     dfmt->print("    done> new unity: %s\n", buffer);
     return true;
 }
@@ -138,19 +114,7 @@ gen_gpr:
 
     src = nasm_reg_names[gpr - EXPR_REG_START];
 
-    if (stat_get_need_init()) {
-        constVal *cVal;
-        GArray *constVals = stat_get_constVals();
-        if (constVals == NULL) {
-            const char *instName = nasm_insn_names[stat_get_opcode()];
-            cVal = request_constVal(instName, opnd_seed->srcdestflags & OPDEST);
-        } else {
-            cVal = g_array_index(constVals, constVal *, stat_get_opi());
-        }
-        sprintf(buffer, "mov %s, 0x%x", src, (cVal == NULL) ? (int)nasm_random64(0x100000000) : cVal->imm32);
-        one_insn_gen_const(buffer);
-    }
-    sprintf(buffer, " %s", src);
+    sprintf(buffer, "%s", src);
     dfmt->print("    done> new gpr: %s\n", buffer);
     return true;
 }
@@ -181,19 +145,7 @@ bool create_immediate(operand_seed* opnd_seed, char *buffer)
     }
     imm = (int)nasm_random64(immn);
 
-    if (stat_get_need_init()) {
-        constVal *cVal;
-        GArray *constVals = stat_get_constVals();
-        if (constVals == NULL) {
-            const char *instName = nasm_insn_names[stat_get_opcode()];
-            cVal = request_constVal(instName, opnd_seed->srcdestflags & OPDEST);
-        } else {
-            cVal = g_array_index(constVals, constVal *, stat_get_opi());
-        }
-        if (cVal != NULL)
-            imm = cVal->imm32;
-    }
-    sprintf(buffer, " 0x%x", imm);
+    sprintf(buffer, "0x%x", imm);
     dfmt->print("    done> new immediate: %s\n", buffer);
     return true;
 }
@@ -254,64 +206,32 @@ static void create_random_modrm(char *buffer)
 
 bool create_memory(operand_seed *opnd_seed, char *buffer)
 {
+    (void)opnd_seed;
     dfmt->print("    try> create memory\n");
     char modrm[64];
-    char src[128];
-    static const char *memsize[3] = {"byte", "word", "dword"};
-    int whichmemsize = opnd_seed->opdsize == BITS8 ? 0 :
-        (opnd_seed->opdsize == BITS16 ? 1 : 2);
     if (globalbits == 16) {
         nasm_fatal("unsupported 16-bit memory type");
     } else {
         create_random_modrm(modrm);
-        sprintf(src, "%s", modrm);
     }
-    if (stat_get_need_init()) {
-        constVal *cVal;
-        GArray *constVals = stat_get_constVals();
-        if (constVals == NULL) {
-            const char *instName = nasm_insn_names[stat_get_opcode()];
-            cVal = request_constVal(instName, opnd_seed->srcdestflags & OPDEST);
-        } else {
-            cVal = g_array_index(constVals, constVal *, stat_get_opi());
-        }
-        one_insn_gen_ctrl(stat_get_init_mem_addr(), INSERT_AFTER);
-        sprintf(buffer, "mov %s %s, 0x%x", memsize[whichmemsize], modrm, (cVal == NULL) ? (int)nasm_random64(0x100000000) : cVal->imm32);
-        one_insn_gen_const(buffer);
-    }
-    sprintf(buffer, " %s", src);
+    sprintf(buffer, "%s", modrm);
     dfmt->print("    done> new memory: %s\n", buffer);
     return true;
 }
 
 bool create_memoffs(operand_seed *opnd_seed, char *buffer)
 {
+    (void)opnd_seed;
     dfmt->print("    try> create memoffs\n");
     char src[128];
     int datai;
-    static const char *memsize[3] = {"byte", "word", "dword"};
-    int whichmemsize = opnd_seed->opdsize == BITS8 ? 0 :
-        (opnd_seed->opdsize == BITS16 ? 1 : 2);
     if (globalbits == 16) {
         nasm_fatal("unsupported 16-bit memory type");
     } else {
         datai = nasm_random32(X86PGState.data_sec.datanum);
         sprintf(src, "[data%d]", datai);
     }
-    if (stat_get_need_init()) {
-        constVal *cVal;
-        GArray *constVals = stat_get_constVals();
-        if (constVals == NULL) {
-            const char *instName = nasm_insn_names[stat_get_opcode()];
-            cVal = request_constVal(instName, opnd_seed->srcdestflags & OPDEST);
-        } else {
-            cVal = g_array_index(constVals, constVal *, stat_get_opi());
-        }
-        sprintf(buffer, "mov %s [data%d], 0x%x", memsize[whichmemsize], datai,
-                (cVal == NULL) ? (int)nasm_random64(0x100000000) : cVal->imm32);
-        one_insn_gen_const(buffer);
-    }
-    sprintf(buffer, " %s", src);
+    sprintf(buffer, "%s", src);
     dfmt->print("    done> new memoffs: %s\n", buffer);
     return true;
 }

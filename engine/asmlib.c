@@ -1,11 +1,12 @@
 #include "compiler.h"
 
+#include "nasm.h"
 #include "nasmlib.h"
 #include "opflags.h"
 #include "nctype.h"
 #include "asmlib.h"
 
-opflags_t asm_parse_opflags(const char *asm_opnd)
+opflags_t parse_asm_opnd_type_opflags(const char *asm_opnd)
 {
     opflags_t opflags = 0;
     char opnd_id[128];
@@ -76,6 +77,17 @@ opflags_t asm_parse_opflags(const char *asm_opnd)
     return opflags;
 }
 
+opflags_t parse_asm_opnd_opflags(const char *asm_opnd)
+{
+/* TODO: only register type supported */
+    opflags_t opflags = 0;
+    struct tokenval tv;
+    nasm_token_hash(asm_opnd, &tv);
+    if (tv.t_type == TOKEN_REG)
+        opflags = nasm_reg_flags[tv.t_integer];
+    return opflags;
+}
+
 bool asm_is_blank(const char *asm_opnd)
 {
     if (asm_opnd) {
@@ -93,7 +105,18 @@ bool asm_is_immediate(const char *asm_opnd)
     asm_opnd = nasm_skip_spaces(asm_opnd);
     if (nasm_isnumstart(*asm_opnd))
         return true;
-    if (is_class(IMMEDIATE, asm_parse_opflags(asm_opnd)))
+    if (is_class(IMMEDIATE, parse_asm_opnd_type_opflags(asm_opnd)))
         return true;
     return false;
+}
+
+size_t copy_asm_opnd(const char *src, char *dst)
+{
+    size_t cnt = 0;
+    while (*src != '\0' && *src != '\n' && *src != ',') {
+        *dst++ = *src++;
+        cnt++;
+    }
+    *dst = '\0';
+    return cnt;
 }
