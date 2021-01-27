@@ -57,7 +57,7 @@ void create_opnd_seed(operand_seed *opnd_seed, const char *asm_opnd)
 
     if (*asm_opnd == '@') {
         opnd_seed->is_var = true;
-        blk_var *var = blk_search_var(stat_get_curr_blk(), asm_opnd);
+        struct blk_var *var = blk_search_var(stat_get_curr_blk(), asm_opnd);
         if (var == NULL)
             nasm_fatal("var: %s not defined\n", asm_opnd);
         if (!var->valid)

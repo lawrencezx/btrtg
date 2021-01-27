@@ -17,10 +17,10 @@ void init_blk_struct(blk_struct *blk)
     blk->times = 0;
     blk->trv_state = NULL;
     blk->blks = g_array_new(FALSE, FALSE, sizeof(void *));
-    blk->vars = g_array_new(FALSE, FALSE, sizeof(blk_var));
+    blk->vars = g_array_new(FALSE, FALSE, sizeof(struct blk_var));
 }
 
-void init_blk_var(blk_var *var)
+void init_blk_var(struct blk_var *var)
 {
     var->valid = false;
     var->name = NULL;
@@ -36,7 +36,7 @@ void init_trv_state(struct trv_state *trv_state)
     trv_state->val_nodes = g_array_new(FALSE, FALSE, sizeof(struct const_node *));
 }
 
-blk_var *blk_search_var(blk_struct *blk, const char *var_name)
+struct blk_var *blk_search_var(blk_struct *blk, const char *var_name)
 {
     if (blk == NULL)
         return NULL;
@@ -44,8 +44,8 @@ blk_var *blk_search_var(blk_struct *blk, const char *var_name)
     if (*var_name != '@')
         return NULL;
     for (guint i = 0; i < blk->vars->len; i++) {
-        if (strcmp(g_array_index(blk->vars, blk_var, i).name, var_name + 1) == 0) {
-            return &g_array_index(blk->vars, blk_var, i);
+        if (strcmp(g_array_index(blk->vars, struct blk_var, i).name, var_name + 1) == 0) {
+            return &g_array_index(blk->vars, struct blk_var, i);
         }
     }
     return blk_search_var(blk->parent, var_name);
@@ -56,7 +56,7 @@ static void blk_invalid_var_all(blk_struct *blk)
     if (blk == NULL)
         return;
     for (guint i = 0; i < blk->vars->len; i++) {
-        blk_var *var = &g_array_index(blk->vars, blk_var, i);
+        struct blk_var *var = &g_array_index(blk->vars, struct blk_var, i);
         free(var->var_val);
         free(var->init_mem_addr);
         var->valid = false;
@@ -209,7 +209,7 @@ static void walkCElem(elem_struct *c_e)
     if (c_type == NULL)
         nasm_fatal("no check point\n");
     if (c_type[0] == '@') {
-        blk_var *var = blk_search_var(stat_get_curr_blk(), c_type);
+        struct blk_var *var = blk_search_var(stat_get_curr_blk(), c_type);
         if (!var->valid)
             nasm_fatal("checking value: %s has not been initialized", c_type);
         c_type = var->var_val;
@@ -255,7 +255,7 @@ static void blk_free(blk_struct *blk)
     if (blk == NULL)
         return;
     for (guint i = 0; i < blk->vars->len; i++) {
-        blk_var *var = &g_array_index(blk->vars, blk_var, i);
+        struct blk_var *var = &g_array_index(blk->vars, struct blk_var, i);
         free(var->name);
         free(var->var_type);
         free(var->var_val);

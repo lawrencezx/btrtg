@@ -670,7 +670,7 @@ static void init_memoffs_opnd(char *asm_opnd, operand_seed *opnd_seed)
 *             is MEMORY type.
 * Return: bool
 ******************************************************************************/
-static void init_opnd(char *asm_opnd, operand_seed *opnd_seed, blk_var *var)
+static void init_opnd(char *asm_opnd, operand_seed *opnd_seed, struct blk_var *var)
 {
     if (!stat_get_need_init())
         return;
@@ -853,7 +853,7 @@ static bool gen_operand_pseudo_code(operand_seed *opnd_seed)
     char *bufptr, *next_opnd;
     char asm_opnd[128];
     size_t opnd_len;
-    blk_var *var = NULL;
+    struct blk_var *var = NULL;
 
     opi = stat_get_opi();
     bufptr = nasm_skip_spaces(get_token_bufptr());

@@ -153,7 +153,7 @@ static void parseTrvBlk(xmlNodePtr trvNode, blk_struct *blk)
 static void parseV(xmlNodePtr VNode, blk_struct *blk)
 {
     char *prop_var, *prop_var_type;
-    blk_var var;
+    struct blk_var var;
 
     prop_var = (char *)xmlGetProp(VNode, (const unsigned char*)"var");
     prop_var_type = (char *)xmlGetProp(VNode, (const unsigned char*)"type");

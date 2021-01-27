@@ -23,16 +23,16 @@
 
 /* element structure
  */
-typedef enum elem_type {
+enum elem_type {
     V_ELEM,
     G_ELEM,
     C_ELEM,
     I_ELEM
-} elem_type;
+};
 
 typedef struct elem_struct {
     double inip;
-    elem_type type;
+    enum elem_type type;
     union {
         struct wd_root *g_tree;     /* G_ELEM */
         char *c_type;               /* C_ELEM */
@@ -52,7 +52,7 @@ struct trv_state {
 
 /* block variable structure
  */
-typedef struct blk_var {
+struct blk_var {
     bool        valid;
     char        *name;
     opflags_t   opndflags;
@@ -60,22 +60,22 @@ typedef struct blk_var {
     char        *var_val;
     /* one or two mov instructions, initiliaze basereg and index */
     char        *init_mem_addr;
-} blk_var;
+};
 
 /* block statement structure
  */
-typedef enum blk_type {
+enum blk_type {
     SEQ_BLK,
     SEL_BLK,
     XFR_BLK,
     RPT_BLK,
     TRV_BLK,
     ELEM_BLK
-} blk_type;
+};
 
 typedef struct blk_struct {
     struct blk_struct *parent;
-    blk_type type;
+    enum blk_type type;
     char *xfr_op;                  /* XFR_BLK */
     int times;                      /* RPT_BLK, XFR_BLK */
     struct trv_state *trv_state;    /* TRV_BLK */
@@ -90,9 +90,9 @@ typedef struct tmplt_struct {
 } tmplt_struct;
 
 void init_blk_struct(blk_struct *blk);
-void init_blk_var(blk_var *var);
+void init_blk_var(struct blk_var *var);
 void init_trv_state(struct trv_state *trv_state);
-blk_var *blk_search_var(blk_struct *blk, const char *var_name);
+struct blk_var *blk_search_var(blk_struct *blk, const char *var_name);
 void walk_tmplt(void);
 void tmplt_clear(tmplt_struct *tmpltm);
 void tmplt_free(tmplt_struct *tmpltm);
