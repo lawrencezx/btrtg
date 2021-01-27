@@ -49,8 +49,8 @@ static void parseGroups(xmlNodePtr groupsNode)
 
             struct const_node inst_node;
             inst_node.type = CONST_INSN;
-            inst_node.instName = nasm_strdup(nasm_trim((char *)iNode->children->content));
-            g_array_append_val(inst_group_node->consts, inst_node);
+            inst_node.asm_op = nasm_strdup(nasm_trim((char *)iNode->children->content));
+            g_array_append_val(inst_group_node->const_nodes, inst_node);
             i++;
         }
 
@@ -79,7 +79,7 @@ static void parseSelBlk(xmlNodePtr selNode, blk_struct *blk)
     selblk_tree->wd_node = wdtree_node_create();
     selblk_tree->wd_node->size = getElemsSize(selNode->children);
     GArray *weights = selblk_tree->wd_node->weights;
-    GArray *subtrees = selblk_tree->wd_node->subtrees;
+    GArray *sub_nodes = selblk_tree->wd_node->sub_nodes;
 
     for (xmlNodePtr blkNode = selNode->children; blkNode != NULL;
         blkNode = blkNode->next) {
@@ -92,7 +92,7 @@ static void parseSelBlk(xmlNodePtr selNode, blk_struct *blk)
         int weight = atoi(prop_weight);
         g_array_append_val(weights, weight);
         key = (char *)xmlGetProp(blkNode, (const unsigned char*)"type");
-        g_array_append_val(subtrees, *(struct wd_node **)hash_find(&hash_wdtrees, key, &hi));
+        g_array_append_val(sub_nodes, *(struct wd_node **)hash_find(&hash_wdtrees, key, &hi));
         i++;
 
         free(prop_weight);
@@ -105,18 +105,18 @@ static void parseSelBlk(xmlNodePtr selNode, blk_struct *blk)
 
 static void parseXfrBlk(xmlNodePtr xfrNode, blk_struct *blk)
 {
-    char *prop_times, *propXfrName;
+    char *prop_times, *prop_xfr_op;
 
     prop_times = (char *)xmlGetProp(xfrNode, (const unsigned char*)"times");
-    propXfrName = (char *)xmlGetProp(xfrNode, (const unsigned char*)"type");
+    prop_xfr_op = (char *)xmlGetProp(xfrNode, (const unsigned char*)"type");
 
     blk->type = XFR_BLK;
     blk->times = atoi(prop_times);
-    blk->xfrName = nasm_strdup(nasm_trim(propXfrName));
+    blk->xfr_op = nasm_strdup(nasm_trim(prop_xfr_op));
     parseBlk(xfrNode->children, blk);
 
     free(prop_times);
-    free(propXfrName);
+    free(prop_xfr_op);
 }
 
 static void parseRptBlk(xmlNodePtr rptNode, blk_struct *blk)
@@ -218,7 +218,7 @@ static void parseG(xmlNodePtr GNode, blk_struct *blk)
 ******************************************************************************/
 static void parseC(xmlNodePtr CNode, blk_struct *blk)
 {
-    char *checkType;
+    char *c_type;
     elem_struct *c_e;
     char *prop_type;
 
@@ -226,8 +226,8 @@ static void parseC(xmlNodePtr CNode, blk_struct *blk)
 
     c_e = (elem_struct *)nasm_malloc(sizeof(elem_struct));
     c_e->type = C_ELEM;
-    checkType = nasm_trim(prop_type);
-    c_e->checkType = nasm_strdup(checkType);
+    c_type = nasm_trim(prop_type);
+    c_e->c_type = nasm_strdup(c_type);
 
     blk->type = ELEM_BLK;
     g_array_append_val(blk->blks, c_e);
@@ -258,12 +258,12 @@ static void parseI(xmlNodePtr INode, blk_struct *blk)
 
     i_e = (elem_struct *)nasm_malloc(sizeof(elem_struct));
     i_e->type = I_ELEM;
-    i_e->inst = nasm_strdup(nasm_trim(prop_type));
+    i_e->asm_inst = nasm_strdup(nasm_trim(prop_type));
     i_e->inip = (prop_inip == NULL) ? 0.0 : atof(prop_inip);
     if (prop_trv != NULL && strcmp(nasm_trim(prop_trv), "true") == 0) {
         trv_state = (struct trv_state *)nasm_malloc(sizeof(struct trv_state));
         init_trv_state(trv_state);
-        create_trv_state(i_e->inst, trv_state);
+        create_trv_state(i_e->asm_inst, trv_state);
         i_e->val_nodes = trv_state->val_nodes;
         i_e->inip = 1.0;
     }

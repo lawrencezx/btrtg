@@ -35,9 +35,9 @@ typedef struct elem_struct {
     elem_type type;
     union {
         struct wd_root *g_tree;     /* G_ELEM */
-        char *checkType;    /* C_ELEM */
-        struct {
-            char *inst;
+        char *c_type;               /* C_ELEM */
+        struct {                    /* I_ELEM */
+            char *asm_inst;
             GArray *val_nodes;
         };
     };
@@ -58,6 +58,7 @@ typedef struct blk_var {
     opflags_t   opndflags;
     char        *var_type;
     char        *var_val;
+    /* one or two mov instructions, initiliaze basereg and index */
     char        *init_mem_addr;
 } blk_var;
 
@@ -75,7 +76,7 @@ typedef enum blk_type {
 typedef struct blk_struct {
     struct blk_struct *parent;
     blk_type type;
-    char *xfrName;                  /* XFR_BLK */
+    char *xfr_op;                  /* XFR_BLK */
     int times;                      /* RPT_BLK, XFR_BLK */
     struct trv_state *trv_state;    /* TRV_BLK */
     GArray *vars;

@@ -239,10 +239,10 @@ bool create_memoffs(operand_seed *opnd_seed, char *buffer)
 bool init_specific_register(enum reg_enum R_reg, bool isDest)
 {
     char buffer[128];
-    const char *instName = nasm_insn_names[stat_get_opcode()];
+    const char *asm_op = nasm_insn_names[stat_get_opcode()];
     const char *src;
     src = nasm_reg_names[R_reg - EXPR_REG_START];
-    struct const_node *val_node = request_val_node(instName, isDest);
+    struct const_node *val_node = request_val_node(asm_op, isDest);
     sprintf(buffer, "mov %s, 0x%x", src, (val_node == NULL) ?
             (int)nasm_random64(0x100000000) : val_node->imm32);
     one_insn_gen_const(buffer);

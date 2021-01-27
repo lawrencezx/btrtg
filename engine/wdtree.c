@@ -24,8 +24,8 @@ struct wd_node *wdtree_node_create(void)
     wd_node->isleaf = false;
     wd_node->size = 0;
     wd_node->weights = g_array_new(FALSE, FALSE, sizeof(int));
-    wd_node->subtrees = g_array_new(FALSE, FALSE, sizeof(struct wd_node *));
-    wd_node->consts = g_array_new(FALSE, FALSE, sizeof(struct const_node));
+    wd_node->sub_nodes = g_array_new(FALSE, FALSE, sizeof(struct wd_node *));
+    wd_node->const_nodes = g_array_new(FALSE, FALSE, sizeof(struct const_node));
 
     if (wd_nodes_templen >= wd_nodes_tempsize) {
         wd_nodes_tempsize += WDTREES_TEMP_DELTA;
@@ -40,7 +40,7 @@ struct wd_node *wdtree_node_create(void)
 static void const_node_clear(struct const_node *const_node)
 {
     if (const_node->type == CONST_INSN) {
-        free(const_node->instName);
+        free(const_node->asm_op);
     }
 }
 
@@ -49,11 +49,11 @@ void wdtree_node_clear(struct wd_node *wd_node)
     g_array_free(wd_node->weights, true);
     if (wd_node->isleaf == true) {
         for (int i = 0; i < wd_node->size; i++) {
-            const_node_clear(&g_array_index(wd_node->consts, struct const_node, i));
+            const_node_clear(&g_array_index(wd_node->const_nodes, struct const_node, i));
         }
-        g_array_free(wd_node->consts, true);
+        g_array_free(wd_node->const_nodes, true);
     } else {
-        g_array_free(wd_node->subtrees, true);
+        g_array_free(wd_node->sub_nodes, true);
     }
 }
 
@@ -107,8 +107,8 @@ static struct const_node *wdtree_select_leaf_node_recursive(struct wd_node *wd_n
 
     subtree = select_subtree(wd_node->weights, wd_node->size);
     if (wd_node->isleaf)
-        return &g_array_index(wd_node->consts, struct const_node, subtree);
-    subnode = g_array_index(wd_node->subtrees, struct wd_node *, subtree);
+        return &g_array_index(wd_node->const_nodes, struct const_node, subtree);
+    subnode = g_array_index(wd_node->sub_nodes, struct wd_node *, subtree);
     return wdtree_select_leaf_node_recursive(subnode);
 }
 

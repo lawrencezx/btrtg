@@ -20,11 +20,11 @@ void tks_free_all(void)
     hash_free_all(&hash_tks, true);
 }
 
-static TKmodel *get_tkm_from_hashtbl(const char *instName)
+static TKmodel *get_tkm_from_hashtbl(const char *asm_op)
 {
     struct hash_insert hi;
     void **tkmpp;
-    tkmpp = hash_find(&hash_tks, instName, &hi);
+    tkmpp = hash_find(&hash_tks, asm_op, &hi);
     return tkmpp == NULL ? NULL : *(TKmodel **)tkmpp;
 }
 
@@ -44,11 +44,11 @@ void create_trv_state(char *asm_inst, struct trv_state *trv_state)
             g_array_append_val(trv_state->tk_trees, tkm->tk_tree);
 }
 
-struct const_node *request_val_node(const char *instName, bool isDest)
+struct const_node *request_val_node(const char *asm_op, bool isDest)
 {
     struct const_node *val_node;
     TKmodel *tkm;
-    tkm = get_tkm_from_hashtbl(instName);
+    tkm = get_tkm_from_hashtbl(asm_op);
 //if (tkm->diffSrcDest == false) {
         val_node = wdtree_select_leaf_node(tkm->tk_tree);
 //    } else {

@@ -596,8 +596,8 @@ static void init_register_opnd(char *asm_opnd, operand_seed *opnd_seed)
     struct const_node *val_node;
     GArray *val_nodes = stat_get_val_nodes();
     if (val_nodes == NULL) {
-        const char *instName = nasm_insn_names[stat_get_opcode()];
-        val_node = request_val_node(instName, opnd_seed->srcdestflags & OPDEST);
+        const char *asm_op = nasm_insn_names[stat_get_opcode()];
+        val_node = request_val_node(asm_op, opnd_seed->srcdestflags & OPDEST);
     } else {
         val_node = g_array_index(val_nodes, struct const_node *, stat_get_opi());
     }
@@ -612,8 +612,8 @@ static void init_immediate_opnd(char *asm_opnd, operand_seed *opnd_seed)
     struct const_node *val_node;
     GArray *val_nodes = stat_get_val_nodes();
     if (val_nodes == NULL) {
-        const char *instName = nasm_insn_names[stat_get_opcode()];
-        val_node = request_val_node(instName, opnd_seed->srcdestflags & OPDEST);
+        const char *asm_op = nasm_insn_names[stat_get_opcode()];
+        val_node = request_val_node(asm_op, opnd_seed->srcdestflags & OPDEST);
     } else {
         val_node = g_array_index(val_nodes, struct const_node *, stat_get_opi());
     }
@@ -629,8 +629,8 @@ static void init_memory_opnd(char *asm_opnd, operand_seed *opnd_seed)
     struct const_node *val_node;
     GArray *val_nodes = stat_get_val_nodes();
     if (val_nodes == NULL) {
-        const char *instName = nasm_insn_names[stat_get_opcode()];
-        val_node = request_val_node(instName, opnd_seed->srcdestflags & OPDEST);
+        const char *asm_op = nasm_insn_names[stat_get_opcode()];
+        val_node = request_val_node(asm_op, opnd_seed->srcdestflags & OPDEST);
     } else {
         val_node = g_array_index(val_nodes, struct const_node *, stat_get_opi());
     }
@@ -646,8 +646,8 @@ static void init_memoffs_opnd(char *asm_opnd, operand_seed *opnd_seed)
     struct const_node *val_node;
     GArray *val_nodes = stat_get_val_nodes();
     if (val_nodes == NULL) {
-        const char *instName = nasm_insn_names[stat_get_opcode()];
-        val_node = request_val_node(instName, opnd_seed->srcdestflags & OPDEST);
+        const char *asm_op = nasm_insn_names[stat_get_opcode()];
+        val_node = request_val_node(asm_op, opnd_seed->srcdestflags & OPDEST);
     } else {
         val_node = g_array_index(val_nodes, struct const_node *, stat_get_opi());
     }

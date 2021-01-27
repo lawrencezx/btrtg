@@ -13,7 +13,7 @@ void init_blk_struct(blk_struct *blk)
 {
     blk->parent = NULL;
     blk->type = -1;
-    blk->xfrName = NULL;
+    blk->xfr_op = NULL;
     blk->times = 0;
     blk->trv_state = NULL;
     blk->blks = g_array_new(FALSE, FALSE, sizeof(void *));
@@ -106,7 +106,7 @@ static void walkSelBlk(blk_struct *blk)
     selblk_tree = g_array_index(blk->blks, struct wd_root *, 0);
     inst_node = wdtree_select_leaf_node(selblk_tree);
     
-    create_insn_seed(&seed, inst_node->instName);
+    create_insn_seed(&seed, inst_node->asm_op);
     one_insn_gen(&seed, &inst);
 }
 
@@ -141,7 +141,7 @@ static void preorder_traverse_trv_state(blk_struct *blk, struct wd_node *tk_node
 
     for (int i = 0; i < tk_node->size; i++) {
         if (tk_node->isleaf) {
-            val_node = &g_array_index(tk_node->consts, struct const_node, i);
+            val_node = &g_array_index(tk_node->const_nodes, struct const_node, i);
             g_array_append_val(trv_state->val_nodes, val_node);
             if ((size_t)num + 1 == trv_state->tk_trees->len) {
                 blk_invalid_var_all(blk);
@@ -155,7 +155,7 @@ static void preorder_traverse_trv_state(blk_struct *blk, struct wd_node *tk_node
             }
             g_array_remove_index(trv_state->val_nodes, num);
         } else {
-            preorder_traverse_trv_state(blk, g_array_index(tk_node->subtrees,
+            preorder_traverse_trv_state(blk, g_array_index(tk_node->sub_nodes,
                         struct wd_node *, i), num);
         }
     }
@@ -196,7 +196,7 @@ static void walkGElem(elem_struct *g_e)
 
     inst_node = wdtree_select_leaf_node(g_e->g_tree);
     
-    create_insn_seed(&seed, inst_node->instName);
+    create_insn_seed(&seed, inst_node->asm_op);
     one_insn_gen(&seed, &inst);
     stat_set_need_init(false);
 }
@@ -204,17 +204,17 @@ static void walkGElem(elem_struct *g_e)
 static void walkCElem(elem_struct *c_e)
 {
     char call_check_function[128];
-    char *checkType = c_e->checkType;
+    char *c_type = c_e->c_type;
 
-    if (checkType == NULL)
+    if (c_type == NULL)
         nasm_fatal("no check point\n");
-    if (checkType[0] == '@') {
-        blk_var *var = blk_search_var(stat_get_curr_blk(), checkType);
+    if (c_type[0] == '@') {
+        blk_var *var = blk_search_var(stat_get_curr_blk(), c_type);
         if (!var->valid)
-            nasm_fatal("checking value: %s has not been initialized", checkType);
-        checkType = var->var_val;
+            nasm_fatal("checking value: %s has not been initialized", c_type);
+        c_type = var->var_val;
     }
-    sprintf(call_check_function, "  check %s", checkType);
+    sprintf(call_check_function, "  check %s", c_type);
     one_insn_gen_ctrl(call_check_function, INSERT_AFTER);
 }
 
@@ -223,7 +223,7 @@ static void walkIElem(elem_struct *i_e)
     stat_set_need_init(likely_happen_p(i_e->inip));
     stat_set_val_nodes(i_e->val_nodes);
 
-    one_insn_gen_const(i_e->inst);
+    one_insn_gen_const(i_e->asm_inst);
 
     stat_set_need_init(false);
     stat_set_val_nodes(NULL);
@@ -246,7 +246,7 @@ void walk_tmplt(void)
 static void elem_free(elem_struct *elem)
 {
     if (elem->type == I_ELEM)
-        free(elem->inst);
+        free(elem->asm_inst);
     free(elem);
 }
 
@@ -269,7 +269,7 @@ static void blk_free(blk_struct *blk)
             blk_free(g_array_index(blk->blks, void *, i));
         }
     }
-    free(blk->xfrName);
+    free(blk->xfr_op);
     g_array_free(blk->vars, true);
     g_array_free(blk->blks, true);
     free(blk);

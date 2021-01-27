@@ -47,7 +47,7 @@ static void parseCGs(xmlNodePtr cgsNode)
             struct const_node val_node;
             val_node.type = CONST_IMM32;
             val_node.imm32 = (uint32_t)imm;
-            g_array_append_val(cg_tree_node->consts, val_node);
+            g_array_append_val(cg_tree_node->const_nodes, val_node);
             //} else {
             //    printf("0x%x\n", imm);
             //}
@@ -69,7 +69,7 @@ static struct wd_node *parseTK(xmlNodePtr tkNode)
     tk_tree_node = wdtree_node_create();
     tk_tree_node->size = getElemsSize(tkNode->children);
     GArray *weights = tk_tree_node->weights;
-    GArray *subtrees = tk_tree_node->subtrees;
+    GArray *sub_nodes = tk_tree_node->sub_nodes;
 
     for (xmlNodePtr nNode = tkNode->children; nNode != NULL; nNode = nNode->next) {
         if (nNode->type != XML_ELEMENT_NODE)
@@ -81,7 +81,7 @@ static struct wd_node *parseTK(xmlNodePtr tkNode)
         propKey = (char *)xmlGetProp(nNode, (const unsigned char*)"name");
         int weight = atoi(propWeight);
         g_array_append_val(weights, weight);
-        g_array_append_val(subtrees, *(struct wd_node **)hash_find(&hash_wdtrees, propKey, &hi));
+        g_array_append_val(sub_nodes, *(struct wd_node **)hash_find(&hash_wdtrees, propKey, &hi));
         i++;
 
         free(propWeight);

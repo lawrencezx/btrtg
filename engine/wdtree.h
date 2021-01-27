@@ -18,7 +18,7 @@ struct const_node {
         int16_t imm16;
         int32_t imm32;
         int8_t unity;
-        char *instName;
+        char *asm_op;
     };
 };
 
@@ -28,8 +28,8 @@ struct wd_node {
     bool isleaf;
     int size;
     GArray *weights;
-    GArray *subtrees;
-    GArray *consts;
+    GArray *sub_nodes;
+    GArray *const_nodes;
 };
 
 struct wd_root {
