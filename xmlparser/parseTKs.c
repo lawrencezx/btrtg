@@ -99,44 +99,18 @@ static void parseTKs(xmlNodePtr tksNode)
 
         char *key;
         struct hash_insert hi;
-        TKmodel *tkm;
-        char *propDiffSrcDest;
-
-        propDiffSrcDest = (char *)xmlGetProp(tkNode, (const unsigned char *)"diffSrcDest");
+        struct tk_model *tkm;
+        struct wd_node *tkTree;
 
         tkm = tkmodel_create();
 
-        if (propDiffSrcDest) {
-            struct wd_node *tkSrcTree;
-            struct wd_node *tkDestTree;
-            for (xmlNodePtr nNode = tkNode->children; nNode != NULL; nNode = nNode->next) {
-                if (nNode->type != XML_ELEMENT_NODE)
-                    continue;
-
-                if (strcmp((const char *)nNode->name, "Src") == 0) {
-                    tkSrcTree = parseTK(nNode);
-                } else if (strcmp((const char *)nNode->name, "Dest") == 0) {
-                    tkDestTree = parseTK(nNode);
-                }
-            }
-            tkm->tk_src_tree = wdtree_create();
-            tkm->tk_dest_tree = wdtree_create();
-            tkm->tk_src_tree->wd_node = tkSrcTree;
-            tkm->tk_dest_tree->wd_node = tkDestTree;
-            tkm->diffSrcDest = true;
-        } else {
-            struct wd_node *tkTree;
-            tkTree = parseTK(tkNode);
-            tkm->tk_tree = wdtree_create();
-            tkm->tk_tree->wd_node = tkTree;
-            tkm->diffSrcDest = false;
-        }
+        tkTree = parseTK(tkNode);
+        tkm->tk_tree = wdtree_create();
+        tkm->tk_tree->wd_node = tkTree;
 
         key = (char *)xmlGetProp(tkNode, (const unsigned char*)"inst");
         hash_find(&hash_tks, key, &hi);
         hash_add(&hi, key, (void *)tkm);
-
-        free(propDiffSrcDest);
     }
 }
 

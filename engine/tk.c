@@ -7,10 +7,10 @@
 
 struct hash_table hash_tks;
 
-TKmodel *tkmodel_create(void)
+struct tk_model *tkmodel_create(void)
 {
-    TKmodel *tkm;
-    tkm = (TKmodel *)nasm_malloc(sizeof(TKmodel));
+    struct tk_model *tkm;
+    tkm = (struct tk_model *)nasm_malloc(sizeof(struct tk_model));
     tkm->tk_tree = NULL;
     return tkm;
 }
@@ -20,12 +20,12 @@ void tks_free_all(void)
     hash_free_all(&hash_tks, true);
 }
 
-static TKmodel *get_tkm_from_hashtbl(const char *asm_op)
+static struct tk_model *get_tkm_from_hashtbl(const char *asm_op)
 {
     struct hash_insert hi;
     void **tkmpp;
     tkmpp = hash_find(&hash_tks, asm_op, &hi);
-    return tkmpp == NULL ? NULL : *(TKmodel **)tkmpp;
+    return tkmpp == NULL ? NULL : *(struct tk_model **)tkmpp;
 }
 
 void create_trv_state(char *asm_inst, struct trv_state *trv_state)
@@ -37,7 +37,7 @@ void create_trv_state(char *asm_inst, struct trv_state *trv_state)
         i++;
     }
     inst_name[i] = '\0';
-    TKmodel *tkm = get_tkm_from_hashtbl(inst_name);
+    struct tk_model *tkm = get_tkm_from_hashtbl(inst_name);
     g_array_append_val(trv_state->tk_trees, tkm->tk_tree);
     while (asm_inst[i] != '\0' && asm_inst[i] != '\n')
         if (asm_inst[i++] == ',')
@@ -47,16 +47,8 @@ void create_trv_state(char *asm_inst, struct trv_state *trv_state)
 struct const_node *request_val_node(const char *asm_op, bool isDest)
 {
     struct const_node *val_node;
-    TKmodel *tkm;
+    struct tk_model *tkm;
     tkm = get_tkm_from_hashtbl(asm_op);
-//if (tkm->diffSrcDest == false) {
-        val_node = wdtree_select_leaf_node(tkm->tk_tree);
-//    } else {
-//        if (isDest) {
-//            cVal = wdtree_select_leaf_node(tkm->wddesttree);
-//        } else {
-//            cVal = wdtree_select_leaf_node(tkm->wdsrctree);
-//        }
-//    }
+    val_node = wdtree_select_leaf_node(tkm->tk_tree);
     return val_node;
 }

@@ -5,21 +5,14 @@
 #include "wdtree.h"
 #include "tmplt.h"
 
-/* TKmodel: testing knowledge model 
+/* tk_model: testing knowledge model 
  *  a weighted set of instruction scenarios.
  */
-typedef struct TKmodel {
-    bool diffSrcDest;
-    union {
-        struct wd_root *tk_tree;
-        struct {
-            struct wd_root *tk_src_tree;
-            struct wd_root *tk_dest_tree;
-        };
-    };
-} TKmodel;
+struct tk_model {
+    struct wd_root *tk_tree;
+};
 
-TKmodel *tkmodel_create(void);
+struct tk_model *tkmodel_create(void);
 void tks_free_all(void);
 struct const_node *request_val_node(const char *asm_op, bool isDest);
 void create_trv_state(char *asm_inst, struct trv_state *trv_state);
