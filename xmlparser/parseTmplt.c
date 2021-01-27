@@ -20,42 +20,43 @@
 
 static const char *xmlfiles[1] =
 {
-    /* must put class before tempalte, so the tempalte can find relevant instruction group */
+    /* must put group before tempalte, so the tempalte can find relevant instruction group */
     "insn-group.xml",
 };
 char *tmpltpath = "../xmlmodel/templates";
 
 static struct trv_state *trv_state = NULL;
 
-static void parseClasses(xmlNodePtr classesNode)
+static void parseGroups(xmlNodePtr groupsNode)
 {
-    for (xmlNodePtr classNode = classesNode->children; classNode != NULL; classNode = classNode->next) {
-        if (classNode->type != XML_ELEMENT_NODE)
+    for (xmlNodePtr groupNode = groupsNode->children; groupNode != NULL;
+            groupNode = groupNode->next) {
+        if (groupNode->type != XML_ELEMENT_NODE)
             continue;
 
         int i = 0;
-        WDTree *classTree;
+        struct wd_node *inst_group_node;
         const char *key;
         struct hash_insert hi;
 
-        classTree = wdtree_create();
-        classTree->isleaf = true;
-        classTree->size = getElemsSize(classNode->children);
+        inst_group_node = wdtree_node_create();
+        inst_group_node->isleaf = true;
+        inst_group_node->size = getElemsSize(groupNode->children);
 
-        for (xmlNodePtr iNode = classNode->children; iNode != NULL; iNode = iNode->next) {
+        for (xmlNodePtr iNode = groupNode->children; iNode != NULL; iNode = iNode->next) {
             if (iNode->type != XML_ELEMENT_NODE)
                 continue;
 
             struct const_node inst_node;
             inst_node.type = CONST_INSN;
             inst_node.instName = nasm_strdup(nasm_trim((char *)iNode->children->content));
-            g_array_append_val(classTree->consts, inst_node);
+            g_array_append_val(inst_group_node->consts, inst_node);
             i++;
         }
 
-        key = (const char *)xmlGetProp(classNode, (const unsigned char*)"name");
+        key = (const char *)xmlGetProp(groupNode, (const unsigned char*)"name");
         hash_find(&hash_wdtrees, key, &hi);
-        hash_add(&hi, key, (void *)classTree);
+        hash_add(&hi, key, (void *)inst_group_node);
     }
 }
 
@@ -72,12 +73,13 @@ static void parseSelBlk(xmlNodePtr selNode, blk_struct *blk)
     int i = 0;
     char *key;
     struct hash_insert hi;
-    WDTree *selTree;
+    struct wd_root *selblk_tree;
 
-    selTree = wdtree_create();
-    selTree->size = getElemsSize(selNode->children);
-    GArray *weights = selTree->weights;
-    GArray *subtrees = selTree->subtrees;
+    selblk_tree = wdtree_create();
+    selblk_tree->wd_node = wdtree_node_create();
+    selblk_tree->wd_node->size = getElemsSize(selNode->children);
+    GArray *weights = selblk_tree->wd_node->weights;
+    GArray *subtrees = selblk_tree->wd_node->subtrees;
 
     for (xmlNodePtr blkNode = selNode->children; blkNode != NULL;
         blkNode = blkNode->next) {
@@ -90,7 +92,7 @@ static void parseSelBlk(xmlNodePtr selNode, blk_struct *blk)
         int weight = atoi(prop_weight);
         g_array_append_val(weights, weight);
         key = (char *)xmlGetProp(blkNode, (const unsigned char*)"type");
-        g_array_append_val(subtrees, *(WDTree **)hash_find(&hash_wdtrees, key, &hi));
+        g_array_append_val(subtrees, *(struct wd_node **)hash_find(&hash_wdtrees, key, &hi));
         i++;
 
         free(prop_weight);
@@ -98,7 +100,7 @@ static void parseSelBlk(xmlNodePtr selNode, blk_struct *blk)
     }
 
     blk->type = SEL_BLK;
-    g_array_append_val(blk->blks, selTree);
+    g_array_append_val(blk->blks, selblk_tree);
 }
 
 static void parseXfrBlk(xmlNodePtr xfrNode, blk_struct *blk)
@@ -192,7 +194,8 @@ static void parseG(xmlNodePtr GNode, blk_struct *blk)
     g_e = (elem_struct *)nasm_malloc(sizeof(elem_struct));
     g_e->type = G_ELEM;
     gType = nasm_trim(prop_type);
-    g_e->wdtree = *(WDTree **)hash_find(&hash_wdtrees, gType, &hi);
+    g_e->g_tree = wdtree_create();
+    g_e->g_tree->wd_node = *(struct wd_node **)hash_find(&hash_wdtrees, gType, &hi);
     g_e->inip = (prop_inip == NULL) ? 0.0 : atof(prop_inip);
 
     blk->type = ELEM_BLK;
@@ -335,7 +338,7 @@ void parse_tmplts_file(const char *fname)
         if (node->type == XML_ELEMENT_NODE) {
             const char *nodeName = (const char *)node->name;
             if (strcmp(nodeName, "InsnGroups") == 0) {
-                parseClasses(node);
+                parseGroups(node);
             } else if (strcmp(nodeName, "Template") == 0) {
                 parseTmplts(node);
             } else {

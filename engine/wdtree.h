@@ -24,23 +24,23 @@ struct const_node {
 
 /* weight decision tree
  */
-typedef struct WDTree {
+struct wd_node {
     bool isleaf;
     int size;
     GArray *weights;
     GArray *subtrees;
     GArray *consts;
-} WDTree;
+};
 
-typedef struct Tmpltmodel {
-    int instNum;
-    WDTree *wdtree;
-} Tmpltmodel;
+struct wd_root {
+    struct wd_node *wd_node;
+};
 
-WDTree *wdtree_create(void);
-void wdtree_clear(WDTree *tree);
+struct wd_root *wdtree_create(void);
+struct wd_node *wdtree_node_create(void);
+void wdtree_node_clear(struct wd_node *tree);
 void wdtrees_free_all(void);
-struct const_node *wdtree_select_leaf_node(WDTree *tree);
+struct const_node *wdtree_select_leaf_node(struct wd_root *tree);
 
 extern struct hash_table hash_wdtrees;
 

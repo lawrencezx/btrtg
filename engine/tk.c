@@ -11,7 +11,7 @@ TKmodel *tkmodel_create(void)
 {
     TKmodel *tkm;
     tkm = (TKmodel *)nasm_malloc(sizeof(TKmodel));
-    tkm->wdtree = NULL;
+    tkm->tk_tree = NULL;
     return tkm;
 }
 
@@ -38,10 +38,10 @@ void create_trv_state(char *asm_inst, struct trv_state *trv_state)
     }
     inst_name[i] = '\0';
     TKmodel *tkm = get_tkm_from_hashtbl(inst_name);
-    g_array_append_val(trv_state->wdtrees, tkm->wdtree);
+    g_array_append_val(trv_state->tk_trees, tkm->tk_tree);
     while (asm_inst[i] != '\0' && asm_inst[i] != '\n')
         if (asm_inst[i++] == ',')
-            g_array_append_val(trv_state->wdtrees, tkm->wdtree);
+            g_array_append_val(trv_state->tk_trees, tkm->tk_tree);
 }
 
 struct const_node *request_val_node(const char *instName, bool isDest)
@@ -50,7 +50,7 @@ struct const_node *request_val_node(const char *instName, bool isDest)
     TKmodel *tkm;
     tkm = get_tkm_from_hashtbl(instName);
 //if (tkm->diffSrcDest == false) {
-        val_node = wdtree_select_leaf_node(tkm->wdtree);
+        val_node = wdtree_select_leaf_node(tkm->tk_tree);
 //    } else {
 //        if (isDest) {
 //            cVal = wdtree_select_leaf_node(tkm->wddesttree);

@@ -11,10 +11,10 @@
 typedef struct TKmodel {
     bool diffSrcDest;
     union {
-        WDTree *wdtree;
+        struct wd_root *tk_tree;
         struct {
-            WDTree *wdsrctree;
-            WDTree *wddesttree;
+            struct wd_root *tk_src_tree;
+            struct wd_root *tk_dest_tree;
         };
     };
 } TKmodel;

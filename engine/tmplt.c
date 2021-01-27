@@ -32,7 +32,7 @@ void init_blk_var(blk_var *var)
 
 void init_trv_state(struct trv_state *trv_state)
 {
-    trv_state->wdtrees = g_array_new(FALSE, FALSE, sizeof(WDTree *));
+    trv_state->tk_trees = g_array_new(FALSE, FALSE, sizeof(struct wd_root *));
     trv_state->val_nodes = g_array_new(FALSE, FALSE, sizeof(struct const_node *));
 }
 
@@ -95,7 +95,7 @@ static void walkSeqBlk(blk_struct *blk)
 
 static void walkSelBlk(blk_struct *blk)
 {
-    WDTree *wdtree;
+    struct wd_root *selblk_tree;
     struct const_node *inst_node;
     insn_seed seed;
     insn inst;
@@ -103,8 +103,8 @@ static void walkSelBlk(blk_struct *blk)
     stat_set_curr_blk(blk);
     blk_invalid_var_all(blk);
 
-    wdtree = g_array_index(blk->blks, WDTree *, 0);
-    inst_node = wdtree_select_leaf_node(wdtree);
+    selblk_tree = g_array_index(blk->blks, struct wd_root *, 0);
+    inst_node = wdtree_select_leaf_node(selblk_tree);
     
     create_insn_seed(&seed, inst_node->instName);
     one_insn_gen(&seed, &inst);
@@ -130,30 +130,34 @@ static void walkRptBlk(blk_struct *blk)
     }
 }
 
-static void pre_order_traverse_trv_state(blk_struct *blk, WDTree *tree, int num)
+static void preorder_traverse_trv_state(blk_struct *blk, struct wd_node *tk_node, int num)
 {
     struct trv_state *trv_state = blk->trv_state;
+    struct const_node *val_node;
+    struct wd_root *tk_tree;
 
-    if (tree == NULL || tree->size == 0)
+    if (tk_node == NULL || tk_node->size == 0)
         return;
 
-    for (int i = 0; i < tree->size; i++) {
-        if (tree->isleaf) {
-            struct const_node *val_node = &g_array_index(tree->consts, struct const_node, i);
+    for (int i = 0; i < tk_node->size; i++) {
+        if (tk_node->isleaf) {
+            val_node = &g_array_index(tk_node->consts, struct const_node, i);
             g_array_append_val(trv_state->val_nodes, val_node);
-            if ((size_t)num + 1 == trv_state->wdtrees->len) {
+            if ((size_t)num + 1 == trv_state->tk_trees->len) {
                 blk_invalid_var_all(blk);
                 for (guint i = 0; i < blk->blks->len; i++) {
                     blk_struct *subblk = g_array_index(blk->blks, blk_struct *, i);
                     walkBlkFuncs[subblk->type](subblk);
                 }
-            } else
-                pre_order_traverse_trv_state(blk, g_array_index(trv_state->wdtrees, 
-                            WDTree *, num + 1), num + 1);
+            } else {
+                tk_tree = g_array_index(trv_state->tk_trees, struct wd_root *, num + 1);
+                preorder_traverse_trv_state(blk, tk_tree->wd_node, num + 1);
+            }
             g_array_remove_index(trv_state->val_nodes, num);
-        } else
-            pre_order_traverse_trv_state(blk, g_array_index(tree->subtrees,
-                        WDTree *, i), num);
+        } else {
+            preorder_traverse_trv_state(blk, g_array_index(tk_node->subtrees,
+                        struct wd_node *, i), num);
+        }
     }
 }
 
@@ -161,9 +165,11 @@ static void walkTrvBlk(blk_struct *blk)
 {
     stat_set_curr_blk(blk);
     
-    GArray *wdtrees = blk->trv_state->wdtrees;
-    if (wdtrees->len != 0)
-        pre_order_traverse_trv_state(blk, g_array_index(wdtrees, WDTree *, 0), 0);
+    GArray *tk_trees = blk->trv_state->tk_trees;
+    if (tk_trees->len != 0) {
+        struct wd_root *tk_tree = g_array_index(tk_trees, struct wd_root *, 0);
+        preorder_traverse_trv_state(blk, tk_tree->wd_node, 0);
+    }
 }
 
 /* walk element
@@ -188,7 +194,7 @@ static void walkGElem(elem_struct *g_e)
 
     stat_set_need_init(likely_happen_p(g_e->inip));
 
-    inst_node = wdtree_select_leaf_node(g_e->wdtree);
+    inst_node = wdtree_select_leaf_node(g_e->g_tree);
     
     create_insn_seed(&seed, inst_node->instName);
     one_insn_gen(&seed, &inst);

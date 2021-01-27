@@ -34,7 +34,7 @@ typedef struct elem_struct {
     double inip;
     elem_type type;
     union {
-        WDTree *wdtree;     /* G_ELEM */
+        struct wd_root *g_tree;     /* G_ELEM */
         char *checkType;    /* C_ELEM */
         struct {
             char *inst;
@@ -46,7 +46,7 @@ typedef struct elem_struct {
 /* traversing state of TRV_BLK block
  */
 struct trv_state {
-    GArray *wdtrees;
+    GArray *tk_trees;
     GArray *val_nodes;
 };
 
