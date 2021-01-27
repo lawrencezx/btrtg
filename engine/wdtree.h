@@ -8,7 +8,7 @@ enum const_type {
     CONST_IMM16,
     CONST_IMM32,
     CONST_UNITY,
-    CONST_INSN  
+    CONST_ASM_OP
 };
 
 struct const_node {

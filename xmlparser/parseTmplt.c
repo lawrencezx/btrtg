@@ -35,9 +35,10 @@ static void parseGroups(xmlNodePtr groupsNode)
             continue;
 
         int i = 0;
-        struct wd_node *inst_group_node;
         const char *key;
         struct hash_insert hi;
+        struct wd_node *inst_group_node;
+        struct const_node inst_node;
 
         inst_group_node = wdtree_node_create();
         inst_group_node->isleaf = true;
@@ -47,8 +48,7 @@ static void parseGroups(xmlNodePtr groupsNode)
             if (iNode->type != XML_ELEMENT_NODE)
                 continue;
 
-            struct const_node inst_node;
-            inst_node.type = CONST_INSN;
+            inst_node.type = CONST_ASM_OP;
             inst_node.asm_op = nasm_strdup(nasm_trim((char *)iNode->children->content));
             g_array_append_val(inst_group_node->const_nodes, inst_node);
             i++;
@@ -70,8 +70,8 @@ static void parseSeqBlk(xmlNodePtr seqNode, blk_struct *blk)
 
 static void parseSelBlk(xmlNodePtr selNode, blk_struct *blk)
 {
-    int i = 0;
-    char *key;
+    int i = 0, weight;
+    char *key, *prop_weight;
     struct hash_insert hi;
     struct wd_root *selblk_tree;
 
@@ -86,10 +86,8 @@ static void parseSelBlk(xmlNodePtr selNode, blk_struct *blk)
         if (blkNode->type != XML_ELEMENT_NODE)
             continue;
 
-        char *prop_weight;
-
         prop_weight = (char *)xmlGetProp(blkNode, (const unsigned char*)"weight");
-        int weight = atoi(prop_weight);
+        weight = atoi(prop_weight);
         g_array_append_val(weights, weight);
         key = (char *)xmlGetProp(blkNode, (const unsigned char*)"type");
         g_array_append_val(sub_nodes, *(struct wd_node **)hash_find(&hash_wdtrees, key, &hi));
@@ -155,11 +153,11 @@ static void parseTrvBlk(xmlNodePtr trvNode, blk_struct *blk)
 static void parseV(xmlNodePtr VNode, blk_struct *blk)
 {
     char *prop_var, *prop_var_type;
+    blk_var var;
 
     prop_var = (char *)xmlGetProp(VNode, (const unsigned char*)"var");
     prop_var_type = (char *)xmlGetProp(VNode, (const unsigned char*)"type");
 
-    blk_var var;
     init_blk_var(&var);
     var.name = nasm_strdup(prop_var);
     var.var_type = nasm_strdup(prop_var_type);
@@ -183,7 +181,7 @@ static void parseV(xmlNodePtr VNode, blk_struct *blk)
 ******************************************************************************/
 static void parseG(xmlNodePtr GNode, blk_struct *blk)
 {
-    char *gType;
+    char *g_type;
     elem_struct *g_e;
     struct hash_insert hi;
     char *prop_type, *prop_inip;
@@ -193,9 +191,9 @@ static void parseG(xmlNodePtr GNode, blk_struct *blk)
 
     g_e = (elem_struct *)nasm_malloc(sizeof(elem_struct));
     g_e->type = G_ELEM;
-    gType = nasm_trim(prop_type);
+    g_type = nasm_trim(prop_type);
     g_e->g_tree = wdtree_create();
-    g_e->g_tree->wd_node = *(struct wd_node **)hash_find(&hash_wdtrees, gType, &hi);
+    g_e->g_tree->wd_node = *(struct wd_node **)hash_find(&hash_wdtrees, g_type, &hi);
     g_e->inip = (prop_inip == NULL) ? 0.0 : atof(prop_inip);
 
     blk->type = ELEM_BLK;
@@ -278,40 +276,40 @@ static void parseI(xmlNodePtr INode, blk_struct *blk)
 
 static void parseBlk(xmlNodePtr blkNodeStart, blk_struct *blk)
 {
+    blk_struct *subblk;
+    const char *blk_name;
+
     for (xmlNodePtr blkNode = blkNodeStart; blkNode != NULL;
         blkNode = blkNode->next) {
         if (blkNode->type != XML_ELEMENT_NODE)
             continue;
 
-        blk_struct *subblk;
-        const char *blkName;
-
-        blkName = (const char *)blkNode->name;
+        blk_name = (const char *)blkNode->name;
         subblk = (blk_struct *)nasm_malloc(sizeof(blk_struct));
         init_blk_struct(subblk);
         subblk->parent = blk;
-        if (strcmp(blkName, "sequence") == 0) {
+        if (strcmp(blk_name, "sequence") == 0) {
             parseSeqBlk(blkNode, subblk);
-        } else if (strcmp(blkName, "select") == 0) {
+        } else if (strcmp(blk_name, "select") == 0) {
             parseSelBlk(blkNode, subblk);
-        } else if (strcmp(blkName, "transfer") == 0) {
+        } else if (strcmp(blk_name, "transfer") == 0) {
             parseXfrBlk(blkNode, subblk);
-        } else if (strcmp(blkName, "repeat") == 0) {
+        } else if (strcmp(blk_name, "repeat") == 0) {
             parseRptBlk(blkNode, subblk);
-        } else if (strcmp(blkName, "traverse") == 0) {
+        } else if (strcmp(blk_name, "traverse") == 0) {
             parseTrvBlk(blkNode, subblk);
-        } else if (strcmp(blkName, "V") == 0) {
+        } else if (strcmp(blk_name, "V") == 0) {
             parseV(blkNode, blk);
             nasm_free(subblk);
             continue;
-        } else if (strcmp(blkName, "G") == 0) {
+        } else if (strcmp(blk_name, "G") == 0) {
             parseG(blkNode, subblk);
-        } else if (strcmp(blkName, "C") == 0) {
+        } else if (strcmp(blk_name, "C") == 0) {
             parseC(blkNode, subblk);
-        } else if (strcmp(blkName, "I") == 0) {
+        } else if (strcmp(blk_name, "I") == 0) {
             parseI(blkNode, subblk);
         } else {
-            nasm_fatal("Unsupported statement type: %s", blkName);
+            nasm_fatal("Unsupported statement type: %s", blk_name);
         }
 
         g_array_append_val(blk->blks, subblk);
@@ -329,6 +327,7 @@ void parse_tmplts_file(const char *fname)
 {
     LIBXML_TEST_VERSION
     xmlDocPtr doc = xmlParseFile(fname);
+    const char *tmplt_type;
     if (doc != NULL) {
         xmlNodePtr node = doc->children;
         while (node != NULL && node->type != XML_ELEMENT_NODE)
@@ -336,13 +335,13 @@ void parse_tmplts_file(const char *fname)
         if (node == NULL)
             return;
         if (node->type == XML_ELEMENT_NODE) {
-            const char *nodeName = (const char *)node->name;
-            if (strcmp(nodeName, "InsnGroups") == 0) {
+            tmplt_type = (const char *)node->name;
+            if (strcmp(tmplt_type, "InsnGroups") == 0) {
                 parseGroups(node);
-            } else if (strcmp(nodeName, "Template") == 0) {
+            } else if (strcmp(tmplt_type, "Template") == 0) {
                 parseTmplts(node);
             } else {
-                nasm_fatal("failed to parse element: %s", nodeName);
+                nasm_fatal("failed to parse tempalte type: %s", tmplt_type);
             }
         }
     } else {

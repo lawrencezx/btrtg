@@ -39,7 +39,7 @@ struct wd_node *wdtree_node_create(void)
 
 static void const_node_clear(struct const_node *const_node)
 {
-    if (const_node->type == CONST_INSN) {
+    if (const_node->type == CONST_ASM_OP) {
         free(const_node->asm_op);
     }
 }

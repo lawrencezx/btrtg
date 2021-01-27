@@ -18,14 +18,15 @@ char *TKpath = "../xmlmodel/tks";
 
 static void parseCGs(xmlNodePtr cgsNode)
 {
+    int i = 0, imm;
+    char *key;
+    struct hash_insert hi;
+    struct wd_node *cg_tree_node;
+    struct const_node val_node;
+
     for (xmlNodePtr cgNode = cgsNode->children; cgNode != NULL; cgNode = cgNode->next) {
         if (cgNode->type != XML_ELEMENT_NODE)
             continue;
-
-        int i = 0;
-        struct wd_node *cg_tree_node;
-        char *key;
-        struct hash_insert hi;
 
         cg_tree_node = wdtree_node_create();
         cg_tree_node->isleaf = true;
@@ -35,7 +36,7 @@ static void parseCGs(xmlNodePtr cgsNode)
             if (cNode->type != XML_ELEMENT_NODE)
                 continue;
 
-            int imm = hex2dec((const char *)cNode->children->content);
+            imm = hex2dec((const char *)cNode->children->content);
             //const char *cNodeName = (const char *)cNode->name;
             //if (strcmp(cNodeName, "Imm8") == 0) {
             //    cgVal[i].imm8 = (uint8_t)imm;
@@ -44,7 +45,6 @@ static void parseCGs(xmlNodePtr cgsNode)
             //} else if (strcmp(cNodeName, "Imm16") == 0) {
             //    cgVal[i].imm16 = (uint16_t)imm;
             //} else if (strcmp(cNodeName, "Imm32") == 0) {
-            struct const_node val_node;
             val_node.type = CONST_IMM32;
             val_node.imm32 = (uint32_t)imm;
             g_array_append_val(cg_tree_node->const_nodes, val_node);
@@ -62,7 +62,8 @@ static void parseCGs(xmlNodePtr cgsNode)
 
 static struct wd_node *parseTK(xmlNodePtr tkNode)
 {
-    int i = 0;
+    int i = 0, weight;
+    char *propWeight, *propKey;
     struct hash_insert hi;
     struct wd_node *tk_tree_node;
 
@@ -75,11 +76,9 @@ static struct wd_node *parseTK(xmlNodePtr tkNode)
         if (nNode->type != XML_ELEMENT_NODE)
             continue;
 
-        char *propWeight, *propKey;
-
         propWeight = (char *)xmlGetProp(nNode, (const unsigned char*)"weight");
         propKey = (char *)xmlGetProp(nNode, (const unsigned char*)"name");
-        int weight = atoi(propWeight);
+        weight = atoi(propWeight);
         g_array_append_val(weights, weight);
         g_array_append_val(sub_nodes, *(struct wd_node **)hash_find(&hash_wdtrees, propKey, &hi));
         i++;
@@ -93,14 +92,14 @@ static struct wd_node *parseTK(xmlNodePtr tkNode)
 
 static void parseTKs(xmlNodePtr tksNode)
 {
+    char *key;
+    struct hash_insert hi;
+    struct tk_model *tkm;
+    struct wd_node *tkTree;
+
     for (xmlNodePtr tkNode = tksNode->children; tkNode != NULL; tkNode = tkNode->next) {
         if (tkNode->type != XML_ELEMENT_NODE)
             continue;
-
-        char *key;
-        struct hash_insert hi;
-        struct tk_model *tkm;
-        struct wd_node *tkTree;
 
         tkm = tkmodel_create();
 
@@ -118,16 +117,18 @@ void parse_tks_file(const char *fname)
 {
     LIBXML_TEST_VERSION
     xmlDocPtr doc = xmlParseFile(fname);
+    const char *tk_type;
+
     if (doc != NULL) {
         xmlNodePtr node = doc->children;
         if (node->type == XML_ELEMENT_NODE) {
-            const char *nodeName = (const char *)node->name;
-            if (strcmp(nodeName, "ConstGroups") == 0) {
+            tk_type = (const char *)node->name;
+            if (strcmp(tk_type, "ConstGroups") == 0) {
                 parseCGs(node);
-            } else if (strcmp(nodeName, "TestingKnowledges") == 0) {
+            } else if (strcmp(tk_type, "TestingKnowledges") == 0) {
                 parseTKs(node);
             } else {
-                nasm_nonfatal("failed to parse element: %s", nodeName);
+                nasm_nonfatal("failed to parse element: %s", tk_type);
             }
         }
     } else {
