@@ -6,11 +6,7 @@
 #include "nctype.h"
 #include "asmlib.h"
 
-<<<<<<< HEAD
 opflags_t parse_asm_opnd_type_opflags(const char *asm_opnd)
-=======
-opflags_t   asm_parse_opflags(const char *asm_opnd)
->>>>>>> 93fe5193... bug:gen-two-move
 {
     opflags_t opflags = 0;
     char opnd_id[128];
