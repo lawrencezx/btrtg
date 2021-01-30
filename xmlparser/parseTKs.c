@@ -46,6 +46,7 @@ static void parseCGs(xmlNodePtr cgsNode)
                 *(float *)(val_node.immf) = strtof((const char *)cNode->children->content, NULL);
                 *(double *)(val_node.immf + 1) = strtod((const char *)cNode->children->content, NULL);
                 *(long double *)(val_node.immf + 3) = strtold((const char *)cNode->children->content, NULL);
+                g_array_append_val(cg_tree_node->const_nodes, val_node);
 
             }else{
                 val_node.type = CONST_IMM32;

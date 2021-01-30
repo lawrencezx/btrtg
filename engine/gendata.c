@@ -689,6 +689,81 @@ bool gen_opcode(const insn_seed *seed)
     return true;
 }
 
+static void init_memory_opnd_float(char *asm_opnd, operand_seed *opnd_seed, struct const_node *val_node)
+{
+    char asm_mov_inst[128];
+    char mem_address[128];
+    strcpy(mem_address, asm_opnd);
+    int fp_number[3] = {0};
+    if(val_node == NULL){
+        //random_fp_number(opnd_seed, fp_number);
+    }else{
+        switch(opnd_seed->opdsize){
+            case BITS32:
+                fp_number[0] = val_node->immf[0];
+                break;
+            case BITS64:
+                fp_number[0] = val_node->immf[1];
+                fp_number[1] = val_node->immf[2];
+                break;
+            case BITS80:
+                fp_number[0] = val_node->immf[3];
+                fp_number[1] = val_node->immf[4];
+                fp_number[2] = val_node->immf[5];
+                break;
+            default:
+                break;
+        }  
+    }
+    if(opnd_seed->opdsize >= BITS32){
+        sprintf(asm_mov_inst, "mov %s, 0x%x", mem_address, fp_number[0]);
+        preappend_mem_size(asm_mov_inst + 4, BITS32);
+        one_insn_gen_const(asm_mov_inst);
+    }
+    if(opnd_seed->opdsize >= BITS64){
+        char * mem_address_end = mem_address + strlen(mem_address);
+        sprintf(mem_address_end -1, "%s", " + 0x4]");
+        sprintf(asm_mov_inst, "mov %s, 0x%x", mem_address, fp_number[1]);
+        preappend_mem_size(asm_mov_inst + 4, BITS32);
+        one_insn_gen_const(asm_mov_inst);
+    }
+    if(opnd_seed->opdsize >= BITS80){
+        char * mem_address_end = mem_address + strlen(mem_address);
+        sprintf(mem_address_end -1, "%s", " + 0x8]");
+        sprintf(asm_mov_inst, "mov %s, 0x%x", mem_address, fp_number[2]);
+        preappend_mem_size(asm_mov_inst + 4, BITS32);
+        one_insn_gen_const(asm_mov_inst);
+    }
+}
+
+static void init_fpu_register_opnd(char *asm_opnd, operand_seed *opnd_seed)
+{
+    char asm_fpu_inst[128];
+    char mem_address[128];
+
+    struct const_node *val_node;
+    GArray *val_nodes = stat_get_val_nodes();
+    if (val_nodes == NULL) {
+        const char *asm_op = nasm_insn_names[stat_get_opcode()];
+        val_node = request_val_node(asm_op, opnd_seed->srcdestflags & OPDEST);
+    } else {
+        val_node = g_array_index(val_nodes, struct const_node *, stat_get_opi());
+    }
+    create_memory(NULL, mem_address);
+
+    sprintf(asm_fpu_inst, "fxch %s", asm_opnd);
+    one_insn_gen_const(asm_fpu_inst);
+    sprintf(asm_fpu_inst, "fstp st0");
+    //sprintf(buffer, "fincstp");
+    one_insn_gen_const(asm_fpu_inst);
+    sprintf(asm_fpu_inst, "mov dword %s, 0x%x", mem_address, val_node->immf[0]);
+    one_insn_gen_const(asm_fpu_inst); 
+    sprintf(asm_fpu_inst, "fld dword %s",mem_address);
+    one_insn_gen_const(asm_fpu_inst);
+    sprintf(asm_fpu_inst, "fxch %s", asm_opnd);
+    one_insn_gen_const(asm_fpu_inst);
+}
+
 static void init_register_opnd(char *asm_opnd, operand_seed *opnd_seed)
 {
     char asm_mov_inst[128];
@@ -733,10 +808,15 @@ static void init_memory_opnd(char *asm_opnd, operand_seed *opnd_seed)
     } else {
         val_node = g_array_index(val_nodes, struct const_node *, stat_get_opi());
     }
-    sprintf(asm_mov_inst, "mov %s, 0x%x", asm_opnd, (val_node == NULL) ?
-            (int)nasm_random64(RAND_BITS32_BND) : val_node->imm32);
-    preappend_mem_size(asm_mov_inst + 4, opnd_seed->opdsize);
-    one_insn_gen_const(asm_mov_inst);
+    if(val_node != NULL && CONST_FLOAT == val_node->type){
+        init_memory_opnd_float(asm_opnd, opnd_seed, val_node);
+    }else{
+        sprintf(asm_mov_inst, "mov %s, 0x%x", asm_opnd, (val_node == NULL) ?
+                (int)nasm_random64(RAND_BITS32_BND) : val_node->imm32);
+        preappend_mem_size(asm_mov_inst + 4, opnd_seed->opdsize);
+        one_insn_gen_const(asm_mov_inst);
+    }
+
 }
 
 static void init_memoffs_opnd(char *asm_opnd, operand_seed *opnd_seed)
@@ -776,9 +856,13 @@ static void init_opnd(char *asm_opnd, operand_seed *opnd_seed, struct blk_var *v
 
     stat_set_need_init(false);
     opflags_t opndflags = opnd_seed->opndflags;
-    if (is_class(REGISTER, opndflags))
-        init_register_opnd(asm_opnd, opnd_seed);
-    else if (is_class(REGMEM, opndflags)) {
+    if (is_class(REGISTER, opndflags)){
+        if(is_class(REG_CLASS_FPUREG, opndflags)){
+            init_fpu_register_opnd(asm_opnd, opnd_seed);
+        }else{
+            init_register_opnd(asm_opnd, opnd_seed);
+        }
+    }else if (is_class(REGMEM, opndflags)) {
         if (is_class(MEM_OFFS, opndflags)) {
             init_memoffs_opnd(asm_opnd, opnd_seed);
         } else {

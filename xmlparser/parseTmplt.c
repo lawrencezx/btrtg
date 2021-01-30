@@ -258,6 +258,7 @@ static void parseI(xmlNodePtr INode, blk_struct *blk)
     i_e->type = I_ELEM;
     i_e->asm_inst = nasm_strdup(nasm_trim(prop_type));
     i_e->inip = (prop_inip == NULL) ? 0.0 : atof(prop_inip);
+    i_e->val_nodes = NULL;
     if (prop_trv != NULL && strcmp(nasm_trim(prop_trv), "true") == 0) {
         trv_state = (struct trv_state *)nasm_malloc(sizeof(struct trv_state));
         init_trv_state(trv_state);
