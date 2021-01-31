@@ -35,3 +35,12 @@ DEFINE_CHECK_FUNCTION(gs,         29,  check_point_gs)
 DEFINE_CHECK_FUNCTION(eflags,     30,  check_point_eflags)
 
 DEFINE_CHECK_FUNCTION(x86_state,  31,  check_point_x86_state)
+
+DEFINE_CHECK_FUNCTION(x86_state,  31,  check_point_st0)
+DEFINE_CHECK_FUNCTION(x86_state,  31,  check_point_st1)
+DEFINE_CHECK_FUNCTION(x86_state,  31,  check_point_st2)
+DEFINE_CHECK_FUNCTION(x86_state,  31,  check_point_st3)
+DEFINE_CHECK_FUNCTION(x86_state,  31,  check_point_st4)
+DEFINE_CHECK_FUNCTION(x86_state,  31,  check_point_st5)
+DEFINE_CHECK_FUNCTION(x86_state,  31,  check_point_st6)
+DEFINE_CHECK_FUNCTION(x86_state,  31,  check_point_st7)

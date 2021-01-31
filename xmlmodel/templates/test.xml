@@ -1,0 +1,13 @@
+<Template>
+	<I type = "fadd mem32" inip = "1.0"></I>
+    <traverse>
+        <V var = "fpureg" type = "fpureg"></V>
+        <I type = "fadd @fpureg,fpu0" trv = "true"></I>
+        <C type = "@fpureg"></C>
+    </traverse>
+    <traverse>
+        <V var = "fpureg" type = "fpureg"></V>
+        <I type = "fadd fpu0,@fpureg" trv = "true"></I>
+        <C type = "@fpureg"></C>
+    </traverse>
+</Template>

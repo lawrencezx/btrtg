@@ -740,6 +740,8 @@ static void init_fpu_register_opnd(char *asm_opnd, operand_seed *opnd_seed)
 {
     char asm_fpu_inst[128];
     char mem_address[128];
+    create_memory(NULL, mem_address);
+    one_insn_gen_ctrl(stat_get_init_mem_addr(), INSERT_AFTER);
 
     struct const_node *val_node;
     GArray *val_nodes = stat_get_val_nodes();
@@ -749,8 +751,6 @@ static void init_fpu_register_opnd(char *asm_opnd, operand_seed *opnd_seed)
     } else {
         val_node = g_array_index(val_nodes, struct const_node *, stat_get_opi());
     }
-    create_memory(NULL, mem_address);
-
     sprintf(asm_fpu_inst, "fxch %s", asm_opnd);
     one_insn_gen_const(asm_fpu_inst);
     sprintf(asm_fpu_inst, "fstp st0");
@@ -858,7 +858,9 @@ static void init_opnd(char *asm_opnd, operand_seed *opnd_seed, struct blk_var *v
     opflags_t opndflags = opnd_seed->opndflags;
     if (is_class(REGISTER, opndflags)){
         if(is_class(REG_CLASS_FPUREG, opndflags)){
+            stat_set_has_mem_opnd(false);
             init_fpu_register_opnd(asm_opnd, opnd_seed);
+            stat_set_has_mem_opnd(true);
         }else{
             init_register_opnd(asm_opnd, opnd_seed);
         }
