@@ -550,11 +550,17 @@ static opflags_t calOperandSize(const insn_seed *seed, int opdi)
     return opdsize;
 }
 
-static void init_implicit_operands(const insn_seed *seed)
+void init_implicit_operands(insn *result)
 {
-    if (seed->opcode == I_DIV ||
-        seed->opcode == I_IDIV) {
-        switch (calOperandSize(seed, 0)) {
+
+    if (result->opcode == I_DIV ||
+        result->opcode == I_IDIV) {
+        insn_seed seed;
+        seed.opcode = result->opcode;
+        for(int i = 0; i < MAX_OPERANDS; i++){
+            seed.opd[i] = result->oprs[i].type;
+        }
+        switch (calOperandSize(&seed, 0)) {
             case BITS8:
                 init_specific_register(R_AX, true);
                 break;
@@ -570,11 +576,8 @@ static void init_implicit_operands(const insn_seed *seed)
                 break;
         }
     }else{
-        int operands = 0;
-        while (seed->opd[operands]) {
-            operands++;
-        }
-        switch(seed->opcode){
+        int operands = result->operands;
+        switch(result->opcode){
             case I_FBSTP:
             case I_FCHS:
             case I_FCOS:
@@ -594,10 +597,11 @@ static void init_implicit_operands(const insn_seed *seed)
             case I_FSINCOS:
             case I_FSQRT:
             case I_FTST:
-            case I_FXCH:
+            //case I_FXCH:
             case I_FXTRACT:
-
+                stat_set_has_mem_opnd(false);
                 init_specific_register(R_ST0, true);
+                stat_set_has_mem_opnd(true);
                 break;
             
             case I_FADD:
@@ -622,7 +626,7 @@ static void init_implicit_operands(const insn_seed *seed)
             case I_FMUL:
             case I_FMULP:
             case I_FST:
-            case I_FSTP:
+            //case I_FSTP:
             case I_FSUB:
             case I_FSUBP:
             case I_FSUBR:
@@ -632,13 +636,14 @@ static void init_implicit_operands(const insn_seed *seed)
             case I_FUCOMIP:
             case I_FUCOMP:
             case I_FUCOMPP:
-
+                stat_set_has_mem_opnd(false);
                 if(operands == 1){
                     init_specific_register(R_ST0, true);
                 }else if(operands == 0){
                     init_specific_register(R_ST0, true);
                     init_specific_register(R_ST1, true);
                 }
+                stat_set_has_mem_opnd(true);
                 break;
 
             case I_FFREE:
@@ -681,10 +686,6 @@ bool gen_opcode(const insn_seed *seed)
     /* write instruction name to token_buf */
     inst_name = nasm_insn_names[seed->opcode];
     sprintf(get_token_cbufptr(), "%s ", inst_name);
-
-    /* initialize implicit operands, exp: eax in mul  */
-    if (stat_get_need_init())
-        init_implicit_operands(seed);
 
     return true;
 }
@@ -751,17 +752,27 @@ static void init_fpu_register_opnd(char *asm_opnd, operand_seed *opnd_seed)
     } else {
         val_node = g_array_index(val_nodes, struct const_node *, stat_get_opi());
     }
+    stat_set_need_init(false);
     sprintf(asm_fpu_inst, "fxch %s", asm_opnd);
     one_insn_gen_const(asm_fpu_inst);
-    sprintf(asm_fpu_inst, "fstp st0");
-    //sprintf(buffer, "fincstp");
+    stat_set_need_init(true);
+
+    stat_set_need_init(false);
+    sprintf(asm_fpu_inst, "fstp st0");    
+    //sprintf(asm_fpu_inst, "fincstp");
     one_insn_gen_const(asm_fpu_inst);
+    stat_set_need_init(true);
+
     sprintf(asm_fpu_inst, "mov dword %s, 0x%x", mem_address, val_node->immf[0]);
     one_insn_gen_const(asm_fpu_inst); 
+
     sprintf(asm_fpu_inst, "fld dword %s",mem_address);
     one_insn_gen_const(asm_fpu_inst);
+
+    stat_set_need_init(false);
     sprintf(asm_fpu_inst, "fxch %s", asm_opnd);
     one_insn_gen_const(asm_fpu_inst);
+    stat_set_need_init(true);
 }
 
 static void init_register_opnd(char *asm_opnd, operand_seed *opnd_seed)

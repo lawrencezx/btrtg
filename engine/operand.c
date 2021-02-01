@@ -264,9 +264,52 @@ bool init_specific_register(enum reg_enum R_reg, bool isDest)
     const char *src;
     src = nasm_reg_names[R_reg - EXPR_REG_START];
     struct const_node *val_node = request_val_node(asm_op, isDest);
-    sprintf(buffer, "mov %s, 0x%x", src, (val_node == NULL) ?
-            (int)nasm_random64(0x100000000) : val_node->imm32);
-    one_insn_gen_const(buffer);
+    if((R_reg >= R_ST0) && (R_reg <= R_ST7)){
+        char mem_address[128];
+        char inst_init_mem_addr[128];
+        strcpy(inst_init_mem_addr, stat_get_init_mem_addr());
+        create_memory(NULL, mem_address);
+        one_insn_gen_ctrl(stat_get_init_mem_addr(), INSERT_AFTER);
+        
+        // stat_set_need_init(false);
+        // //sprintf(buffer, "fstp st0");
+        // sprintf(buffer, "fincstp");
+        // one_insn_gen_const(buffer);
+        // stat_set_need_init(true);
+
+        // sprintf(buffer, "mov dword %s, 0x%x", mem_address, val_node->immf[0]);
+        // one_insn_gen_const(buffer); 
+
+        // sprintf(buffer, "fld dword %s",mem_address);
+        // one_insn_gen_const(buffer);
+        stat_set_need_init(false);
+        sprintf(buffer, "fxch %s", src);
+        one_insn_gen_const(buffer);
+        stat_set_need_init(true);
+
+        stat_set_need_init(false);
+        sprintf(buffer, "fstp st0");    
+        //sprintf(asm_fpu_inst, "fincstp");
+        one_insn_gen_const(buffer);
+        stat_set_need_init(true);
+
+        sprintf(buffer, "mov dword %s, 0x%x", mem_address, val_node->immf[0]);
+        one_insn_gen_const(buffer); 
+
+        sprintf(buffer, "fld dword %s",mem_address);
+        one_insn_gen_const(buffer);
+        
+        stat_set_need_init(false);
+        sprintf(buffer, "fxch %s", src);
+        one_insn_gen_const(buffer);
+        stat_set_need_init(true);
+        sprintf(stat_get_init_mem_addr(), "%s", inst_init_mem_addr);
+
+    }else{
+        sprintf(buffer, "mov %s, 0x%x", src, (val_node == NULL) ?
+        (int)nasm_random64(0x100000000) : val_node->imm32);
+        one_insn_gen_const(buffer);
+    }
     return true;
 }
 
@@ -275,8 +318,11 @@ bool init_specific_register(enum reg_enum R_reg, bool isDest)
  */
 char *preappend_mem_size(char *asm_mem, opflags_t opdsize)
 {
-    static const char *memsize[3] = {"byte ", "word ", "dword "};
+    static const char *memsize[5] = {"byte ", "word ", "dword ", "qword", "tword"};
     int i = opdsize == BITS8 ? 0 :
-            opdsize == BITS16 ? 1 : 2;
+            opdsize == BITS16 ? 1 : 
+            opdsize == BITS32 ? 2 :
+            opdsize == BITS64 ? 3 :
+            opdsize == BITS80? 4 : 2;
     return nasm_strrplc(asm_mem, 0, memsize[i], strlen(memsize[i]));
 }

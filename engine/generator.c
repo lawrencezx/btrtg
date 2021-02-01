@@ -458,6 +458,10 @@ bool one_insn_gen(const insn_seed *seed, insn *result)
         result->ctrl = get_token_buf();
     }
 
+    /* initialize implicit operands, exp: eax in mul  */
+    if (stat_get_need_init())
+        init_implicit_operands(result);
+
     if (stat_get_has_mem_opnd())
         one_insn_gen_ctrl(stat_get_init_mem_addr(), INSERT_AFTER);
 

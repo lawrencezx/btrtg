@@ -1,6 +1,0 @@
-<Template>
-	<G type = "FloatArithmetic" > </G>
-	<I type = "fcmovb" inip = "1.0"> </I>
-	<I type = "fadd" inip = "1.0"> </I>
-	<I type = "fld" inip = "1.0"> </I>
-</Template>
