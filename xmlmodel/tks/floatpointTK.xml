@@ -4,6 +4,14 @@
         <Node name = "farith" weight="100"> </Node>
         <Node name = "normal" weight="0"> </Node>
     </TK>
+    <TK inst = "faddp">
+        <Node name = "farith" weight="100"> </Node>
+        <Node name = "normal" weight="0"> </Node>
+    </TK>
+    <TK inst = "fiadd">
+        <Node name = "arith" weight="100"> </Node>
+        <Node name = "normal" weight="0"> </Node>
+    </TK>
 	<TK inst = "fld">
 		<Node name = "farith" weight="100"> </Node>
         <Node name = "normal" weight="0"> </Node>

@@ -577,6 +577,8 @@ void init_implicit_operands(insn *result)
         }
     }else{
         int operands = result->operands;
+        bool has_mem_opnd = stat_get_has_mem_opnd();
+        stat_set_has_mem_opnd(false);
         switch(result->opcode){
             case I_FBSTP:
             case I_FCHS:
@@ -599,9 +601,9 @@ void init_implicit_operands(insn *result)
             case I_FTST:
             //case I_FXCH:
             case I_FXTRACT:
-                stat_set_has_mem_opnd(false);
+                
                 init_specific_register(R_ST0, true);
-                stat_set_has_mem_opnd(true);
+                
                 break;
             
             case I_FADD:
@@ -636,16 +638,15 @@ void init_implicit_operands(insn *result)
             case I_FUCOMIP:
             case I_FUCOMP:
             case I_FUCOMPP:
-                stat_set_has_mem_opnd(false);
+                
                 if(operands == 1){
                     init_specific_register(R_ST0, true);
                 }else if(operands == 0){
                     init_specific_register(R_ST0, true);
                     init_specific_register(R_ST1, true);
                 }
-                stat_set_has_mem_opnd(true);
+                
                 break;
-
             case I_FFREE:
                 if(operands == 0){
                     init_specific_register(R_ST0, true);
@@ -657,7 +658,6 @@ void init_implicit_operands(insn *result)
                     init_specific_register(R_ST1, true);
                 }
                 break;
-
             case I_FPATAN:
             case I_FPREM:
             case I_FPREM1:
@@ -669,10 +669,8 @@ void init_implicit_operands(insn *result)
                 break;
             default:
                 break;
-            
-
-
         }
+        stat_set_has_mem_opnd(has_mem_opnd);
     }
 }
 
@@ -869,9 +867,10 @@ static void init_opnd(char *asm_opnd, operand_seed *opnd_seed, struct blk_var *v
     opflags_t opndflags = opnd_seed->opndflags;
     if (is_class(REGISTER, opndflags)){
         if(is_class(REG_CLASS_FPUREG, opndflags)){
+            bool has_mem_opnd = stat_get_has_mem_opnd();
             stat_set_has_mem_opnd(false);
             init_fpu_register_opnd(asm_opnd, opnd_seed);
-            stat_set_has_mem_opnd(true);
+            stat_set_has_mem_opnd(has_mem_opnd);
         }else{
             init_register_opnd(asm_opnd, opnd_seed);
         }

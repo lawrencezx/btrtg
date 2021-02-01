@@ -4,9 +4,29 @@
 #include "insns.h"
 #include "nasmlib.h"
 #include "tk.h"
+#include "buf2token.h"
 
 struct hash_table hash_tks;
 
+static int get_operands_from_instname(char * inst_name){
+    struct tokenval tokval;
+    char buffer[128];
+    char * old_token_bufptr = get_token_bufptr();
+    strcpy(buffer, inst_name);
+    set_token_bufptr(buffer);
+    get_token(&tokval);
+    set_token_bufptr(old_token_bufptr);
+    enum opcode opcode = tokval.t_integer;
+
+    switch(opcode){
+        case I_FADD:
+        case I_FADDP:
+        case I_FIADD:
+            return 2;
+        default:
+            return -1;
+    }
+}
 struct tk_model *tkmodel_create(void)
 {
     struct tk_model *tkm;
@@ -32,16 +52,23 @@ void create_trv_state(char *asm_inst, struct trv_state *trv_state)
 {
     char inst_name[128];
     int i = 0;
-    while (asm_inst[i] != ' ' && asm_inst[i] != '\n') {
+    int operands = 0;
+    while (asm_inst[i] != ' ' && asm_inst[i] != '\n' && asm_inst[i] != '\0') {
         inst_name[i] = asm_inst[i];
         i++;
     }
     inst_name[i] = '\0';
     struct tk_model *tkm = get_tkm_from_hashtbl(inst_name);
     g_array_append_val(trv_state->tk_trees, tkm->tk_tree);
+    operands ++;
     while (asm_inst[i] != '\0' && asm_inst[i] != '\n')
-        if (asm_inst[i++] == ',')
+        if (asm_inst[i++] == ','){
             g_array_append_val(trv_state->tk_trees, tkm->tk_tree);
+            operands++;
+        }
+    for(int j = get_operands_from_instname(inst_name) - operands; j > 0; j--){
+        g_array_append_val(trv_state->tk_trees, tkm->tk_tree);
+    }
 }
 
 struct const_node *request_val_node(const char *asm_op, bool isDest)

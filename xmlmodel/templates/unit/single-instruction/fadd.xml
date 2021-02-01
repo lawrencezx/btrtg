@@ -1,4 +1,6 @@
 <Template>
+	<I type = "fadd mem64" inip = "1.0"></I>
+	<I type = "fadd st1, st0" inip = "1.0"></I>
     <traverse>
         <V var = "mem" type = "mem32"></V>
         <I type = "fadd @mem" trv = "true"></I>
@@ -17,6 +19,25 @@
     <traverse>
         <V var = "fpureg" type = "fpureg"></V>
         <I type = "fadd fpu0,@fpureg" trv = "true"></I>
+        <C type = "st0"></C>
+    </traverse>
+    <traverse>
+        <V var = "fpureg" type = "fpureg"></V>
+        <I type = "faddp @fpureg, st0" trv = "true"></I>
+        <C type = "@fpureg"></C>
+    </traverse>
+    <traverse>
+        <I type = "faddp" trv = "true"></I>
+        <C type = "st1"></C>
+    </traverse>
+    <traverse>
+        <V var = "mem" type = "mem16"></V>
+        <I type = "fiadd @mem" trv = "true"></I>
+        <C type = "st0"></C>
+    </traverse>
+    <traverse>
+        <V var = "mem" type = "mem32"></V>
+        <I type = "fiadd @mem" trv = "true"></I>
         <C type = "st0"></C>
     </traverse>
 </Template>

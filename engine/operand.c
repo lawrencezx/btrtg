@@ -263,25 +263,22 @@ bool init_specific_register(enum reg_enum R_reg, bool isDest)
     const char *asm_op = nasm_insn_names[stat_get_opcode()];
     const char *src;
     src = nasm_reg_names[R_reg - EXPR_REG_START];
-    struct const_node *val_node = request_val_node(asm_op, isDest);
+    struct const_node *val_node;
+    GArray *val_nodes = stat_get_val_nodes();
+    if (val_nodes == NULL) {
+        const char *asm_op = nasm_insn_names[stat_get_opcode()];
+        val_node = request_val_node(asm_op, isDest);
+    } else {
+        val_node = g_array_index(val_nodes, struct const_node *, stat_get_opi());
+    }
+
     if((R_reg >= R_ST0) && (R_reg <= R_ST7)){
         char mem_address[128];
         char inst_init_mem_addr[128];
         strcpy(inst_init_mem_addr, stat_get_init_mem_addr());
         create_memory(NULL, mem_address);
         one_insn_gen_ctrl(stat_get_init_mem_addr(), INSERT_AFTER);
-        
-        // stat_set_need_init(false);
-        // //sprintf(buffer, "fstp st0");
-        // sprintf(buffer, "fincstp");
-        // one_insn_gen_const(buffer);
-        // stat_set_need_init(true);
 
-        // sprintf(buffer, "mov dword %s, 0x%x", mem_address, val_node->immf[0]);
-        // one_insn_gen_const(buffer); 
-
-        // sprintf(buffer, "fld dword %s",mem_address);
-        // one_insn_gen_const(buffer);
         stat_set_need_init(false);
         sprintf(buffer, "fxch %s", src);
         one_insn_gen_const(buffer);
