@@ -1,24 +1,4 @@
 <ConstGroups>
-    <CG name = "arith">
-        <Imm8> 0x0 </Imm8>
-        <Imm8> 0x1 </Imm8>
-        <Imm8> 0x7f </Imm8>
-        <Imm8> 0x80 </Imm8>
-        <Imm8> 0x81 </Imm8>
-        <Imm16> 0x7fff </Imm16>
-        <Imm16> 0x8000 </Imm16>
-        <Imm16> 0x8001 </Imm16>
-        <Imm32> 0x03030303 </Imm32>
-        <Imm32> 0x44444444 </Imm32>
-        <Imm32> 0x7fffffff </Imm32>
-        <Imm32> 0x80000000 </Imm32>
-        <Imm32> 0x80000001 </Imm32>
-        <Imm32> 0xcccccccc </Imm32>
-        <Imm32> 0xf5f5f5f5 </Imm32>
-        <Imm32> 0xffffffff </Imm32>
-        <Imm32> 0x12345678 </Imm32>
-        <Imm32> 0xabcdef01 </Imm32>
-    </CG>
 	<CG name = "farith">
 		<Immf> 2.718281828459045235360287471352662498 </Immf>
 
@@ -29,78 +9,5 @@
 		<Immf> 3.40282346638528859811704183484516925e+38 </Immf>
 		<Immf> 2.22507385850720138309023271733240406e-308 </Immf>
 	</CG>
-    <CG name = "normal">
-    </CG>
-    <CG name = "divdest">
-        <Imm16> 0xf1ff </Imm16>
-	    <Imm16> 0xf0f0 </Imm16>
-	    <Imm16> 0xefff </Imm16>
-	    <Imm16> 0xe349 </Imm16>
-	    <Imm16> 0xdfff </Imm16>
-	    <Imm16> 0xd179 </Imm16>
-	    <Imm16> 0xc5ee </Imm16>
-	    <Imm16> 0xc923 </Imm16>
-        <Imm32> 0xbfffffff </Imm32>
-	    <Imm32> 0xb5782323 </Imm32>
-	    <Imm32> 0xaaaaaaaa </Imm32>
-	    <Imm32> 0xacdc7777 </Imm32>
-	    <Imm32> 0x99999999 </Imm32>
-	    <Imm32> 0x94949494 </Imm32>
-	    <Imm32> 0x27272727 </Imm32>
-	    <Imm32> 0x88888888 </Imm32>
-    </CG>
-    <CG name = "divsrc">
-        <Imm8> 0xf2 </Imm8>
-	    <Imm8> 0xf3 </Imm8>
-	    <Imm8> 0xf9 </Imm8>
-	    <Imm8> 0xfe </Imm8>
-	    <Imm8> 0xf8 </Imm8>
-	    <Imm8> 0xf5 </Imm8>
-        <Imm16> 0xf233 </Imm16>
-	    <Imm16> 0xf355 </Imm16>
-	    <Imm16> 0xf977 </Imm16>
-	    <Imm16> 0xfe99 </Imm16>
-	    <Imm16> 0xf811 </Imm16>
-	    <Imm16> 0xf532 </Imm16>
-        <Imm32> 0xc5c4c3c2 </Imm32>
-	    <Imm32> 0xc8c9c0cc </Imm32>
-	    <Imm32> 0xefffffff </Imm32>
-	    <Imm32> 0xe743adff </Imm32>
-	    <Imm32> 0xdddddddd </Imm32>
-	    <Imm32> 0xd9d7d2d3 </Imm32>
-    </CG>
-    <CG name = "logic">
-        <Imm8> 0x0 </Imm8>
-        <Imm8> 0x1 </Imm8>
-        <Imm8> 0x7f </Imm8>
-        <Imm8> 0x80 </Imm8>
-        <Imm8> 0xff </Imm8>
-        <Imm8> 0xce </Imm8>
-        <Imm8> 0x36 </Imm8>
-        <Imm16> 0x7fff </Imm16>
-        <Imm16> 0xffff </Imm16>
-        <Imm16> 0x8000 </Imm16>
-        <Imm16> 0xcccc </Imm16>
-        <Imm16> 0x4532 </Imm16>
-        <Imm32> 0x12345678 </Imm32>
-        <Imm32> 0x7fffffff </Imm32>
-        <Imm32> 0x80000001 </Imm32>
-        <Imm32> 0xffffffff </Imm32>
-        <Imm32> 0xbcadbeef </Imm32>
-    </CG>
-    <CG name = "unity">
-        <Imm8> 0x0 </Imm8>
-        <Imm8> 0x1 </Imm8>
-        <Imm8> 0x2 </Imm8>
-        <Imm8> 0x7 </Imm8>
-        <Imm8> 0x8 </Imm8>
-        <Imm8> 0x9 </Imm8>
-        <Imm8> 0xf </Imm8>
-        <Imm8> 0x10 </Imm8>
-        <Imm8> 0x11 </Imm8>
-        <Imm8> 0x1f </Imm8>
-        <Imm8> 0x20 </Imm8>
-        <Imm8> 0x21 </Imm8>
-        <Imm8> 0x6d </Imm8>
-    </CG>
+
 </ConstGroups>

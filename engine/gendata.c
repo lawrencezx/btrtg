@@ -599,7 +599,7 @@ void init_implicit_operands(insn *result)
             case I_FSINCOS:
             case I_FSQRT:
             case I_FTST:
-            //case I_FXCH:
+            case I_FXCH:
             case I_FXTRACT:
                 
                 init_specific_register(R_ST0, true);
@@ -628,7 +628,7 @@ void init_implicit_operands(insn *result)
             case I_FMUL:
             case I_FMULP:
             case I_FST:
-            //case I_FSTP:
+            case I_FSTP:
             case I_FSUB:
             case I_FSUBP:
             case I_FSUBR:

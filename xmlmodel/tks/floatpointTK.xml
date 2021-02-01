@@ -9,7 +9,7 @@
         <Node name = "normal" weight="0"> </Node>
     </TK>
     <TK inst = "fiadd">
-        <Node name = "arith" weight="100"> </Node>
+        <Node name = "farith" weight="100"> </Node>
         <Node name = "normal" weight="0"> </Node>
     </TK>
 	<TK inst = "fld">
@@ -24,10 +24,6 @@
 		<Node name = "farith" weight="100"> </Node>
         <Node name = "normal" weight="0"> </Node>
 	</TK>
-    <TK inst = "add">
-        <Node name = "arith" weight="50"> </Node>
-        <Node name = "normal" weight="50"> </Node>
-    </TK>
     <!-- user mode extended sate save/restore instructions -->
     <!-- TODO -->
 
