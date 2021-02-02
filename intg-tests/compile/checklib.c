@@ -147,6 +147,31 @@ check_point_fpureg(st5, 5)
 check_point_fpureg(st6, 6)
 check_point_fpureg(st7, 7)
 
+#define check_point_mmxreg(mmxreg, index) void check_point_##mmxreg\
+    (struct X87LegacyXSaveArea x87fpstate, \
+     struct X86StandardRegisters x86regs) \
+{ \
+    int diff = 0; \
+    FPReg std_##mmxreg = x87fpstate.fpregs[index]; \
+    FPReg check_##mmxreg = output[point].X87[index]; \
+    if (std_##mmxreg.mmx._q_MMXReg[0] != check_##mmxreg.mmx._q_MMXReg[0]) { \
+        printf("diff ["#mmxreg"]: 0x%x, should be: 0x%x\n", check_##mmxreg, std_##mmxreg); \
+        diff = 1; \
+    } \
+    printf("check point: %d %s! ["#mmxreg"]\n", point + 1, (diff == 1) ? "fail" : "pass"); \
+    diffs += diff; \
+    point++; \
+}
+
+check_point_mmxreg(mm0, 0)
+check_point_mmxreg(mm1, 1)
+check_point_mmxreg(mm2, 2)
+check_point_mmxreg(mm3, 3)
+check_point_mmxreg(mm4, 4)
+check_point_mmxreg(mm5, 5)
+check_point_mmxreg(mm6, 6)
+check_point_mmxreg(mm7, 7)
+
 void check_point_x86_state(struct X87LegacyXSaveArea x87fpstate,
      struct X86StandardRegisters x86regs)
 {
