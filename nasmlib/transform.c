@@ -32,3 +32,20 @@ int hex2dec(const char *hex)
     }
     return num;
 }
+
+int64_t hex2declong(const char *hex)
+{
+    int64_t temp, num = 0;
+
+    /* skip head */
+    while (*hex == ' ')
+        hex++;
+    if (strlen(hex) >= 2 && hex[0] == '0' && (hex[1] == 'X' || hex[1] == 'x'))
+        hex += 2;
+
+    while ((temp = ascii_xdigit_value(*hex)) != -1) {
+        num = (num * HEX_RADIX) + temp;
+        hex++;
+    }
+    return num;
+}

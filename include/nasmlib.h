@@ -71,8 +71,7 @@ bool likely_happen_w(int w, int total_w);
 /* Transform string to number.
  */
 int hex2dec(const char *hex);
-void hex2double(const char *hex, int* num);
-void hex2ldouble(const char *hex, int *num);
+int64_t hex2declong(const char *hex);
 /*
  * Wrappers around malloc, realloc, free and a few more. nasm_malloc
  * will fatal-error and die rather than return NULL; nasm_realloc will

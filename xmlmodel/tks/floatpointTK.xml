@@ -24,6 +24,22 @@
 		<Node name = "farith" weight="100"> </Node>
         <Node name = "normal" weight="0"> </Node>
 	</TK>
+	<TK inst = "paddb">
+		<Node name = "mmxarith" weight="100"> </Node>
+        <Node name = "normal" weight="0"> </Node>
+	</TK>
+	<TK inst = "paddw">
+		<Node name = "mmxarith" weight="100"> </Node>
+        <Node name = "normal" weight="0"> </Node>
+	</TK>
+	<TK inst = "paddd">
+		<Node name = "mmxarith" weight="100"> </Node>
+        <Node name = "normal" weight="0"> </Node>
+	</TK>
+	<TK inst = "paddq">
+		<Node name = "mmxarith" weight="100"> </Node>
+        <Node name = "normal" weight="0"> </Node>
+	</TK>
     <!-- user mode extended sate save/restore instructions -->
     <!-- TODO -->
 

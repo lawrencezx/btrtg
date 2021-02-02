@@ -64,7 +64,8 @@ bool create_segment_register(operand_seed *opnd_seed, char *buffer)
     return true;
 }
 
-bool create_fpu_register(operand_seed *opnd_seed, char *buffer){
+bool create_fpu_register(operand_seed *opnd_seed, char *buffer)
+{
     dfmt->print("    try> create fpureg\n");
     int fpuregi, fpuregn;
     enum reg_enum fpureg;
@@ -82,6 +83,23 @@ bool create_fpu_register(operand_seed *opnd_seed, char *buffer){
     dfmt->print("    done> new fpureg: %s\n", buffer);
     
     
+    return true;
+}
+
+bool create_mmx_register(operand_seed *opnd_seed, char *buffer)
+{
+    dfmt->print("    try> create mmxreg\n");
+    int mmxregi, mmxregn;
+    enum reg_enum mmxreg;
+    const char *src;
+
+    bseqiflags_t bseqiflags = bseqi_flags(opnd_seed->opndflags);
+    mmxregn = BSEQIFLAG_INDEXSIZE(bseqiflags);
+    mmxregi = nasm_random32(mmxregn);
+    mmxreg = nasm_rd_mmxreg[mmxregi];
+    src = nasm_reg_names[mmxreg - EXPR_REG_START];
+    sprintf(buffer, " %s", src);
+    dfmt->print("    done> new mmxreg: %s\n", buffer);
     return true;
 }
 
@@ -260,7 +278,6 @@ bool create_memoffs(operand_seed *opnd_seed, char *buffer)
 bool init_specific_register(enum reg_enum R_reg, bool isDest)
 {
     char buffer[128];
-    const char *asm_op = nasm_insn_names[stat_get_opcode()];
     const char *src;
     src = nasm_reg_names[R_reg - EXPR_REG_START];
     struct const_node *val_node;

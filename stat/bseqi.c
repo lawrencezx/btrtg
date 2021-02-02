@@ -21,7 +21,9 @@ bseqiflags_t bseqi_flags(opflags_t opndflags)
         {REG_GPR|BITS32,    GEN_INDEXPOS(6) | GEN_INDEXSIZE(4)},
         {RM_GPR|BITS32,     GEN_INDEXPOS(7) | GEN_INDEXSIZE(4)},
         {IMMEDIATE,         GEN_INDEXPOS(8) | GEN_INDEXSIZE(14)},
-        {FPUREG,            GEN_INDEXPOS(9) | GEN_INDEXSIZE(8)}
+        {FPUREG,            GEN_INDEXPOS(9) | GEN_INDEXSIZE(8)},
+        {MMXREG,            GEN_INDEXPOS(10)| GEN_INDEXSIZE(8)},
+        {( REG_CLASS_RM_MMX | REGISTER), GEN_INDEXPOS(11)| GEN_INDEXSIZE(8)}
         /* TODO */
     };
 
