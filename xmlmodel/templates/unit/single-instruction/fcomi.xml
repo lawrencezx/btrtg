@@ -1,0 +1,18 @@
+<Template>
+    <traverse>
+        <I type = "fcomi st0, fpureg" trv = "true"></I>
+        <C type = "eflags"></C>
+    </traverse>
+    <traverse>
+        <I type = "fcomip st0, fpureg" trv = "true"></I>
+        <C type = "eflags"></C>
+    </traverse>
+    <traverse>
+        <I type = "fucomi st0, fpureg" trv = "true"></I>
+        <C type = "eflags"></C>
+    </traverse>
+    <traverse>
+        <I type = "fucomip st0, fpureg" trv = "true"></I>
+        <C type = "eflags"></C>
+    </traverse>
+</Template>

@@ -21,22 +21,32 @@
 ,0x%08" PRIx32 "},\n"
 
 #define  X87RegsOutputFormat "{\
-0x%04" PRIx64 "\
+0x%04" PRIx16 "\
 ,0x%04" PRIx16 "\
-,0x%04" PRIx64 "\
+,0x%02" PRIx8 "\
 ,0x%04" PRIx16 "\
-,0x%04" PRIx64 "\
+,0x%08" PRIx32 "\
 ,0x%04" PRIx16 "\
-,0x%08" PRIx64 "\
-,0x%08" PRIx16 "\
-,0x%08" PRIx64 "\
-,0x%08" PRIx16 "\
-,0x%08" PRIx64 "\
-,0x%08" PRIx16 "\
-,0x%08" PRIx64 "\
-,0x%08" PRIx16 "\
-,0x%08" PRIx64 "\
-,0x%08" PRIx16 "}"
+,0x%08" PRIx32 "\
+,0x%04" PRIx16 "\
+,0x%08" PRIx32 "\
+,0x%08" PRIx32 "\
+,0x%016" PRIx64 "\
+,0x%04" PRIx16 "\
+,0x%016" PRIx64 "\
+,0x%04" PRIx16 "\
+,0x%016" PRIx64 "\
+,0x%04" PRIx16 "\
+,0x%016" PRIx64 "\
+,0x%04" PRIx16 "\
+,0x%016" PRIx64 "\
+,0x%04" PRIx16 "\
+,0x%016" PRIx64 "\
+,0x%04" PRIx16 "\
+,0x%016" PRIx64 "\
+,0x%04" PRIx16 "\
+,0x%016" PRIx64 "\
+,0x%04" PRIx16 "}"
 
 #define DEFINE_CHECK_FUNCTION(nasm,type,func) void func \
     (struct X87LegacyXSaveArea x87fpstate, \
@@ -48,6 +58,8 @@
         x86regs.eflags, \
         x86regs.edi, x86regs.esi, x86regs.ebp, x86regs.esp, x86regs.ebx, x86regs.edx, x86regs.ecx, x86regs.eax); \
     printf(X87RegsOutputFormat, \
+        x87fpstate.fcw, x87fpstate.fsw, x87fpstate.ftw, x87fpstate.fpop, x87fpstate.fpip, x87fpstate.fpcs, \
+        x87fpstate.fpdp, x87fpstate.fpds, x87fpstate.mxcsr, x87fpstate.mxcsr_mask, \
         x87fpstate.fpregs[0].d.low, x87fpstate.fpregs[0].d.high, \
         x87fpstate.fpregs[1].d.low, x87fpstate.fpregs[1].d.high, \
         x87fpstate.fpregs[2].d.low, x87fpstate.fpregs[2].d.high, \

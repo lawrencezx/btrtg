@@ -4,9 +4,22 @@
 #include <inttypes.h>
 #include "verification.h"
 
+struct X87Regs{
+    uint16_t fcw;
+    uint16_t fsw;
+    uint8_t ftw;
+    uint16_t fpop;
+    uint32_t fpip;
+    uint16_t fpcs;
+    uint32_t fpdp;
+    uint16_t fpds;
+    uint32_t mxcsr;
+    uint32_t mxcsr_mask;
+    FPReg fpregs[8];
+};
 struct output{
     struct X86StandardRegisters X86;
-    FPReg X87[8];
+    struct X87Regs X87;
 };
 struct output  output[] = 
 {
@@ -128,7 +141,7 @@ check_point_reg32(eflags)
 { \
     int diff = 0; \
     FPReg std_##fpureg = x87fpstate.fpregs[index]; \
-    FPReg check_##fpureg = output[point].X87[index]; \
+    FPReg check_##fpureg = output[point].X87.fpregs[index]; \
     if (std_##fpureg.d.low != check_##fpureg.d.low || std_##fpureg.d.high != check_##fpureg.d.high) { \
         printf("diff ["#fpureg"]: 0x%x, should be: 0x%x\n", check_##fpureg, std_##fpureg); \
         diff = 1; \
@@ -153,7 +166,7 @@ check_point_fpureg(st7, 7)
 { \
     int diff = 0; \
     FPReg std_##mmxreg = x87fpstate.fpregs[index]; \
-    FPReg check_##mmxreg = output[point].X87[index]; \
+    FPReg check_##mmxreg = output[point].X87.fpregs[index]; \
     if (std_##mmxreg.mmx._q_MMXReg[0] != check_##mmxreg.mmx._q_MMXReg[0]) { \
         printf("diff ["#mmxreg"]: 0x%x, should be: 0x%x\n", check_##mmxreg, std_##mmxreg); \
         diff = 1; \
@@ -171,6 +184,67 @@ check_point_mmxreg(mm4, 4)
 check_point_mmxreg(mm5, 5)
 check_point_mmxreg(mm6, 6)
 check_point_mmxreg(mm7, 7)
+
+#define check_point_x87status32(x87status) void check_point_##x87status\
+    (struct X87LegacyXSaveArea x87fpstate, \
+     struct X86StandardRegisters x86regs) \
+{ \
+    int diff = 0; \
+    uint32_t std_##x87status = x87fpstate.x87status; \
+    uint32_t check_##x87status = output[point].X87.x87status; \
+    if (std_##x87status != check_##x87status) { \
+        printf("diff ["#x87status"]: 0x%x, should be: 0x%x\n", check_##x87status, std_##x87status); \
+        diff = 1; \
+    } \
+    printf("check point: %d %s! ["#x87status"]\n", point + 1, (diff == 1) ? "fail" : "pass"); \
+    diffs += diff; \
+    point++; \
+}
+
+check_point_x87status32(fpip)
+check_point_x87status32(fpdp)
+check_point_x87status32(mxcsr)
+check_point_x87status32(mxcsr_mask)
+
+#define check_point_x87status16(x87status) void check_point_##x87status\
+    (struct X87LegacyXSaveArea x87fpstate, \
+     struct X86StandardRegisters x86regs) \
+{ \
+    int diff = 0; \
+    uint16_t std_##x87status = x87fpstate.x87status; \
+    uint16_t check_##x87status = output[point].X87.x87status; \
+    if (std_##x87status != check_##x87status) { \
+        printf("diff ["#x87status"]: 0x%x, should be: 0x%x\n", check_##x87status, std_##x87status); \
+        diff = 1; \
+    } \
+    printf("check point: %d %s! ["#x87status"]\n", point + 1, (diff == 1) ? "fail" : "pass"); \
+    diffs += diff; \
+    point++; \
+}
+
+check_point_x87status16(fcw)
+check_point_x87status16(fsw)
+check_point_x87status16(fpop)
+check_point_x87status16(fpcs)
+check_point_x87status16(fpds)
+
+#define check_point_x87status8(x87status) void check_point_##x87status\
+    (struct X87LegacyXSaveArea x87fpstate, \
+     struct X86StandardRegisters x86regs) \
+{ \
+    int diff = 0; \
+    uint16_t std_##x87status = x87fpstate.x87status; \
+    uint16_t check_##x87status = output[point].X87.x87status; \
+    if (std_##x87status != check_##x87status) { \
+        printf("diff ["#x87status"]: 0x%x, should be: 0x%x\n", check_##x87status, std_##x87status); \
+        diff = 1; \
+    } \
+    printf("check point: %d %s! ["#x87status"]\n", point + 1, (diff == 1) ? "fail" : "pass"); \
+    diffs += diff; \
+    point++; \
+}
+
+check_point_x87status8(ftw)
 
 void check_point_x86_state(struct X87LegacyXSaveArea x87fpstate,
      struct X86StandardRegisters x86regs)

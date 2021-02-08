@@ -22,7 +22,29 @@ static int get_operands_from_instname(char * inst_name){
         case I_FADD:
         case I_FADDP:
         case I_FIADD:
+        case I_FCMOVB:
+        case I_FCMOVBE:
+        case I_FCMOVE:
+        case I_FCMOVNB:
+        case I_FCMOVNBE:
+        case I_FCMOVNE:
+        case I_FCMOVNU:
+        case I_FCMOVU:
+        case I_FCOM:
+        case I_FCOMP:
+        case I_FCOMPP:
+        case I_FCOMI:
+        case I_FCOMIP:
+        case I_FUCOMI:
+        case I_FUCOMIP:
+        case I_FDIV:
+        case I_FDIVP:
+        case I_FIDIV:
             return 2;
+        case I_FABS:
+        case I_FCHS:
+        case I_FCOS:
+            return 1;
         default:
             return -1;
     }
