@@ -36,6 +36,16 @@ void init_trv_state(struct trv_state *trv_state)
     trv_state->val_nodes = g_array_new(FALSE, FALSE, sizeof(struct const_node *));
 }
 
+void init_elem_struct(elem_struct *elem)
+{
+    elem->inip = 0;
+    elem->type = NONE_ELEM;
+    elem->g_tree = NULL;
+    elem->c_type = NULL;
+    elem->asm_inst = NULL;
+    elem->val_nodes = NULL;
+}
+
 struct blk_var *blk_search_var(blk_struct *blk, const char *var_name)
 {
     if (blk == NULL)
@@ -180,6 +190,7 @@ static void walkIElem(elem_struct *i_e);
 
 static void (*walkElemFuncs[])(elem_struct *elem) =
 {
+    NULL, /* none element */
     NULL, /* variable element */
     walkGElem,
     walkCElem,

@@ -24,6 +24,7 @@
 /* element structure
  */
 enum elem_type {
+    NONE_ELEM,
     V_ELEM,
     G_ELEM,
     C_ELEM,
@@ -92,6 +93,7 @@ typedef struct tmplt_struct {
 void init_blk_struct(blk_struct *blk);
 void init_blk_var(struct blk_var *var);
 void init_trv_state(struct trv_state *trv_state);
+void init_elem_struct(elem_struct *elem);
 struct blk_var *blk_search_var(blk_struct *blk, const char *var_name);
 void walk_tmplt(void);
 void tmplt_clear(tmplt_struct *tmpltm);

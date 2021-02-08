@@ -38,7 +38,6 @@ static void parseCGs(xmlNodePtr cgsNode)
             if (cNode->type != XML_ELEMENT_NODE)
                 continue;
 
-
             imm = hex2dec((const char *)cNode->children->content);
             const char *cNodeName = (const char *)cNode->name;
             if(0 == strcmp(cNodeName, "Immf")){
@@ -47,7 +46,6 @@ static void parseCGs(xmlNodePtr cgsNode)
                 *(double *)(val_node.immf + 1) = strtod((const char *)cNode->children->content, NULL);
                 *(long double *)(val_node.immf + 3) = strtold((const char *)cNode->children->content, NULL);
                 g_array_append_val(cg_tree_node->const_nodes, val_node);
-
             }else if(0 == strcmp(cNodeName, "Imm64")){
                 val_node.type = CONST_IMM64;
                 val_node.imm64 = hex2declong((const char *)cNode->children->content);
