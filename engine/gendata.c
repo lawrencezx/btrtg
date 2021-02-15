@@ -550,14 +550,14 @@ static opflags_t calOperandSize(const insn_seed *seed, int opdi)
     return opdsize;
 }
 
-void init_implicit_operands(insn *result)
+void init_implied_operands(insn *result)
 {
-
+    stat_set_need_init(false);
     if (result->opcode == I_DIV ||
         result->opcode == I_IDIV) {
         insn_seed seed;
         seed.opcode = result->opcode;
-        for(int i = 0; i < MAX_OPERANDS; i++){
+        for (int i = 0; i < MAX_OPERANDS; i++) {
             seed.opd[i] = result->oprs[i].type;
         }
         switch (calOperandSize(&seed, 0)) {
@@ -575,11 +575,15 @@ void init_implicit_operands(insn *result)
             default:
                 break;
         }
-    }else{
+    } else if (result->opcode == I_CWD) {
+        init_specific_register(R_AX, true);
+    } else if (result->opcode == I_CDQ) {
+        init_specific_register(R_EAX, true);
+    } else {
         int operands = result->operands;
         bool has_mem_opnd = stat_get_has_mem_opnd();
         stat_set_has_mem_opnd(false);
-        switch(result->opcode){
+        switch (result->opcode) {
             case I_FBSTP:
             case I_FCHS:
             case I_FCOS:
@@ -673,6 +677,7 @@ void init_implicit_operands(insn *result)
         }
         stat_set_has_mem_opnd(has_mem_opnd);
     }
+    stat_set_need_init(true);
 }
 
 /* Generate instruction opcode. */
