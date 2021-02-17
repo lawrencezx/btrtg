@@ -17,7 +17,7 @@ bool create_gpr_register(operand_seed *opnd_seed, char *buffer);
 bool create_immediate(operand_seed *opnd_seed, char *buffer);
 bool create_memory(operand_seed *opnd_seed, char *buffer);
 bool create_memoffs(operand_seed *opnd_seed, char *buffer);
-bool init_specific_register(enum reg_enum R_reg, bool isDest);
+bool init_specific_register(enum reg_enum R_reg);
 bool create_fpu_register(operand_seed *opnd_seed, char *buffer);
 bool create_mmx_register(operand_seed *opnd_seed, char *buffer);
 

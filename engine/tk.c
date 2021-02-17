@@ -66,7 +66,7 @@ struct tk_model *tkmodel_create(void)
 {
     struct tk_model *tkm;
     tkm = (struct tk_model *)nasm_malloc(sizeof(struct tk_model));
-    tkm->tk_tree = NULL;
+    tkm->tk_trees = g_array_new(FALSE, FALSE, sizeof(struct wd_root *));
     return tkm;
 }
 
@@ -86,36 +86,55 @@ static struct tk_model *get_tkm_from_hashtbl(const char *asm_op)
 void create_trv_state(char *asm_inst, struct trv_state *trv_state)
 {
     char inst_name[128];
-    int i = 0;
-    int operands = 0;
+    int i = 0, operands = 0;
+    struct tk_model *tkm;
+    struct wd_root *tk_tree;
+
     while (asm_inst[i] != ' ' && asm_inst[i] != '\n' && asm_inst[i] != '\0') {
         inst_name[i] = asm_inst[i];
         i++;
     }
     inst_name[i] = '\0';
-    struct tk_model *tkm = get_tkm_from_hashtbl(inst_name);
-    if (asm_inst[i] != '\0' && asm_inst[i] != '\n') {
-        g_array_append_val(trv_state->tk_trees, tkm->tk_tree);
-        operands++;
-    }
-    while (asm_inst[i] != '\0' && asm_inst[i] != '\n')
-        if (asm_inst[i++] == ',') {
-            g_array_append_val(trv_state->tk_trees, tkm->tk_tree);
+    tkm = get_tkm_from_hashtbl(inst_name);
+    if (tkm->tk_trees->len == 1) {
+        trv_state->tk_trees = g_array_new(FALSE, FALSE, sizeof(struct wd_root *));
+        tk_tree = g_array_index(tkm->tk_trees, struct wd_root *, 0);
+        /* first operand */
+        if (asm_inst[i] != '\0' && asm_inst[i] != '\n') {
+            g_array_append_val(trv_state->tk_trees, tk_tree);
             operands++;
         }
-    for(int j = get_operands_from_instname(inst_name) - operands; j > 0; j--) {
-        g_array_append_val(trv_state->tk_trees, tkm->tk_tree);
+        /* other operands */
+        while (asm_inst[i] != '\0' && asm_inst[i] != '\n')
+            if (asm_inst[i++] == ',') {
+                g_array_append_val(trv_state->tk_trees, tk_tree);
+                operands++;
+            }
+        /* implied operands */
+        for(int j = get_operands_from_instname(inst_name) - operands; j > 0; j--) {
+            g_array_append_val(trv_state->tk_trees, tk_tree);
+        }
+        /* implied operands */
+        for(int j = get_implied_operands_from_instname(inst_name); j > 0; j--) {
+            g_array_append_val(trv_state->tk_trees, tk_tree);
+        }
+    } else {
+        for (guint i = 0; i < tkm->tk_trees->len; i++) {
+            trv_state->tk_trees = g_array_copy(tkm->tk_trees);
+        }
     }
-    for(int j = get_implied_operands_from_instname(inst_name); j > 0; j--) {
-        g_array_append_val(trv_state->tk_trees, tkm->tk_tree);
-    }
+
+    trv_state->val_nodes = g_array_new(FALSE, FALSE, sizeof(struct const_node *));
 }
 
-struct const_node *request_val_node(const char *asm_op, bool isDest)
+struct const_node *request_val_node(const char *asm_op, int opi)
 {
-    struct const_node *val_node;
     struct tk_model *tkm;
+    struct wd_root *tk_tree;
+
     tkm = get_tkm_from_hashtbl(asm_op);
-    val_node = wdtree_select_leaf_node(tkm->tk_tree);
-    return val_node;
+    if (tkm->tk_trees->len == 1)
+        opi = 0;
+    tk_tree = g_array_index(tkm->tk_trees, struct wd_root *, opi);
+    return wdtree_select_leaf_node(tk_tree);
 }

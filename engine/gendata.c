@@ -562,23 +562,23 @@ void init_implied_operands(insn *result)
         }
         switch (calOperandSize(&seed, 0)) {
             case BITS8:
-                init_specific_register(R_AX, true);
+                init_specific_register(R_AX);
                 break;
             case BITS16:
-                init_specific_register(R_DX, true);
-                init_specific_register(R_AX, true);
+                init_specific_register(R_DX);
+                init_specific_register(R_AX);
                 break;
             case BITS32:
-                init_specific_register(R_EDX, true);
-                init_specific_register(R_EAX, true);
+                init_specific_register(R_EDX);
+                init_specific_register(R_EAX);
                 break;
             default:
                 break;
         }
     } else if (result->opcode == I_CWD) {
-        init_specific_register(R_AX, true);
+        init_specific_register(R_AX);
     } else if (result->opcode == I_CDQ) {
-        init_specific_register(R_EAX, true);
+        init_specific_register(R_EAX);
     } else {
         int operands = result->operands;
         bool has_mem_opnd = stat_get_has_mem_opnd();
@@ -607,7 +607,7 @@ void init_implied_operands(insn *result)
             case I_FXTRACT:
             case I_FABS:
                 
-                init_specific_register(R_ST0, true);
+                init_specific_register(R_ST0);
                 
                 break;
             
@@ -645,22 +645,22 @@ void init_implied_operands(insn *result)
             case I_FUCOMPP:
                 
                 if(operands == 1){
-                    init_specific_register(R_ST0, true);
+                    init_specific_register(R_ST0);
                 }else if(operands == 0){
-                    init_specific_register(R_ST0, true);
-                    init_specific_register(R_ST1, true);
+                    init_specific_register(R_ST0);
+                    init_specific_register(R_ST1);
                 }
                 
                 break;
             case I_FFREE:
                 if(operands == 0){
-                    init_specific_register(R_ST0, true);
+                    init_specific_register(R_ST0);
                 }
                 break;
 
             case I_FLD:
                 if(operands == 0){
-                    init_specific_register(R_ST1, true);
+                    init_specific_register(R_ST1);
                 }
                 break;
             case I_FPATAN:
@@ -669,8 +669,8 @@ void init_implied_operands(insn *result)
             case I_FSCALE:
             case I_FYL2X:
             case I_FYL2XP1:
-                init_specific_register(R_ST0, true);
-                init_specific_register(R_ST1, true);
+                init_specific_register(R_ST0);
+                init_specific_register(R_ST1);
                 break;
             default:
                 break;
@@ -768,7 +768,7 @@ static void init_fpu_register_opnd(char *asm_opnd, operand_seed *opnd_seed)
     GArray *val_nodes = stat_get_val_nodes();
     if (val_nodes == NULL) {
         const char *asm_op = nasm_insn_names[stat_get_opcode()];
-        val_node = request_val_node(asm_op, opnd_seed->srcdestflags & OPDEST);
+        val_node = request_val_node(asm_op, stat_get_opi());
     } else {
         val_node = g_array_index(val_nodes, struct const_node *, stat_get_opi());
     }
@@ -806,7 +806,7 @@ static void init_mmx_register_opnd(char *asm_opnd, operand_seed *opnd_seed)
     GArray *val_nodes = stat_get_val_nodes();
     if (val_nodes == NULL) {
         const char *asm_op = nasm_insn_names[stat_get_opcode()];
-        val_node = request_val_node(asm_op, opnd_seed->srcdestflags & OPDEST);
+        val_node = request_val_node(asm_op, stat_get_opi());
     } else {
         val_node = g_array_index(val_nodes, struct const_node *, stat_get_opi());
     }
@@ -831,7 +831,7 @@ static void init_register_opnd(char *asm_opnd, operand_seed *opnd_seed)
     GArray *val_nodes = stat_get_val_nodes();
     if (val_nodes == NULL) {
         const char *asm_op = nasm_insn_names[stat_get_opcode()];
-        val_node = request_val_node(asm_op, opnd_seed->srcdestflags & OPDEST);
+        val_node = request_val_node(asm_op, stat_get_opi());
     } else {
         val_node = g_array_index(val_nodes, struct const_node *, stat_get_opi());
     }
@@ -847,7 +847,7 @@ static void init_immediate_opnd(char *asm_opnd, operand_seed *opnd_seed)
     GArray *val_nodes = stat_get_val_nodes();
     if (val_nodes == NULL) {
         const char *asm_op = nasm_insn_names[stat_get_opcode()];
-        val_node = request_val_node(asm_op, opnd_seed->srcdestflags & OPDEST);
+        val_node = request_val_node(asm_op, stat_get_opi());
     } else {
         val_node = g_array_index(val_nodes, struct const_node *, stat_get_opi());
     }
@@ -864,7 +864,7 @@ static void init_memory_opnd(char *asm_opnd, operand_seed *opnd_seed)
     GArray *val_nodes = stat_get_val_nodes();
     if (val_nodes == NULL) {
         const char *asm_op = nasm_insn_names[stat_get_opcode()];
-        val_node = request_val_node(asm_op, opnd_seed->srcdestflags & OPDEST);
+        val_node = request_val_node(asm_op, stat_get_opi());
     } else {
         val_node = g_array_index(val_nodes, struct const_node *, stat_get_opi());
     }
@@ -888,7 +888,7 @@ static void init_memoffs_opnd(char *asm_opnd, operand_seed *opnd_seed)
     GArray *val_nodes = stat_get_val_nodes();
     if (val_nodes == NULL) {
         const char *asm_op = nasm_insn_names[stat_get_opcode()];
-        val_node = request_val_node(asm_op, opnd_seed->srcdestflags & OPDEST);
+        val_node = request_val_node(asm_op, stat_get_opi());
     } else {
         val_node = g_array_index(val_nodes, struct const_node *, stat_get_opi());
     }

@@ -76,7 +76,7 @@ static void parseCGs(xmlNodePtr cgsNode)
     }
 }
 
-static struct wd_node *parseTK(xmlNodePtr tkNode)
+static struct wd_node *parseOpndTK(xmlNodePtr tkNode)
 {
     int i = 0, weight;
     char *propWeight, *propKey;
@@ -106,12 +106,36 @@ static struct wd_node *parseTK(xmlNodePtr tkNode)
     return tk_tree_node;
 }
 
+static void parseInstTK(xmlNodePtr tkNode, GArray *tk_trees)
+{
+    char *opnd;
+    struct wd_root *tk_tree;
+
+    for (xmlNodePtr opndNode = tkNode->children; opndNode != NULL; opndNode = opndNode->next) {
+        if (opndNode->type != XML_ELEMENT_NODE)
+            continue;
+        
+        opnd = (char *)xmlGetProp(opndNode, (const unsigned char*)"opnd");
+        if (opnd == NULL)
+            goto simple_opnd_tk;
+
+        tk_tree = wdtree_create();
+        tk_tree->wd_node = parseOpndTK(opndNode);
+        g_array_append_val(tk_trees, tk_tree);
+    }
+    return;
+
+simple_opnd_tk:
+    tk_tree = wdtree_create();
+    tk_tree->wd_node = parseOpndTK(tkNode);
+    g_array_append_val(tk_trees, tk_tree);
+}
+
 static void parseTKs(xmlNodePtr tksNode)
 {
     char *key;
     struct hash_insert hi;
     struct tk_model *tkm;
-    struct wd_node *tkTree;
 
     for (xmlNodePtr tkNode = tksNode->children; tkNode != NULL; tkNode = tkNode->next) {
         if (tkNode->type != XML_ELEMENT_NODE)
@@ -119,9 +143,7 @@ static void parseTKs(xmlNodePtr tksNode)
 
         tkm = tkmodel_create();
 
-        tkTree = parseTK(tkNode);
-        tkm->tk_tree = wdtree_create();
-        tkm->tk_tree->wd_node = tkTree;
+        parseInstTK(tkNode, tkm->tk_trees);
 
         key = (char *)xmlGetProp(tkNode, (const unsigned char*)"inst");
         hash_find(&hash_tks, key, &hi);

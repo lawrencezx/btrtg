@@ -275,7 +275,7 @@ bool create_memoffs(operand_seed *opnd_seed, char *buffer)
     return true;
 }
 
-bool init_specific_register(enum reg_enum R_reg, bool isDest)
+bool init_specific_register(enum reg_enum R_reg)
 {
     char buffer[128];
     const char *src;
@@ -284,7 +284,7 @@ bool init_specific_register(enum reg_enum R_reg, bool isDest)
     GArray *val_nodes = stat_get_val_nodes();
     if (val_nodes == NULL) {
         const char *asm_op = nasm_insn_names[stat_get_opcode()];
-        val_node = request_val_node(asm_op, isDest);
+        val_node = request_val_node(asm_op, stat_get_opi());
     } else {
         val_node = g_array_index(val_nodes, struct const_node *, stat_get_opi());
     }

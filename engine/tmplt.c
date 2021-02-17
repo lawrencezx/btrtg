@@ -30,12 +30,6 @@ void init_blk_var(struct blk_var *var)
     var->init_mem_addr = NULL;
 }
 
-void init_trv_state(struct trv_state *trv_state)
-{
-    trv_state->tk_trees = g_array_new(FALSE, FALSE, sizeof(struct wd_root *));
-    trv_state->val_nodes = g_array_new(FALSE, FALSE, sizeof(struct const_node *));
-}
-
 void init_elem_struct(elem_struct *elem)
 {
     elem->inip = 0;
