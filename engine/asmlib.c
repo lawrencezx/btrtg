@@ -12,7 +12,7 @@ opflags_t parse_asm_opnd_type_opflags(const char *asm_opnd)
     char opnd_id[128];
     size_t i = 0, k = 0, opnd_size = 0;
 
-    while (isalpha(asm_opnd[k])) {
+    while (asm_opnd[k] && !isdigit(asm_opnd[k])) {
         opnd_id[i++] = asm_opnd[k++];
     }
     opnd_id[i++] = '\0';

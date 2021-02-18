@@ -271,6 +271,7 @@ bool create_memoffs(operand_seed *opnd_seed, char *buffer)
         sprintf(src, "[data%d]", datai);
     }
     sprintf(buffer, "%s", src);
+    preappend_mem_size(buffer, opnd_seed->opdsize);
     dfmt->print("    done> new memoffs: %s\n", buffer);
     return true;
 }
@@ -290,7 +291,7 @@ bool init_specific_register(enum reg_enum R_reg)
     }
 
     if((R_reg >= R_ST0) && (R_reg <= R_ST7)){
-        char mem_address[128];
+        char mem_address[64];
         char inst_init_mem_addr[128];
         strcpy(inst_init_mem_addr, stat_get_init_mem_addr());
         create_memory(NULL, mem_address);
@@ -321,7 +322,7 @@ bool init_specific_register(enum reg_enum R_reg)
 
     }else{
         sprintf(buffer, "mov %s, 0x%x", src, (val_node == NULL) ?
-        (int)nasm_random64(0x100000000) : val_node->imm32);
+        (uint32_t)nasm_random64(0x100000000) : val_node->imm32);
         one_insn_gen_const(buffer);
     }
     return true;

@@ -16,12 +16,12 @@ enum const_type {
 struct const_node {
     enum const_type type;
     union {
-        int8_t imm8;
-        int16_t imm16;
-        int32_t imm32;
-        int64_t imm64;
-        int32_t immf[6];
-        int8_t unity;
+        uint8_t imm8;
+        uint16_t imm16;
+        uint32_t imm32;
+        uint64_t imm64;
+        uint32_t immf[6];
+        uint8_t unity;
         char *asm_op;
     };
 };
