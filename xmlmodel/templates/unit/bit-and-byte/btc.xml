@@ -1,0 +1,32 @@
+<?xml version = "1.0" ?>
+
+<!--
+@Test: BTC
+@Description: test btc single instruction
+@Detail:
+@Author: ZouXu
+-->
+
+<Template>
+    <traverse>
+        <V var = "reg" type = "reg16"> </V>
+        <I type = "btc @reg, reg16" trv="true"></I>
+        <C type = "eflags"></C>
+    </traverse>
+    <traverse>
+        <V var = "reg" type = "reg16"> </V>
+        <I type = "btc @reg, imm16" trv="true"></I>
+        <C type = "eflags"></C>
+    </traverse>
+
+    <traverse>
+        <V var = "reg" type = "reg32"> </V>
+        <I type = "btc @reg, reg32" trv="true"></I>
+        <C type = "eflags"></C>
+    </traverse>
+    <traverse>
+        <V var = "reg" type = "reg32"> </V>
+        <I type = "btc @reg, imm32" trv="true"></I>
+        <C type = "eflags"></C>
+    </traverse>
+</Template>

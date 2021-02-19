@@ -1,0 +1,51 @@
+<?xml version = "1.0" ?>
+
+<!--
+@Test: CMPXCHG
+@Description: test cmpxchg single instruction
+@Detail:
+@Author: ZouXu
+-->
+
+<Template>
+    <traverse>
+        <V var = "reg" type = "reg8"></V>
+        <I type = "cmpxchg @reg,reg8" trv = "true"></I>
+        <C type = "@reg"></C>
+        <C type = "eflags"></C>
+    </traverse>
+    <traverse>
+        <V var = "reg" type = "reg16"></V>
+        <I type = "cmpxchg @reg,reg16" trv = "true"></I>
+        <C type = "@reg"></C>
+        <C type = "eflags"></C>
+    </traverse>
+    <traverse>
+        <V var = "reg" type = "reg32"></V>
+        <I type = "cmpxchg @reg,reg32" trv = "true"></I>
+        <C type = "@reg"></C>
+        <C type = "eflags"></C>
+    </traverse>
+
+    <traverse>
+        <V var = "mem" type = "mem8"></V>
+        <I type = "cmpxchg @mem,reg8" trv = "true"></I>
+        <I type = "mov al,@mem"></I>
+        <C type = "al"></C>
+        <C type = "eflags"></C>
+    </traverse>
+    <traverse>
+        <V var = "mem" type = "mem16"></V>
+        <I type = "cmpxchg @mem,reg16" trv = "true"></I>
+        <I type = "mov al,@mem"></I>
+        <C type = "al"></C>
+        <C type = "eflags"></C>
+    </traverse>
+    <traverse>
+        <V var = "mem" type = "mem32"></V>
+        <I type = "cmpxchg @mem,reg32" trv = "true"></I>
+        <I type = "mov al,@mem"></I>
+        <C type = "al"></C>
+        <C type = "eflags"></C>
+    </traverse>
+</Template>

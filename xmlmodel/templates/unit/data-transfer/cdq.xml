@@ -1,0 +1,16 @@
+<?xml version = "1.0" ?>
+
+<!--
+@Test: CDQ
+@Description: test cdq single instruction
+@Detail:
+@Author: ZouXu
+-->
+
+<Template>
+    <traverse>
+        <I type = "cdq" trv="true"></I>
+        <C type = "eax"></C>
+        <C type = "edx"></C>
+    </traverse>
+</Template>

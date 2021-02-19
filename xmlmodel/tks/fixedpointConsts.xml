@@ -1,4 +1,12 @@
 <ConstGroups>
+    <CG name = "normal">
+    </CG>
+    <CG name = "cmp">
+        <Imm8> 0x1 </Imm8>
+        <Imm8> 0xff </Imm8>
+        <Imm16> 0xffff </Imm16>
+        <Imm32> 0xffffffff </Imm32>
+    </CG>
     <CG name = "arith">
         <Imm8> 0x0 </Imm8>
         <Imm8> 0x1 </Imm8>
@@ -19,9 +27,64 @@
         <Imm32> 0x12345678 </Imm32>
         <Imm32> 0xabcdef01 </Imm32>
     </CG>
-    <CG name = "normal">
+    <CG name = "logical">
+        <Imm8> 0x0 </Imm8>
+        <Imm8> 0x1 </Imm8>
+        <Imm8> 0x36 </Imm8>
+        <Imm8> 0xff </Imm8>
+        <Imm8> 0x80 </Imm8>
+        <Imm8> 0xa5 </Imm8>
+        <Imm16> 0xffff </Imm16>
+        <Imm16> 0x7fff </Imm16>
+        <Imm16> 0x8000 </Imm16>
+        <Imm16> 0xc5ad </Imm16>
+        <Imm16> 0x1234 </Imm16>
+        <Imm32> 0xffffffff </Imm32>
+        <Imm32> 0x7fffffff </Imm32>
+        <Imm32> 0x80000000 </Imm32>
+        <Imm32> 0x35791234 </Imm32>
+        <Imm32> 0xdc352173 </Imm32>
     </CG>
-    <CG name = "divdest">
+    <CG name = "sign-ext">
+        <Imm8> 0x7f </Imm8>
+        <Imm8> 0x8f </Imm8>
+        <Imm16> 0x7fff </Imm16>
+        <Imm16> 0x8fff </Imm16>
+        <Imm32> 0x7fffffff </Imm32>
+        <Imm32> 0x8fffffff </Imm32>
+    </CG>
+    <CG name = "bit-test-str">
+        <Imm32> 0x1 </Imm32>
+        <Imm32> 0x2 </Imm32>
+        <Imm32> 0x4 </Imm32>
+        <Imm32> 0x8 </Imm32>
+        <Imm32> 0x10 </Imm32>
+    </CG>
+    <CG name = "bit-test-off">
+        <Imm8> 0x0 </Imm8>
+        <Imm8> 0x1 </Imm8>
+        <Imm8> 0x2 </Imm8>
+        <Imm8> 0x3 </Imm8>
+        <Imm8> 0x4 </Imm8>
+        <Imm8> 0x10 </Imm8>
+        <Imm8> 0x11 </Imm8>
+        <Imm8> 0x12 </Imm8>
+        <Imm8> 0x13 </Imm8>
+        <Imm8> 0x14 </Imm8>
+        <Imm8> 0x1f </Imm8>
+        <Imm8> 0x20 </Imm8>
+    </CG>
+    <CG name = "bit-scan">
+        <Imm16> 0x1 </Imm16>
+        <Imm16> 0x7 </Imm16>
+        <Imm16> 0x8 </Imm16>
+        <Imm16> 0x7000 </Imm16>
+        <Imm16> 0x8000 </Imm16>
+        <Imm32> 0x10000 </Imm32>
+        <Imm32> 0x70000000 </Imm32>
+        <Imm32> 0x80000000 </Imm32>
+    </CG>
+    <CG name = "divid">
         <Imm16> 0xf1ff </Imm16>
 	    <Imm16> 0xf0f0 </Imm16>
 	    <Imm16> 0xefff </Imm16>
@@ -39,7 +102,7 @@
 	    <Imm32> 0x27272727 </Imm32>
 	    <Imm32> 0x88888888 </Imm32>
     </CG>
-    <CG name = "divsrc">
+    <CG name = "divis">
         <Imm8> 0xf2 </Imm8>
 	    <Imm8> 0xf3 </Imm8>
 	    <Imm8> 0xf9 </Imm8>
@@ -59,7 +122,7 @@
 	    <Imm32> 0xdddddddd </Imm32>
 	    <Imm32> 0xd9d7d2d3 </Imm32>
     </CG>
-    <CG name = "logic">
+    <CG name = "shift">
         <Imm8> 0x0 </Imm8>
         <Imm8> 0x1 </Imm8>
         <Imm8> 0x7f </Imm8>
@@ -92,5 +155,13 @@
         <Imm8> 0x20 </Imm8>
         <Imm8> 0x21 </Imm8>
         <Imm8> 0x6d </Imm8>
+    </CG>
+    <CG name = "string">
+        <Imm8> 0x1 </Imm8>
+        <Imm8> 0x55 </Imm8>
+        <Imm16> 0x100 </Imm16>
+        <Imm16> 0x5555 </Imm16>
+        <Imm32> 0x10000 </Imm32>
+        <Imm32> 0xcccccccc </Imm32>
     </CG>
 </ConstGroups>

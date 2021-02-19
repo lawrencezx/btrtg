@@ -1,0 +1,57 @@
+<?xml version = "1.0" ?>
+
+<!--
+@Test: XADD
+@Description: test xadd single instruction
+@Detail:
+@Author: ZouXu
+-->
+
+<Template>
+    <traverse>
+        <V var = "reg1" type = "reg8"></V>
+        <V var = "reg2" type = "reg8"></V>
+        <I type = "xadd @reg1,@reg2" trv = "true"></I>
+        <C type = "@reg1"></C>
+        <C type = "@reg2"></C>
+    </traverse>
+    <traverse>
+        <V var = "reg1" type = "reg16"></V>
+        <V var = "reg2" type = "reg16"></V>
+        <I type = "xadd @reg1,@reg2" trv = "true"></I>
+        <C type = "@reg1"></C>
+        <C type = "@reg2"></C>
+    </traverse>
+    <traverse>
+        <V var = "reg1" type = "reg32"></V>
+        <V var = "reg2" type = "reg32"></V>
+        <I type = "xadd @reg1,@reg2" trv = "true"></I>
+        <C type = "@reg1"></C>
+        <C type = "@reg2"></C>
+    </traverse>
+
+    <traverse>
+        <V var = "reg" type = "reg8"></V>
+        <V var = "mem" type = "mem8"></V>
+        <I type = "xadd @mem,@reg" trv = "true"></I>
+        <I type = "mov al,@mem"></I>
+        <C type = "al"></C>
+        <C type = "@reg"></C>
+    </traverse>
+    <traverse>
+        <V var = "reg" type = "reg16"></V>
+        <V var = "mem" type = "mem16"></V>
+        <I type = "xadd @mem,@reg" trv = "true"></I>
+        <I type = "mov al,@mem"></I>
+        <C type = "al"></C>
+        <C type = "@reg"></C>
+    </traverse>
+    <traverse>
+        <V var = "reg" type = "reg32"></V>
+        <V var = "mem" type = "mem32"></V>
+        <I type = "xadd @mem,@reg" trv = "true"></I>
+        <I type = "mov al,@mem"></I>
+        <C type = "al"></C>
+        <C type = "@reg"></C>
+    </traverse>
+</Template>

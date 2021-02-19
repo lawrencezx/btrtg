@@ -1,0 +1,42 @@
+<?xml version = "1.0" ?>
+
+<!--
+@Test: MOVSX
+@Description: test movsx single instruction
+@Detail:
+@Author: ZouXu
+-->
+
+<Template>
+    <traverse>
+        <V var = "reg" type = "reg16"></V>
+        <I type = "movsx @reg,reg8" trv = "true"></I>
+        <C type = "@reg"></C>
+    </traverse>
+    <traverse>
+        <V var = "reg" type = "reg32"></V>
+        <I type = "movsx @reg,reg8" trv = "true"></I>
+        <C type = "@reg"></C>
+    </traverse>
+    <traverse>
+        <V var = "reg" type = "reg32"></V>
+        <I type = "movsx @reg,reg16" trv = "true"></I>
+        <C type = "@reg"></C>
+    </traverse>
+
+    <traverse>
+        <V var = "reg" type = "reg16"></V>
+        <I type = "movsx @reg,mem8" trv = "true"></I>
+        <C type = "@reg"></C>
+    </traverse>
+    <traverse>
+        <V var = "reg" type = "reg32"></V>
+        <I type = "movsx @reg,mem8" trv = "true"></I>
+        <C type = "@reg"></C>
+    </traverse>
+    <traverse>
+        <V var = "reg" type = "reg32"></V>
+        <I type = "movsx @reg,mem16" trv = "true"></I>
+        <C type = "@reg"></C>
+    </traverse>
+</Template>

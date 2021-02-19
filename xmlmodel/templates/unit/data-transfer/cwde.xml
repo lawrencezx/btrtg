@@ -1,0 +1,15 @@
+<?xml version = "1.0" ?>
+
+<!--
+@Test: CWDE
+@Description: test cwde single instruction
+@Detail:
+@Author: ZouXu
+-->
+
+<Template>
+    <traverse>
+        <I type = "cwde" trv="true"></I>
+        <C type = "eax"></C>
+    </traverse>
+</Template>

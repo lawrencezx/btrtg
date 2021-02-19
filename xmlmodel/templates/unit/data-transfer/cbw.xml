@@ -1,0 +1,15 @@
+<?xml version = "1.0" ?>
+
+<!--
+@Test: CBW
+@Description: test cbw single instruction
+@Detail:
+@Author: ZouXu
+-->
+
+<Template>
+    <traverse>
+        <I type = "cbw" trv="true"></I>
+        <C type = "ax"></C>
+    </traverse>
+</Template>

@@ -1,0 +1,38 @@
+<?xml version = "1.0" ?>
+
+<!--
+@Test: CLC
+@Description: test clc single instruction
+@Detail:
+@Author: ZouXu
+-->
+
+<Template>
+    <I type = "mov ah,0xff"></I>
+    <C type = "ah"></C>
+    <I type = "sahf"></I>
+    <I type = "clc"></I>
+    <C type = "eflags"></C>
+
+    <I type = "mov ah,0x0"></I>
+    <C type = "ah"></C>
+    <I type = "sahf"></I>
+    <I type = "clc"></I>
+    <C type = "eflags"></C>
+
+    <I type = "lahf"></I>
+    <C type = "ah"></C>
+    <I type = "or ah,0x1"></I>
+    <C type = "ah"></C>
+    <I type = "sahf"></I>
+    <I type = "clc"></I>
+    <C type = "eflags"></C>
+
+    <I type = "lahf"></I>
+    <C type = "ah"></C>
+    <I type = "and ah,0xff"></I>
+    <C type = "ah"></C>
+    <I type = "sahf"></I>
+    <I type = "clc"></I>
+    <C type = "eflags"></C>
+</Template>

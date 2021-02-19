@@ -137,8 +137,18 @@
         <Node name = "normal" weight="50"> </Node>
     </TK>
     <TK inst = "cmpxchg">
-        <Node name = "arith" weight="50"> </Node>
-        <Node name = "normal" weight="50"> </Node>
+        <Node opnd = "0">
+            <Node name = "cmp" weight="50"> </Node>
+            <Node name = "normal" weight="50"> </Node>
+        </Node>
+        <Node opnd = "1">
+            <Node name = "arith" weight="50"> </Node>
+            <Node name = "normal" weight="50"> </Node>
+        </Node>
+        <Node opnd = "2">
+            <Node name = "cmp" weight="50"> </Node>
+            <Node name = "normal" weight="50"> </Node>
+        </Node>
     </TK>
     <TK inst = "cmpxchg8b">
         <Node name = "arith" weight="50"> </Node>
@@ -161,11 +171,11 @@
         <Node name = "normal" weight="50"> </Node>
     </TK>
     <TK inst = "cwd">
-        <Node name = "arith" weight="50"> </Node>
+        <Node name = "sign-ext" weight="50"> </Node>
         <Node name = "normal" weight="50"> </Node>
     </TK>
     <TK inst = "cdq">
-        <Node name = "arith" weight="50"> </Node>
+        <Node name = "sign-ext" weight="50"> </Node>
         <Node name = "normal" weight="50"> </Node>
     </TK>
     <TK inst = "cbw">
@@ -186,6 +196,14 @@
     </TK>
 
     <!-- binary arithmetic instructions -->
+    <TK inst = "adcx">
+        <Node name = "arith" weight="50"> </Node>
+        <Node name = "normal" weight="50"> </Node>
+    </TK>
+    <TK inst = "adox">
+        <Node name = "arith" weight="50"> </Node>
+        <Node name = "normal" weight="50"> </Node>
+    </TK>
     <TK inst = "add">
         <Node name = "arith" weight="50"> </Node>
         <Node name = "normal" weight="50"> </Node>
@@ -211,12 +229,24 @@
         <Node name = "normal" weight="50"> </Node>
     </TK>
     <TK inst = "idiv">
-        <Node name = "divsrc" weight="50"> </Node>
-        <Node name = "normal" weight="50"> </Node>
+        <Node opnd = "0">
+            <Node name = "divis" weight="50"> </Node>
+            <Node name = "normal" weight="50"> </Node>
+        </Node>
+        <Node opnd = "1">
+            <Node name = "divid" weight="50"> </Node>
+            <Node name = "normal" weight="50"> </Node>
+        </Node>
     </TK>
     <TK inst = "div">
-        <Node name = "divsrc" weight="50"> </Node>
-        <Node name = "normal" weight="50"> </Node>
+        <Node opnd = "0">
+            <Node name = "divis" weight="50"> </Node>
+            <Node name = "normal" weight="50"> </Node>
+        </Node>
+        <Node opnd = "1">
+            <Node name = "divid" weight="50"> </Node>
+            <Node name = "normal" weight="50"> </Node>
+        </Node>
     </TK>
     <TK inst = "inc">
         <Node name = "arith" weight="50"> </Node>
@@ -263,87 +293,179 @@
 
     <!-- logical instructions -->
     <TK inst = "and">
-        <Node name = "arith" weight="50"> </Node>
+        <Node name = "logical" weight="50"> </Node>
         <Node name = "normal" weight="50"> </Node>
     </TK>
     <TK inst = "or">
-        <Node name = "arith" weight="50"> </Node>
+        <Node name = "logical" weight="50"> </Node>
         <Node name = "normal" weight="50"> </Node>
     </TK>
     <TK inst = "xor">
-        <Node name = "arith" weight="50"> </Node>
+        <Node name = "logical" weight="50"> </Node>
         <Node name = "normal" weight="50"> </Node>
     </TK>
     <TK inst = "not">
-        <Node name = "arith" weight="50"> </Node>
+        <Node name = "logical" weight="50"> </Node>
         <Node name = "normal" weight="50"> </Node>
     </TK>
 
     <!-- shift and rotate instructions -->
     <TK inst = "sar">
-        <Node name = "logic" weight="50"> </Node>
-        <Node name = "normal" weight="50"> </Node>
+        <Node opnd = "0">
+            <Node name = "shift" weight="50"> </Node>
+            <Node name = "normal" weight="50"> </Node>
+        </Node>
+        <Node opnd = "1">
+            <Node name = "unity" weight="50"> </Node>
+            <Node name = "normal" weight="50"> </Node>
+        </Node>
     </TK>
     <TK inst = "shr">
-        <Node name = "arith" weight="50"> </Node>
-        <Node name = "normal" weight="50"> </Node>
+        <Node opnd = "0">
+            <Node name = "shift" weight="50"> </Node>
+            <Node name = "normal" weight="50"> </Node>
+        </Node>
+        <Node opnd = "1">
+            <Node name = "unity" weight="50"> </Node>
+            <Node name = "normal" weight="50"> </Node>
+        </Node>
     </TK>
     <TK inst = "sal">
-        <Node name = "arith" weight="50"> </Node>
-        <Node name = "normal" weight="50"> </Node>
+        <Node opnd = "0">
+            <Node name = "shift" weight="50"> </Node>
+            <Node name = "normal" weight="50"> </Node>
+        </Node>
+        <Node opnd = "1">
+            <Node name = "unity" weight="50"> </Node>
+            <Node name = "normal" weight="50"> </Node>
+        </Node>
     </TK>
     <TK inst = "shl">
-        <Node name = "arith" weight="50"> </Node>
-        <Node name = "normal" weight="50"> </Node>
+        <Node opnd = "0">
+            <Node name = "shift" weight="50"> </Node>
+            <Node name = "normal" weight="50"> </Node>
+        </Node>
+        <Node opnd = "1">
+            <Node name = "unity" weight="50"> </Node>
+            <Node name = "normal" weight="50"> </Node>
+        </Node>
     </TK>
     <TK inst = "shrd">
-        <Node name = "arith" weight="50"> </Node>
-        <Node name = "normal" weight="50"> </Node>
+        <Node opnd = "0">
+            <Node name = "shift" weight="50"> </Node>
+            <Node name = "normal" weight="50"> </Node>
+        </Node>
+        <Node opnd = "1">
+            <Node name = "shift" weight="50"> </Node>
+            <Node name = "normal" weight="50"> </Node>
+        </Node>
+        <Node opnd = "2">
+            <Node name = "unity" weight="50"> </Node>
+            <Node name = "normal" weight="50"> </Node>
+        </Node>
     </TK>
     <TK inst = "shld">
-        <Node name = "arith" weight="50"> </Node>
-        <Node name = "normal" weight="50"> </Node>
+        <Node opnd = "0">
+            <Node name = "shift" weight="50"> </Node>
+            <Node name = "normal" weight="50"> </Node>
+        </Node>
+        <Node opnd = "1">
+            <Node name = "shift" weight="50"> </Node>
+            <Node name = "normal" weight="50"> </Node>
+        </Node>
+        <Node opnd = "2">
+            <Node name = "unity" weight="50"> </Node>
+            <Node name = "normal" weight="50"> </Node>
+        </Node>
     </TK>
     <TK inst = "ror">
-        <Node name = "arith" weight="50"> </Node>
-        <Node name = "normal" weight="50"> </Node>
+        <Node opnd = "0">
+            <Node name = "shift" weight="50"> </Node>
+            <Node name = "normal" weight="50"> </Node>
+        </Node>
+        <Node opnd = "1">
+            <Node name = "unity" weight="50"> </Node>
+            <Node name = "normal" weight="50"> </Node>
+        </Node>
     </TK>
     <TK inst = "rol">
-        <Node name = "arith" weight="50"> </Node>
-        <Node name = "normal" weight="50"> </Node>
+        <Node opnd = "0">
+            <Node name = "shift" weight="50"> </Node>
+            <Node name = "normal" weight="50"> </Node>
+        </Node>
+        <Node opnd = "1">
+            <Node name = "unity" weight="50"> </Node>
+            <Node name = "normal" weight="50"> </Node>
+        </Node>
     </TK>
     <TK inst = "rcr">
-        <Node name = "arith" weight="50"> </Node>
-        <Node name = "normal" weight="50"> </Node>
+        <Node opnd = "0">
+            <Node name = "shift" weight="50"> </Node>
+            <Node name = "normal" weight="50"> </Node>
+        </Node>
+        <Node opnd = "1">
+            <Node name = "unity" weight="50"> </Node>
+            <Node name = "normal" weight="50"> </Node>
+        </Node>
     </TK>
     <TK inst = "rcl">
-        <Node name = "arith" weight="50"> </Node>
-        <Node name = "normal" weight="50"> </Node>
+        <Node opnd = "0">
+            <Node name = "shift" weight="50"> </Node>
+            <Node name = "normal" weight="50"> </Node>
+        </Node>
+        <Node opnd = "1">
+            <Node name = "unity" weight="50"> </Node>
+            <Node name = "normal" weight="50"> </Node>
+        </Node>
     </TK>
 
     <!-- bit and byte instructions -->
     <TK inst = "bt">
-        <Node name = "arith" weight="50"> </Node>
-        <Node name = "normal" weight="50"> </Node>
+        <Node opnd = "0">
+            <Node name = "bit-test-str" weight="50"> </Node>
+            <Node name = "normal" weight="50"> </Node>
+        </Node>
+        <Node opnd = "1">
+            <Node name = "bit-test-off" weight="50"> </Node>
+            <Node name = "normal" weight="50"> </Node>
+        </Node>
     </TK>
     <TK inst = "bts">
-        <Node name = "arith" weight="50"> </Node>
-        <Node name = "normal" weight="50"> </Node>
+        <Node opnd = "0">
+            <Node name = "bit-test-str" weight="50"> </Node>
+            <Node name = "normal" weight="50"> </Node>
+        </Node>
+        <Node opnd = "1">
+            <Node name = "bit-test-off" weight="50"> </Node>
+            <Node name = "normal" weight="50"> </Node>
+        </Node>
     </TK>
     <TK inst = "btr">
-        <Node name = "arith" weight="50"> </Node>
-        <Node name = "normal" weight="50"> </Node>
+        <Node opnd = "0">
+            <Node name = "bit-test-str" weight="50"> </Node>
+            <Node name = "normal" weight="50"> </Node>
+        </Node>
+        <Node opnd = "1">
+            <Node name = "bit-test-off" weight="50"> </Node>
+            <Node name = "normal" weight="50"> </Node>
+        </Node>
     </TK>
     <TK inst = "btc">
-        <Node name = "arith" weight="50"> </Node>
-        <Node name = "normal" weight="50"> </Node>
+        <Node opnd = "0">
+            <Node name = "bit-test-str" weight="50"> </Node>
+            <Node name = "normal" weight="50"> </Node>
+        </Node>
+        <Node opnd = "1">
+            <Node name = "bit-test-off" weight="50"> </Node>
+            <Node name = "normal" weight="50"> </Node>
+        </Node>
     </TK>
-    <TK inst = "btf">
-        <Node name = "arith" weight="50"> </Node>
+    <TK inst = "bsf">
+        <Node name = "bit-scan" weight="50"> </Node>
         <Node name = "normal" weight="50"> </Node>
     </TK>
     <TK inst = "bsr">
-        <Node name = "arith" weight="50"> </Node>
+        <Node name = "bit-scan" weight="50"> </Node>
         <Node name = "normal" weight="50"> </Node>
     </TK>
     <TK inst = "seta">
@@ -621,49 +743,64 @@
 
     <!-- string instructions -->
     <TK inst = "movsb">
-        <Node name = "normal" weight="100"> </Node>
+        <Node name = "string" weight="50"> </Node>
+        <Node name = "normal" weight="50"> </Node>
     </TK>
     <TK inst = "movsd">
-        <Node name = "normal" weight="100"> </Node>
+        <Node name = "string" weight="50"> </Node>
+        <Node name = "normal" weight="50"> </Node>
     </TK>
     <TK inst = "movsw">
-        <Node name = "normal" weight="100"> </Node>
+        <Node name = "string" weight="50"> </Node>
+        <Node name = "normal" weight="50"> </Node>
     </TK>
     <TK inst = "cmpsb">
-        <Node name = "normal" weight="100"> </Node>
+        <Node name = "string" weight="50"> </Node>
+        <Node name = "normal" weight="50"> </Node>
     </TK>
     <TK inst = "cmpsd">
-        <Node name = "normal" weight="100"> </Node>
+        <Node name = "string" weight="50"> </Node>
+        <Node name = "normal" weight="50"> </Node>
     </TK>
     <TK inst = "cmpsw">
-        <Node name = "normal" weight="100"> </Node>
+        <Node name = "string" weight="50"> </Node>
+        <Node name = "normal" weight="50"> </Node>
     </TK>
     <TK inst = "scasb">
-        <Node name = "normal" weight="100"> </Node>
+        <Node name = "string" weight="50"> </Node>
+        <Node name = "normal" weight="50"> </Node>
     </TK>
     <TK inst = "scasd">
-        <Node name = "normal" weight="100"> </Node>
+        <Node name = "string" weight="50"> </Node>
+        <Node name = "normal" weight="50"> </Node>
     </TK>
     <TK inst = "scasw">
-        <Node name = "normal" weight="100"> </Node>
+        <Node name = "string" weight="50"> </Node>
+        <Node name = "normal" weight="50"> </Node>
     </TK>
     <TK inst = "lodsb">
-        <Node name = "normal" weight="100"> </Node>
+        <Node name = "string" weight="50"> </Node>
+        <Node name = "normal" weight="50"> </Node>
     </TK>
     <TK inst = "lodsd">
-        <Node name = "normal" weight="100"> </Node>
+        <Node name = "string" weight="50"> </Node>
+        <Node name = "normal" weight="50"> </Node>
     </TK>
     <TK inst = "lodsw">
-        <Node name = "normal" weight="100"> </Node>
+        <Node name = "string" weight="50"> </Node>
+        <Node name = "normal" weight="50"> </Node>
     </TK>
     <TK inst = "stosb">
-        <Node name = "normal" weight="100"> </Node>
+        <Node name = "string" weight="50"> </Node>
+        <Node name = "normal" weight="50"> </Node>
     </TK>
     <TK inst = "stosd">
-        <Node name = "normal" weight="100"> </Node>
+        <Node name = "string" weight="50"> </Node>
+        <Node name = "normal" weight="50"> </Node>
     </TK>
     <TK inst = "stodw">
-        <Node name = "normal" weight="100"> </Node>
+        <Node name = "string" weight="50"> </Node>
+        <Node name = "normal" weight="50"> </Node>
     </TK>
 
     <!-- enter and leave instructions -->

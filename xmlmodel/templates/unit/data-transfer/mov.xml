@@ -1,0 +1,115 @@
+<?xml version = "1.0" ?>
+
+<!--
+@Test: MOV
+@Description: test mov single instruction
+@Detail:
+@Author: ZouXu
+-->
+
+<Template>
+    <traverse>
+        <V var = "reg" type = "reg8"></V>
+        <I type = "mov @reg,reg8" trv = "true"></I>
+        <C type = "@reg"></C>
+    </traverse>
+    <traverse>
+        <V var = "reg" type = "reg16"></V>
+        <I type = "mov @reg,reg16" trv = "true"></I>
+        <C type = "@reg"></C>
+    </traverse>
+    <traverse>
+        <V var = "reg" type = "reg32"></V>
+        <I type = "mov @reg,reg32" trv = "true"></I>
+        <C type = "@reg"></C>
+    </traverse>
+
+    <traverse>
+        <V var = "mem" type = "mem8"></V>
+        <I type = "mov @mem,reg8" trv = "true"></I>
+        <I type = "mov al,@mem"></I>
+        <C type = "al"></C>
+    </traverse>
+    <traverse>
+        <V var = "mem" type = "mem16"></V>
+        <I type = "mov @mem,reg16" trv = "true"></I>
+        <I type = "mov ax,@mem"></I>
+        <C type = "ax"></C>
+    </traverse>
+    <traverse>
+        <V var = "mem" type = "mem32"></V>
+        <I type = "mov @mem,reg32" trv = "true"></I>
+        <I type = "mov eax,@mem"></I>
+        <C type = "eax"></C>
+    </traverse>
+
+    <traverse>
+        <V var = "reg" type = "reg8"></V>
+        <I type = "mov @reg,mem8" trv = "true"></I>
+        <C type = "@reg"></C>
+    </traverse>
+    <traverse>
+        <V var = "reg" type = "reg16"></V>
+        <I type = "mov @reg,mem16" trv = "true"></I>
+        <C type = "@reg"></C>
+    </traverse>
+    <traverse>
+        <V var = "reg" type = "reg32"></V>
+        <I type = "mov @reg,mem32" trv = "true"></I>
+        <C type = "@reg"></C>
+    </traverse>
+
+    <traverse>
+        <V var = "reg" type = "reg8"></V>
+        <I type = "mov @reg,imm8" trv = "true"></I>
+        <C type = "@reg"></C>
+    </traverse>
+    <traverse>
+        <V var = "reg" type = "reg16"></V>
+        <I type = "mov @reg,imm16" trv = "true"></I>
+        <C type = "@reg"></C>
+    </traverse>
+    <traverse>
+        <V var = "reg" type = "reg32"></V>
+        <I type = "mov @reg,imm32" trv = "true"></I>
+        <C type = "@reg"></C>
+    </traverse>
+
+    <traverse>
+        <V var = "mem" type = "mem8"> </V>
+        <I type = "mov @mem,imm8" trv = "true"></I>
+        <I type = "mov al,@mem"></I>
+        <C type = "al"></C>
+    </traverse>
+    <traverse>
+        <V var = "mem" type = "mem16"></V>
+        <I type = "mov @mem,imm16" trv = "true"></I>
+        <I type = "mov ax,@mem"></I>
+        <C type = "ax"></C>
+    </traverse>
+    <traverse>
+        <V var = "mem" type = "mem32"></V>
+        <I type = "mov @mem,imm32" trv = "true"></I>
+        <I type = "mov eax,@mem"></I>
+        <C type = "eax"></C>
+    </traverse>
+
+    <traverse>
+        <V var = "memoff" type = "memory_offs8"> </V>
+        <I type = "mov @memoff,al" trv = "true"></I>
+        <I type = "mov al,@memoff"></I>
+        <C type = "al"></C>
+    </traverse>
+    <traverse>
+        <V var = "memoff" type = "memory_offs16"> </V>
+        <I type = "mov @memoff,ax" trv = "true"></I>
+        <I type = "mov ax,@memoff"></I>
+        <C type = "ax"></C>
+    </traverse>
+    <traverse>
+        <V var = "memoff" type = "memory_offs32"> </V>
+        <I type = "mov @memoff,eax" trv = "true"></I>
+        <I type = "mov eax,@memoff"></I>
+        <C type = "eax"></C>
+    </traverse>
+</Template>

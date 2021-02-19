@@ -1,0 +1,37 @@
+<?xml version = "1.0" ?>
+
+<!--
+@Test: DAS
+@Description: test das single instruction
+@Detail:
+@Author: ZouXu
+-->
+
+<Template>
+    <traverse>
+        <I type = "sub al,imm8" trv="true"></I>
+        <I type = "das"></I>
+        <C type = "al"></C>
+    </traverse>
+    <traverse>
+        <I type = "sub ax,imm16" trv = "true"></I>
+        <I type = "das"></I>
+        <C type = "ax"></C>
+    </traverse>
+    <traverse>
+        <I type = "sub eax,imm32" trv = "true"></I>
+        <I type = "das"></I>
+        <C type = "eax"></C>
+    </traverse>
+
+    <traverse>
+        <I type = "sub al,mem8" trv = "true"></I>
+        <I type = "das"></I>
+        <C type = "al"></C>
+    </traverse>
+    <traverse>
+        <I type = "sub al,reg8" trv = "true"></I>
+        <I type = "das"></I>
+        <C type = "al"></C>
+    </traverse>
+</Template>

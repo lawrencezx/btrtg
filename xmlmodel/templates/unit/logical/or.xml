@@ -1,0 +1,120 @@
+<?xml version = "1.0" ?>
+
+<!--
+@Test: OR
+@Description: test or single instruction
+@Detail:
+@Author: ZouXu
+-->
+
+<Template>
+    <traverse>
+        <I type = "or al,imm8" trv="true"></I>
+        <C type = "al"></C>
+    </traverse>
+    <traverse>
+        <I type = "or ax,imm16" trv = "true"></I>
+        <C type = "ax"></C>
+    </traverse>
+    <traverse>
+        <I type = "or eax,imm32" trv = "true"></I>
+        <C type = "eax"></C>
+    </traverse>
+
+    <traverse>
+        <V var = "reg" type = "reg8"></V>
+        <I type = "or @reg,imm8" trv = "true"></I>
+        <C type = "@reg"></C>
+    </traverse>
+    <traverse>
+        <V var = "reg" type = "reg16"></V>
+        <I type = "or @reg,imm16" trv = "true"></I>
+        <C type = "@reg"></C>
+    </traverse>
+    <traverse>
+        <V var = "reg" type = "reg32"></V>
+        <I type = "or @reg,imm32" trv = "true"></I>
+        <C type = "@reg"></C>
+    </traverse>
+
+    <traverse>
+        <V var = "mem" type = "mem8"> </V>
+        <I type = "or @mem,imm8" trv = "true"></I>
+        <I type = "mov al,@mem"></I>
+        <C type = "al"></C>
+    </traverse>
+    <traverse>
+        <V var = "mem" type = "mem16"></V>
+        <I type = "or @mem,imm16" trv = "true"></I>
+        <I type = "mov ax,@mem"></I>
+        <C type = "ax"></C>
+    </traverse>
+    <traverse>
+        <V var = "mem" type = "mem32"></V>
+        <I type = "or @mem,imm32" trv = "true"></I>
+        <I type = "mov eax,@mem"></I>
+        <C type = "eax"></C>
+    </traverse>
+
+    <traverse>
+        <V var = "reg" type = "reg16"></V>
+        <I type = "or @reg,imm8" trv = "true"></I>
+        <C type = "@reg"></C>
+    </traverse>
+    <traverse>
+        <V var = "reg" type = "reg32"></V>
+        <I type = "or @reg,imm8" trv = "true"></I>
+        <C type = "@reg"></C>
+    </traverse>
+
+    <traverse>
+        <V var = "reg" type = "reg8"></V>
+        <I type = "or @reg,reg8" trv = "true"></I>
+        <C type = "@reg"></C>
+    </traverse>
+    <traverse>
+        <V var = "reg" type = "reg16"></V>
+        <I type = "or @reg,reg16" trv = "true"></I>
+        <C type = "@reg"></C>
+    </traverse>
+    <traverse>
+        <V var = "reg" type = "reg32"></V>
+        <I type = "or @reg,reg32" trv = "true"></I>
+        <C type = "@reg"></C>
+    </traverse>
+
+    <traverse>
+        <V var = "mem" type = "mem8"></V>
+        <I type = "or @mem,reg8" trv = "true"></I>
+        <I type = "mov al,@mem"></I>
+        <C type = "al"></C>
+    </traverse>
+    <traverse>
+        <V var = "mem" type = "mem16"></V>
+        <I type = "or @mem,reg16" trv = "true"></I>
+        <I type = "mov ax,@mem"></I>
+        <C type = "ax"></C>
+    </traverse>
+    <traverse>
+        <V var = "mem" type = "mem32"></V>
+        <I type = "or @mem,reg32" trv = "true"></I>
+        <I type = "mov eax,@mem"></I>
+        <C type = "eax"></C>
+    </traverse>
+
+    <traverse>
+        <V var = "reg" type = "reg8"></V>
+        <I type = "or @reg,mem8" trv = "true"></I>
+        <C type = "@reg"></C>
+    </traverse>
+    <traverse>
+        <V var = "reg" type = "reg16"></V>
+        <I type = "or @reg,mem16" trv = "true"></I>
+        <C type = "@reg"></C>
+    </traverse>
+    <traverse>
+        <V var = "reg" type = "reg32"></V>
+        <I type = "or @reg,mem32" trv = "true"></I>
+        <C type = "@reg"></C>
+    </traverse>
+</Template>

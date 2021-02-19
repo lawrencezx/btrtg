@@ -1,0 +1,16 @@
+<?xml version = "1.0" ?>
+
+<!--
+@Test: CWD
+@Description: test cwd single instruction
+@Detail:
+@Author: ZouXu
+-->
+
+<Template>
+    <traverse>
+        <I type = "cwd" trv="true"></I>
+        <C type = "eax"></C>
+        <C type = "edx"></C>
+    </traverse>
+</Template>

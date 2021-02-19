@@ -1,0 +1,16 @@
+<?xml version = "1.0" ?>
+
+<!--
+@Test: BSWAP
+@Description: test bswap single instruction
+@Detail:
+@Author: ZouXu
+-->
+
+<Template>
+    <traverse>
+        <V var = "reg" type = "reg16"> </V>
+        <I type = "bswap @reg" trv="true"></I>
+        <C type = "@reg"></C>
+    </traverse>
+</Template>
