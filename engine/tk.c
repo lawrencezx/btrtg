@@ -17,6 +17,9 @@ static int get_implied_operands_from_instname(char *inst_name)
     switch (opcode) {
         case I_DIV:
         case I_IDIV:
+        case I_CMPXCHG:
+        case I_CBW:
+        case I_CWDE:
         case I_CWD:
         case I_CDQ:
             return 1;

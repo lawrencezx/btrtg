@@ -552,14 +552,15 @@ static opflags_t calOperandSize(const insn_seed *seed, int opdi)
 
 void init_implied_operands(insn *result)
 {
+    insn_seed seed;
+
     stat_set_need_init(false);
+    seed.opcode = result->opcode;
+    for (int i = 0; i < MAX_OPERANDS; i++) {
+        seed.opd[i] = result->oprs[i].type;
+    }
     if (result->opcode == I_DIV ||
         result->opcode == I_IDIV) {
-        insn_seed seed;
-        seed.opcode = result->opcode;
-        for (int i = 0; i < MAX_OPERANDS; i++) {
-            seed.opd[i] = result->oprs[i].type;
-        }
         switch (calOperandSize(&seed, 0)) {
             case BITS8:
                 init_specific_register(R_AX);
@@ -575,9 +576,25 @@ void init_implied_operands(insn *result)
             default:
                 break;
         }
-    } else if (result->opcode == I_CWD) {
+    } else if (result->opcode == I_CMPXCHG) {
+        switch (calOperandSize(&seed, 0)) {
+            case BITS8:
+                init_specific_register(R_AL);
+                break;
+            case BITS16:
+                init_specific_register(R_AX);
+                break;
+            case BITS32:
+                init_specific_register(R_EAX);
+                break;
+            default:
+                break;
+        }
+    } else if (result->opcode == I_CWD ||
+               result->opcode == I_CBW) {
         init_specific_register(R_AX);
-    } else if (result->opcode == I_CDQ) {
+    } else if (result->opcode == I_CDQ ||
+               result->opcode == I_CWDE) {
         init_specific_register(R_EAX);
     } else {
         int operands = result->operands;
