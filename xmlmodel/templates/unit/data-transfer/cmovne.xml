@@ -1,0 +1,36 @@
+<?xml version = "1.0" ?>
+
+<!--
+@Test: CMOVNE
+@Description: test cmovne single instruction
+@Detail:
+@Author: ZouXu
+-->
+
+<Template>
+    <traverse>
+        <V var = "reg" type = "reg16"></V>
+        <I type = "popf" trv = "true"></I>
+        <I type = "cmovne @reg,reg16" inip = "1.0"></I>
+        <C type = "@reg"></C>
+    </traverse>
+    <traverse>
+        <V var = "reg" type = "reg32"></V>
+        <I type = "popf" trv = "true"></I>
+        <I type = "cmovne @reg,reg32" inip = "1.0"></I>
+        <C type = "@reg"></C>
+    </traverse>
+
+    <traverse>
+        <V var = "reg" type = "reg16"></V>
+        <I type = "popf" trv = "true"></I>
+        <I type = "cmovne @reg,mem16" inip = "1.0"></I>
+        <C type = "@reg"></C>
+    </traverse>
+    <traverse>
+        <V var = "reg" type = "reg32"></V>
+        <I type = "popf" trv = "true"></I>
+        <I type = "cmovne @reg,mem32" inip = "1.0"></I>
+        <C type = "@reg"></C>
+    </traverse>
+</Template>

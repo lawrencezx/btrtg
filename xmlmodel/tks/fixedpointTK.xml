@@ -1,127 +1,127 @@
 <TestingKnowledges>
     <!--  data transfer instructions  -->
     <TK inst = "mov">
-        <Node name = "arith" weight="50"> </Node>
+        <Node name = "mov" weight="50"> </Node>
         <Node name = "normal" weight="50"> </Node>
     </TK>
     <TK inst = "cmova">
-        <Node name = "arith" weight="50"> </Node>
+        <Node name = "mov" weight="50"> </Node>
         <Node name = "normal" weight="50"> </Node>
     </TK>
     <TK inst = "cmovae">
-        <Node name = "arith" weight="50"> </Node>
+        <Node name = "mov" weight="50"> </Node>
         <Node name = "normal" weight="50"> </Node>
     </TK>
     <TK inst = "cmovb">
-        <Node name = "arith" weight="50"> </Node>
+        <Node name = "mov" weight="50"> </Node>
         <Node name = "normal" weight="50"> </Node>
     </TK>
     <TK inst = "cmovbe">
-        <Node name = "arith" weight="50"> </Node>
+        <Node name = "mov" weight="50"> </Node>
         <Node name = "normal" weight="50"> </Node>
     </TK>
     <TK inst = "cmovc">
-        <Node name = "arith" weight="50"> </Node>
+        <Node name = "mov" weight="50"> </Node>
         <Node name = "normal" weight="50"> </Node>
     </TK>
     <TK inst = "cmove">
-        <Node name = "arith" weight="50"> </Node>
+        <Node name = "mov" weight="50"> </Node>
         <Node name = "normal" weight="50"> </Node>
     </TK>
     <TK inst = "cmovg">
-        <Node name = "arith" weight="50"> </Node>
+        <Node name = "mov" weight="50"> </Node>
         <Node name = "normal" weight="50"> </Node>
     </TK>
     <TK inst = "cmovge">
-        <Node name = "arith" weight="50"> </Node>
+        <Node name = "mov" weight="50"> </Node>
         <Node name = "normal" weight="50"> </Node>
     </TK>
     <TK inst = "cmovl">
-        <Node name = "arith" weight="50"> </Node>
+        <Node name = "mov" weight="50"> </Node>
         <Node name = "normal" weight="50"> </Node>
     </TK>
     <TK inst = "cmovle">
-        <Node name = "arith" weight="50"> </Node>
+        <Node name = "mov" weight="50"> </Node>
         <Node name = "normal" weight="50"> </Node>
     </TK>
     <TK inst = "cmovna">
-        <Node name = "arith" weight="50"> </Node>
+        <Node name = "mov" weight="50"> </Node>
         <Node name = "normal" weight="50"> </Node>
     </TK>
     <TK inst = "cmovnae">
-        <Node name = "arith" weight="50"> </Node>
+        <Node name = "mov" weight="50"> </Node>
         <Node name = "normal" weight="50"> </Node>
     </TK>
     <TK inst = "cmovnb">
-        <Node name = "arith" weight="50"> </Node>
+        <Node name = "mov" weight="50"> </Node>
         <Node name = "normal" weight="50"> </Node>
     </TK>
     <TK inst = "cmovnbe">
-        <Node name = "arith" weight="50"> </Node>
+        <Node name = "mov" weight="50"> </Node>
         <Node name = "normal" weight="50"> </Node>
     </TK>
     <TK inst = "cmovnc">
-        <Node name = "arith" weight="50"> </Node>
+        <Node name = "mov" weight="50"> </Node>
         <Node name = "normal" weight="50"> </Node>
     </TK>
     <TK inst = "cmovne">
-        <Node name = "arith" weight="50"> </Node>
+        <Node name = "mov" weight="50"> </Node>
         <Node name = "normal" weight="50"> </Node>
     </TK>
     <TK inst = "cmovng">
-        <Node name = "arith" weight="50"> </Node>
+        <Node name = "mov" weight="50"> </Node>
         <Node name = "normal" weight="50"> </Node>
     </TK>
     <TK inst = "cmovnge">
-        <Node name = "arith" weight="50"> </Node>
+        <Node name = "mov" weight="50"> </Node>
         <Node name = "normal" weight="50"> </Node>
     </TK>
     <TK inst = "cmovnl">
-        <Node name = "arith" weight="50"> </Node>
+        <Node name = "mov" weight="50"> </Node>
         <Node name = "normal" weight="50"> </Node>
     </TK>
     <TK inst = "cmovnle">
-        <Node name = "arith" weight="50"> </Node>
+        <Node name = "mov" weight="50"> </Node>
         <Node name = "normal" weight="50"> </Node>
     </TK>
     <TK inst = "cmovno">
-        <Node name = "arith" weight="50"> </Node>
+        <Node name = "mov" weight="50"> </Node>
         <Node name = "normal" weight="50"> </Node>
     </TK>
     <TK inst = "cmovnp">
-        <Node name = "arith" weight="50"> </Node>
+        <Node name = "mov" weight="50"> </Node>
         <Node name = "normal" weight="50"> </Node>
     </TK>
     <TK inst = "cmovns">
-        <Node name = "arith" weight="50"> </Node>
+        <Node name = "mov" weight="50"> </Node>
         <Node name = "normal" weight="50"> </Node>
     </TK>
     <TK inst = "cmovnz">
-        <Node name = "arith" weight="50"> </Node>
+        <Node name = "mov" weight="50"> </Node>
         <Node name = "normal" weight="50"> </Node>
     </TK>
     <TK inst = "cmovo">
-        <Node name = "arith" weight="50"> </Node>
+        <Node name = "mov" weight="50"> </Node>
         <Node name = "normal" weight="50"> </Node>
     </TK>
     <TK inst = "cmovp">
-        <Node name = "arith" weight="50"> </Node>
+        <Node name = "mov" weight="50"> </Node>
         <Node name = "normal" weight="50"> </Node>
     </TK>
     <TK inst = "cmovpe">
-        <Node name = "arith" weight="50"> </Node>
+        <Node name = "mov" weight="50"> </Node>
         <Node name = "normal" weight="50"> </Node>
     </TK>
     <TK inst = "cmovpo">
-        <Node name = "arith" weight="50"> </Node>
+        <Node name = "mov" weight="50"> </Node>
         <Node name = "normal" weight="50"> </Node>
     </TK>
     <TK inst = "cmovs">
-        <Node name = "arith" weight="50"> </Node>
+        <Node name = "mov" weight="50"> </Node>
         <Node name = "normal" weight="50"> </Node>
     </TK>
     <TK inst = "cmovz">
-        <Node name = "arith" weight="50"> </Node>
+        <Node name = "mov" weight="50"> </Node>
         <Node name = "normal" weight="50"> </Node>
     </TK>
     <TK inst = "xchg">
@@ -858,7 +858,7 @@
         <Node name = "normal" weight="100"> </Node>
     </TK>
     <TK inst = "popf">
-        <Node name = "normal" weight="100"> </Node>
+        <Node name = "oszapc" weight="100"> </Node>
     </TK>
     <TK inst = "popfd">
         <Node name = "normal" weight="100"> </Node>

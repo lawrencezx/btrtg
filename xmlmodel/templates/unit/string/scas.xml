@@ -1,0 +1,28 @@
+<?xml version = "1.0" ?>
+
+<!--
+@Test: SCAS
+@Description: test scas single instruction
+@Detail:
+@Author: ZouXu
+-->
+
+<Template>
+    <I type = "scasb" inip = "1.0"></I>
+    <I type = "mov al,[esi]"></I>
+    <I type = "mov bl,[edi]"></I>
+    <C type = "al"></C>
+    <C type = "bl"></C>
+
+    <I type = "scasw" inip = "1.0"></I>
+    <I type = "mov ax,[esi]"></I>
+    <I type = "mov bx,[edi]"></I>
+    <C type = "ax"></C>
+    <C type = "bx"></C>
+
+    <I type = "scasd" inip = "1.0"></I>
+    <I type = "mov eax,[esi]"></I>
+    <I type = "mov ebx,[edi]"></I>
+    <C type = "eax"></C>
+    <C type = "ebx"></C>
+</Template>

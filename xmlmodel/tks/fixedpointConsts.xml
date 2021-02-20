@@ -1,6 +1,12 @@
 <ConstGroups>
     <CG name = "normal">
     </CG>
+    <CG name = "mov">
+        <Imm8> 0x1 </Imm8>
+        <Imm8> 0x22 </Imm8>
+        <Imm16> 0x3333 </Imm16>
+        <Imm32> 0xcccccccc </Imm32>
+    </CG>
     <CG name = "cmp">
         <Imm8> 0x1 </Imm8>
         <Imm8> 0xff </Imm8>
@@ -163,5 +169,24 @@
         <Imm16> 0x5555 </Imm16>
         <Imm32> 0x10000 </Imm32>
         <Imm32> 0xcccccccc </Imm32>
+    </CG>
+    <CG name = "szapc">
+        <Imm16> 0x0 </Imm16>
+        <Imm16> 0x1 </Imm16>
+        <Imm16> 0x4 </Imm16>
+        <Imm16> 0x10 </Imm16>
+        <Imm16> 0x40 </Imm16>
+        <Imm16> 0x80 </Imm16>
+        <Imm16> 0xd5 </Imm16>
+    </CG>
+    <CG name = "oszapc">
+        <Imm16> 0x202 </Imm16>
+        <Imm16> 0x203 </Imm16>
+        <Imm16> 0x206 </Imm16>
+        <Imm16> 0x212 </Imm16>
+        <Imm16> 0x242 </Imm16>
+        <Imm16> 0x282 </Imm16>
+        <Imm16> 0x602 </Imm16>
+        <Imm16> 0x6d7 </Imm16>
     </CG>
 </ConstGroups>

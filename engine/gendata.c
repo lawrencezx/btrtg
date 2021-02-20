@@ -596,6 +596,25 @@ void init_implied_operands(insn *result)
     } else if (result->opcode == I_CDQ ||
                result->opcode == I_CWDE) {
         init_specific_register(R_EAX);
+    } else if (result->opcode == I_MOVSB ||
+               result->opcode == I_MOVSD ||
+               result->opcode == I_MOVSW ||
+               result->opcode == I_CMPSB ||
+               result->opcode == I_CMPSD ||
+               result->opcode == I_CMPSW ||
+               result->opcode == I_SCASB ||
+               result->opcode == I_SCASD ||
+               result->opcode == I_SCASW ||
+               result->opcode == I_LODSB ||
+               result->opcode == I_LODSD ||
+               result->opcode == I_LODSW ||
+               result->opcode == I_STOSB ||
+               result->opcode == I_STOSD ||
+               result->opcode == I_STOSW) {
+        init_specific_mem(R_ESI);
+        init_specific_mem(R_EDI);
+    } else if (result->opcode == I_POPF) {
+        init_popf();
     } else {
         int operands = result->operands;
         bool has_mem_opnd = stat_get_has_mem_opnd();

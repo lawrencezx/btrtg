@@ -328,6 +328,35 @@ bool init_specific_register(enum reg_enum R_reg)
     return true;
 }
 
+bool init_specific_mem(enum reg_enum R_reg)
+{
+    char buffer[128];
+    if (R_reg == R_ESI)
+        sprintf(buffer, "  lea esi,data1");
+    else if (R_reg == R_EDI)
+        sprintf(buffer, "  lea edi,data2");
+    else
+        nasm_fatal("Unsupported specific memory register");
+    one_insn_gen_ctrl(buffer, INSERT_AFTER);
+    return true;
+}
+
+bool init_popf(void)
+{
+    char buffer[128];
+    struct const_node *val_node;
+    GArray *val_nodes = stat_get_val_nodes();
+    if (val_nodes == NULL) {
+        const char *asm_op = nasm_insn_names[stat_get_opcode()];
+        val_node = request_val_node(asm_op, stat_get_opi());
+    } else {
+        val_node = g_array_index(val_nodes, struct const_node *, stat_get_opi());
+    }
+    sprintf(buffer, "  push 0x%x", val_node->imm32);
+    one_insn_gen_ctrl(buffer, INSERT_AFTER);
+    return true;
+}
+
 /* specify the fundamental data item size for a memory operand
  * for example: byte, word, dword, etc.
  */

@@ -1,0 +1,28 @@
+<?xml version = "1.0" ?>
+
+<!--
+@Test: LODS
+@Description: test lods single instruction
+@Detail:
+@Author: ZouXu
+-->
+
+<Template>
+    <I type = "lodsb" inip = "1.0"></I>
+    <I type = "mov al,[esi]"></I>
+    <I type = "mov bl,[edi]"></I>
+    <C type = "al"></C>
+    <C type = "bl"></C>
+
+    <I type = "lodsw" inip = "1.0"></I>
+    <I type = "mov ax,[esi]"></I>
+    <I type = "mov bx,[edi]"></I>
+    <C type = "ax"></C>
+    <C type = "bx"></C>
+
+    <I type = "lodsd" inip = "1.0"></I>
+    <I type = "mov eax,[esi]"></I>
+    <I type = "mov ebx,[edi]"></I>
+    <C type = "eax"></C>
+    <C type = "ebx"></C>
+</Template>

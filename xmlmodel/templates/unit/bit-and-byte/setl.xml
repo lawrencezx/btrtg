@@ -1,0 +1,24 @@
+<?xml version = "1.0" ?>
+
+<!--
+@Test: SETL
+@Description: test setl single instruction
+@Detail:
+@Author: ZouXu
+-->
+
+<Template>
+    <traverse>
+        <V var = "reg" type = "reg8"></V>
+        <I type = "popf" trv = "true"></I>
+        <I type = "setl @reg" inip="1.0"></I>
+        <C type = "@reg"></C>
+    </traverse>
+    <traverse>
+        <V var = "mem" type = "mem8"></V>
+        <I type = "popf" trv = "true"></I>
+        <I type = "setl @mem" inip = "1.0"></I>
+        <I type = "mov al,@mem"></I>
+        <C type = "al"></C>
+    </traverse>
+</Template>
