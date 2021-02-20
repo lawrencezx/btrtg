@@ -23,6 +23,8 @@ static int get_implied_operands_from_instname(char *inst_name)
         case I_CWD:
         case I_CDQ:
         case I_POPF:
+        case I_JCXZ:
+        case I_JECXZ:
             return 1;
         default:
             return -1;

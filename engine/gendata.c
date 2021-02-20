@@ -596,6 +596,9 @@ void init_implied_operands(insn *result)
     } else if (result->opcode == I_CDQ ||
                result->opcode == I_CWDE) {
         init_specific_register(R_EAX);
+    } else if (result->opcode == I_JCXZ ||
+               result->opcode == I_JECXZ) {
+        init_specific_register(R_ECX);
     } else if (result->opcode == I_MOVSB ||
                result->opcode == I_MOVSD ||
                result->opcode == I_MOVSW ||

@@ -696,10 +696,12 @@
         <Node name = "normal" weight="100"> </Node>
     </TK>
     <TK inst = "jcxz">
-        <Node name = "normal" weight="100"> </Node>
+        <Node name = "jecx" weight="50"> </Node>
+        <Node name = "normal" weight="50"> </Node>
     </TK>
     <TK inst = "jecxz">
-        <Node name = "normal" weight="100"> </Node>
+        <Node name = "jecx" weight="50"> </Node>
+        <Node name = "normal" weight="50"> </Node>
     </TK>
     <TK inst = "loop">
         <Node name = "normal" weight="100"> </Node>

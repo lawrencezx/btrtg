@@ -1,0 +1,20 @@
+<?xml version = "1.0" ?>
+
+<!--
+@Test: JL
+@Description: test jl single instruction
+@Detail:
+@Author: ZouXu
+-->
+
+<Template>
+    <repeat times = "100">
+        <traverse>
+            <V var = "reg" type = "reg32"> </V>
+            <I type = "mov @reg,imm32"></I>
+            <C type = "@reg"></C>
+            <I type = "popf" trv = "true"></I>
+            <I type = "jl"></I>
+        </traverse>
+    </repeat>
+</Template>

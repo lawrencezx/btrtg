@@ -270,12 +270,6 @@ bool one_insn_gen(const insn_seed *seed, insn *result)
     else
         dfmt->print("\033[31m Gen const inst\033[m: %s\n", get_token_bufptr());
 
-    token_reset();
-
-    if (gen_control_transfer_insn(seed))
-        return true;
-    likely_gen_label();
-
     int i;
     int opi = 0;
     struct eval_hints hints;
@@ -289,6 +283,9 @@ bool one_insn_gen(const insn_seed *seed, insn *result)
     result->evex_rm     = 0;
     result->evex_brerop = -1;
 
+    likely_gen_label();
+    token_reset();
+
     if (!gen_opcode(seed))
         return false;
     i = get_token(&tokval);
@@ -298,6 +295,9 @@ bool one_insn_gen(const insn_seed *seed, insn *result)
 
     result->opcode = tokval.t_integer;
     result->condition = tokval.t_inttwo;
+
+    if (gen_control_transfer_insn(result->opcode))
+        return true;
 
 //    if (seed != NULL && X86PGState.seqMode && !bseqi_inc(&X86PGState.bseqi, seed, opnum))
 //        return false;

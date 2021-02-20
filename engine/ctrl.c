@@ -81,6 +81,8 @@ static bool is_jcc(enum opcode opcode)
     case I_JZ:
     case I_JPE:
     case I_JPO:
+    case I_JCXZ:
+    case I_JECXZ:
         return true;
         break;
     default:
@@ -89,14 +91,14 @@ static bool is_jcc(enum opcode opcode)
     return false;
 }
 
-bool gen_control_transfer_insn(const insn_seed *seed)
+bool gen_control_transfer_insn(enum opcode opcode)
 {
-    if (seed == NULL || stat_ctrl_locked())
+    if (stat_ctrl_locked())
         return false;
     char buffer[64];
-    if (seed->opcode == I_JMP) {
+    if (opcode == I_JMP) {
         /* jmp lable(n+1) */
-        sprintf(buffer, "  %s label%d", nasm_insn_names[seed->opcode], stat_get_labeli());
+        sprintf(buffer, "  %s label%d", nasm_insn_names[opcode], stat_get_labeli());
         one_insn_gen_ctrl(buffer, INSERT_AFTER);
         int label = select_one_label();
         if (label == -1) {
@@ -105,9 +107,9 @@ bool gen_control_transfer_insn(const insn_seed *seed)
             skip_to_stat_get_labeli(label);
         }
         return true;
-    } else if (is_jcc(seed->opcode)) {
+    } else if (is_jcc(opcode)) {
         /* jcc lable(n+1) */
-        sprintf(buffer, "  %s label%d", nasm_insn_names[seed->opcode], stat_get_labeli());
+        sprintf(buffer, "  %s label%d", nasm_insn_names[opcode], stat_get_labeli());
         one_insn_gen_ctrl(buffer, INSERT_AFTER);
         /* jmp lable(n+1) */
         sprintf(buffer, "  %s label%d", nasm_insn_names[I_JMP], stat_get_labeli());
@@ -119,22 +121,22 @@ bool gen_control_transfer_insn(const insn_seed *seed)
             skip_to_stat_get_labeli(label);
         }
         return true;
-    } else if ((seed->opcode == I_LOOP) ||
-        (seed->opcode == I_LOOPE) ||
-        (seed->opcode == I_LOOPNE) ||
-        (seed->opcode == I_LOOPNZ) ||
-        (seed->opcode == I_LOOPZ)) {
+    } else if ((opcode == I_LOOP) ||
+        (opcode == I_LOOPE) ||
+        (opcode == I_LOOPNE) ||
+        (opcode == I_LOOPNZ) ||
+        (opcode == I_LOOPZ)) {
         /* loopxx lable(n+1) */
-        sprintf(buffer, "  %s label%d", nasm_insn_names[seed->opcode], stat_get_labeli());
+        sprintf(buffer, "  %s label%d", nasm_insn_names[opcode], stat_get_labeli());
         one_insn_gen_ctrl(buffer, INSERT_AFTER);
 
         gen_label(INSERT_BEFORE);
         stat_lock_ctrl();
         stat_lock_reg(R_ECX, LOCK_REG_CASE_LOOP);
         return true;
-    } else if (seed->opcode == I_CALL) {
+    } else if (opcode == I_CALL) {
         /* call lable(n+1) */
-        sprintf(buffer, "  %s label%d", nasm_insn_names[seed->opcode], stat_get_labeli());
+        sprintf(buffer, "  %s label%d", nasm_insn_names[opcode], stat_get_labeli());
         one_insn_gen_ctrl(buffer, INSERT_AFTER);
 
         sprintf(buffer, "  %s", nasm_insn_names[I_RET]);

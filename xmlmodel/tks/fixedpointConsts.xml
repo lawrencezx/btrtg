@@ -162,6 +162,11 @@
         <Imm8> 0x21 </Imm8>
         <Imm8> 0x6d </Imm8>
     </CG>
+    <CG name = "jecx">
+        <Imm32> 0x0 </Imm32>
+        <Imm32> 0x1 </Imm32>
+        <Imm32> 0xcccccccc </Imm32>
+    </CG>
     <CG name = "string">
         <Imm8> 0x1 </Imm8>
         <Imm8> 0x55 </Imm8>
