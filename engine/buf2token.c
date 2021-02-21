@@ -36,7 +36,7 @@ char *get_token_buf(void)
 char *get_token_cbufptr(void)
 {
     memset(token_buf, ' ', 2);
-    memset(token_buf + 2, '\n', sizeof(token_buf) - 2);
+    memset(token_buf + 2, '\0', sizeof(token_buf) - 2);
     token_bufptr = (char *)token_buf + 2;
     return token_bufptr;
 }
@@ -84,7 +84,7 @@ static char *buf_copy(const char *p, int len)
 int get_token(struct tokenval *tv)
 {
 #ifdef DEBUG_MODE
-    fprintf(stderr, "[token_bufptr]: %s\n", token_bufptr);
+    fprintf(stderr, "[token_bufptr: 0x%llx]: %s\n", (long long unsigned int)token_bufptr, token_bufptr);
 #endif
     const char *r;
 

@@ -620,8 +620,6 @@ void init_implied_operands(insn *result)
         init_popf();
     } else {
         int operands = result->operands;
-        bool has_mem_opnd = stat_get_has_mem_opnd();
-        stat_set_has_mem_opnd(false);
         switch (result->opcode) {
             case I_FBSTP:
             case I_FCHS:
@@ -714,7 +712,6 @@ void init_implied_operands(insn *result)
             default:
                 break;
         }
-        stat_set_has_mem_opnd(has_mem_opnd);
     }
     stat_set_need_init(true);
 }
@@ -969,19 +966,16 @@ static void init_opnd(char *asm_opnd, operand_seed *opnd_seed, struct blk_var *v
     stat_set_need_init(false);
     opflags_t opndflags = opnd_seed->opndflags;
     if (is_class(REGISTER, opndflags)){
+        bool has_mem_opnd = stat_get_has_mem_opnd();
+        stat_set_has_mem_opnd(false);
         if(is_class(REG_CLASS_FPUREG, opndflags)){
-            bool has_mem_opnd = stat_get_has_mem_opnd();
-            stat_set_has_mem_opnd(false);
             init_fpu_register_opnd(asm_opnd, opnd_seed);
-            stat_set_has_mem_opnd(has_mem_opnd);
         }else if(is_class(REG_CLASS_RM_MMX, opndflags)){
-            bool has_mem_opnd = stat_get_has_mem_opnd();
-            stat_set_has_mem_opnd(false);
             init_mmx_register_opnd(asm_opnd, opnd_seed);
-            stat_set_has_mem_opnd(has_mem_opnd);
         }else{
             init_register_opnd(asm_opnd, opnd_seed);
         }
+        stat_set_has_mem_opnd(has_mem_opnd);
     }else if (is_class(REGMEM, opndflags)) {
         if (is_class(MEM_OFFS, opndflags)) {
             init_memoffs_opnd(asm_opnd, opnd_seed);

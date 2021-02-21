@@ -198,6 +198,7 @@ static void walkGElem(elem_struct *g_e)
     insn inst;
 
     stat_set_need_init(likely_happen_p(g_e->inip));
+    stat_set_has_mem_opnd(false);
 
     inst_node = wdtree_select_leaf_node(g_e->g_tree);
     
@@ -226,6 +227,7 @@ static void walkCElem(elem_struct *c_e)
 static void walkIElem(elem_struct *i_e)
 {
     stat_set_need_init(likely_happen_p(i_e->inip));
+    stat_set_has_mem_opnd(false);
     stat_set_val_nodes(i_e->val_nodes);
 
     one_insn_gen_const(i_e->asm_inst);

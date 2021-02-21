@@ -290,6 +290,9 @@ bool init_specific_register(enum reg_enum R_reg)
         val_node = g_array_index(val_nodes, struct const_node *, stat_get_opi());
     }
 
+    bool has_mem_opnd = stat_get_has_mem_opnd();
+    stat_set_has_mem_opnd(false);
+
     if((R_reg >= R_ST0) && (R_reg <= R_ST7)){
         char mem_address[64];
         char inst_init_mem_addr[128];
@@ -325,6 +328,7 @@ bool init_specific_register(enum reg_enum R_reg)
         (uint32_t)nasm_random64(0x100000000) : val_node->imm32);
         one_insn_gen_const(buffer);
     }
+    stat_set_has_mem_opnd(has_mem_opnd);
     return true;
 }
 

@@ -487,6 +487,7 @@ bool one_insn_gen_const(char *asm_buffer)
 
     strcpy(get_token_cbufptr(), asm_buffer);
     sucess = one_insn_gen(NULL, &const_inst);
+    get_token_cbufptr();
 
     /* restore the contents in token_buf */
     strcpy(get_token_buf(), buffer);
