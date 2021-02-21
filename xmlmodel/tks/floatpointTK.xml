@@ -95,6 +95,22 @@
 		<Node name = "farith" weight="100"> </Node>
         <Node name = "normal" weight="0"> </Node>
 	</TK>
+	<TK inst = "fsin">
+		<Node name = "farith" weight="100"> </Node>
+        <Node name = "normal" weight="0"> </Node>
+	</TK>
+	<TK inst = "fsincos">
+		<Node name = "farith" weight="100"> </Node>
+        <Node name = "normal" weight="0"> </Node>
+	</TK>
+	<TK inst = "fptan">
+		<Node name = "farith" weight="100"> </Node>
+        <Node name = "normal" weight="0"> </Node>
+	</TK>
+	<TK inst = "fpatan">
+		<Node name = "farith" weight="100"> </Node>
+        <Node name = "normal" weight="0"> </Node>
+	</TK>
 
 	<TK inst = "fdiv">
 		<Node name = "farith" weight="100"> </Node>
@@ -105,6 +121,32 @@
         <Node name = "normal" weight="0"> </Node>
 	</TK>
 	<TK inst = "fidiv">
+		<Node name = "farith" weight="100"> </Node>
+        <Node name = "normal" weight="0"> </Node>
+	</TK>
+
+	<TK inst = "fdivr">
+		<Node name = "farith" weight="100"> </Node>
+        <Node name = "normal" weight="0"> </Node>
+	</TK>
+	<TK inst = "fdivrp">
+		<Node name = "farith" weight="100"> </Node>
+        <Node name = "normal" weight="0"> </Node>
+	</TK>
+	<TK inst = "fidivr">
+		<Node name = "farith" weight="100"> </Node>
+        <Node name = "normal" weight="0"> </Node>
+	</TK>
+
+	<TK inst = "fmul">
+		<Node name = "farith" weight="100"> </Node>
+        <Node name = "normal" weight="0"> </Node>
+	</TK>
+	<TK inst = "fmulp">
+		<Node name = "farith" weight="100"> </Node>
+        <Node name = "normal" weight="0"> </Node>
+	</TK>
+	<TK inst = "fimul">
 		<Node name = "farith" weight="100"> </Node>
         <Node name = "normal" weight="0"> </Node>
 	</TK>

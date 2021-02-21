@@ -1,0 +1,36 @@
+<Template>
+    <traverse>
+        <I type = "fdiv mem32" trv = "true"></I>
+        <C type = "st0"></C>
+    </traverse>
+    <traverse>
+        <I type = "fdiv mem64" trv = "true"></I>
+        <C type = "st0"></C>
+    </traverse>
+    <traverse>
+        <I type = "fdiv st0, fpureg" trv = "true"></I>
+        <C type = "st0"></C>
+    </traverse>
+    <traverse>
+		<V var = "fpureg" type = "fpureg"></V>
+        <I type = "fdiv @fpureg, st0" trv = "true"></I>
+        <C type = "fpureg"></C>
+    </traverse>
+    <traverse>
+		<V var = "fpureg" type = "fpureg"></V>
+        <I type = "fdivp @fpureg, st0" trv = "true"></I>
+        <C type = "fpureg"></C>
+    </traverse>
+    <traverse>
+        <I type = "fdivp" trv = "true"></I>
+        <C type = "st0"></C>
+    </traverse>
+    <traverse>
+        <I type = "fidiv mem32" trv = "true"></I>
+        <C type = "st0"></C>
+    </traverse>
+    <traverse>
+        <I type = "fidiv mem16" trv = "true"></I>
+        <C type = "st0"></C>
+    </traverse>
+</Template>

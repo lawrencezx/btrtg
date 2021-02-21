@@ -40,10 +40,20 @@ static int get_operands_from_instname(char * inst_name){
         case I_FDIV:
         case I_FDIVP:
         case I_FIDIV:
+        case I_FDIVR:
+        case I_FDIVRP:
+        case I_FIDIVR:
+        case I_FMUL:
+        case I_FMULP:
+        case I_FIMUL:
             return 2;
         case I_FABS:
         case I_FCHS:
         case I_FCOS:
+        case I_FSIN:
+        case I_FSINCOS:
+        case I_FPTAN:
+        case I_FPATAN:
             return 1;
         default:
             return -1;

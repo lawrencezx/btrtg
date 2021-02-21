@@ -1,0 +1,36 @@
+<Template>
+    <traverse>
+        <I type = "fmul mem32" trv = "true"></I>
+        <C type = "st0"></C>
+    </traverse>
+    <traverse>
+        <I type = "fmul mem64" trv = "true"></I>
+        <C type = "st0"></C>
+    </traverse>
+    <traverse>
+        <I type = "fmul st0, fpureg" trv = "true"></I>
+        <C type = "st0"></C>
+    </traverse>
+    <traverse>
+		<V var = "fpureg" type = "fpureg"></V>
+        <I type = "fmul @fpureg, st0" trv = "true"></I>
+        <C type = "fpureg"></C>
+    </traverse>
+    <traverse>
+		<V var = "fpureg" type = "fpureg"></V>
+        <I type = "fmulp @fpureg, st0" trv = "true"></I>
+        <C type = "fpureg"></C>
+    </traverse>
+    <traverse>
+        <I type = "fmulp" trv = "true"></I>
+        <C type = "st0"></C>
+    </traverse>
+    <traverse>
+        <I type = "fimul mem32" trv = "true"></I>
+        <C type = "st0"></C>
+    </traverse>
+    <traverse>
+        <I type = "fimul mem16" trv = "true"></I>
+        <C type = "st0"></C>
+    </traverse>
+</Template>

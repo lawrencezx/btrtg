@@ -1,0 +1,23 @@
+<Template>
+    <traverse>
+        <I type = "fsin" trv = "true"></I>
+        <C type = "st0"></C>
+    </traverse>
+    <traverse>
+        <I type = "fcos" trv = "true"></I>
+        <C type = "st0"></C>
+    </traverse>
+    <traverse>
+        <I type = "fsincos" trv = "true"></I>
+        <C type = "st0"></C>
+		<C typt = "st1">
+    </traverse>
+    <traverse>
+        <I type = "fptan" trv = "true"></I>
+        <C type = "st0"></C>
+    </traverse>
+    <traverse>
+        <I type = "fpatan" trv = "true"></I>
+        <C type = "st0"></C>
+    </traverse>
+</Template>
