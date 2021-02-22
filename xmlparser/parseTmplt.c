@@ -18,10 +18,11 @@
 #include "tmplt.h"
 #include "tk.h"
 
-static const char *xmlfiles[1] =
+static const char *xmlfiles[2] =
 {
     /* must put group before tempalte, so the tempalte can find relevant instruction group */
     "insn-group.xml",
+    "flag-pattern-group.xml"
 };
 char *tmpltpath = "../xmlmodel/templates";
 

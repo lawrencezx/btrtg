@@ -123,6 +123,34 @@ bool create_unity(operand_seed *opnd_seed, char *buffer)
     return true;
 }
 
+bool create_sbyteword(operand_seed *opnd_seed, char *buffer)
+{
+    (void)opnd_seed;
+    dfmt->print("    try> create sbyteword\n");
+    
+    int sbyteword;
+
+    sbyteword = nasm_random32(RAND_BITS16_BND);
+
+    sprintf(buffer, "0x%x", sbyteword);
+    dfmt->print("    done> new sbyteword: %s\n", buffer);
+    return true;
+}
+
+bool create_sbytedword(operand_seed *opnd_seed, char *buffer)
+{
+    (void)opnd_seed;
+    dfmt->print("    try> create sbytedword\n");
+    
+    int sbytedword;
+
+    sbytedword = nasm_random64(RAND_BITS32_BND);
+
+    sprintf(buffer, "0x%x", sbytedword);
+    dfmt->print("    done> new sbytedword: %s\n", buffer);
+    return true;
+}
+
 bool create_gpr_register(operand_seed *opnd_seed, char *buffer)
 {
     dfmt->print("    try> create gpr\n");

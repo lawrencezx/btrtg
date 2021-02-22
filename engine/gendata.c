@@ -1069,9 +1069,17 @@ static bool gen_immediate(operand_seed *opnd_seed, char *buffer)
         }
         return create_unity(opnd_seed, buffer);
     } else if (is_class(SBYTEDWORD, opndflags)) {
-        /* TODO */
+        if (stat_get_need_init()) {
+            init_immediate_opnd(buffer, opnd_seed);
+            return true;
+        }
+        return create_sbytedword(opnd_seed, buffer);
     } else if (is_class(SBYTEWORD, opndflags)) {
-        /* TODO */
+        if (stat_get_need_init()) {
+            init_immediate_opnd(buffer, opnd_seed);
+            return true;
+        }
+        return create_sbyteword(opnd_seed, buffer);
     } else if (is_class(IMMEDIATE, opndflags)) {
         if (stat_get_need_init()) {
             init_immediate_opnd(buffer, opnd_seed);
@@ -1103,7 +1111,7 @@ static bool gen_reg_mem(operand_seed *opnd_seed, char *buffer)
             opnd_seed->opndflags = (opnd_seed->opndflags & ~OPTYPE_MASK) | MEMORY;
             return create_memory(opnd_seed, buffer);
         } else {
-            opnd_seed->opndflags = (opnd_seed->opndflags & ~OPTYPE_MASK) | REGISTER;
+            opnd_seed->opndflags = opnd_seed->opndflags | REGISTER;
             return gen_register(opnd_seed, buffer);
         }
     }

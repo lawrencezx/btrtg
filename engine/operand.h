@@ -13,6 +13,8 @@ bool create_specific_register(enum reg_enum R_reg, operand_seed *opnd_seed, char
 bool create_control_register(operand_seed *opnd_seed, char *buffer);
 bool create_segment_register(operand_seed *opnd_seed, char *buffer);
 bool create_unity(operand_seed *opnd_seed, char *buffer);
+bool create_sbyteword(operand_seed *opnd_seed, char *buffer);
+bool create_sbytedword(operand_seed *opnd_seed, char *buffer);
 bool create_gpr_register(operand_seed *opnd_seed, char *buffer);
 bool create_immediate(operand_seed *opnd_seed, char *buffer);
 bool create_memory(operand_seed *opnd_seed, char *buffer);

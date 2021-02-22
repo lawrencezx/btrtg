@@ -1,0 +1,102 @@
+<InsnGroups>
+    <IG name = "Pattern-head">
+        <I> add </I>
+        <I> sub </I>
+        <I> inc </I>
+        <I> dec </I>
+        <I> cmp </I>
+        <I> and </I>
+        <I> or </I>
+        <I> test </I>
+    </IG>
+    <IG name = "CMOVcc">
+        <I> cmova </I>
+        <I> cmovae </I>
+        <I> cmovb </I>
+        <I> cmovbe </I>
+        <I> cmove </I>
+        <I> cmovg </I>
+        <I> cmovge </I>
+        <I> cmovl </I>
+        <I> cmovle </I>
+        <I> cmovna </I>
+        <I> cmovnae </I>
+        <I> cmovnb </I>
+        <I> cmovnbe </I>
+        <I> cmovne </I>
+        <I> cmovng </I>
+        <I> cmovnge </I>
+        <I> cmovnl </I>
+        <I> cmovnle </I>
+        <I> cmovno </I>
+        <I> cmovnp </I>
+        <I> cmovns </I>
+        <I> cmovnz </I>
+        <I> cmovo </I>
+        <I> cmovp </I>
+        <I> cmovpe </I>
+        <I> cmovpo </I>
+        <I> cmovs </I>
+        <I> cmovz </I>
+    </IG>
+    <IG name = "Jcc">
+        <I> ja </I>
+        <I> jae </I>
+        <I> jb </I>
+        <I> jbe </I>
+        <I> je </I>
+        <I> jg </I>
+        <I> jge </I>
+        <I> jl </I>
+        <I> jle </I>
+        <I> jna </I>
+        <I> jnae </I>
+        <I> jnb </I>
+        <I> jnbe </I>
+        <I> jne </I>
+        <I> jng </I>
+        <I> jnge </I>
+        <I> jnl </I>
+        <I> jnle </I>
+        <I> jno </I>
+        <I> jnp </I>
+        <I> jns </I>
+        <I> jnz </I>
+        <I> jo </I>
+        <I> jp </I>
+        <I> jpe </I>
+        <I> jpo </I>
+        <I> js </I>
+        <I> jz </I>
+    </IG>
+    <IG name = "SETcc">
+        <I> seta </I> 
+        <I> setae </I>
+        <I> setb </I>
+        <I> setbe </I>
+        <I> sete </I>
+        <I> setg </I>
+        <I> setge </I>
+        <I> setl </I>
+        <I> setle </I>
+        <I> setna </I>
+        <I> setnae </I>
+        <I> setnb </I>
+        <I> setnbe </I>
+        <I> setne </I>
+        <I> setng </I>
+        <I> setnge </I>
+        <I> setnl </I>
+        <I> setnle </I>
+        <I> setno </I>
+        <I> setnp </I>
+        <I> setns </I>
+        <I> setnz </I>
+        <I> seto </I>
+        <I> setp </I>
+        <I> setpe </I>
+        <I> setpo </I>
+        <I> sets </I>
+        <I> setz </I> 
+    </IG>
+</InsnGroups>

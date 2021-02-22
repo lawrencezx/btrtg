@@ -1,0 +1,7 @@
+<Template>
+    <repeat times = "100">
+        <G type = "Pattern-head"> </G>
+        <G type = "CMOVcc"> </G>
+        <C type = "x86_state"> </C>
+    </repeat>
+</Template>
