@@ -50,7 +50,7 @@ static const char safe_exit[] = "\n\
 static char *check_function_names[] =
 {
 #define DEFINE_CHECK_FUNCTION(name,type,func) #func,
-#include "./compile/checkfunctions.h"
+#include "./user-lib/checkfunctions.h"
     "check_point_end"
 #undef DEFINE_CHECK_FUNCTION
 };
