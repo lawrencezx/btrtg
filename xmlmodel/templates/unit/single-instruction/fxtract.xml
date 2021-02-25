@@ -1,0 +1,7 @@
+<Template>
+    <traverse>
+        <I type = "fxtract" trv = "true"></I>
+        <C type = "st0"></C>
+		<C type = "st1"></C>
+    </traverse>
+</Template>

@@ -1,0 +1,10 @@
+<Template>
+    <traverse>
+        <I type = "fprem" trv = "true"></I>
+        <C type = "st0"></C>
+    </traverse>
+    <traverse>
+        <I type = "fprem1" trv = "true"></I>
+        <C type = "st0"></C>
+    </traverse>
+</Template>

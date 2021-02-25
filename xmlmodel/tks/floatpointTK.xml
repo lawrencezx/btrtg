@@ -151,6 +151,96 @@
         <Node name = "normal" weight="0"> </Node>
 	</TK>
 
+	<TK inst = "fprem">
+		<Node name = "farith" weight="100"> </Node>
+        <Node name = "normal" weight="0"> </Node>
+	</TK>
+	<TK inst = "fprem1">
+		<Node name = "farith" weight="100"> </Node>
+        <Node name = "normal" weight="0"> </Node>
+	</TK>
+
+	<TK inst = "frndint">
+		<Node name = "farith" weight="100"> </Node>
+        <Node name = "normal" weight="0"> </Node>
+	</TK>
+
+	<TK inst = "fscale">
+		<Node name = "farith" weight="100"> </Node>
+        <Node name = "normal" weight="0"> </Node>
+	</TK>
+
+	<TK inst = "fsqrt">
+		<Node name = "farith" weight="100"> </Node>
+        <Node name = "normal" weight="0"> </Node>
+	</TK>
+
+    <TK inst = "fsub">
+        <Node name = "farith" weight="100"> </Node>
+        <Node name = "normal" weight="0"> </Node>
+    </TK>
+    <TK inst = "fsubp">
+        <Node name = "farith" weight="100"> </Node>
+        <Node name = "normal" weight="0"> </Node>
+    </TK>
+    <TK inst = "fisub">
+        <Node name = "farith" weight="100"> </Node>
+        <Node name = "normal" weight="0"> </Node>
+    </TK>
+
+    <TK inst = "fsubr">
+        <Node name = "farith" weight="100"> </Node>
+        <Node name = "normal" weight="0"> </Node>
+    </TK>
+    <TK inst = "fsubrp">
+        <Node name = "farith" weight="100"> </Node>
+        <Node name = "normal" weight="0"> </Node>
+    </TK>
+    <TK inst = "fisubr">
+        <Node name = "farith" weight="100"> </Node>
+        <Node name = "normal" weight="0"> </Node>
+    </TK>
+
+    <TK inst = "fxtract">
+        <Node name = "farith" weight="100"> </Node>
+        <Node name = "normal" weight="0"> </Node>
+    </TK>
+
+    <TK inst = "fyl2x">
+        <Node name = "farith" weight="100"> </Node>
+        <Node name = "normal" weight="0"> </Node>
+    </TK>
+
+    <TK inst = "fyl2xp1">
+        <Node name = "farith" weight="100"> </Node>
+        <Node name = "normal" weight="0"> </Node>
+    </TK>
+
+    <TK inst = "fild">
+        <Node name = "imm64" weight="100"> </Node>
+        <Node name = "normal" weight="0"> </Node>
+    </TK>
+
+    <TK inst = "fist">
+        <Node name = "imm64" weight="100"> </Node>
+        <Node name = "normal" weight="0"> </Node>
+    </TK>
+
+    <TK inst = "fistp">
+        <Node name = "imm64" weight="100"> </Node>
+        <Node name = "normal" weight="0"> </Node>
+    </TK>
+
+    <TK inst = "fst">
+        <Node name = "farith" weight="100"> </Node>
+        <Node name = "normal" weight="0"> </Node>
+    </TK>
+
+    <TK inst = "fstp">
+        <Node name = "farith" weight="100"> </Node>
+        <Node name = "normal" weight="0"> </Node>
+    </TK>
+
 	<TK inst = "paddb">
 		<Node name = "mmxarith" weight="100"> </Node>
         <Node name = "normal" weight="0"> </Node>
@@ -164,6 +254,204 @@
         <Node name = "normal" weight="0"> </Node>
 	</TK>
 	<TK inst = "paddq">
+		<Node name = "mmxarith" weight="100"> </Node>
+        <Node name = "normal" weight="0"> </Node>
+	</TK>
+
+	<TK inst = "movd">
+		<Node name = "arith" weight="100"> </Node>
+        <Node name = "normal" weight="0"> </Node>
+	</TK>
+	<TK inst = "movq">
+		<Node name = "mmxarith" weight="100"> </Node>
+        <Node name = "normal" weight="0"> </Node>
+	</TK>
+
+	<TK inst = "packsswb">
+		<Node name = "mmxarith" weight="100"> </Node>
+        <Node name = "normal" weight="0"> </Node>
+	</TK>
+	<TK inst = "packssdw">
+		<Node name = "mmxarith" weight="100"> </Node>
+        <Node name = "normal" weight="0"> </Node>
+	</TK>
+
+	<TK inst = "packuswb">
+		<Node name = "mmxarith" weight="100"> </Node>
+        <Node name = "normal" weight="0"> </Node>
+	</TK>
+
+	<TK inst = "paddsb">
+		<Node name = "mmxarith" weight="100"> </Node>
+        <Node name = "normal" weight="0"> </Node>
+	</TK>
+	<TK inst = "paddsw">
+		<Node name = "mmxarith" weight="100"> </Node>
+        <Node name = "normal" weight="0"> </Node>
+	</TK>
+
+	<TK inst = "paddusb">
+		<Node name = "mmxarith" weight="100"> </Node>
+        <Node name = "normal" weight="0"> </Node>
+	</TK>
+	<TK inst = "paddusw">
+		<Node name = "mmxarith" weight="100"> </Node>
+        <Node name = "normal" weight="0"> </Node>
+	</TK>
+
+	<TK inst = "pand">
+		<Node name = "mmxarith" weight="100"> </Node>
+        <Node name = "normal" weight="0"> </Node>
+	</TK>
+
+	<TK inst = "pandn">
+		<Node name = "mmxarith" weight="100"> </Node>
+        <Node name = "normal" weight="0"> </Node>
+	</TK>
+
+	<TK inst = "pcmpeqb">
+		<Node name = "mmxarith" weight="100"> </Node>
+        <Node name = "normal" weight="0"> </Node>
+	</TK>
+	<TK inst = "pcmpeqw">
+		<Node name = "mmxarith" weight="100"> </Node>
+        <Node name = "normal" weight="0"> </Node>
+	</TK>
+	<TK inst = "pcmpeqd">
+		<Node name = "mmxarith" weight="100"> </Node>
+        <Node name = "normal" weight="0"> </Node>
+	</TK>
+
+	<TK inst = "pcmpgtb">
+		<Node name = "mmxarith" weight="100"> </Node>
+        <Node name = "normal" weight="0"> </Node>
+	</TK>
+	<TK inst = "pcmpgtw">
+		<Node name = "mmxarith" weight="100"> </Node>
+        <Node name = "normal" weight="0"> </Node>
+	</TK>
+	<TK inst = "pcmpgtd">
+		<Node name = "mmxarith" weight="100"> </Node>
+        <Node name = "normal" weight="0"> </Node>
+	</TK>
+
+	<TK inst = "pmaddwd">
+		<Node name = "mmxarith" weight="100"> </Node>
+        <Node name = "normal" weight="0"> </Node>
+	</TK>
+
+	<TK inst = "pmaddubsw">
+		<Node name = "mmxarith" weight="100"> </Node>
+        <Node name = "normal" weight="0"> </Node>
+	</TK>
+
+	<TK inst = "pmulhw">
+		<Node name = "mmxarith" weight="100"> </Node>
+        <Node name = "normal" weight="0"> </Node>
+	</TK>
+
+	<TK inst = "por">
+		<Node name = "mmxarith" weight="100"> </Node>
+        <Node name = "normal" weight="0"> </Node>
+	</TK>
+
+	<TK inst = "psllw">
+		<Node name = "mmxarith" weight="100"> </Node>
+        <Node name = "normal" weight="0"> </Node>
+	</TK>
+	<TK inst = "pslld">
+		<Node name = "mmxarith" weight="100"> </Node>
+        <Node name = "normal" weight="0"> </Node>
+	</TK>
+	<TK inst = "psllq">
+		<Node name = "mmxarith" weight="100"> </Node>
+        <Node name = "normal" weight="0"> </Node>
+	</TK>
+
+	<TK inst = "psraw">
+		<Node name = "mmxarith" weight="100"> </Node>
+        <Node name = "normal" weight="0"> </Node>
+	</TK>
+	<TK inst = "psrad">
+		<Node name = "mmxarith" weight="100"> </Node>
+        <Node name = "normal" weight="0"> </Node>
+	</TK>
+
+	<TK inst = "psrlw">
+		<Node name = "mmxarith" weight="100"> </Node>
+        <Node name = "normal" weight="0"> </Node>
+	</TK>
+	<TK inst = "psrld">
+		<Node name = "mmxarith" weight="100"> </Node>
+        <Node name = "normal" weight="0"> </Node>
+	</TK>
+	<TK inst = "psrlq">
+		<Node name = "mmxarith" weight="100"> </Node>
+        <Node name = "normal" weight="0"> </Node>
+	</TK>
+
+	<TK inst = "psubb">
+		<Node name = "mmxarith" weight="100"> </Node>
+        <Node name = "normal" weight="0"> </Node>
+	</TK>
+	<TK inst = "psubw">
+		<Node name = "mmxarith" weight="100"> </Node>
+        <Node name = "normal" weight="0"> </Node>
+	</TK>
+	<TK inst = "psubd">
+		<Node name = "mmxarith" weight="100"> </Node>
+        <Node name = "normal" weight="0"> </Node>
+	</TK>
+	<TK inst = "psubq">
+		<Node name = "mmxarith" weight="100"> </Node>
+        <Node name = "normal" weight="0"> </Node>
+	</TK>
+
+	<TK inst = "psubsb">
+		<Node name = "mmxarith" weight="100"> </Node>
+        <Node name = "normal" weight="0"> </Node>
+	</TK>
+	<TK inst = "psubsw">
+		<Node name = "mmxarith" weight="100"> </Node>
+        <Node name = "normal" weight="0"> </Node>
+	</TK>
+
+	<TK inst = "psubusb">
+		<Node name = "mmxarith" weight="100"> </Node>
+        <Node name = "normal" weight="0"> </Node>
+	</TK>
+	<TK inst = "psubusw">
+		<Node name = "mmxarith" weight="100"> </Node>
+        <Node name = "normal" weight="0"> </Node>
+	</TK>
+
+	<TK inst = "punpckhbw">
+		<Node name = "mmxarith" weight="100"> </Node>
+        <Node name = "normal" weight="0"> </Node>
+	</TK>
+	<TK inst = "punpckhwd">
+		<Node name = "mmxarith" weight="100"> </Node>
+        <Node name = "normal" weight="0"> </Node>
+	</TK>
+	<TK inst = "punpckhdq">
+		<Node name = "mmxarith" weight="100"> </Node>
+        <Node name = "normal" weight="0"> </Node>
+	</TK>
+
+	<TK inst = "punpcklbw">
+		<Node name = "mmxarith" weight="100"> </Node>
+        <Node name = "normal" weight="0"> </Node>
+	</TK>
+	<TK inst = "punpcklwd">
+		<Node name = "mmxarith" weight="100"> </Node>
+        <Node name = "normal" weight="0"> </Node>
+	</TK>
+	<TK inst = "punpckldq">
+		<Node name = "mmxarith" weight="100"> </Node>
+        <Node name = "normal" weight="0"> </Node>
+	</TK>
+
+	<TK inst = "pxor">
 		<Node name = "mmxarith" weight="100"> </Node>
         <Node name = "normal" weight="0"> </Node>
 	</TK>

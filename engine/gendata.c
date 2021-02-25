@@ -628,8 +628,8 @@ void init_implicit_operands(insn *result)
             case I_FDIVRP:
             case I_FMUL:
             case I_FMULP:
-            case I_FST:
-            case I_FSTP:
+            //case I_FST:
+            //case I_FSTP:
             case I_FSUB:
             case I_FSUBP:
             case I_FSUBR:
@@ -806,6 +806,9 @@ static void init_mmx_register_opnd(char *asm_opnd, operand_seed *opnd_seed)
         val_node = g_array_index(val_nodes, struct const_node *, stat_get_opi());
     }
     
+    if(val_node->type == CONST_IMM32){
+        ((int *)&(val_node->imm64))[1] = 0x0;
+    }
     char * mem_address_end = mem_address + strlen(mem_address);
     sprintf(asm_mmx_inst, "mov dword %s, 0x%x", mem_address, ((int *)&(val_node->imm64))[0]);
     one_insn_gen_const(asm_mmx_inst); 
@@ -865,8 +868,8 @@ static void init_memory_opnd(char *asm_opnd, operand_seed *opnd_seed)
     }
     if(val_node != NULL && CONST_FLOAT == val_node->type){
         init_memory_opnd_float(asm_opnd, opnd_seed, val_node);
-    }else if(val_node != NULL && CONST_IMM64 == val_node->type){
-        init_memory_opnd_imm64(asm_opnd, val_node);
+    }else if(val_node != NULL && opnd_seed->opdsize == BITS64){
+            init_memory_opnd_imm64(asm_opnd, val_node);
     }else{
         sprintf(asm_mov_inst, "mov %s, 0x%x", asm_opnd, (val_node == NULL) ?
                 (int)nasm_random64(RAND_BITS32_BND) : val_node->imm32);
