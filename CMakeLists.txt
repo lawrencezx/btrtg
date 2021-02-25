@@ -87,9 +87,12 @@ add_dependencies(nasmlib perlreq)
 
 add_subdirectory(intg-tests)
 
-configure_file(./intg-tests/user-lib/ld.script ld.script COPYONLY)
-configure_file(./intg-tests/user-lib/user-compile.sh user-compile.sh COPYONLY)
-configure_file(./intg-tests/user-lib/verification.h verification.h COPYONLY)
-configure_file(./intg-tests/user-lib/outputlib.c outputlib.c COPYONLY)
-configure_file(./intg-tests/user-lib/checklib.c checklib.c COPYONLY)
-configure_file(./intg-tests/user-lib/checkfunctions.h checkfunctions.h COPYONLY)
+#configure_file(./intg-tests/user-lib/ld.script ld.script COPYONLY)
+#configure_file(./intg-tests/user-lib/user-compile.sh user-compile.sh COPYONLY)
+#configure_file(./intg-tests/user-lib/verification.h verification.h COPYONLY)
+#configure_file(./intg-tests/user-lib/outputlib.c outputlib.c COPYONLY)
+#configure_file(./intg-tests/user-lib/checklib.c checklib.c COPYONLY)
+#configure_file(./intg-tests/user-lib/checkfunctions.h checkfunctions.h COPYONLY)
+
+file(COPY ./intg-tests/user-lib DESTINATION ./)
+file(COPY ./intg-tests/system-lib DESTINATION ./)
