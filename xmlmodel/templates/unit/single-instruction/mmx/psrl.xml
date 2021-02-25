@@ -1,0 +1,49 @@
+<Template>
+    <traverse>
+        <V var = "mmxreg" type = "mmxreg"></V>
+        <I type = "psrlw @mmxreg,mmxreg" trv = "true"></I>
+        <C type = "@mmxreg"></C>
+    </traverse>
+    <traverse>
+        <V var = "mmxreg" type = "mmxreg"></V>
+        <I type = "psrlw @mmxreg,mem64" trv = "true"></I>
+        <C type = "@mmxreg"></C>
+    </traverse>
+    <traverse>
+        <V var = "mmxreg" type = "mmxreg"></V>
+        <I type = "psrlw @mmxreg,imm8" trv = "true"></I>
+        <C type = "@mmxreg"></C>
+    </traverse>
+
+    <traverse>
+        <V var = "mmxreg" type = "mmxreg"></V>
+        <I type = "psrld @mmxreg,mmxreg" trv = "true"></I>
+        <C type = "@mmxreg"></C>
+    </traverse>
+    <traverse>
+        <V var = "mmxreg" type = "mmxreg"></V>
+        <I type = "psrld @mmxreg,mem64" trv = "true"></I>
+        <C type = "@mmxreg"></C>
+    </traverse>
+    <traverse>
+        <V var = "mmxreg" type = "mmxreg"></V>
+        <I type = "psrld @mmxreg,imm8" trv = "true"></I>
+        <C type = "@mmxreg"></C>
+    </traverse>
+
+    <traverse>
+        <V var = "mmxreg" type = "mmxreg"></V>
+        <I type = "psrlq @mmxreg,mmxreg" trv = "true"></I>
+        <C type = "@mmxreg"></C>
+    </traverse>
+    <traverse>
+        <V var = "mmxreg" type = "mmxreg"></V>
+        <I type = "psrlq @mmxreg,mem64" trv = "true"></I>
+        <C type = "@mmxreg"></C>
+    </traverse>
+    <traverse>
+        <V var = "mmxreg" type = "mmxreg"></V>
+        <I type = "psrlq @mmxreg,imm8" trv = "true"></I>
+        <C type = "@mmxreg"></C>
+    </traverse>
+</Template>
