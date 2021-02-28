@@ -23,14 +23,10 @@
 #define  X87RegsOutputFormat "{\
 0x%04" PRIx16 "\
 ,0x%04" PRIx16 "\
-,0x%02" PRIx8 "\
-,0x%04" PRIx16 "\
-,0x%08" PRIx32 "\
-,0x%04" PRIx16 "\
-,0x%08" PRIx32 "\
 ,0x%04" PRIx16 "\
 ,0x%08" PRIx32 "\
 ,0x%08" PRIx32 "\
+,0x%04" PRIx16 "\
 ,0x%016" PRIx64 "\
 ,0x%04" PRIx16 "\
 ,0x%016" PRIx64 "\
@@ -49,7 +45,7 @@
 ,0x%04" PRIx16 "}"
 
 #define DEFINE_CHECK_FUNCTION(nasm,type,func) void func \
-    (struct X87LegacyXSaveArea x87fpstate, \
+    (struct X87LegacyFPUSaveArea x87fpustate, \
      struct X86StandardRegisters x86regs) \
 { \
     printf("{"); \
@@ -58,16 +54,16 @@
         x86regs.eflags, \
         x86regs.edi, x86regs.esi, x86regs.ebp, x86regs.esp, x86regs.ebx, x86regs.edx, x86regs.ecx, x86regs.eax); \
     printf(X87RegsOutputFormat, \
-        x87fpstate.fcw, x87fpstate.fsw, x87fpstate.ftw, x87fpstate.fpop, x87fpstate.fpip, x87fpstate.fpcs, \
-        x87fpstate.fpdp, x87fpstate.fpds, x87fpstate.mxcsr, x87fpstate.mxcsr_mask, \
-        x87fpstate.fpregs[0].d.low, x87fpstate.fpregs[0].d.high, \
-        x87fpstate.fpregs[1].d.low, x87fpstate.fpregs[1].d.high, \
-        x87fpstate.fpregs[2].d.low, x87fpstate.fpregs[2].d.high, \
-        x87fpstate.fpregs[3].d.low, x87fpstate.fpregs[3].d.high, \
-        x87fpstate.fpregs[4].d.low, x87fpstate.fpregs[4].d.high, \
-        x87fpstate.fpregs[5].d.low, x87fpstate.fpregs[5].d.high, \
-        x87fpstate.fpregs[6].d.low, x87fpstate.fpregs[6].d.high, \
-        x87fpstate.fpregs[7].d.low, x87fpstate.fpregs[7].d.high); \
+        fsa_get_fcw(&x87fpustate), fsa_get_fsw(&x87fpustate), fsa_get_ftw(&x87fpustate), \
+        fsa_get_ffdp(&x87fpustate), fsa_get_ffip(&x87fpustate), fsa_get_ffop(&x87fpustate), \
+        fsa_get_st(&x87fpustate, 0).low, fsa_get_st(&x87fpustate, 0).high, \
+        fsa_get_st(&x87fpustate, 1).low, fsa_get_st(&x87fpustate, 1).high, \
+        fsa_get_st(&x87fpustate, 2).low, fsa_get_st(&x87fpustate, 2).high, \
+        fsa_get_st(&x87fpustate, 3).low, fsa_get_st(&x87fpustate, 3).high, \
+        fsa_get_st(&x87fpustate, 4).low, fsa_get_st(&x87fpustate, 4).high, \
+        fsa_get_st(&x87fpustate, 5).low, fsa_get_st(&x87fpustate, 5).high, \
+        fsa_get_st(&x87fpustate, 6).low, fsa_get_st(&x87fpustate, 6).high, \
+        fsa_get_st(&x87fpustate, 7).low, fsa_get_st(&x87fpustate, 7).high); \
     printf("},\n"); \
 }
 

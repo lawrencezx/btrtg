@@ -4,48 +4,69 @@
 typedef uint32_t float32;
 typedef uint64_t float64;
 
-#define MMREG_UNION(n, bits)        \
-    union n {                       \
-        uint8_t  _b_##n[(bits)/8];  \
-        uint16_t _w_##n[(bits)/16]; \
-        uint32_t _l_##n[(bits)/32]; \
-        uint64_t _q_##n[(bits)/64]; \
-        float32  _s_##n[(bits)/32]; \
-        float64  _d_##n[(bits)/64]; \
-    }
-
-typedef MMREG_UNION(MMXReg, 64)  MMXReg;
-
 typedef struct {
     uint64_t low;
     uint16_t high;
 } floatx80;
 
-
-typedef union {
-    floatx80 d __attribute__((aligned(16)));
-    MMXReg mmx;
-} FPReg;
-
-struct X87LegacyXSaveArea {
+struct X87LegacyFPUSaveArea {
     uint16_t fcw;
+    uint16_t fcw_padding;
     uint16_t fsw;
-    uint8_t ftw;
-    uint8_t reserved0_5;
-    uint16_t fpop;
-    uint32_t fpip;
-    uint16_t fpcs;
-    uint16_t reserved0_14;
-    uint32_t fpdp;
-    uint16_t fpds;
-    uint16_t reserved16_6;
-    uint32_t mxcsr;
-    uint32_t mxcsr_mask;
-    FPReg fpregs[8];
-    uint8_t xmm_regs[8][16];
-    uint8_t reverved[11][16];
-    uint8_t available[3][16];
+    uint16_t fsw_padding;
+    uint16_t ftw;
+    uint16_t ftw_padding;
+    uint16_t ffip_0;
+    uint16_t ffip_padding;
+    struct {
+        uint32_t ffop:12;
+        uint32_t ffip_16:16;
+        uint32_t ffopfip_padding:4;
+    };
+    uint16_t ffdp_0;
+    uint16_t ffdp_padding;
+    struct {
+        uint32_t ffdp_padding_pre:12;
+        uint32_t ffdp_16:16;
+        uint32_t ffdp_padding_after:4;
+    };
+    uint8_t st80[80];
 };
+
+static inline uint16_t fsa_get_fcw(struct X87LegacyFPUSaveArea *x87fpustate)
+{
+    return x87fpustate->fcw;
+}
+
+static inline uint16_t fsa_get_fsw(struct X87LegacyFPUSaveArea *x87fpustate)
+{
+    return x87fpustate->fsw;
+}
+
+static inline uint16_t fsa_get_ftw(struct X87LegacyFPUSaveArea *x87fpustate)
+{
+    return x87fpustate->ftw;
+}
+
+static inline uint32_t fsa_get_ffdp(struct X87LegacyFPUSaveArea *x87fpustate)
+{
+    return ((uint32_t)x87fpustate->ffdp_0 | ((uint32_t)x87fpustate->ffdp_16 << 16));
+}
+
+static inline uint32_t fsa_get_ffip(struct X87LegacyFPUSaveArea *x87fpustate)
+{
+    return ((uint32_t)x87fpustate->ffip_0 | ((uint32_t)x87fpustate->ffip_16 << 16));
+}
+
+static inline uint16_t fsa_get_ffop(struct X87LegacyFPUSaveArea *x87fpustate)
+{
+    return x87fpustate->ffop;
+}
+
+static inline floatx80 fsa_get_st(struct X87LegacyFPUSaveArea *x87fpustate, int i)
+{
+    return *((floatx80 *)&(x87fpustate->st80[i * 10]));
+}
 
 typedef uint8_t Reg8;
 typedef uint16_t Reg16;

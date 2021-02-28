@@ -14,7 +14,12 @@ static const char main_label[] = "\
 main:\n";
 
 static const char init_regs[] = "\
-  mov edx,0x0\n";
+  mov eax,0x0\n\
+  mov ebx,0x0\n\
+  mov ecx,0x0\n\
+  mov edx,0x0\n\
+  mov esi,0x0\n\
+  mov edi,0x0\n";
 
 static const char check_macro[] = "\
 %macro check 1\n\
@@ -26,11 +31,11 @@ static const char check_macro[] = "\
   push es\n\
   push fs\n\
   push gs\n\
-  sub esp,0x200\n\
-  fxsave [esp]\n\
+  sub esp,0x6c\n\
+  fsave [esp]\n\
   call check_point_%1\n\
-  add esp,0x200\n\
-  fxrstor [esp]\n\
+  add esp,0x6c\n\
+  frstor [esp]\n\
   pop eax\n\
   pop eax\n\
   pop eax\n\

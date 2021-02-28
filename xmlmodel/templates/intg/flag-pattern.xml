@@ -1,5 +1,5 @@
 <Template>
-    <repeat times = "100">
+    <repeat times = "1000">
         <G type = "Pattern-head"> </G>
         <G type = "CMOVcc"> </G>
         <C type = "x86_state"> </C>
