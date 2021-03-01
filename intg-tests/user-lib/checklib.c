@@ -42,7 +42,10 @@ static int point = 0;
         printf("diff ["#gprhi"]: 0x%x, should be: 0x%x\n", check_##gprhi, std_##gprhi); \
         diff = 1; \
     } \
-    printf("check point: %d %s! ["#gprhi"]\n", point + 1, (diff == 1) ? "fail" : "pass"); \
+    if (diff == 1) \
+        printf("check point: %d fail! ["#gprhi"][fuzzy_pc:0x%x]\n", point + 1, x86regs.pc); \
+    else \
+        printf("check point: %d pass! ["#gprhi"]\n", point + 1); \
     diffs += diff; \
     point++; \
 }
@@ -63,7 +66,10 @@ check_point_gprhi(dh)
         printf("diff ["#gprlo"]: 0x%x, should be: 0x%x\n", check_##gprlo, std_##gprlo); \
         diff = 1; \
     } \
-    printf("check point: %d %s! ["#gprlo"]\n", point + 1, (diff == 1) ? "fail" : "pass"); \
+    if (diff == 1) \
+        printf("check point: %d fail! ["#gprlo"][fuzzy_pc:0x%x]\n", point + 1, x86regs.pc); \
+    else \
+        printf("check point: %d pass! ["#gprlo"]\n", point + 1); \
     diffs += diff; \
     point++; \
 }
@@ -84,7 +90,10 @@ check_point_gprlo(dl)
         printf("diff ["#reg16"]: 0x%x, should be: 0x%x\n", check_##reg16, std_##reg16); \
         diff = 1; \
     } \
-    printf("check point: %d %s! ["#reg16"]\n", point + 1, (diff == 1) ? "fail" : "pass"); \
+    if (diff == 1) \
+        printf("check point: %d fail! ["#reg16"][fuzzy_pc:0x%x]\n", point + 1, x86regs.pc); \
+    else \
+        printf("check point: %d pass! ["#reg16"]\n", point + 1); \
     diffs += diff; \
     point++; \
 }
@@ -116,7 +125,10 @@ check_point_reg16(gs)
         printf("diff ["#reg32"]: 0x%x, should be: 0x%x\n", check_##reg32, std_##reg32); \
         diff = 1; \
     } \
-    printf("check point: %d %s! ["#reg32"]\n", point + 1, (diff == 1) ? "fail" : "pass"); \
+    if (diff == 1) \
+        printf("check point: %d fail! ["#reg32"][fuzzy_pc:0x%x]\n", point + 1, x86regs.pc); \
+    else \
+        printf("check point: %d pass! ["#reg32"]\n", point + 1); \
     diffs += diff; \
     point++; \
 }
@@ -142,7 +154,10 @@ check_point_reg32(eflags)
         printf("diff ["#fpureg"]: 0x%x, should be: 0x%x\n", check_##fpureg, std_##fpureg); \
         diff = 1; \
     } \
-    printf("check point: %d %s! ["#fpureg"]\n", point + 1, (diff == 1) ? "fail" : "pass"); \
+    if (diff == 1) \
+        printf("check point: %d fail! ["#fpureg"][fuzzy_pc:0x%x]\n", point + 1, x86regs.pc); \
+    else \
+        printf("check point: %d pass! ["#fpureg"]\n", point + 1); \
     diffs += diff; \
     point++; \
 }
@@ -167,7 +182,10 @@ check_point_fpureg(st7, 7)
         printf("diff ["#mmxreg"]: 0x%x, should be: 0x%x\n", check_##mmxreg, std_##mmxreg); \
         diff = 1; \
     } \
-    printf("check point: %d %s! ["#mmxreg"]\n", point + 1, (diff == 1) ? "fail" : "pass"); \
+    if (diff == 1) \
+        printf("check point: %d fail! ["#mmxreg"][fuzzy_pc:0x%x]\n", point + 1, x86regs.pc); \
+    else \
+        printf("check point: %d pass! ["#mmxreg"]\n", point + 1); \
     diffs += diff; \
     point++; \
 }
@@ -192,7 +210,10 @@ check_point_mmxreg(mm7, 7)
         printf("diff ["#x87status"]: 0x%x, should be: 0x%x\n", check_##x87status, std_##x87status); \
         diff = 1; \
     } \
-    printf("check point: %d %s! ["#x87status"]\n", point + 1, (diff == 1) ? "fail" : "pass"); \
+    if (diff == 1) \
+        printf("check point: %d fail! ["#x87status"][fuzzy_pc:0x%x]\n", point + 1, x86regs.pc); \
+    else \
+        printf("check point: %d pass! ["#x87status"]\n", point + 1); \
     diffs += diff; \
     point++; \
 }
@@ -211,7 +232,10 @@ check_point_x87status32(ffip)
         printf("diff ["#x87status"]: 0x%x, should be: 0x%x\n", check_##x87status, std_##x87status); \
         diff = 1; \
     } \
-    printf("check point: %d %s! ["#x87status"]\n", point + 1, (diff == 1) ? "fail" : "pass"); \
+    if (diff == 1) \
+        printf("check point: %d fail! ["#x87status"][fuzzy_pc:0x%x]\n", point + 1, x86regs.pc); \
+    else \
+        printf("check point: %d pass! ["#x87status"]\n", point + 1); \
     diffs += diff; \
     point++; \
 }
@@ -225,10 +249,10 @@ void check_point_x86_state(struct X87LegacyFPUSaveArea x87fpustate,
      struct X86StandardRegisters x86regs)
 {
     int diff = 0;
-    if (x86regs.gs != output[point].X86.gs) {
-        printf("diff [gs]: %x, should be: 0x%x\n", x86regs.gs, output[point].X86.gs);
-        diff = 1;
-    }
+    //if (x86regs.gs != output[point].X86.gs) {
+    //    printf("diff [gs]: %x, should be: 0x%x\n", x86regs.gs, output[point].X86.gs);
+    //    diff = 1;
+    //}
     if (x86regs.fs != output[point].X86.fs) {
         printf("diff [fs]: %x, should be: 0x%x\n", x86regs.fs, output[point].X86.fs);
         diff = 1;
@@ -277,7 +301,10 @@ void check_point_x86_state(struct X87LegacyFPUSaveArea x87fpustate,
         printf("diff [eax]: %x, should be: 0x%x\n", x86regs.eax, output[point].X86.eax);
         diff = 1;
     }
-    printf("check point: %d %s! [x86_state]\n", point + 1, (diff == 1) ? "fail" : "pass"); \
+    if (diff == 1)
+        printf("check point: %d fail! [x86_state][fuzzy_pc:0x%x]\n", point + 1, x86regs.pc);
+    else
+        printf("check point: %d pass! [x86_state]\n", point + 1);
     diffs += diff;
     point++;
 }

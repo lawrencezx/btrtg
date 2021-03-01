@@ -86,6 +86,7 @@ struct X86StandardRegisters {
     uint16_t cs;
     uint16_t cs_padding;
     uint32_t eflags;
+    uint32_t pc;
     union {
         uint32_t edi;
         struct {

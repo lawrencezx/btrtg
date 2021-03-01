@@ -18,6 +18,7 @@
 ,0x%08" PRIx32 "\
 ,0x%08" PRIx32 "\
 ,0x%08" PRIx32 "\
+,0x%08" PRIx32 "\
 ,0x%08" PRIx32 "},\n"
 
 #define  X87RegsOutputFormat "{\
@@ -52,6 +53,7 @@
     printf(X86RegsOutputFormat, \
         x86regs.gs, x86regs.fs, x86regs.es, x86regs.ds, x86regs.ss, x86regs.cs, \
         x86regs.eflags, \
+        x86regs.pc, \
         x86regs.edi, x86regs.esi, x86regs.ebp, x86regs.esp, x86regs.ebx, x86regs.edx, x86regs.ecx, x86regs.eax); \
     printf(X87RegsOutputFormat, \
         fsa_get_fcw(&x87fpustate), fsa_get_fsw(&x87fpustate), fsa_get_ftw(&x87fpustate), \

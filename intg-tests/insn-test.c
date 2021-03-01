@@ -9,6 +9,12 @@
 #include "insn-test.h"
 #include "x86pg.h"
 
+static const char funcs[] = "\
+\n\
+_get_pc:\n\
+  mov eax,[esp]\n\
+  ret\n";
+
 static const char main_label[] = "\
   GLOBAL main\n\
 main:\n";
@@ -24,6 +30,8 @@ static const char init_regs[] = "\
 static const char check_macro[] = "\
 %macro check 1\n\
   pusha\n\
+  call _get_pc\n\
+  push eax\n\
   pushf\n\
   push cs\n\
   push ss\n\
@@ -43,6 +51,7 @@ static const char check_macro[] = "\
   pop eax\n\
   pop eax\n\
   popf\n\
+  pop eax\n\
   popa\n\
 %endmacro\n";
 
@@ -85,6 +94,8 @@ void gsp_init(void)
     ofmt->output(&data);
 
     data.type = OUTPUT_RAWDATA;
+    data.buf = (const void *)funcs;
+    ofmt->output(&data);
     data.buf = (const void *)main_label;
     ofmt->output(&data);
     data.buf = (const void *)init_regs;
