@@ -125,7 +125,7 @@ void generator_exit(void)
     token_cleanup();
 }
 
-void insn_to_bin(insn *instruction, const char** buf)
+void insn_to_bin(insn *instruction, const char **buf)
 {
     int64_t l;
 
@@ -145,17 +145,21 @@ void insn_to_bin(insn *instruction, const char** buf)
     *buf = (const char*)global_codebuf;
 }
 
-void insn_to_asm(insn *instruction, const char** buf)
+void insn_to_asm(insn *instruction, const char **buf)
 {
+    const char *binbuf;
+    iflag_t prefer;
+
     if (instruction == NULL)
         return ;
-    const char* binbuf;
     insn_to_bin(instruction, &binbuf);
-
-    iflag_t prefer;
+    memset(codestr, '\0', sizeof(codestr));
     disasm((uint8_t *)global_codebuf, (int32_t)global_codebuf_len, (char *)codestr, sizeof(codestr),
             globalbits, &prefer);
-    *buf = (const char*)codestr;
+    if (codestr[0] == '\0')
+        /* Set a break point here to debug. */
+        dfmt->print("\033[35m Disassemble inst fail! \033[m\n");
+    *buf = (const char *)codestr;
 }
 
 static inline void init_operand(operand *op)
