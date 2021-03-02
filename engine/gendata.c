@@ -1177,8 +1177,10 @@ static bool gen_operand_pseudo_code(operand_seed *opnd_seed)
             if (is_class(MEMORY, var->opndflags) && var->opndflags != MEM_OFFS)
                 var->init_mem_addr = nasm_strdup(stat_get_init_mem_addr());
             var->valid = true;
+            var->is_mem_opnd = stat_get_has_mem_opnd();
         } else {
             opnd_seed->opndflags = var->opndflags;
+            stat_set_has_mem_opnd(var->is_mem_opnd);
         }
 
         nasm_strrplc(bufptr, opnd_len, var->var_val, strlen(var->var_val));

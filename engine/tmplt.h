@@ -60,6 +60,7 @@ struct blk_var {
     char        *var_type;
     char        *var_val;
     /* one or two mov instructions, initiliaze basereg and index */
+    bool        is_mem_opnd;
     char        *init_mem_addr;
 };
 
