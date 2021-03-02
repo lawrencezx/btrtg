@@ -196,14 +196,6 @@
     </TK>
 
     <!-- binary arithmetic instructions -->
-    <TK inst = "adcx">
-        <Node name = "arith" weight="50"> </Node>
-        <Node name = "normal" weight="50"> </Node>
-    </TK>
-    <TK inst = "adox">
-        <Node name = "arith" weight="50"> </Node>
-        <Node name = "normal" weight="50"> </Node>
-    </TK>
     <TK inst = "add">
         <Node name = "arith" weight="50"> </Node>
         <Node name = "normal" weight="50"> </Node>

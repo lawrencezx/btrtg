@@ -9,7 +9,7 @@
 
 <Template>
     <traverse>
-        <V var = "reg" type = "reg16"> </V>
+        <V var = "reg" type = "reg32"> </V>
         <I type = "bswap @reg" trv="true"></I>
         <C type = "@reg"></C>
     </traverse>
