@@ -1195,8 +1195,9 @@ static bool gen_operand_pseudo_code(operand_seed *opnd_seed)
         /* specify the fundamental data item size for a memory operand
          */
         next_opnd = nasm_skip_a_comma(bufptr);
-        if (opi == 0 && is_class(MEMORY, opnd_seed->opndflags) &&
-            (asm_is_blank(next_opnd) || asm_is_immediate(next_opnd)))
+        if (stat_get_opcode() == I_MOVSX ||
+            (opi == 0 && is_class(MEMORY, opnd_seed->opndflags) &&
+            (asm_is_blank(next_opnd) || asm_is_immediate(next_opnd))))
             preappend_mem_size(bufptr, opnd_seed->opdsize);
     }
     
@@ -1237,8 +1238,9 @@ static bool gen_operand_insn_seed(const insn_seed *seed, operand_seed *opnd_seed
 
     /* specify the fundamental data item size for a memory operand
      */
-    if (opi == 0 && is_class(MEMORY, opnd_seed->opndflags) &&
-        (seed->opd[1] == 0 || is_class(IMMEDIATE, seed->opd[1])))
+    if (stat_get_opcode() == I_MOVSX ||
+        (opi == 0 && is_class(MEMORY, opnd_seed->opndflags) &&
+        (seed->opd[1] == 0 || is_class(IMMEDIATE, seed->opd[1]))))
         preappend_mem_size(bufptr, opnd_seed->opdsize);
 
     init_opnd(asm_opnd, opnd_seed, NULL);
