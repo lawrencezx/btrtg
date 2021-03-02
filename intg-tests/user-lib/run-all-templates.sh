@@ -1,6 +1,7 @@
 #!/bin/bash
 # Before running compile.sh: please move ld.script compile.sh outputlib.c
 # checkfunctions.h test_intg.s to the same directory.
+# bash run-all-templates.sh template-path -o result-path
 
 echo "compile test_intg.s"
 nasm -f elf test_intg.s -o test_intg.o

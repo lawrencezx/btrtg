@@ -11,11 +11,11 @@
 
 static bool terminate_directly = false;
 static char *template_file_name = NULL;
-static char *output_file_name = "test_intg.s";
+static char *output_file_name = "x86asmpg.s";
 
 static void help(void)
 {
-    printf("Usage: intg -t <file> -o file\n");
+    printf("Usage: x86asmpg -t <file> -o file\n");
     printf("    -h            show this text and exit (also --help)\n");
     printf("    -t <file>     select a template <file>\n");
     printf("    -o <file>     place the output into <file>\n");
@@ -78,7 +78,7 @@ int main(int argc, char *argv[])
     parse_tmplts_file(template_file_name);
 
     ofmt->init(output_file_name);
-    dfmt->init("debug_intg.txt");
+    dfmt->init("debug_x86asmpg.txt");
 
     gsp_init();
     
