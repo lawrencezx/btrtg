@@ -194,4 +194,9 @@
         <Imm16> 0x602 </Imm16>
         <Imm16> 0x6d7 </Imm16>
     </CG>
+    <CG name = "meaningless">
+        <Imm8> 0xaa </Imm8>
+        <Imm16> 0xaaaa </Imm16>
+        <Imm32> 0xaaaaaaaa </Imm32>
+    </CG>
 </ConstGroups>

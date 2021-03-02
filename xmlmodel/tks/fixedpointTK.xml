@@ -891,7 +891,8 @@
 
     <!-- miscellaneous instructions -->
     <TK inst = "lea">
-        <Node name = "normal" weight="100"> </Node>
+        <Node name = "meaningless" weight="50"> </Node>
+        <Node name = "normal" weight="50"> </Node>
     </TK>
     <TK inst = "nop">
         <Node name = "normal" weight="100"> </Node>

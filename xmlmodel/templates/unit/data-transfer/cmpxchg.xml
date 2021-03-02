@@ -9,20 +9,31 @@
 
 <Template>
     <traverse>
+        <V var = "mem" type = "mem8"></V>
+        <I type = "cmpxchg @mem,reg8" trv = "true"></I>
+        <C type = "al"></C>
+        <I type = "mov al,@mem"></I>
+        <C type = "al"></C>
+        <C type = "eflags"></C>
+    </traverse>
+    <traverse>
         <V var = "reg" type = "reg8"></V>
         <I type = "cmpxchg @reg,reg8" trv = "true"></I>
+        <C type = "al"></C>
         <C type = "@reg"></C>
         <C type = "eflags"></C>
     </traverse>
     <traverse>
         <V var = "reg" type = "reg16"></V>
         <I type = "cmpxchg @reg,reg16" trv = "true"></I>
+        <C type = "ax"></C>
         <C type = "@reg"></C>
         <C type = "eflags"></C>
     </traverse>
     <traverse>
         <V var = "reg" type = "reg32"></V>
         <I type = "cmpxchg @reg,reg32" trv = "true"></I>
+        <C type = "eax"></C>
         <C type = "@reg"></C>
         <C type = "eflags"></C>
     </traverse>
@@ -30,6 +41,7 @@
     <traverse>
         <V var = "mem" type = "mem8"></V>
         <I type = "cmpxchg @mem,reg8" trv = "true"></I>
+        <C type = "al"></C>
         <I type = "mov al,@mem"></I>
         <C type = "al"></C>
         <C type = "eflags"></C>
@@ -37,15 +49,17 @@
     <traverse>
         <V var = "mem" type = "mem16"></V>
         <I type = "cmpxchg @mem,reg16" trv = "true"></I>
-        <I type = "mov al,@mem"></I>
-        <C type = "al"></C>
+        <C type = "ax"></C>
+        <I type = "mov ax,@mem"></I>
+        <C type = "ax"></C>
         <C type = "eflags"></C>
     </traverse>
     <traverse>
         <V var = "mem" type = "mem32"></V>
         <I type = "cmpxchg @mem,reg32" trv = "true"></I>
-        <I type = "mov al,@mem"></I>
-        <C type = "al"></C>
+        <C type = "eax"></C>
+        <I type = "mov eax,@mem"></I>
+        <C type = "eax"></C>
         <C type = "eflags"></C>
     </traverse>
 </Template>
