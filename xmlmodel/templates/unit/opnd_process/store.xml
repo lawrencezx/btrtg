@@ -18,35 +18,43 @@
 
 <Template>
     <!-- store gpr8/16/32 -->
-    <traverse var = "reg" type = "reg8">
-        <I type = "mov @reg,imm8" inip = "1.0"></I>
+    <traverse>
+        <V var = "reg" type = "reg8"></V>
+        <I type = "mov @reg,imm8" trv = "true"></I>
         <C type = "@reg"></C>
     </traverse>
-    <traverse var = "reg" type = "reg16">
-        <I type = "mov @reg,imm16" inip = "1.0"></I>
+    <traverse>
+        <V var = "reg" type = "reg16"></V>
+        <I type = "mov @reg,imm16" trv = "true"></I>
         <C type = "@reg"></C>
     </traverse>
-    <traverse var = "reg" type = "reg32">
-        <I type = "mov @reg,imm32" inip = "1.0"></I>
+    <traverse>
+        <V var = "reg" type = "reg32"></V>
+        <I type = "mov @reg,imm32" trv = "true"></I>
         <C type = "@reg"></C>
     </traverse>
     <!-- store sreg -->
-    <I type = "mov es,0x1f"></I>
+    <!--
+    <I type = "mov es,ax"></I>
     <C type = "es"></C>
-    <I type = "mov es,0x0"></I>
+    <I type = "mov es,ax"></I>
+    -->
     <!-- store mem8/16/32 -->
-    <traverse var = "mem" type = "mem8">
-        <I type = "mov @mem,imm8" inip = "1.0"></I>
+    <traverse>
+        <V var = "mem" type = "mem8"></V>
+        <I type = "mov @mem,imm8" trv = "true"></I>
         <I type = "mov al,@mem"></I>
         <C type = "al"></C>
     </traverse>
-    <traverse var = "mem" type = "mem16">
-        <I type = "mov @mem,imm16" inip = "1.0"></I>
+    <traverse>
+        <V var = "mem" type = "mem16"></V>
+        <I type = "mov @mem,imm16" trv = "true"></I>
         <I type = "mov ax, @mem"></I>
         <C type = "ax"></C>
     </traverse>
-    <traverse var = "mem" type = "mem32">
-        <I type = "mov @mem,imm32" inip = "1.0"></I>
+    <traverse>
+        <V var = "mem" type = "mem32"></V>
+        <I type = "mov @mem,imm32" trv = "true"></I>
         <I type = "mov eax, @mem"></I>
         <C type = "eax"></C>
     </traverse>
