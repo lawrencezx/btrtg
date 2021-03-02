@@ -1,0 +1,7 @@
+<Template>
+    <repeat times = "1000">
+        <G type = "Pattern-head"> </G>
+        <G type = "Jcc"> </G>
+        <C type = "x86_state"> </C>
+    </repeat>
+</Template>
