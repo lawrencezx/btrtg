@@ -3,7 +3,7 @@
 # checkfunctions.h to the same directory.
 
 function compile_asm() {
-    echo "compile $1"
+    echo -e "\033[31mcompile $1 \033[0m"
     nasm -f elf $1 -o ${1%.s}.o
     return $?
 }
@@ -50,7 +50,7 @@ case $# in
             if gen_standard_results ${1%.s}; then
                 link_with_checklib ${1%.s}.o $3
             fi
-            rm *.o
+            rm ${1%.s}.o
             exit 0
         fi
         ;;
