@@ -50,8 +50,8 @@ case $# in
             if gen_standard_results ${1%.s}; then
                 link_with_checklib ${1%.s}.o $3
             fi
-            rm *.o
             rm ${1%.s}.o
+            rm *.o
             exit 0
         fi
         ;;
