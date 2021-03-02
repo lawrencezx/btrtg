@@ -18,13 +18,14 @@ char *group_tmplt_path = "../xmlmodel/templates/group";
 
 static void help(void)
 {
-    printf("Usage: x86asmpg -t <file> -o file\n");
+    printf("Usage: x86asmpg -k <path> -g <path> -t <file> [options]\n");
+    printf("Options:\n");
+    printf("    --help        show this text and exit (also -h)\n");
     printf("    -h            show this text and exit (also --help)\n");
     printf("    -k <path>     path to the testing knowledge template files\n");
     printf("    -g <path>     path to the instruction group template files\n");
     printf("    -t <file>     select a template <file>\n");
     printf("    -o <file>     place the output into <file>\n");
-    printf("    --help        show this text and exit (also -h)\n");
 }
 
 static void parse_cmdline(int argc, char *argv[])
