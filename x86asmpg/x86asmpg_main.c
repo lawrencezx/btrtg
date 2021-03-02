@@ -13,10 +13,15 @@ static bool terminate_directly = false;
 static char *template_file_name = NULL;
 static char *output_file_name = "x86asmpg.s";
 
+char *tk_tmplt_path = "../xmlmodel/tks";
+char *group_tmplt_path = "../xmlmodel/templates/group";
+
 static void help(void)
 {
     printf("Usage: x86asmpg -t <file> -o file\n");
     printf("    -h            show this text and exit (also --help)\n");
+    printf("    -k <path>     path to the testing knowledge template files\n");
+    printf("    -g <path>     path to the instruction group template files\n");
     printf("    -t <file>     select a template <file>\n");
     printf("    -o <file>     place the output into <file>\n");
     printf("    --help        show this text and exit (also -h)\n");
@@ -44,6 +49,12 @@ static void parse_cmdline(int argc, char *argv[])
                     case 'h':
                         help();
                         terminate_directly = true;
+                        break;
+                    case 'k':
+                        tk_tmplt_path = argv[++argci];
+                        break;
+                    case 'g':
+                        group_tmplt_path = argv[++argci];
                         break;
                     case 'o':
                         output_file_name = argv[++argci];

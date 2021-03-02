@@ -24,7 +24,7 @@ static const char *xmlfiles[2] =
     "insn-group.xml",
     "flag-pattern-group.xml"
 };
-char *tmpltpath = "../xmlmodel/templates";
+extern char *group_tmplt_path;
 
 static struct trv_state *trv_state = NULL;
 
@@ -358,7 +358,7 @@ void init_tmplts(void)
 #ifdef LIBXML_READER_ENABLED
     char fname[1024];
     for (size_t i = 0; i < ARRAY_SIZE(xmlfiles); i++) {
-        sprintf(fname, "%s/%s", tmpltpath, xmlfiles[i]);
+        sprintf(fname, "%s/%s", group_tmplt_path, xmlfiles[i]);
         parse_tmplts_file(fname);
         memset(fname, 0, 1024);
     }

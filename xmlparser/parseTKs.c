@@ -15,7 +15,8 @@ static const char *xmlfiles[4] =
     "floatpointConsts.xml",
     "floatpointTK.xml"
 };
-char *TKpath = "../xmlmodel/tks";
+
+extern char *tk_tmplt_path;
 
 
 static void parseCGs(xmlNodePtr cgsNode)
@@ -180,7 +181,7 @@ void init_tks(void)
 #ifdef LIBXML_READER_ENABLED
     char fname[1024];
     for (size_t i = 0; i < ARRAY_SIZE(xmlfiles); i++) {
-        sprintf(fname, "%s/%s", TKpath, xmlfiles[i]);
+        sprintf(fname, "%s/%s", tk_tmplt_path, xmlfiles[i]);
         parse_tks_file(fname);
         memset(fname, 0, 1024);
     }
