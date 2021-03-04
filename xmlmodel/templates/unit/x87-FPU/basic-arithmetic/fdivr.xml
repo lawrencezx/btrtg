@@ -1,42 +1,36 @@
 <Template>
     <traverse>
-        <V var = "mem" type = "mem32"></V>
-        <I type = "fdivr @mem" trv = "true"></I>
+        <I type = "fdivr mem32" trv = "true"></I>
         <C type = "st0"></C>
     </traverse>
     <traverse>
-        <V var = "mem" type = "mem64"></V>
-        <I type = "fdivr @mem" trv = "true"></I>
+        <I type = "fdivr mem64" trv = "true"></I>
         <C type = "st0"></C>
     </traverse>
     <traverse>
-        <V var = "fpureg" type = "fpureg"></V>
-        <I type = "fdivr @fpureg,fpu0" trv = "true"></I>
-        <C type = "@fpureg"></C>
-    </traverse>
-    <traverse>
-        <V var = "fpureg" type = "fpureg"></V>
-        <I type = "fdivr fpu0,@fpureg" trv = "true"></I>
+        <I type = "fdivr st0, fpureg" trv = "true"></I>
         <C type = "st0"></C>
     </traverse>
     <traverse>
-        <V var = "fpureg" type = "fpureg"></V>
+		<V var = "fpureg" type = "fpureg"></V>
+        <I type = "fdivr @fpureg, st0" trv = "true"></I>
+        <C type = "fpureg"></C>
+    </traverse>
+    <traverse>
+		<V var = "fpureg" type = "fpureg"></V>
         <I type = "fdivrp @fpureg, st0" trv = "true"></I>
-		<I type = "fld mem32"></I>
-        <C type = "@fpureg"></C>
+        <C type = "fpureg"></C>
     </traverse>
     <traverse>
         <I type = "fdivrp" trv = "true"></I>
-        <C type = "st1"></C>
-    </traverse>
-    <traverse>
-        <V var = "mem" type = "mem16"></V>
-        <I type = "fidivr @mem" trv = "true"></I>
         <C type = "st0"></C>
     </traverse>
     <traverse>
-        <V var = "mem" type = "mem32"></V>
-        <I type = "fidivr @mem" trv = "true"></I>
+        <I type = "fidivr mem32" trv = "true"></I>
+        <C type = "st0"></C>
+    </traverse>
+    <traverse>
+        <I type = "fidivr mem16" trv = "true"></I>
         <C type = "st0"></C>
     </traverse>
 </Template>

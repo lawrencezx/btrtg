@@ -1,0 +1,9 @@
+<Template>
+    <traverse>
+        <V var = "mem" type = "mem16"></V>
+		<I type = "fild @mem" trv = "true"></I>
+        <I type = "fist @mem"></I>
+		<I type = "fst @mem"></I>
+		<C type = "st0"></C>
+    </traverse>
+</Template>

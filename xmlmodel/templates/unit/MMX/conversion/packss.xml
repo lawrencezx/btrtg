@@ -1,0 +1,22 @@
+<Template>
+    <traverse>
+        <V var = "mmxreg" type = "mmxreg"></V>
+        <I type = "packsswb @mmxreg,mmxreg" trv = "true"></I>
+        <C type = "@mmxreg"></C>
+    </traverse>
+    <traverse>
+        <V var = "mmxreg" type = "mmxreg"></V>
+        <I type = "packsswb @mmxreg,mem64" trv = "true"></I>
+        <C type = "@mmxreg"></C>
+    </traverse>
+    <traverse>
+        <V var = "mmxreg" type = "mmxreg"></V>
+        <I type = "packssdw @mmxreg,mmxreg" trv = "true"></I>
+        <C type = "@mmxreg"></C>
+    </traverse>
+    <traverse>
+        <V var = "mmxreg" type = "mmxreg"></V>
+        <I type = "packssdw @mmxreg,mem64" trv = "true"></I>
+        <C type = "@mmxreg"></C>
+    </traverse>
+</Template>

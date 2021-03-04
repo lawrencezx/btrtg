@@ -1,42 +1,36 @@
 <Template>
     <traverse>
-        <V var = "mem" type = "mem32"></V>
-        <I type = "fmul @mem" trv = "true"></I>
+        <I type = "fmul mem32" trv = "true"></I>
         <C type = "st0"></C>
     </traverse>
     <traverse>
-        <V var = "mem" type = "mem64"></V>
-        <I type = "fmul @mem" trv = "true"></I>
+        <I type = "fmul mem64" trv = "true"></I>
         <C type = "st0"></C>
     </traverse>
     <traverse>
-        <V var = "fpureg" type = "fpureg"></V>
-        <I type = "fmul @fpureg,fpu0" trv = "true"></I>
-        <C type = "@fpureg"></C>
-    </traverse>
-    <traverse>
-        <V var = "fpureg" type = "fpureg"></V>
-        <I type = "fmul fpu0,@fpureg" trv = "true"></I>
+        <I type = "fmul st0, fpureg" trv = "true"></I>
         <C type = "st0"></C>
     </traverse>
     <traverse>
-        <V var = "fpureg" type = "fpureg"></V>
+		<V var = "fpureg" type = "fpureg"></V>
+        <I type = "fmul @fpureg, st0" trv = "true"></I>
+        <C type = "fpureg"></C>
+    </traverse>
+    <traverse>
+		<V var = "fpureg" type = "fpureg"></V>
         <I type = "fmulp @fpureg, st0" trv = "true"></I>
-		<I type = "fld mem32"></I>
-        <C type = "@fpureg"></C>
+        <C type = "fpureg"></C>
     </traverse>
     <traverse>
         <I type = "fmulp" trv = "true"></I>
-        <C type = "st1"></C>
-    </traverse>
-    <traverse>
-        <V var = "mem" type = "mem16"></V>
-        <I type = "fimul @mem" trv = "true"></I>
         <C type = "st0"></C>
     </traverse>
     <traverse>
-        <V var = "mem" type = "mem32"></V>
-        <I type = "fimul @mem" trv = "true"></I>
+        <I type = "fimul mem32" trv = "true"></I>
+        <C type = "st0"></C>
+    </traverse>
+    <traverse>
+        <I type = "fimul mem16" trv = "true"></I>
         <C type = "st0"></C>
     </traverse>
 </Template>

@@ -58,10 +58,37 @@ static int get_operands_from_instname(char * inst_name){
         case I_FDIV:
         case I_FDIVP:
         case I_FIDIV:
+        case I_FDIVR:
+        case I_FDIVRP:
+        case I_FIDIVR:
+        case I_FMUL:
+        case I_FMULP:
+        case I_FIMUL:
+        case I_FPREM:
+        case I_FPREM1:
+        case I_FSCALE:
+        case I_FSUB:
+        case I_FSUBP:
+        case I_FISUB:
+        case I_FSUBR:
+        case I_FSUBRP:
+        case I_FISUBR:
+        case I_FYL2X:
+        case I_FYL2XP1:
             return 2;
         case I_FABS:
         case I_FCHS:
         case I_FCOS:
+        case I_FSIN:
+        case I_FSINCOS:
+        case I_FPTAN:
+        case I_FPATAN:
+        case I_FRNDINT:
+        case I_FXTRACT:
+        case I_FILD:
+        case I_F2XM1:
+        //case I_FIST:
+        //case I_FISTP:
             return 1;
         default:
             return -1;

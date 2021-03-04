@@ -1,0 +1,34 @@
+<Template>
+    <traverse>
+        <V var = "mmxreg" type = "mmxreg"></V>
+        <I type = "punpcklbw @mmxreg,mmxreg" trv = "true"></I>
+        <C type = "@mmxreg"></C>
+    </traverse>
+    <traverse>
+        <V var = "mmxreg" type = "mmxreg"></V>
+        <I type = "punpcklbw @mmxreg,mem64" trv = "true"></I>
+        <C type = "@mmxreg"></C>
+    </traverse>
+
+    <traverse>
+        <V var = "mmxreg" type = "mmxreg"></V>
+        <I type = "punpcklwd @mmxreg,mmxreg" trv = "true"></I>
+        <C type = "@mmxreg"></C>
+    </traverse>
+    <traverse>
+        <V var = "mmxreg" type = "mmxreg"></V>
+        <I type = "punpcklwd @mmxreg,mem64" trv = "true"></I>
+        <C type = "@mmxreg"></C>
+    </traverse>
+
+    <traverse>
+        <V var = "mmxreg" type = "mmxreg"></V>
+        <I type = "punpckldq @mmxreg,mmxreg" trv = "true"></I>
+        <C type = "@mmxreg"></C>
+    </traverse>
+    <traverse>
+        <V var = "mmxreg" type = "mmxreg"></V>
+        <I type = "punpckldq @mmxreg,mem64" trv = "true"></I>
+        <C type = "@mmxreg"></C>
+    </traverse>
+</Template>

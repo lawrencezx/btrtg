@@ -1,0 +1,18 @@
+<Template>
+    <traverse>
+        <V var = "mmxreg" type = "mmxreg"></V>
+        <I type = "movq @mmxreg,mmxreg" trv = "true"></I>
+        <C type = "@mmxreg"></C>
+    </traverse>
+    <traverse>
+        <V var = "mmxreg" type = "mmxreg"></V>
+        <I type = "movq @mmxreg,mem64" trv = "true"></I>
+        <C type = "@mmxreg"></C>
+    </traverse>
+    <traverse>
+        <V var = "mem" type = "mem64"></V>
+        <I type = "movq @mem,mmxreg" trv = "true"></I>
+		<I type = "movq mm0,@mem"></I>
+		<C type = "mm0"></C>
+    </traverse>
+</Template>
