@@ -68,6 +68,7 @@ static int get_operands_from_instname(char * inst_name){
         case I_FRNDINT:
         case I_FXTRACT:
         case I_FILD:
+        case I_F2XM1:
         //case I_FIST:
         //case I_FISTP:
             return 1;

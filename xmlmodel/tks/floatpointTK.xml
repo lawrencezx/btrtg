@@ -20,6 +20,12 @@
 		<Node name = "farith" weight="100"> </Node>
         <Node name = "normal" weight="0"> </Node>
 	</TK>
+
+	<TK inst = "f2xm1">
+		<Node name = "farith" weight="100"> </Node>
+        <Node name = "normal" weight="0"> </Node>
+	</TK>
+
 	<TK inst = "fabs">
 		<Node name = "farith" weight="100"> </Node>
         <Node name = "normal" weight="0"> </Node>

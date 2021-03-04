@@ -602,6 +602,7 @@ void init_implicit_operands(insn *result)
             case I_FXCH:
             case I_FXTRACT:
             case I_FABS:
+            case I_F2XM1:
                 
                 init_specific_register(R_ST0, true);
                 
