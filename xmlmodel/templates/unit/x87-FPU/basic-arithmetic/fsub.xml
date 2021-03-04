@@ -1,0 +1,42 @@
+<Template>
+    <traverse>
+        <V var = "mem" type = "mem32"></V>
+        <I type = "fsub @mem" trv = "true"></I>
+        <C type = "st0"></C>
+    </traverse>
+    <traverse>
+        <V var = "mem" type = "mem64"></V>
+        <I type = "fsub @mem" trv = "true"></I>
+        <C type = "st0"></C>
+    </traverse>
+    <traverse>
+        <V var = "fpureg" type = "fpureg"></V>
+        <I type = "fsub @fpureg,fpu0" trv = "true"></I>
+        <C type = "@fpureg"></C>
+    </traverse>
+    <traverse>
+        <V var = "fpureg" type = "fpureg"></V>
+        <I type = "fsub fpu0,@fpureg" trv = "true"></I>
+        <C type = "st0"></C>
+    </traverse>
+    <traverse>
+        <V var = "fpureg" type = "fpureg"></V>
+        <I type = "fsubp @fpureg, st0" trv = "true"></I>
+		<I type = "fld mem32"></I>
+        <C type = "@fpureg"></C>
+    </traverse>
+    <traverse>
+        <I type = "fsubp" trv = "true"></I>
+        <C type = "st1"></C>
+    </traverse>
+    <traverse>
+        <V var = "mem" type = "mem16"></V>
+        <I type = "fisub @mem" trv = "true"></I>
+        <C type = "st0"></C>
+    </traverse>
+    <traverse>
+        <V var = "mem" type = "mem32"></V>
+        <I type = "fisub @mem" trv = "true"></I>
+        <C type = "st0"></C>
+    </traverse>
+</Template>
