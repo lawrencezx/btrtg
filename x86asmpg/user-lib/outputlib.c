@@ -45,6 +45,8 @@
 ,0x%016" PRIx64 "\
 ,0x%04" PRIx16 "}"
 
+void parse_argv(void) {}
+
 #define DEFINE_CHECK_FUNCTION(nasm,type,func) void func \
     (struct X87LegacyFPUSaveArea x87fpustate, \
      struct X86StandardRegisters x86regs) \

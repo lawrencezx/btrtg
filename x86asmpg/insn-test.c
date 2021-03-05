@@ -17,7 +17,8 @@ _get_pc:\n\
 
 static const char main_label[] = "\
   GLOBAL main\n\
-main:\n";
+main:\n\n\
+  call parse_argv\n";
 
 static const char init_regs[] = "\
   mov eax,0x0\n\
@@ -65,7 +66,8 @@ static char *check_function_names[] =
 {
 #define DEFINE_CHECK_FUNCTION(name,type,func) #func,
 #include "./user-lib/checkfunctions.h"
-    "check_point_end"
+    "check_point_end",
+    "parse_argv"
 #undef DEFINE_CHECK_FUNCTION
 };
 
