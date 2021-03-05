@@ -66,6 +66,7 @@ static int get_operands_from_instname(char * inst_name){
         case I_FIMUL:
         case I_FPREM:
         case I_FPREM1:
+        case I_FPATAN:
         case I_FSCALE:
         case I_FSUB:
         case I_FSUBP:
@@ -82,7 +83,6 @@ static int get_operands_from_instname(char * inst_name){
         case I_FSIN:
         case I_FSINCOS:
         case I_FPTAN:
-        case I_FPATAN:
         case I_FRNDINT:
         case I_FXTRACT:
         case I_FILD:
