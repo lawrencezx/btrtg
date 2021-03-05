@@ -1141,6 +1141,7 @@ static bool gen_operand_pseudo_code(operand_seed *opnd_seed)
             var->is_mem_opnd = stat_get_has_mem_opnd();
             var->has_label = opnd_seed->has_label;
         } else {
+            strcpy(asm_opnd, var->var_val);
             opnd_seed->opndflags = var->opndflags;
             opnd_seed->has_label = var->has_label;
             stat_set_has_mem_opnd(var->is_mem_opnd);
@@ -1189,7 +1190,10 @@ static bool gen_operand_insn_seed(const insn_seed *seed, operand_seed *opnd_seed
 
     bufptr = get_token_bufptr();
 
-    if (opi != 0) {
+    if (opi == 0) { /* space after opcode */
+        *bufptr++ = ' ';
+        set_token_bufptr(bufptr);
+    } else { /* comma after an operand */
         *bufptr++ = ',';
         set_token_bufptr(bufptr);
     }
