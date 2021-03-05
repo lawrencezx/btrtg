@@ -14,12 +14,12 @@
     <traverse>
 		<V var = "fpureg" type = "fpureg"></V>
         <I type = "fdivr @fpureg, st0" trv = "true"></I>
-        <C type = "fpureg"></C>
+        <C type = "@fpureg"></C>
     </traverse>
     <traverse>
 		<V var = "fpureg" type = "fpureg"></V>
         <I type = "fdivrp @fpureg, st0" trv = "true"></I>
-        <C type = "fpureg"></C>
+        <C type = "@fpureg"></C>
     </traverse>
     <traverse>
         <I type = "fdivrp" trv = "true"></I>
