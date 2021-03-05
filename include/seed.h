@@ -11,6 +11,7 @@ typedef uint64_t srcdestflags_t;
 typedef struct operand_seed {
     bool            is_var;
     bool            is_opnd_type;
+    bool            has_label;
     opflags_t       opndflags;
     srcdestflags_t  srcdestflags;         /* source and destination operand flag */
     opflags_t       opdsize;

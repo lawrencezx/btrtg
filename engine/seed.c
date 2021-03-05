@@ -22,6 +22,7 @@ void init_opnd_seed(operand_seed *opnd_seed)
 {
     opnd_seed->is_var = false;
     opnd_seed->is_opnd_type = false;
+    opnd_seed->has_label = false;
     opnd_seed->opndflags = 0;
     opnd_seed->srcdestflags = 0;
     opnd_seed->opdsize = 0;

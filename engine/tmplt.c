@@ -28,6 +28,7 @@ void init_blk_var(struct blk_var *var)
     var->var_type = NULL;
     var->var_val = NULL;
     var->init_mem_addr = NULL;
+    var->has_label = false;
     var->is_mem_opnd = false;
 }
 

@@ -27,8 +27,4 @@ bool create_mmx_register(operand_seed *opnd_seed, char *buffer);
 
 char *preappend_mem_size(char *asm_mem, opflags_t opdsize);
 
-/* generate random memory address */
-void random_mem_addr_from_data(struct random_mem_addr *daddr);
-void random_mem_addr_from_stack(struct random_mem_addr *daddr);
-
 #endif

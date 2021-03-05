@@ -12,6 +12,8 @@
 #include "dfmt.h"
 #include "tk.h"
 #include "generator.h"
+#include "mem.h"
+
 bool create_specific_register(enum reg_enum R_reg, operand_seed *opnd_seed, char *buffer)
 {
     dfmt->print("    try> create specific register\n");
@@ -189,7 +191,7 @@ gen_gpr:
  * If it's larger than the limmit (8/16-bits imm), the high significant bytes
  * will be wipped away while assembling.
  */
-bool create_immediate(operand_seed* opnd_seed, char *buffer)
+bool create_immediate(operand_seed *opnd_seed, char *buffer)
 {
     dfmt->print("    try> create immediate\n");
     int imm;
@@ -216,7 +218,7 @@ bool create_immediate(operand_seed* opnd_seed, char *buffer)
     return true;
 }
 
-static void create_random_modrm(char *buffer)
+static void create_random_modrm(operand_seed *opnd_seed, char *buffer)
 {
     struct random_mem_addr mem_addr;
     enum reg_enum baseregs[6] = {R_EAX, R_ECX, R_EDX, R_EBX, R_ESI, R_EDI};
@@ -225,47 +227,71 @@ static void create_random_modrm(char *buffer)
 
     /* data section */
     if (true) {
-        do {
-            basereg = baseregs[nasm_random32(6)];
-        } while (stat_reg_locked(basereg));
-        stat_lock_reg(basereg, LOCK_REG_CASE_MEM);
-        do {
-            indexreg = indexregs[nasm_random32(6)];
-        } while (stat_reg_locked(indexreg));
-        stat_unlock_reg(LOCK_REG_CASE_MEM);
-        random_mem_addr_from_data(&mem_addr);
+        int mode;
+        char *init_mem_addr;
+        const char *base_reg_name, *index_reg_name;
 
-        int modes = nasm_random32(4);
-        const char *base_reg_name = nasm_reg_names[basereg - EXPR_REG_START];
-        const char *index_reg_name = nasm_reg_names[indexreg - EXPR_REG_START];
+        if (is_class(MEM_OFFS, opnd_seed->opndflags))
+            mode = SIB_MODE_D;
+        else
+            mode = nasm_random32(SIB_MODE_NUM);
 
+        random_mem_addr_from_data(&mem_addr, mode);
         /* initialize base register and index register */
-        char *init_mem_addr = stat_get_init_mem_addr();
-        sprintf(init_mem_addr, "  lea %s, data%d", base_reg_name, mem_addr.base);
-        if (modes == 2 || modes == 3)
-            sprintf(init_mem_addr + strlen(init_mem_addr), "\n  mov %s, 0x%x",
-                    index_reg_name, mem_addr.index);
+        init_mem_addr = stat_get_init_mem_addr();
 
-        switch (modes) {
-            case 0:   /* base */
+        *init_mem_addr = '\0';
+
+        if (sib_mode_has_base(mode)) { /* if has base */
+            do {
+                basereg = baseregs[nasm_random32(6)];
+            } while (stat_reg_locked(basereg));
+            stat_lock_reg(basereg, LOCK_REG_CASE_MEM);
+            base_reg_name = nasm_reg_names[basereg - EXPR_REG_START];
+            sprintf(init_mem_addr, "  lea %s, data%d", base_reg_name, mem_addr.base);
+        }
+
+        if (sib_mode_has_index(mode)) { /* if has index */
+            do {
+                indexreg = indexregs[nasm_random32(6)];
+            } while (stat_reg_locked(indexreg));
+            index_reg_name = nasm_reg_names[indexreg - EXPR_REG_START];
+            sprintf(init_mem_addr + strlen(init_mem_addr), "%s  mov %s, 0x%x",
+                    sib_mode_has_base(mode) ? "\n" : "", index_reg_name,
+                    mem_addr.index);
+        }
+        stat_unlock_reg(LOCK_REG_CASE_MEM);
+
+        switch (mode) {
+            case SIB_MODE_D:   /* disp */
+                sprintf(buffer, "[data%d]", mem_addr.base);
+                opnd_seed->has_label = true;
+                break;
+            case SIB_MODE_B:   /* base */
                 sprintf(buffer, "[%s]", base_reg_name);
                 break;
-            case 1:   /* base + disp */
+            case SIB_MODE_BD:   /* base + disp */
                 sprintf(buffer, "[%s + 0x%x]", base_reg_name, mem_addr.disp);
                 break;
-            case 2:   /* base + index + disp */
+            case SIB_MODE_ISD:   /* index * scale + disp */
+                sprintf(buffer, "[%s*%d + data%d]", index_reg_name,
+                    mem_addr.scale, mem_addr.base);
+                opnd_seed->has_label = true;
+                break;
+            case SIB_MODE_BID:   /* base + index + disp */
                 sprintf(buffer, "[%s + %s + 0x%x]", base_reg_name,
                     index_reg_name, mem_addr.disp);
                 break;
-            case 3:   /* base + index * scale + disp */
+            case SIB_MODE_BISD:   /* base + index * scale + disp */
                 sprintf(buffer, "[%s + %s*%d + 0x%x]", base_reg_name,
                     index_reg_name, mem_addr.scale, mem_addr.disp);
                 break;
             default:
                 break;
-            /* disp */
-            /* index * scale + disp */
         }
+
+        if (mode != SIB_MODE_D)
+            stat_set_has_mem_opnd(true);
     }
     /* else stack */
 }
@@ -279,7 +305,7 @@ bool create_memory(operand_seed *opnd_seed, char *buffer)
     if (globalbits == 16) {
         nasm_fatal("unsupported 16-bit memory type");
     } else {
-        create_random_modrm(modrm);
+        create_random_modrm(opnd_seed, modrm);
     }
     sprintf(buffer, "%s", modrm);
     dfmt->print("    done> new memory: %s\n", buffer);
@@ -298,6 +324,7 @@ bool create_memoffs(operand_seed *opnd_seed, char *buffer)
         datai = nasm_random32(X86PGState.data_sec.datanum);
         sprintf(src, "[data%d]", datai);
     }
+    opnd_seed->has_label = true;
     sprintf(buffer, "%s", src);
     preappend_mem_size(buffer, opnd_seed->opdsize);
     dfmt->print("    done> new memoffs: %s\n", buffer);

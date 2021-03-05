@@ -15,14 +15,6 @@
 #include "generator.h"
 
 
-static bool is_label_operand(operand_seed *opnd_seed)
-{
-    if (is_class(MEM_OFFS, opnd_seed->opndflags)) {
-        return true;
-    }
-    return false;
-}
-
 static srcdestflags_t calSrcDestFlags(const insn_seed *seed, int opi)
 {
     srcdestflags_t srcdestflags = 0;
@@ -906,32 +898,6 @@ static void init_memory_opnd(char *asm_opnd, operand_seed *opnd_seed)
 {
     char asm_mov_inst[128];
     struct const_node *val_node;
-    GArray *val_nodes = stat_get_val_nodes();
-    if (val_nodes == NULL) {
-        const char *asm_op = nasm_insn_names[stat_get_opcode()];
-        val_node = request_val_node(asm_op, stat_get_opi());
-    } else {
-        val_node = g_array_index(val_nodes, struct const_node *, stat_get_opi());
-    }
-    if(val_node != NULL && CONST_FLOAT == val_node->type){
-        init_memory_opnd_float(asm_opnd, opnd_seed, val_node);
-    }else if(val_node != NULL && opnd_seed->opdsize == BITS64){
-            init_memory_opnd_imm64(asm_opnd, val_node);
-    }else{
-        sprintf(asm_mov_inst, "mov %s, 0x%x", asm_opnd, (val_node == NULL) ?
-                (uint32_t)nasm_random64(RAND_BITS32_BND) : val_node->imm32);
-        preappend_mem_size(asm_mov_inst + 4, opnd_seed->opdsize);
-        one_insn_gen_const(asm_mov_inst);
-    }
-
-}
-
-static void init_memoffs_opnd(char *asm_opnd, operand_seed *opnd_seed)
-{
-    opflags_t size;
-    uint32_t val;
-    char asm_mov_inst[128];
-    struct const_node *val_node;
     GArray *val_nodes;
 
     val_nodes = stat_get_val_nodes();
@@ -941,12 +907,22 @@ static void init_memoffs_opnd(char *asm_opnd, operand_seed *opnd_seed)
     } else {
         val_node = g_array_index(val_nodes, struct const_node *, stat_get_opi());
     }
-    size = opnd_seed->opndflags & SIZE_MASK;
-    val = (size == BITS8) ? val_node->imm8 :
-                (size == BITS16) ? val_node->imm16 : val_node->imm32;
-    sprintf(asm_mov_inst, "  mov %s, 0x%x", asm_opnd, (val_node == NULL) ?
-            (uint32_t)nasm_random64(RAND_BITS32_BND) : val);
-    one_insn_gen_ctrl(asm_mov_inst, INSERT_AFTER);
+    if(val_node != NULL && CONST_FLOAT == val_node->type){
+        init_memory_opnd_float(asm_opnd, opnd_seed, val_node);
+    }else if(val_node != NULL && opnd_seed->opdsize == BITS64){
+        init_memory_opnd_imm64(asm_opnd, val_node);
+    }else{
+        opflags_t size;
+        uint32_t val;
+        size = opnd_seed->opndflags & SIZE_MASK;
+        val = (val_node == NULL) ? (uint32_t)nasm_random64(RAND_BITS32_BND) :
+                                   val_node->imm32;
+        val = (size == BITS8) ? (uint8_t)val :
+                (size == BITS16) ? (uint16_t)val : (uint32_t)val;
+        sprintf(asm_mov_inst, "  mov %s, 0x%x", asm_opnd, val);
+        preappend_mem_size(asm_mov_inst + 6, opnd_seed->opdsize);
+        one_insn_gen_ctrl(asm_mov_inst, INSERT_AFTER);
+    }
 }
 
 /******************************************************************************
@@ -968,10 +944,12 @@ static void init_opnd(char *asm_opnd, operand_seed *opnd_seed, struct blk_var *v
         return;
 
     stat_set_need_init(false);
+
     opflags_t opndflags = opnd_seed->opndflags;
+    bool has_mem_opnd = stat_get_has_mem_opnd();
+    stat_set_has_mem_opnd(false);
+
     if (is_class(REGISTER, opndflags)){
-        bool has_mem_opnd = stat_get_has_mem_opnd();
-        stat_set_has_mem_opnd(false);
         if(is_class(REG_CLASS_FPUREG, opndflags)){
             init_fpu_register_opnd(asm_opnd, opnd_seed);
         }else if(is_class(REG_CLASS_RM_MMX, opndflags)){
@@ -979,20 +957,15 @@ static void init_opnd(char *asm_opnd, operand_seed *opnd_seed, struct blk_var *v
         }else{
             init_register_opnd(asm_opnd, opnd_seed);
         }
-        stat_set_has_mem_opnd(has_mem_opnd);
     }else if (is_class(REGMEM, opndflags)) {
-        if (is_class(MEM_OFFS, opndflags)) {
-            init_memoffs_opnd(asm_opnd, opnd_seed);
-        } else {
-            stat_set_has_mem_opnd(false);
-            if (var)
-                one_insn_gen_ctrl(var->init_mem_addr, INSERT_AFTER);
-            else
-                one_insn_gen_ctrl(stat_get_init_mem_addr(), INSERT_AFTER);
-            init_memory_opnd(asm_opnd, opnd_seed);
-            stat_set_has_mem_opnd(true);
-        }
+        if (var)
+            one_insn_gen_ctrl(var->init_mem_addr, INSERT_AFTER);
+        else
+            one_insn_gen_ctrl(stat_get_init_mem_addr(), INSERT_AFTER);
+        init_memory_opnd(asm_opnd, opnd_seed);
     }
+
+    stat_set_has_mem_opnd(has_mem_opnd);
     stat_set_need_init(true);
 }
 
@@ -1102,16 +1075,10 @@ static bool gen_reg_mem(operand_seed *opnd_seed, char *buffer)
     opndflags = opnd_seed->opndflags;
 
     if (is_class(MEMORY, opndflags)) {
-        if (is_class(MEM_OFFS, opndflags)) {
-            return create_memoffs(opnd_seed, buffer);
-        } else {
-            stat_set_has_mem_opnd(true);
-            return create_memory(opnd_seed, buffer);
-        }
+        return create_memory(opnd_seed, buffer);
     } else {
         bool select_mem = likely_happen_p(0.5);
         if (select_mem) {
-            stat_set_has_mem_opnd(true);
             opnd_seed->opndflags = (opnd_seed->opndflags & ~OPTYPE_MASK) | MEMORY;
             return create_memory(opnd_seed, buffer);
         } else {
@@ -1182,8 +1149,10 @@ static bool gen_operand_pseudo_code(operand_seed *opnd_seed)
                 var->init_mem_addr = nasm_strdup(stat_get_init_mem_addr());
             var->valid = true;
             var->is_mem_opnd = stat_get_has_mem_opnd();
+            var->has_label = opnd_seed->has_label;
         } else {
             opnd_seed->opndflags = var->opndflags;
+            opnd_seed->has_label = var->has_label;
             stat_set_has_mem_opnd(var->is_mem_opnd);
         }
 
@@ -1282,8 +1251,8 @@ bool gen_operand(const insn_seed *seed, bool *is_label)
     else
         success = gen_operand_insn_seed(seed, &opnd_seed);
 
-    if (is_label_operand(&opnd_seed))
-        *is_label = true;
+    if (opnd_seed.has_label)
+        *is_label = opnd_seed.has_label;
 
     return success;
 }

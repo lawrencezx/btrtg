@@ -3,8 +3,9 @@
 #include "nasm.h"
 #include "x86pg.h"
 #include "operand.h"
+#include "mem.h"
 
-void random_mem_addr_from_data(struct random_mem_addr *daddr)
+void random_mem_addr_from_data(struct random_mem_addr *daddr, enum SIB_MODE mode)
 {
     int32_t base, scale, index, disp;
     int data_size;
@@ -19,5 +20,5 @@ void random_mem_addr_from_data(struct random_mem_addr *daddr)
     daddr->base = base;
     daddr->scale = scale;
     daddr->index = index;
-    daddr->disp = disp;
+    daddr->disp = (mode == SIB_MODE_ISD || mode == SIB_MODE_D) ? base : disp;
 }
