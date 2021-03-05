@@ -312,25 +312,6 @@ bool create_memory(operand_seed *opnd_seed, char *buffer)
     return true;
 }
 
-bool create_memoffs(operand_seed *opnd_seed, char *buffer)
-{
-    (void)opnd_seed;
-    dfmt->print("    try> create memoffs\n");
-    char src[128];
-    int datai;
-    if (globalbits == 16) {
-        nasm_fatal("unsupported 16-bit memory type");
-    } else {
-        datai = nasm_random32(X86PGState.data_sec.datanum);
-        sprintf(src, "[data%d]", datai);
-    }
-    opnd_seed->has_label = true;
-    sprintf(buffer, "%s", src);
-    preappend_mem_size(buffer, opnd_seed->opdsize);
-    dfmt->print("    done> new memoffs: %s\n", buffer);
-    return true;
-}
-
 bool init_specific_register(enum reg_enum R_reg)
 {
     char buffer[128];
