@@ -495,6 +495,27 @@ static srcdestflags_t calSrcDestFlags(const insn_seed *seed, int opi)
     return srcdestflags;
 }
 
+static bool is_shift_or_rotate(enum opcode opcode)
+{
+    switch (opcode) {
+        case I_RCL:
+        case I_RCR:
+        case I_ROL:
+        case I_ROR:
+        case I_SAL:
+        case I_SAR:
+        case I_SHL:
+        case I_SHR:
+        case I_SHLD:
+        case I_SHRD:
+            return true;
+            break;
+        default:
+            break;
+    }
+    return false;
+}
+
 static opflags_t getCurOperandSize(opflags_t opflags)
 {
     opflags_t opdsize = 0;
@@ -1160,6 +1181,7 @@ static bool gen_operand_pseudo_code(operand_seed *opnd_seed)
          */
         next_opnd = nasm_skip_a_comma(bufptr);
         if (stat_get_opcode() == I_MOVSX ||
+            (opi == 0 && is_shift_or_rotate(stat_get_opcode())) ||
             (opi == 0 && is_class(MEMORY, opnd_seed->opndflags) &&
             (asm_is_blank(next_opnd) || asm_is_immediate(next_opnd))))
             preappend_mem_size(bufptr, opnd_seed->opdsize);
@@ -1206,6 +1228,7 @@ static bool gen_operand_insn_seed(const insn_seed *seed, operand_seed *opnd_seed
     /* specify the fundamental data item size for a memory operand
      */
     if (stat_get_opcode() == I_MOVSX ||
+        (opi == 0 && is_shift_or_rotate(stat_get_opcode())) ||
         (opi == 0 && is_class(MEMORY, opnd_seed->opndflags) &&
         (seed->opd[1] == 0 || is_class(IMMEDIATE, seed->opd[1]))))
         preappend_mem_size(bufptr, opnd_seed->opdsize);
