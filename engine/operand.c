@@ -349,35 +349,23 @@ bool init_specific_register(enum reg_enum R_reg)
     stat_set_has_mem_opnd(false);
 
     if((R_reg >= R_ST0) && (R_reg <= R_ST7)){
-        char mem_address[64];
-        char inst_init_mem_addr[128];
-        strcpy(inst_init_mem_addr, stat_get_init_mem_addr());
-        create_memory(NULL, mem_address);
-        one_insn_gen_ctrl(stat_get_init_mem_addr(), INSERT_AFTER);
+        char mem_address[64] = "[data0]";
 
-        stat_set_need_init(false);
         sprintf(buffer, "fxch %s", src);
         one_insn_gen_const(buffer);
-        stat_set_need_init(true);
 
-        stat_set_need_init(false);
         sprintf(buffer, "fstp st0");    
         //sprintf(asm_fpu_inst, "fincstp");
         one_insn_gen_const(buffer);
-        stat_set_need_init(true);
 
-        sprintf(buffer, "mov dword %s, 0x%x", mem_address, val_node->immf[0]);
-        one_insn_gen_const(buffer); 
+        sprintf(buffer, "  mov dword %s, 0x%x", mem_address, val_node->immf[0]);
+        one_insn_gen_ctrl(buffer, INSERT_AFTER); 
 
-        sprintf(buffer, "fld dword %s",mem_address);
-        one_insn_gen_const(buffer);
+        sprintf(buffer, "  fld dword %s",mem_address);
+        one_insn_gen_ctrl(  buffer, INSERT_AFTER);
         
-        stat_set_need_init(false);
         sprintf(buffer, "fxch %s", src);
         one_insn_gen_const(buffer);
-        stat_set_need_init(true);
-        sprintf(stat_get_init_mem_addr(), "%s", inst_init_mem_addr);
-
     }else{
         sprintf(buffer, "mov %s, 0x%x", src, (val_node == NULL) ?
         (uint32_t)nasm_random64(0x100000000) : val_node->imm32);

@@ -752,21 +752,21 @@ static void init_memory_opnd_float(char *asm_opnd, operand_seed *opnd_seed, stru
     if(opnd_seed->opdsize >= BITS32){
         sprintf(asm_mov_inst, "mov %s, 0x%x", mem_address, fp_number[0]);
         preappend_mem_size(asm_mov_inst + 4, BITS32);
-        one_insn_gen_const(asm_mov_inst);
+        one_insn_gen_ctrl(asm_mov_inst, INSERT_AFTER);
     }
     if(opnd_seed->opdsize >= BITS64){
         char * mem_address_end = mem_address + strlen(mem_address);
         sprintf(mem_address_end -1, "%s", " + 0x4]");
         sprintf(asm_mov_inst, "mov %s, 0x%x", mem_address, fp_number[1]);
         preappend_mem_size(asm_mov_inst + 4, BITS32);
-        one_insn_gen_const(asm_mov_inst);
+        one_insn_gen_ctrl(asm_mov_inst, INSERT_AFTER);
     }
     if(opnd_seed->opdsize >= BITS80){
         char * mem_address_end = mem_address + strlen(mem_address);
         sprintf(mem_address_end -1, "%s", " + 0x8]");
         sprintf(asm_mov_inst, "mov %s, 0x%x", mem_address, fp_number[2]);
         preappend_mem_size(asm_mov_inst + 4, BITS32);
-        one_insn_gen_const(asm_mov_inst);
+        one_insn_gen_ctrl(asm_mov_inst, INSERT_AFTER);
     }
 }
 
@@ -778,21 +778,19 @@ static void init_memory_opnd_imm64(char *asm_opnd, struct const_node *val_node)
     int *imm64 = (int *)&(val_node->imm64);
 
     sprintf(asm_mov_inst, "mov dword %s, 0x%x", mem_address, imm64[0]);
-    one_insn_gen_const(asm_mov_inst);
+    one_insn_gen_ctrl(asm_mov_inst, INSERT_AFTER);
 
     char * mem_address_end = mem_address + strlen(mem_address);
     sprintf(mem_address_end -1, "%s", " + 0x4]");
     sprintf(asm_mov_inst, "mov dword %s, 0x%x", mem_address, imm64[1]);
-    one_insn_gen_const(asm_mov_inst);
+    one_insn_gen_ctrl(asm_mov_inst, INSERT_AFTER);
 }
 
 static void init_fpu_register_opnd(char *asm_opnd, operand_seed *opnd_seed)
 {
     (void)opnd_seed;
     char asm_fpu_inst[128];
-    char mem_address[64];
-    create_memory(NULL, mem_address);
-    one_insn_gen_ctrl(stat_get_init_mem_addr(), INSERT_AFTER);
+    char mem_address[64] = "[data0]";
 
     struct const_node *val_node;
     GArray *val_nodes = stat_get_val_nodes();
@@ -802,36 +800,28 @@ static void init_fpu_register_opnd(char *asm_opnd, operand_seed *opnd_seed)
     } else {
         val_node = g_array_index(val_nodes, struct const_node *, stat_get_opi());
     }
-    stat_set_need_init(false);
     sprintf(asm_fpu_inst, "fxch %s", asm_opnd);
     one_insn_gen_const(asm_fpu_inst);
-    stat_set_need_init(true);
 
-    stat_set_need_init(false);
     sprintf(asm_fpu_inst, "fstp st0");    
     //sprintf(asm_fpu_inst, "fincstp");
     one_insn_gen_const(asm_fpu_inst);
-    stat_set_need_init(true);
 
-    sprintf(asm_fpu_inst, "mov dword %s, 0x%x", mem_address, val_node->immf[0]);
-    one_insn_gen_const(asm_fpu_inst); 
+    sprintf(asm_fpu_inst, "  mov dword %s, 0x%x", mem_address, val_node->immf[0]);
+    one_insn_gen_ctrl(asm_fpu_inst, INSERT_AFTER); 
 
-    sprintf(asm_fpu_inst, "fld dword %s",mem_address);
-    one_insn_gen_const(asm_fpu_inst);
+    sprintf(asm_fpu_inst, "  fld dword %s",mem_address);
+    one_insn_gen_ctrl(asm_fpu_inst, INSERT_AFTER);
 
-    stat_set_need_init(false);
     sprintf(asm_fpu_inst, "fxch %s", asm_opnd);
     one_insn_gen_const(asm_fpu_inst);
-    stat_set_need_init(true);
 }
 
 static void init_mmx_register_opnd(char *asm_opnd, operand_seed *opnd_seed)
 {
     (void)opnd_seed;
     char asm_mmx_inst[128];
-    char mem_address[64];
-    create_memory(NULL, mem_address);
-    one_insn_gen_ctrl(stat_get_init_mem_addr(), INSERT_AFTER);
+    char mem_address[64] = "[data0]";
 
     struct const_node *val_node;
     GArray *val_nodes = stat_get_val_nodes();
@@ -846,16 +836,16 @@ static void init_mmx_register_opnd(char *asm_opnd, operand_seed *opnd_seed)
         ((int *)&(val_node->imm64))[1] = 0x0;
     }
     char * mem_address_end = mem_address + strlen(mem_address);
-    sprintf(asm_mmx_inst, "mov dword %s, 0x%x", mem_address, ((int *)&(val_node->imm64))[0]);
-    one_insn_gen_const(asm_mmx_inst); 
+    sprintf(asm_mmx_inst, "  mov dword %s, 0x%x", mem_address, ((int *)&(val_node->imm64))[0]);
+    one_insn_gen_ctrl(asm_mmx_inst, INSERT_AFTER); 
 
     sprintf(mem_address_end -1, "%s", " + 0x4]");
-    sprintf(asm_mmx_inst, "mov dword %s, 0x%x", mem_address, ((int *)&(val_node->imm64))[1]);
-    one_insn_gen_const(asm_mmx_inst);
+    sprintf(asm_mmx_inst, "  mov dword %s, 0x%x", mem_address, ((int *)&(val_node->imm64))[1]);
+    one_insn_gen_ctrl(asm_mmx_inst, INSERT_AFTER);
 
     sprintf(mem_address_end -1, "%s", "]");
-    sprintf(asm_mmx_inst, "movq qword %s, %s", asm_opnd, mem_address);
-    one_insn_gen_const(asm_mmx_inst);
+    sprintf(asm_mmx_inst, "  movq qword %s, %s", asm_opnd, mem_address);
+    one_insn_gen_ctrl(asm_mmx_inst, INSERT_AFTER);
 }
 
 static void init_register_opnd(char *asm_opnd, operand_seed *opnd_seed)
