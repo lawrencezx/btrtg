@@ -117,6 +117,7 @@
 #define SIZE_BITS               (11)
 #define SIZE_MASK               OP_GENMASK(SIZE_BITS, SIZE_SHIFT)
 #define GEN_SIZE(bit)           OP_GENBIT(bit, SIZE_SHIFT)
+#define size_mask(opflags)      (opflags & SIZE_MASK)
 
 /*
  * Register set count

@@ -126,12 +126,13 @@ bool create_unity(operand_seed *opnd_seed, char *buffer)
 {
     dfmt->print("    try> create unity\n");
     int unity, shiftCount;
+    opflags_t opndsize = size_mask(opnd_seed->opndflags);
     
-    if (opnd_seed->opdsize == BITS8) {
+    if (opndsize == BITS8) {
         shiftCount = 8;
-    } else if (opnd_seed->opdsize == BITS16) {
+    } else if (opndsize == BITS16) {
         shiftCount = 16;
-    } else if (opnd_seed->opdsize == BITS32) {
+    } else if (opndsize == BITS32) {
         shiftCount = 32;
     }
 
@@ -183,7 +184,7 @@ gen_gpr:
     gprn = BSEQIFLAG_INDEXSIZE(bseqiflags);
     gpri = nasm_random32(gprn);
 
-    switch (opnd_seed->opdsize) {
+    switch (size_mask(opnd_seed->opndflags)) {
         case BITS8:
             gpr = nasm_rd_reg8[gpri];
             break;
@@ -214,7 +215,7 @@ bool create_immediate(operand_seed *opnd_seed, char *buffer)
     int imm;
     
     long long immn;
-    switch (opnd_seed->opdsize) {
+    switch (size_mask(opnd_seed->opndflags)) {
         case BITS8:
             immn = RAND_BITS8_BND;
             break;
@@ -405,13 +406,13 @@ bool init_popf(void)
 /* specify the fundamental data item size for a memory operand
  * for example: byte, word, dword, etc.
  */
-char *preappend_mem_size(char *asm_mem, opflags_t opdsize)
+char *preappend_mem_size(char *asm_mem, opflags_t opndsize)
 {
     static const char *memsize[5] = {"byte ", "word ", "dword ", "qword", "tword"};
-    int i = opdsize == BITS8 ? 0 :
-            opdsize == BITS16 ? 1 : 
-            opdsize == BITS32 ? 2 :
-            opdsize == BITS64 ? 3 :
-            opdsize == BITS80? 4 : 2;
+    int i = opndsize == BITS8 ? 0 :
+            opndsize == BITS16 ? 1 : 
+            opndsize == BITS32 ? 2 :
+            opndsize == BITS64 ? 3 :
+            opndsize == BITS80? 4 : 2;
     return nasm_strrplc(asm_mem, 0, memsize[i], strlen(memsize[i]));
 }

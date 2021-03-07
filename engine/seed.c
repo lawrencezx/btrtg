@@ -25,7 +25,6 @@ void init_opnd_seed(operand_seed *opnd_seed)
     opnd_seed->has_label = false;
     opnd_seed->opndflags = 0;
     opnd_seed->srcdestflags = 0;
-    opnd_seed->opdsize = 0;
 }
 
 void create_insn_seed(insn_seed *seed, const char *instname)
@@ -70,5 +69,4 @@ void create_opnd_seed(operand_seed *opnd_seed, const char *asm_opnd)
         else
             opnd_seed->opndflags = parse_asm_opnd_opflags(asm_opnd);
     }
-    opnd_seed->opdsize = opnd_seed->opndflags & SIZE_MASK;
 }

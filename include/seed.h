@@ -14,7 +14,6 @@ typedef struct operand_seed {
     bool            has_label;
     opflags_t       opndflags;
     srcdestflags_t  srcdestflags;         /* source and destination operand flag */
-    opflags_t       opdsize;
 } operand_seed;
 
 typedef struct insn_seed {

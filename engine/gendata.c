@@ -518,49 +518,49 @@ static bool is_shift_or_rotate(enum opcode opcode)
 
 static opflags_t getCurOperandSize(opflags_t opflags)
 {
-    opflags_t opdsize = 0;
+    opflags_t opndsize = 0;
     if ((SIZE_MASK & opflags) != 0) {
-        opdsize = SIZE_MASK & opflags;
+        opndsize = SIZE_MASK & opflags;
     }
     /* or if current operand opflags does not have size property
      * get it from current instruction's other properties
      */
-    return opdsize;
+    return opndsize;
 }
 
 static opflags_t calOperandSize(const insn_seed *seed, int opdi)
 {
-    opflags_t opdsize = 0;
+    opflags_t opndsize = 0;
     /* If operand's opflags contain size information, extract it. */
-    if ((opdsize = getCurOperandSize(seed->opd[opdi])) == 0) {
+    if ((opndsize = getCurOperandSize(seed->opd[opdi])) == 0) {
     /* If operand's opflags does not contain size information
      * Copy the size information from other operands.
      */
         for (int i = 0; i < MAX_OPERANDS && seed->opd[i] != 0; i++) {
-            if ((opdsize = getCurOperandSize(seed->opd[i])) != 0) {
+            if ((opndsize = getCurOperandSize(seed->opd[i])) != 0) {
                 break;
             }
         }
     }
-    if (opdsize == 0) {
+    if (opndsize == 0) {
         /* Instructions whose operands do not indicate it's operand sizeof()
          * We can calculate it according from instruction opcode.
          */
         switch (seed->opcode) {
             case I_RET:
             case I_RETF:
-                opdsize = BITS16;
+                opndsize = BITS16;
                 break;
             case I_ENTER:
-                opdsize = (opdi == 1) ? BITS16 : BITS8;
+                opndsize = (opdi == 1) ? BITS16 : BITS8;
                 break;
             default:
-                opdsize = (globalbits == 16) ? BITS16 : BITS32;
+                opndsize = (globalbits == 16) ? BITS16 : BITS32;
                 break;
         }
         /*TODO: Instructions whose name end with B/W/D. */
     }
-    return opdsize;
+    return opndsize;
 }
 
 void init_implied_operands(insn *result)
@@ -750,10 +750,12 @@ static void init_memory_opnd_float(char *asm_opnd, operand_seed *opnd_seed, stru
     char mem_address[64];
     strcpy(mem_address, asm_opnd);
     int fp_number[3] = {0};
+    opflags_t opndsize = size_mask(opnd_seed->opndflags);
+
     if(val_node == NULL){
         //random_fp_number(opnd_seed, fp_number);
     }else{
-        switch(opnd_seed->opdsize){
+        switch (opndsize) {
             case BITS32:
                 fp_number[0] = val_node->immf[0];
                 break;
@@ -770,19 +772,19 @@ static void init_memory_opnd_float(char *asm_opnd, operand_seed *opnd_seed, stru
                 break;
         }  
     }
-    if(opnd_seed->opdsize >= BITS32){
+    if(opndsize >= BITS32){
         sprintf(asm_mov_inst, "mov %s, 0x%x", mem_address, fp_number[0]);
         preappend_mem_size(asm_mov_inst + 4, BITS32);
         one_insn_gen_ctrl(asm_mov_inst, INSERT_AFTER);
     }
-    if(opnd_seed->opdsize >= BITS64){
+    if(opndsize >= BITS64){
         char * mem_address_end = mem_address + strlen(mem_address);
         sprintf(mem_address_end -1, "%s", " + 0x4]");
         sprintf(asm_mov_inst, "mov %s, 0x%x", mem_address, fp_number[1]);
         preappend_mem_size(asm_mov_inst + 4, BITS32);
         one_insn_gen_ctrl(asm_mov_inst, INSERT_AFTER);
     }
-    if(opnd_seed->opdsize >= BITS80){
+    if(opndsize >= BITS80){
         char * mem_address_end = mem_address + strlen(mem_address);
         sprintf(mem_address_end -1, "%s", " + 0x8]");
         sprintf(asm_mov_inst, "mov %s, 0x%x", mem_address, fp_number[2]);
@@ -927,7 +929,7 @@ static void init_memory_opnd(char *asm_opnd, operand_seed *opnd_seed)
     }
     if(val_node != NULL && CONST_FLOAT == val_node->type){
         init_memory_opnd_float(asm_opnd, opnd_seed, val_node);
-    }else if(val_node != NULL && opnd_seed->opdsize == BITS64){
+    }else if(val_node != NULL && size_mask(opnd_seed->opndflags) == BITS64){
         init_memory_opnd_imm64(asm_opnd, val_node);
     }else{
         opflags_t size;
@@ -938,7 +940,7 @@ static void init_memory_opnd(char *asm_opnd, operand_seed *opnd_seed)
         val = (size == BITS8) ? (uint8_t)val :
                 (size == BITS16) ? (uint16_t)val : (uint32_t)val;
         sprintf(asm_mov_inst, "  mov %s, 0x%x", asm_opnd, val);
-        preappend_mem_size(asm_mov_inst + 6, opnd_seed->opdsize);
+        preappend_mem_size(asm_mov_inst + 6, size_mask(opnd_seed->opndflags));
         one_insn_gen_ctrl(asm_mov_inst, INSERT_AFTER);
     }
 }
@@ -1193,7 +1195,7 @@ static bool gen_operand_pseudo_code(operand_seed *opnd_seed)
             (opi == 0 && is_shift_or_rotate(stat_get_opcode())) ||
             (opi == 0 && is_class(MEMORY, opnd_seed->opndflags) &&
             (asm_is_blank(next_opnd) || asm_is_immediate(next_opnd))))
-            preappend_mem_size(bufptr, opnd_seed->opdsize);
+            preappend_mem_size(bufptr, size_mask(opnd_seed->opndflags));
     }
     
     init_opnd(asm_opnd, opnd_seed, var);
@@ -1215,9 +1217,8 @@ static bool gen_operand_insn_seed(const insn_seed *seed, operand_seed *opnd_seed
     if (seed->opd[opi] == 0)
         return true;
 
-    opnd_seed->opndflags = seed->opd[opi];
+    opnd_seed->opndflags = (seed->opd[opi] | calOperandSize(seed, opi));
     opnd_seed->srcdestflags = calSrcDestFlags(seed, opi);
-    opnd_seed->opdsize = calOperandSize(seed, opi);
 
     bufptr = get_token_bufptr();
 
@@ -1240,7 +1241,7 @@ static bool gen_operand_insn_seed(const insn_seed *seed, operand_seed *opnd_seed
         (opi == 0 && is_shift_or_rotate(stat_get_opcode())) ||
         (opi == 0 && is_class(MEMORY, opnd_seed->opndflags) &&
         (seed->opd[1] == 0 || is_class(IMMEDIATE, seed->opd[1]))))
-        preappend_mem_size(bufptr, opnd_seed->opdsize);
+        preappend_mem_size(bufptr, size_mask(opnd_seed->opndflags));
 
     init_opnd(asm_opnd, opnd_seed, NULL);
 

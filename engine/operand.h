@@ -25,6 +25,6 @@ bool create_fpu_register(operand_seed *opnd_seed, char *buffer);
 bool create_mmx_register(operand_seed *opnd_seed, char *buffer);
 bool create_xmm_register(operand_seed *opnd_seed, char *buffer);
 
-char *preappend_mem_size(char *asm_mem, opflags_t opdsize);
+char *preappend_mem_size(char *asm_mem, opflags_t opndsize);
 
 #endif
