@@ -1,0 +1,6 @@
+<TestingKnowledges>
+    <TK inst = "addps">
+        <Node name = "xmmarith" weight="100"> </Node>
+        <Node name = "normal" weight="0"> </Node>
+    </TK>
+</TestingKnowledges>

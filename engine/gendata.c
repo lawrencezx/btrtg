@@ -869,6 +869,13 @@ static void init_mmx_register_opnd(char *asm_opnd, operand_seed *opnd_seed)
     one_insn_gen_ctrl(asm_mmx_inst, INSERT_AFTER);
 }
 
+static void init_xmm_register_opnd(char *asm_opnd, operand_seed *opnd_seed)
+{
+    (void)asm_opnd;
+    (void)opnd_seed;
+    /* TODO */
+}
+    
 static void init_register_opnd(char *asm_opnd, operand_seed *opnd_seed)
 {
     (void)opnd_seed;
@@ -961,11 +968,13 @@ static void init_opnd(char *asm_opnd, operand_seed *opnd_seed, struct blk_var *v
     stat_set_has_mem_opnd(false);
 
     if (is_class(REGISTER, opndflags)){
-        if(is_class(REG_CLASS_FPUREG, opndflags)){
+        if (is_class(REG_CLASS_FPUREG, opndflags)) {
             init_fpu_register_opnd(asm_opnd, opnd_seed);
-        }else if(is_class(REG_CLASS_RM_MMX, opndflags)){
+        } else if (is_class(REG_CLASS_RM_MMX, opndflags)) {
             init_mmx_register_opnd(asm_opnd, opnd_seed);
-        }else{
+        } else if (is_class(REG_CLASS_RM_XMM, opndflags)) {
+            init_xmm_register_opnd(asm_opnd, opnd_seed);
+        } else {
             init_register_opnd(asm_opnd, opnd_seed);
         }
     }else if (is_class(REGMEM, opndflags)) {
@@ -1030,7 +1039,7 @@ static bool gen_register(operand_seed *opnd_seed, char *buffer)
     } else if (is_class(REG_CLASS_RM_MMX, opndflags)) {
         return create_mmx_register(opnd_seed, buffer);
     } else if (is_class(REG_CLASS_RM_XMM, opndflags)) {
-        /* TODO */
+        return create_xmm_register(opnd_seed, buffer);
     } else if (is_class(REG_CLASS_RM_YMM, opndflags)) {
         /* TODO */
     } else if (is_class(REG_CLASS_RM_ZMM, opndflags)) {

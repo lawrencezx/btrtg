@@ -1,11 +1,9 @@
 <Template>
-    <I type = "add reg32, imm32" inip = "1.0"> </I>
-    <traverse var = "mem" type = "mem16">
+    <I type = "add reg32, mem32"> </I>
+    <traverse>
+        <V var = "mem" type = "mem16"></V>
         <I type = "lea bx, @mem"></I>
-        <I type = "add @mem, imm16"></I>
-        <sequence>
-            <I type = "sub @mem, imm16"></I>
-        </sequence>
+        <I type = "add @mem, imm16" trv = "true" ></I>
     </traverse>
     <repeat times = "10">
         <select>
@@ -22,8 +20,9 @@
     <C type = "eax"> </C>
     <C type = "cs"> </C>
     <C type = "eflags"> </C>
-    <traverse var = "reg" type = "reg16">
-        <I type = "add @reg,imm16"></I>
+    <traverse>
+        <V var = "reg" type = "reg16"> </V>
+        <I type = "add @reg,imm16" trv = "true"></I>
         <C type = "@reg"></C>
     </traverse>
 </Template>

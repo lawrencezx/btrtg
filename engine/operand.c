@@ -105,6 +105,23 @@ bool create_mmx_register(operand_seed *opnd_seed, char *buffer)
     return true;
 }
 
+bool create_xmm_register(operand_seed *opnd_seed, char *buffer)
+{
+    dfmt->print("    try> create xmmreg\n");
+    int xmmregi, xmmregn;
+    enum reg_enum xmmreg;
+    const char *src;
+
+    bseqiflags_t bseqiflags = bseqi_flags(opnd_seed->opndflags);
+    xmmregn = BSEQIFLAG_INDEXSIZE(bseqiflags);
+    xmmregi = nasm_random32(xmmregn);
+    xmmreg = nasm_rd_xmmreg[xmmregi];
+    src = nasm_reg_names[xmmreg - EXPR_REG_START];
+    sprintf(buffer, " %s", src);
+    dfmt->print("    done> new xmmreg: %s\n", buffer);
+    return true;
+}
+
 bool create_unity(operand_seed *opnd_seed, char *buffer)
 {
     dfmt->print("    try> create unity\n");
