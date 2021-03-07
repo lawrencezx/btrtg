@@ -23,7 +23,6 @@ extern char *tk_tmplt_path;
 
 static void parseCGs(xmlNodePtr cgsNode)
 {
-    int i = 0, imm;
     char *key;
     struct hash_insert hi;
     struct wd_node *cg_tree_node;
@@ -41,40 +40,28 @@ static void parseCGs(xmlNodePtr cgsNode)
             if (cNode->type != XML_ELEMENT_NODE)
                 continue;
 
-            imm = hex2dec((const char *)cNode->children->content);
             const char *cNodeName = (const char *)cNode->name;
+            const char *cNodeContent = (const char *)cNode->children->content;
+
             if(0 == strcmp(cNodeName, "Immf")){
                 val_node.type = CONST_FLOAT;
-                *(float *)(val_node.immf) = strtof((const char *)cNode->children->content, NULL);
-                *(double *)(val_node.immf + 1) = strtod((const char *)cNode->children->content, NULL);
-                *(long double *)(val_node.immf + 3) = strtold((const char *)cNode->children->content, NULL);
-                g_array_append_val(cg_tree_node->const_nodes, val_node);
+                *(float *)(val_node.immf) = strtof(cNodeContent, NULL);
+                *(double *)(val_node.immf + 1) = strtod(cNodeContent, NULL);
+                *(long double *)(val_node.immf + 3) = strtold(cNodeContent, NULL);
             }else if(0 == strcmp(cNodeName, "Imm64")){
                 val_node.type = CONST_IMM64;
-                val_node.imm64 = hex2declong((const char *)cNode->children->content);
-                g_array_append_val(cg_tree_node->const_nodes, val_node);    
+                val_node.imm64 = hex2declong(cNodeContent);
             }else if(0 == strcmp(cNodeName, "Bcd")){
                 val_node.type = CONST_BCD;
-                str2bcd((const char *)cNode->children->content, val_node.bcd);
-                g_array_append_val(cg_tree_node->const_nodes, val_node);
-            }else{
+                str2bcd(cNodeContent, val_node.bcd);
+            } else if (strcmp(cNodeName, "Float32")) {
+                val_node.type = CONST_FLOAT32;
+                val_node.float32 = strtof(cNodeContent, NULL);
+            } else {
                 val_node.type = CONST_IMM32;
-                val_node.imm32 = (uint32_t)imm;
-                g_array_append_val(cg_tree_node->const_nodes, val_node);
+                val_node.imm32 = (uint32_t)hex2dec(cNodeContent);
             }
-
-            //const char *cNodeName = (const char *)cNode->name;
-            //if (strcmp(cNodeName, "Imm8") == 0) {
-            //    cgVal[i].imm8 = (uint8_t)imm;
-            //} else if (strcmp(cNodeName, "Unity") == 0) {
-            //    cgVal[i].unity = (uint8_t)imm;
-            //} else if (strcmp(cNodeName, "Imm16") == 0) {
-            //    cgVal[i].imm16 = (uint16_t)imm;
-            //} else if (strcmp(cNodeName, "Imm32") == 0) {
-            //} else {
-            //    printf("0x%x\n", imm);
-            //}
-            i++;
+            g_array_append_val(cg_tree_node->const_nodes, val_node);
         }
 
         key = (char *)xmlGetProp(cgNode, (const unsigned char*)"name");

@@ -890,11 +890,36 @@ static void init_mmx_register_opnd(char *asm_opnd, operand_seed *opnd_seed)
     one_insn_gen_ctrl(asm_mmx_inst, INSERT_AFTER);
 }
 
+/* movups [float1, float2, float3, float4] to xmm_reg
+ */
+#define init_xmm_5_insts_format "\
+  mov dword [data0], 0x%x\n\
+  mov dword [data0 + 0x4], 0x%x\n\
+  mov dword [data0 + 0x8], 0x%x\n\
+  mov dword [data0 + 0xc], 0x%x\n\
+  movups %s, [data0]"
+
 static void init_xmm_register_opnd(char *asm_opnd, operand_seed *opnd_seed)
 {
-    (void)asm_opnd;
     (void)opnd_seed;
-    /* TODO */
+    char asm_xmm_inst5[512] = "";
+
+    struct const_node *val_node;
+    GArray *val_nodes = stat_get_val_nodes();
+    if (val_nodes == NULL) {
+        const char *asm_op = nasm_insn_names[stat_get_opcode()];
+        val_node = request_val_node(asm_op, stat_get_opi());
+    } else {
+        val_node = g_array_index(val_nodes, struct const_node *, stat_get_opi());
+    }
+    
+    sprintf(asm_xmm_inst5, init_xmm_5_insts_format,
+            float32_bytes_to_uint32(val_node->float32),
+            float32_bytes_to_uint32(val_node->float32),
+            float32_bytes_to_uint32(val_node->float32),
+            float32_bytes_to_uint32(val_node->float32),
+            asm_opnd);
+    one_insn_gen_ctrl(asm_xmm_inst5, INSERT_AFTER); 
 }
     
 static void init_register_opnd(char *asm_opnd, operand_seed *opnd_seed)
