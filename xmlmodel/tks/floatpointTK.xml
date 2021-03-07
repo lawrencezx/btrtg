@@ -119,8 +119,14 @@
 	</TK>
 
 	<TK inst = "fdiv">
-		<Node name = "farith" weight="100"> </Node>
-        <Node name = "normal" weight="0"> </Node>
+        <Node opnd = "0">
+            <Node name = "fdivs" weight="100"> </Node>
+            <Node name = "normal" weight="0"> </Node>
+        </Node>
+        <Node opnd = "1">
+            <Node name = "fdivd" weight="100"> </Node>
+            <Node name = "normal" weight="0"> </Node>
+        </Node>
 	</TK>
 	<TK inst = "fdivp">
 		<Node name = "farith" weight="100"> </Node>
@@ -213,8 +219,14 @@
     </TK>
 
     <TK inst = "fyl2x">
-        <Node name = "farith" weight="100"> </Node>
-        <Node name = "normal" weight="0"> </Node>
+        <Node opnd = "0">
+            <Node name = "fyl2xst0" weight="100"> </Node>
+            <Node name = "normal" weight="0"> </Node>
+        </Node>
+        <Node opnd = "1">
+            <Node name = "fyl2xst1" weight="100"> </Node>
+            <Node name = "normal" weight="0"> </Node>
+        </Node>
     </TK>
 
     <TK inst = "fyl2xp1">
@@ -246,6 +258,45 @@
         <Node name = "farith" weight="100"> </Node>
         <Node name = "normal" weight="0"> </Node>
     </TK>
+
+    <TK inst = "fbld">
+        <Node name = "bcd80" weight="100"> </Node>
+        <Node name = "normal" weight="0"> </Node>
+    </TK>
+
+    <TK inst = "fbstp">
+        <Node name = "bcd80" weight="100"> </Node>
+        <Node name = "normal" weight="0"> </Node>
+    </TK>
+
+	<TK inst = "fld1">
+		<Node name = "farith" weight="100"> </Node>
+        <Node name = "normal" weight="0"> </Node>
+	</TK>
+	<TK inst = "fldz">
+		<Node name = "farith" weight="100"> </Node>
+        <Node name = "normal" weight="0"> </Node>
+	</TK>
+	<TK inst = "fldpi">
+		<Node name = "farith" weight="100"> </Node>
+        <Node name = "normal" weight="0"> </Node>
+	</TK>
+	<TK inst = "fldl2e">
+		<Node name = "farith" weight="100"> </Node>
+        <Node name = "normal" weight="0"> </Node>
+	</TK>
+	<TK inst = "fldln2">
+		<Node name = "farith" weight="100"> </Node>
+        <Node name = "normal" weight="0"> </Node>
+	</TK>
+	<TK inst = "fldl2t">
+		<Node name = "farith" weight="100"> </Node>
+        <Node name = "normal" weight="0"> </Node>
+	</TK>
+	<TK inst = "fldlg2">
+		<Node name = "farith" weight="100"> </Node>
+        <Node name = "normal" weight="0"> </Node>
+	</TK>
 
 	<TK inst = "paddb">
 		<Node name = "mmxarith" weight="100"> </Node>

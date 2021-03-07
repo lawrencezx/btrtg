@@ -76,6 +76,7 @@ static int get_operands_from_instname(char * inst_name){
         case I_FISUBR:
         case I_FYL2X:
         case I_FYL2XP1:
+        case I_FXCH:
             return 2;
         case I_FABS:
         case I_FCHS:

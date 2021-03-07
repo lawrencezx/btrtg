@@ -9,6 +9,7 @@ enum const_type {
     CONST_IMM32,
     CONST_IMM64,
     CONST_FLOAT,
+    CONST_BCD,
     CONST_UNITY,
     CONST_ASM_OP
 };
@@ -21,6 +22,7 @@ struct const_node {
         uint32_t imm32;
         uint64_t imm64;
         uint32_t immf[6];
+        uint32_t bcd[3];
         uint8_t unity;
         char *asm_op;
     };

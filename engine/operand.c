@@ -349,7 +349,7 @@ bool init_specific_register(enum reg_enum R_reg)
 
     if((R_reg >= R_ST0) && (R_reg <= R_ST7)){
         char mem_address[64] = "[data0]";
-
+        char *mem_address_end = mem_address + strlen(mem_address);
         sprintf(buffer, "fxch %s", src);
         one_insn_gen_const(buffer);
 
@@ -357,12 +357,18 @@ bool init_specific_register(enum reg_enum R_reg)
         //sprintf(asm_fpu_inst, "fincstp");
         one_insn_gen_const(buffer);
 
-        sprintf(buffer, "  mov dword %s, 0x%x", mem_address, val_node->immf[0]);
+        sprintf(buffer, "  mov dword %s, 0x%x", mem_address, val_node->immf[1]);
         one_insn_gen_ctrl(buffer, INSERT_AFTER); 
 
-        sprintf(buffer, "  fld dword %s",mem_address);
+        sprintf(mem_address_end - 1, " + 0x4]");
+
+        sprintf(buffer, "  mov dword %s, 0x%x", mem_address, val_node->immf[2]);
+        one_insn_gen_ctrl(buffer, INSERT_AFTER); 
+
+        sprintf(mem_address_end - 1 , "]");
+        sprintf(buffer, "  fld qword %s",mem_address);
         one_insn_gen_ctrl(  buffer, INSERT_AFTER);
-        
+
         sprintf(buffer, "fxch %s", src);
         one_insn_gen_const(buffer);
     }else{

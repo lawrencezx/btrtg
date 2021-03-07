@@ -1,0 +1,19 @@
+<Template>
+    <traverse>
+        <V var = "fpureg" type = "fpureg"></V>
+		<I type = "fxch @fpureg" trv = "true"></I>
+		<C type = "@fpureg"></C>
+    </traverse>
+    <traverse>
+		<I type = "fxch fpureg" trv = "true"></I>
+		<C type = "st0"></C>
+    </traverse>
+    <traverse>
+		<I type = "fxch " trv = "true"></I>
+		<C type = "st0"></C>
+    </traverse>
+    <traverse>
+		<I type = "fxch " trv = "true"></I>
+		<C type = "st1"></C>
+    </traverse>
+</Template>

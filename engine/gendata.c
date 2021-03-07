@@ -653,7 +653,7 @@ void init_implied_operands(insn *result)
             case I_FSINCOS:
             case I_FSQRT:
             case I_FTST:
-            case I_FXCH:
+            
             case I_FXTRACT:
             case I_FABS:
             case I_F2XM1:
@@ -694,7 +694,7 @@ void init_implied_operands(insn *result)
             case I_FUCOMIP:
             case I_FUCOMP:
             case I_FUCOMPP:
-                
+            case I_FXCH:
                 if(operands == 1){
                     init_specific_register(R_ST0);
                 }else if(operands == 0){
@@ -786,11 +786,30 @@ static void init_memory_opnd_float(char *asm_opnd, operand_seed *opnd_seed, stru
     }
     if(opndsize >= BITS80){
         char * mem_address_end = mem_address + strlen(mem_address);
-        sprintf(mem_address_end -1, "%s", " + 0x8]");
+        sprintf(mem_address_end -1, "%s", " + 0x4]");
         sprintf(asm_mov_inst, "mov %s, 0x%x", mem_address, fp_number[2]);
         preappend_mem_size(asm_mov_inst + 4, BITS32);
         one_insn_gen_ctrl(asm_mov_inst, INSERT_AFTER);
     }
+}
+
+static void init_memory_opnd_bcd80(char *asm_opnd, struct const_node *val_node){
+    char asm_mov_inst[128];
+    char mem_address[64];
+    strcpy(mem_address, asm_opnd);
+    int *bcd80 = (int *)&(val_node->bcd);
+
+    sprintf(asm_mov_inst, "mov dword %s, 0x%x", mem_address, bcd80[0]);
+    one_insn_gen_ctrl(asm_mov_inst, INSERT_AFTER);
+
+    char * mem_address_end = mem_address + strlen(mem_address);
+    sprintf(mem_address_end -1, "%s", " + 0x4]");
+    sprintf(asm_mov_inst, "mov dword %s, 0x%x", mem_address, bcd80[1]);
+    one_insn_gen_ctrl(asm_mov_inst, INSERT_AFTER);
+
+    sprintf(mem_address_end -1, "%s", " + 0x8]");
+    sprintf(asm_mov_inst, "mov dword %s, 0x%x", mem_address, bcd80[2]);
+    one_insn_gen_ctrl(asm_mov_inst, INSERT_AFTER);
 }
 
 static void init_memory_opnd_imm64(char *asm_opnd, struct const_node *val_node)
@@ -931,6 +950,8 @@ static void init_memory_opnd(char *asm_opnd, operand_seed *opnd_seed)
         init_memory_opnd_float(asm_opnd, opnd_seed, val_node);
     }else if(val_node != NULL && size_mask(opnd_seed->opndflags) == BITS64){
         init_memory_opnd_imm64(asm_opnd, val_node);
+    }else if(val_node != NULL && opnd_seed->opdsize == BITS80){
+        init_memory_opnd_bcd80(asm_opnd, val_node);
     }else{
         opflags_t size;
         uint32_t val;
@@ -1175,6 +1196,7 @@ static bool gen_operand_pseudo_code(operand_seed *opnd_seed)
         } else {
             strcpy(asm_opnd, var->var_val);
             opnd_seed->opndflags = var->opndflags;
+            opnd_seed->opdsize = opnd_seed->opndflags & SIZE_MASK;
             opnd_seed->has_label = var->has_label;
             stat_set_has_mem_opnd(var->is_mem_opnd);
         }

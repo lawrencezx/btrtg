@@ -53,6 +53,10 @@ static void parseCGs(xmlNodePtr cgsNode)
                 val_node.type = CONST_IMM64;
                 val_node.imm64 = hex2declong((const char *)cNode->children->content);
                 g_array_append_val(cg_tree_node->const_nodes, val_node);    
+            }else if(0 == strcmp(cNodeName, "Bcd")){
+                val_node.type = CONST_BCD;
+                str2bcd((const char *)cNode->children->content, val_node.bcd);
+                g_array_append_val(cg_tree_node->const_nodes, val_node);
             }else{
                 val_node.type = CONST_IMM32;
                 val_node.imm32 = (uint32_t)imm;
