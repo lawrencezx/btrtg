@@ -177,7 +177,7 @@
 #define REG_CLASS_RM_ZMM        GEN_REG_CLASS(7)
 #define REG_CLASS_OPMASK        GEN_REG_CLASS(8)
 #define REG_CLASS_BND           GEN_REG_CLASS(9)
-#define REG_CLASS_RM_TMM	GEN_REG_CLASS(10)
+#define REG_CLASS_RM_TMM	    GEN_REG_CLASS(10)
 
 static inline bool is_class(opflags_t class, opflags_t op)
 {

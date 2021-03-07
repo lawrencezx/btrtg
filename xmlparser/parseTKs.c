@@ -7,7 +7,7 @@
 #include "error.h"
 #include "tk.h"
 
-static const char *xmlfiles[6] =
+static const char *xmlfiles[8] =
 {
     /* must put Consts before TK, so the TK can find relevant constGroup */
     "fixedpointConsts.xml",
@@ -15,7 +15,9 @@ static const char *xmlfiles[6] =
     "floatpointConsts.xml",
     "floatpointTK.xml",
     "sseConsts.xml",
-    "sseTK.xml"
+    "sseTK.xml",
+    "sse2Consts.xml",
+    "sse2TK.xml"
 };
 
 extern char *tk_tmplt_path;
@@ -57,6 +59,9 @@ static void parseCGs(xmlNodePtr cgsNode)
             } else if (strcmp(cNodeName, "Float32")) {
                 val_node.type = CONST_FLOAT32;
                 val_node.float32 = strtof(cNodeContent, NULL);
+            } else if (strcmp(cNodeName, "Float64")) {
+                val_node.type = CONST_FLOAT64;
+                val_node.float64 = strtof(cNodeContent, NULL);
             } else {
                 val_node.type = CONST_IMM32;
                 val_node.imm32 = (uint32_t)hex2dec(cNodeContent);

@@ -10,6 +10,7 @@ enum const_type {
     CONST_IMM64,
     CONST_FLOAT,
     CONST_FLOAT32,
+    CONST_FLOAT64,
     CONST_BCD,
     CONST_UNITY,
     CONST_ASM_OP

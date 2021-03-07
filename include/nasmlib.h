@@ -75,9 +75,9 @@ int64_t hex2declong(const char *hex);
 void str2bcd(const char *hex, uint32_t bcd[3]);
 /* Transform above same bytes.
  */
-static inline uint32_t float32_bytes_to_uint32(float f)
+static inline uint32_t bytes_to_uint32(char *f)
 {
-    return *((uint32_t *)&f);
+    return *(uint32_t *)f;
 }
 /*
  * Wrappers around malloc, realloc, free and a few more. nasm_malloc

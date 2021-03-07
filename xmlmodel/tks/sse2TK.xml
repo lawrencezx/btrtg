@@ -1,0 +1,6 @@
+<TestingKnowledges>
+    <TK inst = "addpd">
+        <Node name = "sse2-arith" weight="100"> </Node>
+        <Node name = "normal" weight="0"> </Node>
+    </TK>
+</TestingKnowledges>

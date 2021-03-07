@@ -892,17 +892,26 @@ static void init_mmx_register_opnd(char *asm_opnd, operand_seed *opnd_seed)
 
 /* movups [float1, float2, float3, float4] to xmm_reg
  */
-#define init_xmm_5_insts_format "\
+#define init_xmm_4float32_format "\
   mov dword [data0], 0x%x\n\
   mov dword [data0 + 0x4], 0x%x\n\
   mov dword [data0 + 0x8], 0x%x\n\
   mov dword [data0 + 0xc], 0x%x\n\
   movups %s, [data0]"
 
+/* movupd [double1, double2] to xmm_reg
+ */
+#define init_xmm_2float64_format "\
+  mov dword [data0], 0x%x\n\
+  mov dword [data0 + 0x4], 0x%x\n\
+  mov dword [data0 + 0x8], 0x%x\n\
+  mov dword [data0 + 0xc], 0x%x\n\
+  movupd %s, [data0]"
+
 static void init_xmm_register_opnd(char *asm_opnd, operand_seed *opnd_seed)
 {
     (void)opnd_seed;
-    char asm_xmm_inst5[512] = "";
+    char asm_xmm_inst5[512];
 
     struct const_node *val_node;
     GArray *val_nodes = stat_get_val_nodes();
@@ -913,12 +922,20 @@ static void init_xmm_register_opnd(char *asm_opnd, operand_seed *opnd_seed)
         val_node = g_array_index(val_nodes, struct const_node *, stat_get_opi());
     }
     
-    sprintf(asm_xmm_inst5, init_xmm_5_insts_format,
-            float32_bytes_to_uint32(val_node->float32),
-            float32_bytes_to_uint32(val_node->float32),
-            float32_bytes_to_uint32(val_node->float32),
-            float32_bytes_to_uint32(val_node->float32),
-            asm_opnd);
+    if (val_node->type == CONST_FLOAT32)
+        sprintf(asm_xmm_inst5, init_xmm_4float32_format,
+                bytes_to_uint32((char *)(&val_node->float32)),
+                bytes_to_uint32((char *)(&val_node->float32)),
+                bytes_to_uint32((char *)(&val_node->float32)),
+                bytes_to_uint32((char *)(&val_node->float32)),
+                asm_opnd);
+    else
+        sprintf(asm_xmm_inst5, init_xmm_2float64_format,
+                bytes_to_uint32((char *)(&val_node->float64)),
+                bytes_to_uint32((char *)(&val_node->float64) + 4),
+                bytes_to_uint32((char *)(&val_node->float64)),
+                bytes_to_uint32((char *)(&val_node->float64) + 4),
+                asm_opnd);
     one_insn_gen_ctrl(asm_xmm_inst5, INSERT_AFTER); 
 }
     
