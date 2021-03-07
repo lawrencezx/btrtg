@@ -950,7 +950,7 @@ static void init_memory_opnd(char *asm_opnd, operand_seed *opnd_seed)
         init_memory_opnd_float(asm_opnd, opnd_seed, val_node);
     }else if(val_node != NULL && size_mask(opnd_seed->opndflags) == BITS64){
         init_memory_opnd_imm64(asm_opnd, val_node);
-    }else if(val_node != NULL && opnd_seed->opdsize == BITS80){
+    }else if(val_node != NULL && size_mask(opnd_seed->opndflags) == BITS80){
         init_memory_opnd_bcd80(asm_opnd, val_node);
     }else{
         opflags_t size;
@@ -1196,7 +1196,6 @@ static bool gen_operand_pseudo_code(operand_seed *opnd_seed)
         } else {
             strcpy(asm_opnd, var->var_val);
             opnd_seed->opndflags = var->opndflags;
-            opnd_seed->opdsize = opnd_seed->opndflags & SIZE_MASK;
             opnd_seed->has_label = var->has_label;
             stat_set_has_mem_opnd(var->is_mem_opnd);
         }
