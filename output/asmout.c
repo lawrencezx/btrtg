@@ -36,7 +36,7 @@ static void asm_out_sec(struct section *sec)
             break;
         case DATA_SEC:
             /* data section */
-            fprintf(asmfp, "SECTION .DATA write\n");
+            fprintf(asmfp, "SECTION .DATA write align = 128\n");
             for (int i = 0; i < sec->datanum; i++) {
                 fprintf(asmfp, "  data%d:  times %d db 0\n", i, sec->datasizes[i]);
             }
