@@ -1,6 +1,8 @@
 <TestingKnowledges>
     <TK inst = "addps">
-        <Node name = "sse-arith" weight="100"> </Node>
-        <Node name = "normal" weight="0"> </Node>
+        <Node opnd = "all" packedn = "4">
+            <Node name = "sse-arith" weight="100"> </Node>
+            <Node name = "normal" weight="0"> </Node>
+        </Node>
     </TK>
 </TestingKnowledges>

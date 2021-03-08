@@ -16,6 +16,7 @@ struct tk_model {
 struct tk_model *tkmodel_create(void);
 void tks_free_all(void);
 struct const_node *request_val_node(const char *asm_op, int opi);
+GArray *request_packed_val_node(const char *asm_op, int opi);
 void create_trv_state(char *asm_inst, struct trv_state *trv_state);
 
 extern struct hash_table hash_tks;

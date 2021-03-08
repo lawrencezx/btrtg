@@ -336,13 +336,11 @@ bool init_specific_register(enum reg_enum R_reg)
     const char *src;
     src = nasm_reg_names[R_reg - EXPR_REG_START];
     struct const_node *val_node;
-    GArray *val_nodes = stat_get_val_nodes();
-    if (val_nodes == NULL) {
-        const char *asm_op = nasm_insn_names[stat_get_opcode()];
-        val_node = request_val_node(asm_op, stat_get_opi());
-    } else {
-        val_node = g_array_index(val_nodes, struct const_node *, stat_get_opi());
-    }
+
+    val_node = request_trv_node(stat_get_opi());
+    if (val_node == NULL)
+        val_node = request_val_node(nasm_insn_names[stat_get_opcode()],
+                stat_get_opi());
 
     bool has_mem_opnd = stat_get_has_mem_opnd();
     stat_set_has_mem_opnd(false);
@@ -397,13 +395,12 @@ bool init_popf(void)
 {
     char buffer[128];
     struct const_node *val_node;
-    GArray *val_nodes = stat_get_val_nodes();
-    if (val_nodes == NULL) {
-        const char *asm_op = nasm_insn_names[stat_get_opcode()];
-        val_node = request_val_node(asm_op, stat_get_opi());
-    } else {
-        val_node = g_array_index(val_nodes, struct const_node *, stat_get_opi());
-    }
+
+    val_node = request_trv_node(stat_get_opi());
+    if (val_node == NULL)
+        val_node = request_val_node(nasm_insn_names[stat_get_opcode()],
+                stat_get_opi());
+
     sprintf(buffer, "  push 0x%x", val_node->imm32);
     one_insn_gen_ctrl(buffer, INSERT_AFTER);
     return true;

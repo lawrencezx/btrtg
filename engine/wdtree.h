@@ -45,6 +45,7 @@ struct wd_node {
 };
 
 struct wd_root {
+    int packedn;
     struct wd_node *wd_node;
 };
 

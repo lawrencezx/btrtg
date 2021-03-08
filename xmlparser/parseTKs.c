@@ -56,10 +56,10 @@ static void parseCGs(xmlNodePtr cgsNode)
             }else if(0 == strcmp(cNodeName, "Bcd")){
                 val_node.type = CONST_BCD;
                 str2bcd(cNodeContent, val_node.bcd);
-            } else if (strcmp(cNodeName, "Float32")) {
+            } else if (strcmp(cNodeName, "Float32") == 0) {
                 val_node.type = CONST_FLOAT32;
                 val_node.float32 = strtof(cNodeContent, NULL);
-            } else if (strcmp(cNodeName, "Float64")) {
+            } else if (strcmp(cNodeName, "Float64") == 0) {
                 val_node.type = CONST_FLOAT64;
                 val_node.float64 = strtof(cNodeContent, NULL);
             } else {
@@ -107,18 +107,20 @@ static struct wd_node *parseOpndTK(xmlNodePtr tkNode)
 
 static void parseInstTK(xmlNodePtr tkNode, GArray *tk_trees)
 {
-    char *opnd;
+    char *opnd, *packedn;
     struct wd_root *tk_tree;
 
     for (xmlNodePtr opndNode = tkNode->children; opndNode != NULL; opndNode = opndNode->next) {
         if (opndNode->type != XML_ELEMENT_NODE)
             continue;
         
+        packedn = (char *)xmlGetProp(opndNode, (const unsigned char*)"packedn");
         opnd = (char *)xmlGetProp(opndNode, (const unsigned char*)"opnd");
         if (opnd == NULL)
             goto simple_opnd_tk;
 
         tk_tree = wdtree_create();
+        tk_tree->packedn = (packedn == NULL) ? 1 : atoi(packedn);
         tk_tree->wd_node = parseOpndTK(opndNode);
         g_array_append_val(tk_trees, tk_tree);
     }
@@ -126,6 +128,7 @@ static void parseInstTK(xmlNodePtr tkNode, GArray *tk_trees)
 
 simple_opnd_tk:
     tk_tree = wdtree_create();
+    tk_tree->packedn = (packedn == NULL) ? 1 : atoi(packedn);
     tk_tree->wd_node = parseOpndTK(tkNode);
     g_array_append_val(tk_trees, tk_tree);
 }

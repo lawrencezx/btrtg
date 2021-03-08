@@ -5,15 +5,12 @@
 #include "nasmlib.h"
 #include "tk.h"
 #include "buf2token.h"
+#include "asmlib.h"
 
 struct hash_table hash_tks;
 
-static int get_implied_operands_from_instname(char *inst_name)
+static int get_implied_operands_num(enum opcode opcode)
 {
-    struct tokenval tv;
-    nasm_token_hash(inst_name, &tv);
-    enum opcode opcode = tv.t_integer;
-
     switch (opcode) {
         case I_DIV:
         case I_IDIV:
@@ -31,11 +28,8 @@ static int get_implied_operands_from_instname(char *inst_name)
     }
 }
 
-static int get_operands_from_instname(char * inst_name){
-    struct tokenval tv;
-    nasm_token_hash(inst_name, &tv);
-    enum opcode opcode = tv.t_integer;
-
+static int adjust_operands_num(enum opcode opcode)
+{
     switch(opcode){
         case I_FADD:
         case I_FADDP:
@@ -119,38 +113,42 @@ static struct tk_model *get_tkm_from_hashtbl(const char *asm_op)
 
 void create_trv_state(char *asm_inst, struct trv_state *trv_state)
 {
-    char inst_name[128];
-    int i = 0, operands = 0;
+    char asm_opcode[128];
+    int i = 0, opi = 0;
     struct tk_model *tkm;
     struct wd_root *tk_tree;
+    enum opcode opcode;
 
     while (asm_inst[i] != ' ' && asm_inst[i] != '\n' && asm_inst[i] != '\0') {
-        inst_name[i] = asm_inst[i];
+        asm_opcode[i] = asm_inst[i];
         i++;
     }
-    inst_name[i] = '\0';
-    tkm = get_tkm_from_hashtbl(inst_name);
+    asm_opcode[i] = '\0';
+    opcode = parse_asm_opcode(asm_opcode);
+    tkm = get_tkm_from_hashtbl(asm_opcode);
     if (tkm->tk_trees->len == 1) {
-        trv_state->tk_trees = g_array_new(FALSE, FALSE, sizeof(struct wd_root *));
         tk_tree = g_array_index(tkm->tk_trees, struct wd_root *, 0);
+        trv_state->tk_trees = g_array_new(FALSE, FALSE, sizeof(struct wd_root *));
         /* first operand */
         if (asm_inst[i] != '\0' && asm_inst[i] != '\n') {
             g_array_append_val(trv_state->tk_trees, tk_tree);
-            operands++;
+            opi++;
         }
-        /* other operands */
+        /* other opi */
         while (asm_inst[i] != '\0' && asm_inst[i] != '\n')
             if (asm_inst[i++] == ',') {
                 g_array_append_val(trv_state->tk_trees, tk_tree);
-                operands++;
+                opi++;
             }
-        /* implied operands */
-        for(int j = get_operands_from_instname(inst_name) - operands; j > 0; j--) {
+        /* implied opi */
+        for(int j = adjust_operands_num(opcode) - opi; j > 0; j--) {
             g_array_append_val(trv_state->tk_trees, tk_tree);
+            opi++;
         }
-        /* implied operands */
-        for(int j = get_implied_operands_from_instname(inst_name); j > 0; j--) {
+        /* implied opi */
+        for(int j = get_implied_operands_num(opcode); j > 0; j--) {
             g_array_append_val(trv_state->tk_trees, tk_tree);
+            opi++;
         }
     } else {
         for (guint i = 0; i < tkm->tk_trees->len; i++) {
@@ -158,7 +156,7 @@ void create_trv_state(char *asm_inst, struct trv_state *trv_state)
         }
     }
 
-    trv_state->val_nodes = g_array_new(FALSE, FALSE, sizeof(struct const_node *));
+    trv_state->trv_nodes = g_array_new(FALSE, FALSE, sizeof(GArray *));
 }
 
 struct const_node *request_val_node(const char *asm_op, int opi)
@@ -171,4 +169,23 @@ struct const_node *request_val_node(const char *asm_op, int opi)
         opi = 0;
     tk_tree = g_array_index(tkm->tk_trees, struct wd_root *, opi);
     return wdtree_select_leaf_node(tk_tree);
+}
+
+GArray *request_packed_val_node(const char *asm_op, int opi)
+{
+    struct tk_model *tkm;
+    struct wd_root *tk_tree;
+    GArray *packed_nodes;
+    struct const_node *val_node;
+
+    tkm = get_tkm_from_hashtbl(asm_op);
+    if (tkm->tk_trees->len == 1)
+        opi = 0;
+    tk_tree = g_array_index(tkm->tk_trees, struct wd_root *, opi);
+    packed_nodes = g_array_new(FALSE, FALSE, sizeof(struct const_node *));
+    for (int i = 0; i < tk_tree->packedn; i++) {
+        val_node = wdtree_select_leaf_node(tk_tree);
+        g_array_append_val(packed_nodes, val_node);
+    }
+    return packed_nodes;
 }

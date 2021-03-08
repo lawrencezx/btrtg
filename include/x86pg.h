@@ -96,7 +96,7 @@ struct X86PGState {
         int opi;
         bool has_mem_opnd;
         char init_mem_addr[128];
-        GArray *val_nodes;
+        GArray *trv_nodes;
     }; /* instruction state */
 };
 
@@ -134,9 +134,9 @@ bool stat_get_has_mem_opnd(void);
 void stat_set_has_mem_opnd(bool has_mem_opnd);
 /* init_mem_addr */
 char *stat_get_init_mem_addr(void);
-/* val_nodes */
-GArray *stat_get_val_nodes(void);
-void stat_set_val_nodes(GArray *val_nodes);
+/* trv_nodes */
+GArray *stat_get_trv_nodes(void);
+void stat_set_trv_nodes(GArray *trv_nodes);
 
 /* global lock */
 void stat_lock_ctrl(void);

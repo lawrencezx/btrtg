@@ -39,7 +39,7 @@ typedef struct elem_struct {
         char *c_type;               /* C_ELEM */
         struct {                    /* I_ELEM */
             char *asm_inst;
-            GArray *val_nodes;
+            GArray *trv_nodes;
         };
     };
 } elem_struct;
@@ -48,7 +48,7 @@ typedef struct elem_struct {
  */
 struct trv_state {
     GArray *tk_trees;
-    GArray *val_nodes;
+    GArray *trv_nodes;
 };
 
 /* block variable structure
@@ -99,6 +99,9 @@ struct blk_var *blk_search_var(blk_struct *blk, const char *var_name);
 void walk_tmplt(void);
 void tmplt_clear(tmplt_struct *tmpltm);
 void tmplt_free(tmplt_struct *tmpltm);
+
+struct const_node *request_trv_node(int opi);
+GArray *request_packed_trv_node(int opi);
 
 extern tmplt_struct tmpltm;
 

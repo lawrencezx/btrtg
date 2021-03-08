@@ -14,6 +14,8 @@ struct wd_root *wdtree_create(void)
 {
     struct wd_root *tree;
     tree = (struct wd_root *)nasm_malloc(sizeof(struct wd_root));
+    tree->packedn = 1;
+    tree->wd_node = NULL;
     return tree;
 }
 

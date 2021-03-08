@@ -39,7 +39,7 @@ void init_elem_struct(elem_struct *elem)
     elem->g_tree = NULL;
     elem->c_type = NULL;
     elem->asm_inst = NULL;
-    elem->val_nodes = NULL;
+    elem->trv_nodes = NULL;
 }
 
 struct blk_var *blk_search_var(blk_struct *blk, const char *var_name)
@@ -136,11 +136,13 @@ static void walkRptBlk(blk_struct *blk)
     }
 }
 
-static void preorder_traverse_trv_state(blk_struct *blk, struct wd_node *tk_node, int num)
+static void preorder_traverse_tk_trees(blk_struct *blk, struct wd_root *tk_tree,
+        struct wd_node *tk_node, GArray *val_nodes, int treei, int packedi)
 {
     struct trv_state *trv_state = blk->trv_state;
     struct const_node *val_node;
-    struct wd_root *tk_tree;
+    GArray *next_val_nodes;
+    struct wd_root *next_tk_tree;
 
     if (tk_node == NULL || tk_node->size == 0)
         return;
@@ -148,21 +150,36 @@ static void preorder_traverse_trv_state(blk_struct *blk, struct wd_node *tk_node
     for (int i = 0; i < tk_node->size; i++) {
         if (tk_node->isleaf) {
             val_node = &g_array_index(tk_node->const_nodes, struct const_node, i);
-            g_array_append_val(trv_state->val_nodes, val_node);
-            if ((size_t)num + 1 == trv_state->tk_trees->len) {
+            g_array_append_val(val_nodes, val_node);
+
+            if ((size_t)treei + 1 == trv_state->tk_trees->len &&
+                packedi + 1 == tk_tree->packedn) {
+                /* got a complete traverse value nodes */
                 blk_invalid_var_all(blk);
                 for (guint i = 0; i < blk->blks->len; i++) {
                     blk_struct *subblk = g_array_index(blk->blks, blk_struct *, i);
                     walkBlkFuncs[subblk->type](subblk);
                 }
+            } else if (packedi + 1 == tk_tree->packedn) {
+                /* finished a packed operand's value nodes */
+                next_val_nodes = g_array_new(FALSE, FALSE, sizeof(struct const_node *));
+                g_array_append_val(trv_state->trv_nodes, next_val_nodes);
+
+                next_tk_tree = g_array_index(trv_state->tk_trees, struct wd_root *, treei + 1);
+                preorder_traverse_tk_trees(blk, next_tk_tree, tk_tree->wd_node,
+                        next_val_nodes, treei + 1, 0);
+
+                g_array_remove_index(trv_state->trv_nodes, treei + 1);
             } else {
-                tk_tree = g_array_index(trv_state->tk_trees, struct wd_root *, num + 1);
-                preorder_traverse_trv_state(blk, tk_tree->wd_node, num + 1);
+                /* during a packed operand's value nodes */
+                preorder_traverse_tk_trees(blk, tk_tree, tk_tree->wd_node,
+                        val_nodes, treei, packedi + 1);
             }
-            g_array_remove_index(trv_state->val_nodes, num);
+
+            g_array_remove_index(val_nodes, packedi);
         } else {
-            preorder_traverse_trv_state(blk, g_array_index(tk_node->sub_nodes,
-                        struct wd_node *, i), num);
+            preorder_traverse_tk_trees(blk, tk_tree, g_array_index(tk_node->sub_nodes,
+                        struct wd_node *, i), val_nodes, treei, packedi);
         }
     }
 }
@@ -171,10 +188,14 @@ static void walkTrvBlk(blk_struct *blk)
 {
     stat_set_curr_blk(blk);
     
-    GArray *tk_trees = blk->trv_state->tk_trees;
+    struct trv_state *trv_state = blk->trv_state;
+    GArray *tk_trees = trv_state->tk_trees;
     if (tk_trees->len != 0) {
         struct wd_root *tk_tree = g_array_index(tk_trees, struct wd_root *, 0);
-        preorder_traverse_trv_state(blk, tk_tree->wd_node, 0);
+        GArray *val_nodes = g_array_new(FALSE, FALSE, sizeof(struct const_node *));
+        g_array_append_val(trv_state->trv_nodes, val_nodes);
+        preorder_traverse_tk_trees(blk, tk_tree, tk_tree->wd_node, val_nodes, 0, 0);
+        g_array_remove_index(trv_state->trv_nodes, 0);
     }
 }
 
@@ -230,12 +251,12 @@ static void walkIElem(elem_struct *i_e)
 {
     stat_set_need_init(likely_happen_p(i_e->inip));
     stat_set_has_mem_opnd(false);
-    stat_set_val_nodes(i_e->val_nodes);
+    stat_set_trv_nodes(i_e->trv_nodes);
 
     one_insn_gen_const(i_e->asm_inst);
 
     stat_set_need_init(false);
-    stat_set_val_nodes(NULL);
+    stat_set_trv_nodes(NULL);
 }
 
 static void walkElemBlk(blk_struct *blk)
@@ -293,4 +314,25 @@ void tmplt_free(tmplt_struct *tmpltm)
 {
     tmplt_clear(tmpltm);
     free(tmpltm);
+}
+
+struct const_node *request_trv_node(int opi)
+{
+    GArray *trv_nodes, *val_nodes;
+
+    trv_nodes = stat_get_trv_nodes();
+    if (trv_nodes == NULL)
+        return NULL;
+    val_nodes = g_array_index(trv_nodes, GArray *, opi);
+    return g_array_index(val_nodes, struct const_node *, 0);
+}
+
+GArray *request_packed_trv_node(int opi)
+{
+    GArray *trv_nodes;
+
+    trv_nodes = stat_get_trv_nodes();
+    if (trv_nodes == NULL)
+        return NULL;
+    return g_array_index(trv_nodes, GArray *, opi);
 }

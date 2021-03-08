@@ -126,3 +126,10 @@ size_t copy_asm_opnd(const char *src, char *dst)
     *dst = '\0';
     return cnt;
 }
+
+enum opcode parse_asm_opcode(char *asm_opcode)
+{
+    struct tokenval tv;
+    nasm_token_hash(asm_opcode, &tv);
+    return tv.t_integer;
+}
