@@ -350,7 +350,11 @@ bool init_specific_register(enum reg_enum R_reg)
     if((R_reg >= R_ST0) && (R_reg <= R_ST7)){
         char mem_address[64] = "[data0]";
         char *mem_address_end = mem_address + strlen(mem_address);
-        sprintf(buffer, "fxch %s", src);
+
+        sprintf(buffer, "ffree %s", src);
+        one_insn_gen_const(buffer);
+
+        sprintf(buffer, "fst %s", src);
         one_insn_gen_const(buffer);
 
         sprintf(buffer, "fstp st0");    
@@ -361,7 +365,6 @@ bool init_specific_register(enum reg_enum R_reg)
         one_insn_gen_ctrl(buffer, INSERT_AFTER);
 
         sprintf(mem_address_end - 1, " + 0x4]");
-
         sprintf(buffer, "  mov dword %s, 0x%x", mem_address, ((int *)(&val_node->float64))[1]);
         one_insn_gen_ctrl(buffer, INSERT_AFTER); 
 
@@ -421,4 +424,14 @@ char *preappend_mem_size(char *asm_mem, opflags_t opndsize)
             opndsize == BITS64 ? 3 :
             opndsize == BITS80? 4 : 2;
     return nasm_strrplc(asm_mem, 0, memsize[i], strlen(memsize[i]));
+}
+
+bool init_fpu_dest_register(enum reg_enum R_reg)
+{
+    char buffer[128];
+    const char *src;
+    src = nasm_reg_names[R_reg - EXPR_REG_START];
+    sprintf(buffer, "  ffree %s", src);
+    one_insn_gen_ctrl(buffer, INSERT_AFTER);
+    return true;
 }

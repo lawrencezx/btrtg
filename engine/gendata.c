@@ -708,11 +708,23 @@ void init_implied_operands(insn *result)
                     init_specific_register(R_ST0);
                 }
                 break;
-
+            // case I_FCMOVB:
+            // case I_FCMOVBE:
+            // case I_FCMOVE:
+            // case I_FCMOVNB:
+            // case I_FCMOVNBE:
+            // case I_FCMOVNE:
+            // case I_FCMOVNU:
+            // case I_FCMOVU:
+            //     if(operands == 0){
+            //         init_specific_register(R_ST1);
+            //     }
+            //     break;
             case I_FLD:
                 if(operands == 0){
                     init_specific_register(R_ST1);
                 }
+                init_fpu_dest_register(R_ST7);
                 break;
             case I_FPATAN:
             case I_FPREM:
@@ -840,7 +852,11 @@ static void init_fpu_register_opnd(char *asm_opnd, operand_seed *opnd_seed)
     } else {
         val_node = g_array_index(val_nodes, struct const_node *, stat_get_opi());
     }
-    sprintf(asm_fpu_inst, "fxch %s", asm_opnd);
+
+    sprintf(asm_fpu_inst, "ffree %s", asm_opnd);
+    one_insn_gen_const(asm_fpu_inst);
+
+    sprintf(asm_fpu_inst, "fst %s", asm_opnd);
     one_insn_gen_const(asm_fpu_inst);
 
     sprintf(asm_fpu_inst, "fstp st0");    
@@ -855,6 +871,7 @@ static void init_fpu_register_opnd(char *asm_opnd, operand_seed *opnd_seed)
     sprintf(asm_fpu_inst, "  mov dword %s, 0x%x", mem_address, ((int *)(&val_node->float64))[1]);
     one_insn_gen_ctrl(asm_fpu_inst, INSERT_AFTER);
 
+    sprintf(mem_address_end - 1 , "]");
     sprintf(asm_fpu_inst, "  fld qword %s",mem_address);
     one_insn_gen_ctrl(asm_fpu_inst, INSERT_AFTER);
 

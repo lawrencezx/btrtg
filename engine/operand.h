@@ -21,6 +21,7 @@ bool create_memory(operand_seed *opnd_seed, char *buffer);
 bool init_popf(void);
 bool init_specific_mem(enum reg_enum R_reg);
 bool init_specific_register(enum reg_enum R_reg);
+bool init_fpu_dest_register(enum reg_enum R_reg);
 bool create_fpu_register(operand_seed *opnd_seed, char *buffer);
 bool create_mmx_register(operand_seed *opnd_seed, char *buffer);
 bool create_xmm_register(operand_seed *opnd_seed, char *buffer);
