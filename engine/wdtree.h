@@ -21,10 +21,14 @@ struct const_node {
         uint16_t imm16;
         uint32_t imm32;
         uint64_t imm64;
-        uint32_t immf[6];
         uint32_t bcd[3];
         uint8_t unity;
         char *asm_op;
+    };
+    struct {
+        float float32;
+        double float64;
+        long double float80;
     };
 };
 

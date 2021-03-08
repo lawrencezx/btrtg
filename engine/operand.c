@@ -357,12 +357,12 @@ bool init_specific_register(enum reg_enum R_reg)
         //sprintf(asm_fpu_inst, "fincstp");
         one_insn_gen_const(buffer);
 
-        sprintf(buffer, "  mov dword %s, 0x%x", mem_address, val_node->immf[1]);
-        one_insn_gen_ctrl(buffer, INSERT_AFTER); 
+        sprintf(buffer, "  mov dword %s, 0x%x", mem_address, ((int *)(&val_node->float64))[0]);
+        one_insn_gen_ctrl(buffer, INSERT_AFTER);
 
         sprintf(mem_address_end - 1, " + 0x4]");
 
-        sprintf(buffer, "  mov dword %s, 0x%x", mem_address, val_node->immf[2]);
+        sprintf(buffer, "  mov dword %s, 0x%x", mem_address, ((int *)(&val_node->float64))[1]);
         one_insn_gen_ctrl(buffer, INSERT_AFTER); 
 
         sprintf(mem_address_end - 1 , "]");

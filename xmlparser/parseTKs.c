@@ -45,9 +45,9 @@ static void parseCGs(xmlNodePtr cgsNode)
             const char *cNodeName = (const char *)cNode->name;
             if(0 == strcmp(cNodeName, "Immf")){
                 val_node.type = CONST_FLOAT;
-                *(float *)(val_node.immf) = strtof((const char *)cNode->children->content, NULL);
-                *(double *)(val_node.immf + 1) = strtod((const char *)cNode->children->content, NULL);
-                *(long double *)(val_node.immf + 3) = strtold((const char *)cNode->children->content, NULL);
+                val_node.float32 = strtof((const char *)cNode->children->content, NULL);
+                val_node.float64 = strtod((const char *)cNode->children->content, NULL);
+                val_node.float80 = strtold((const char *)cNode->children->content, NULL);
                 g_array_append_val(cg_tree_node->const_nodes, val_node);
             }else if(0 == strcmp(cNodeName, "Imm64")){
                 val_node.type = CONST_IMM64;

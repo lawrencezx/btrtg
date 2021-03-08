@@ -757,16 +757,13 @@ static void init_memory_opnd_float(char *asm_opnd, operand_seed *opnd_seed, stru
     }else{
         switch (opndsize) {
             case BITS32:
-                fp_number[0] = val_node->immf[0];
+                memcpy(fp_number, &val_node->float32, 4);
                 break;
             case BITS64:
-                fp_number[0] = val_node->immf[1];
-                fp_number[1] = val_node->immf[2];
+                memcpy(fp_number, &val_node->float64, 8);
                 break;
             case BITS80:
-                fp_number[0] = val_node->immf[3];
-                fp_number[1] = val_node->immf[4];
-                fp_number[2] = val_node->immf[5];
+                memcpy(fp_number, &val_node->float80, 10);
                 break;
             default:
                 break;
@@ -850,12 +847,12 @@ static void init_fpu_register_opnd(char *asm_opnd, operand_seed *opnd_seed)
     //sprintf(asm_fpu_inst, "fincstp");
     one_insn_gen_const(asm_fpu_inst);
 
-    sprintf(asm_fpu_inst, "  mov dword %s, 0x%x", mem_address, val_node->immf[1]);
-    one_insn_gen_ctrl(asm_fpu_inst, INSERT_AFTER); 
+    sprintf(asm_fpu_inst, "  mov dword %s, 0x%x", mem_address, ((int *)(&val_node->float64))[0]);
+    one_insn_gen_ctrl(asm_fpu_inst, INSERT_AFTER);
 
     sprintf(mem_address_end - 1, " + 0x4]");
 
-    sprintf(asm_fpu_inst, "  mov dword %s, 0x%x", mem_address, val_node->immf[2]);
+    sprintf(asm_fpu_inst, "  mov dword %s, 0x%x", mem_address, ((int *)(&val_node->float64))[1]);
     one_insn_gen_ctrl(asm_fpu_inst, INSERT_AFTER);
 
     sprintf(asm_fpu_inst, "  fld qword %s",mem_address);
