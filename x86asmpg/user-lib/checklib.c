@@ -46,8 +46,8 @@ void parse_argv(void *main_addr, int argc, char const *argv[])
      struct X86StandardRegisters x86regs) \
 { \
     int diff = 0; \
-    Reg8 std_##gprhi = x86regs.gprhi; \
-    Reg8 check_##gprhi = output[point].X86.gprhi; \
+    Reg8 check_##gprhi = x86regs.gprhi; \
+    Reg8 std_##gprhi = output[point].X86.gprhi; \
     if (std_##gprhi != check_##gprhi) { \
         printf("diff ["#gprhi"]: 0x%x, should be: 0x%x\n", check_##gprhi, std_##gprhi); \
         diff = 1; \
@@ -70,8 +70,8 @@ check_point_gprhi(dh)
      struct X86StandardRegisters x86regs) \
 { \
     int diff = 0; \
-    Reg8 std_##gprlo = x86regs.gprlo; \
-    Reg8 check_##gprlo = output[point].X86.gprlo; \
+    Reg8 check_##gprlo = x86regs.gprlo; \
+    Reg8 std_##gprlo = output[point].X86.gprlo; \
     if (std_##gprlo != check_##gprlo) { \
         printf("diff ["#gprlo"]: 0x%x, should be: 0x%x\n", check_##gprlo, std_##gprlo); \
         diff = 1; \
@@ -94,8 +94,8 @@ check_point_gprlo(dl)
      struct X86StandardRegisters x86regs) \
 { \
     int diff = 0; \
-    Reg16 std_##reg16 = x86regs.reg16; \
-    Reg16 check_##reg16 = output[point].X86.reg16; \
+    Reg16 check_##reg16 = x86regs.reg16; \
+    Reg16 std_##reg16 = output[point].X86.reg16; \
     if (std_##reg16 != check_##reg16) { \
         printf("diff ["#reg16"]: 0x%x, should be: 0x%x\n", check_##reg16, std_##reg16); \
         diff = 1; \
@@ -129,8 +129,8 @@ check_point_reg16(gs)
      struct X86StandardRegisters x86regs) \
 { \
     int diff = 0; \
-    Reg32 std_##reg32 = x86regs.reg32; \
-    Reg32 check_##reg32 = output[point].X86.reg32; \
+    Reg32 check_##reg32 = x86regs.reg32; \
+    Reg32 std_##reg32 = output[point].X86.reg32; \
     if (std_##reg32 != check_##reg32) { \
         printf("diff ["#reg32"]: 0x%x, should be: 0x%x\n", check_##reg32, std_##reg32); \
         diff = 1; \
@@ -158,8 +158,8 @@ check_point_reg32(eflags)
      struct X86StandardRegisters x86regs) \
 { \
     int diff = 0; \
-    floatx80 std_##fpureg = fsa_get_st(&x87fpustate, index); \
-    floatx80 check_##fpureg = output[point].X87.fpregs[index]; \
+    floatx80 check_##fpureg = fsa_get_st(&x87fpustate, index); \
+    floatx80 std_##fpureg = output[point].X87.fpregs[index]; \
     if (std_##fpureg.low != check_##fpureg.low || std_##fpureg.high != check_##fpureg.high) { \
         printf("diff ["#fpureg"]: 0x%x, should be: 0x%x\n", check_##fpureg, std_##fpureg); \
         diff = 1; \
@@ -186,8 +186,8 @@ check_point_fpureg(st7, 7)
      struct X86StandardRegisters x86regs) \
 { \
     int diff = 0; \
-    floatx80 std_##mmxreg = fsa_get_st(&x87fpustate, index); \
-    floatx80 check_##mmxreg = output[point].X87.fpregs[index]; \
+    floatx80 check_##mmxreg = fsa_get_st(&x87fpustate, index); \
+    floatx80 std_##mmxreg = output[point].X87.fpregs[index]; \
     if (std_##mmxreg.low != check_##mmxreg.low || std_##mmxreg.high != check_##mmxreg.high) { \
         printf("diff ["#mmxreg"]: 0x%x, should be: 0x%x\n", check_##mmxreg, std_##mmxreg); \
         diff = 1; \
@@ -214,8 +214,8 @@ check_point_mmxreg(mm7, 7)
      struct X86StandardRegisters x86regs) \
 { \
     int diff = 0; \
-    uint32_t std_##x87status = fsa_get_##x87status(&x87fpustate); \
-    uint32_t check_##x87status = output[point].X87.x87status; \
+    uint32_t check_##x87status = fsa_get_##x87status(&x87fpustate); \
+    uint32_t std_##x87status = output[point].X87.x87status; \
     if (std_##x87status != check_##x87status) { \
         printf("diff ["#x87status"]: 0x%x, should be: 0x%x\n", check_##x87status, std_##x87status); \
         diff = 1; \
@@ -236,8 +236,8 @@ check_point_x87status32(ffip)
      struct X86StandardRegisters x86regs) \
 { \
     int diff = 0; \
-    uint16_t std_##x87status = fsa_get_##x87status(&x87fpustate); \
-    uint16_t check_##x87status = output[point].X87.x87status; \
+    uint16_t check_##x87status = fsa_get_##x87status(&x87fpustate); \
+    uint16_t std_##x87status = output[point].X87.x87status; \
     if (std_##x87status != check_##x87status) { \
         printf("diff ["#x87status"]: 0x%x, should be: 0x%x\n", check_##x87status, std_##x87status); \
         diff = 1; \
