@@ -1,5 +1,6 @@
 <Template>
     <I type = "addps xmmreg,xmmreg" inip = "1.0"></I>
+    <I type = "addps xmmreg,xmmmem128" inip = "1.0"></I>
     <I type = "addpd xmmreg,xmmreg" inip = "1.0"></I>
 	<I type = "fadd mem64" inip = "1.0"></I>
 	<I type = "fadd st1, st0" inip = "1.0"></I>

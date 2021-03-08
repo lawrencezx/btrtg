@@ -1003,6 +1003,86 @@ static void init_immediate_opnd(char *asm_opnd, operand_seed *opnd_seed)
     }
 }
 
+/* movups [float, -, -, -] to xmm_mem
+ */
+#define init_xmmmem_float32_format "\
+  mov dword [%s], 0x%x"
+
+/* movupd [double, -, -, -] to xmm_mem
+ */
+#define init_xmmmem_float64_format "\
+  mov dword [%s], 0x%x\n\
+  mov dword [%s + 0x4], 0x%x"
+
+/* movups [float1, float2, float3, float4] to xmm_mem
+ */
+#define init_xmmmem_4float32_format "\
+  mov dword [%s], 0x%x\n\
+  mov dword [%s + 0x4], 0x%x\n\
+  mov dword [%s + 0x8], 0x%x\n\
+  mov dword [%s + 0xc], 0x%x"
+
+/* movupd [double1, double2] to xmm_mem
+ */
+#define init_xmmmem_2float64_format "\
+  mov dword [%s], 0x%x\n\
+  mov dword [%s + 0x4], 0x%x\n\
+  mov dword [%s + 0x8], 0x%x\n\
+  mov dword [%s + 0xc], 0x%x"
+
+static void init_memory_opnd_xmm(char *asm_opnd, operand_seed *opnd_seed)
+{
+    /* TODO: more cases should be supported */
+    (void)opnd_seed;
+    char asm_xmm_insts[512];
+    char mem_addr[64];
+    GArray *val_nodes;
+
+    val_nodes = request_packed_trv_node(stat_get_opi());
+    if (val_nodes == NULL)
+        val_nodes = request_packed_val_node(nasm_insn_names[stat_get_opcode()],
+                stat_get_opi());
+
+    strcpy(mem_addr, asm_opnd + 1);
+    mem_addr[strlen(mem_addr) - 1] = '\0';
+
+    if (val_nodes->len == 4) {
+        /* four float */
+        struct const_node *val_node0, *val_node1, *val_node2, *val_node3;
+        val_node0 = g_array_index(val_nodes, struct const_node *, 0);
+        val_node1 = g_array_index(val_nodes, struct const_node *, 1);
+        val_node2 = g_array_index(val_nodes, struct const_node *, 2);
+        val_node3 = g_array_index(val_nodes, struct const_node *, 3);
+        sprintf(asm_xmm_insts, init_xmmmem_4float32_format,
+                mem_addr, bytes_to_uint32((char *)(&val_node0->float32)),
+                mem_addr, bytes_to_uint32((char *)(&val_node1->float32)),
+                mem_addr, bytes_to_uint32((char *)(&val_node2->float32)),
+                mem_addr, bytes_to_uint32((char *)(&val_node3->float32)));
+    } else if (val_nodes->len == 2) {
+        struct const_node *val_node0, *val_node1;
+        val_node0 = g_array_index(val_nodes, struct const_node *, 0);
+        val_node1 = g_array_index(val_nodes, struct const_node *, 1);
+        sprintf(asm_xmm_insts, init_xmmmem_2float64_format,
+                mem_addr, bytes_to_uint32((char *)(&val_node0->float64)),
+                mem_addr, bytes_to_uint32((char *)(&val_node0->float64) + 4),
+                mem_addr, bytes_to_uint32((char *)(&val_node1->float64)),
+                mem_addr, bytes_to_uint32((char *)(&val_node1->float64) + 4));
+    } else if (val_nodes->len == 1) {
+        /* one float or double */
+        struct const_node *val_node;
+        val_node = g_array_index(val_nodes, struct const_node *, 0);
+        if (val_node->type == CONST_FLOAT32) {
+            sprintf(asm_xmm_insts, init_xmmmem_float32_format,
+                    mem_addr, bytes_to_uint32((char *)(&val_node->float32)));
+        } else if (val_node->type == CONST_FLOAT64) {
+            sprintf(asm_xmm_insts, init_xmmmem_float64_format,
+                    mem_addr, bytes_to_uint32((char *)(&val_node->float64)),
+                    mem_addr, bytes_to_uint32((char *)(&val_node->float64) + 4));
+        }
+    }
+    one_insn_gen_ctrl(asm_xmm_insts, INSERT_AFTER); 
+}
+
 static void init_memory_opnd(char *asm_opnd, operand_seed *opnd_seed)
 {
     char asm_mov_inst[128];
@@ -1019,7 +1099,9 @@ static void init_memory_opnd(char *asm_opnd, operand_seed *opnd_seed)
         init_memory_opnd_imm64(asm_opnd, val_node);
     }else if(val_node != NULL && size_mask(opnd_seed->opndflags) == BITS80){
         init_memory_opnd_bcd80(asm_opnd, val_node);
-    }else{
+    } else if (is_class(REG_CLASS_RM_XMM, opnd_seed->opndflags)) {
+        init_memory_opnd_xmm(asm_opnd, opnd_seed);
+    } else {
         opflags_t size;
         uint32_t val;
         size = opnd_seed->opndflags & SIZE_MASK;
