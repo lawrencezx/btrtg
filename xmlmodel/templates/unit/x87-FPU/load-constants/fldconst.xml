@@ -1,0 +1,30 @@
+<Template>
+		
+	<I type = "fstp"></I>
+	<I type = "fld1"></I>
+	<C type = "st0"></C>
+
+	<I type = "fstp"></I>
+	<I type = "fldz "></I>
+	<C type = "st0"></C>
+
+	<I type = "fstp"></I>
+	<I type = "fldpi "></I>
+	<C type = "st0"></C>
+
+	<I type = "fstp"></I>
+	<I type = "fldl2e"></I>
+	<C type = "st0"></C>
+
+	<I type = "fstp"></I>
+	<I type = "fldln2"></I>
+	<C type = "st0"></C>
+
+	<I type = "fstp"></I>
+	<I type = "fldl2t "></I>
+	<C type = "st0"></C>
+
+	<I type = "fstp"></I>
+	<I type = "fldlg2"></I>
+	<C type = "st0"></C>
+</Template>

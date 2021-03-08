@@ -833,6 +833,7 @@ static void init_fpu_register_opnd(char *asm_opnd, operand_seed *opnd_seed)
     (void)opnd_seed;
     char asm_fpu_inst[128];
     char mem_address[64] = "[data0]";
+    char *mem_address_end = mem_address + strlen(mem_address);
 
     struct const_node *val_node;
     GArray *val_nodes = stat_get_val_nodes();
@@ -849,10 +850,15 @@ static void init_fpu_register_opnd(char *asm_opnd, operand_seed *opnd_seed)
     //sprintf(asm_fpu_inst, "fincstp");
     one_insn_gen_const(asm_fpu_inst);
 
-    sprintf(asm_fpu_inst, "  mov dword %s, 0x%x", mem_address, val_node->immf[0]);
+    sprintf(asm_fpu_inst, "  mov dword %s, 0x%x", mem_address, val_node->immf[1]);
     one_insn_gen_ctrl(asm_fpu_inst, INSERT_AFTER); 
 
-    sprintf(asm_fpu_inst, "  fld dword %s",mem_address);
+    sprintf(mem_address_end - 1, " + 0x4]");
+
+    sprintf(asm_fpu_inst, "  mov dword %s, 0x%x", mem_address, val_node->immf[2]);
+    one_insn_gen_ctrl(asm_fpu_inst, INSERT_AFTER);
+
+    sprintf(asm_fpu_inst, "  fld qword %s",mem_address);
     one_insn_gen_ctrl(asm_fpu_inst, INSERT_AFTER);
 
     sprintf(asm_fpu_inst, "fxch %s", asm_opnd);

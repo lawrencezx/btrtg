@@ -1,13 +1,16 @@
 <Template>
     <traverse>
+		<I type = "fstp st0"></I>
         <I type = "fild mem16" trv = "true"></I>
         <C type = "st0"></C>
     </traverse>
     <traverse>
+		<I type = "fstp st0"></I>
         <I type = "fild mem32" trv = "true"></I>
         <C type = "st0"></C>
     </traverse>
     <traverse>
+		<I type = "fstp st0"></I>
         <I type = "fild mem64" trv = "true"></I>
         <C type = "st0"></C>
     </traverse>
