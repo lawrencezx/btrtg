@@ -47,7 +47,8 @@ static void parseCGs(xmlNodePtr cgsNode)
                 val_node.type = CONST_FLOAT;
                 val_node.float32 = strtof((const char *)cNode->children->content, NULL);
                 val_node.float64 = strtod((const char *)cNode->children->content, NULL);
-                val_node.float80 = strtold((const char *)cNode->children->content, NULL);
+                long double float80 = strtold((const char *)cNode->children->content, NULL);
+                memcpy(&val_node.float80, &float80, 10);
                 g_array_append_val(cg_tree_node->const_nodes, val_node);
             }else if(0 == strcmp(cNodeName, "Imm64")){
                 val_node.type = CONST_IMM64;
@@ -57,11 +58,11 @@ static void parseCGs(xmlNodePtr cgsNode)
                 val_node.type = CONST_BCD;
                 str2bcd((const char *)cNode->children->content, val_node.bcd);
                 g_array_append_val(cg_tree_node->const_nodes, val_node);
-            }else if(0 == strcmp(cNodeName, "X87status")){
-                val_node.type = CONST_X87STATUS;
-                uint32_t x87status[7] = {0};
-                str2x87_status((const char *)cNode->children->content, x87status);
-                memcpy(&(val_node.fcw), x87status, 28);
+            }else if(0 == strcmp(cNodeName, "X87env")){
+                val_node.type = CONST_X87ENV;
+                uint32_t x87env[7] = {0};
+                str2x87env((const char *)cNode->children->content, x87env);
+                memcpy(&(val_node.fcw), x87env, 28);
                 g_array_append_val(cg_tree_node->const_nodes, val_node);
             }else{
                 val_node.type = CONST_IMM32;

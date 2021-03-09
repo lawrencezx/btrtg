@@ -82,7 +82,7 @@ void str2bcd(const char *hex, uint32_t bcd[3]){
     ((char *)bcd)[9] = sign == 1 ? 0x00 : 0x80;
 }
 
-void str2x87_status(const char *hex, uint32_t x87status[7]){
+void str2x87env(const char *hex, uint32_t x87env[7]){
     /* skip head */
     while (*hex != '{')
         hex++;
@@ -95,7 +95,7 @@ void str2x87_status(const char *hex, uint32_t x87status[7]){
         }
         memcpy(num_buffer, hex, end_of_num - hex);
         num_buffer[end_of_num - hex] = '\0';
-        x87status[i] = hex2dec((const char *)num_buffer);
+        x87env[i] = hex2dec((const char *)num_buffer);
         hex = end_of_num + 1;
     }
 }

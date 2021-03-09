@@ -2,6 +2,6 @@
     <traverse>
         <I type = "fldenv mem" trv = "true"></I>
 		<I type = "fninit"></I>
-        <C type = "fcw"></C>
+        <C type = "x87_env"></C>
     </traverse>
 </Template>

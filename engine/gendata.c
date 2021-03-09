@@ -787,58 +787,58 @@ static void init_memory_opnd_float(char *asm_opnd, operand_seed *opnd_seed, stru
         }  
     }
     if(opndsize >= BITS32){
-        sprintf(asm_mov_inst, "mov %s, 0x%x", mem_address, fp_number[0]);
+        sprintf(asm_mov_inst, "  mov %s, 0x%x", mem_address, fp_number[0]);
         preappend_mem_size(asm_mov_inst + 4, BITS32);
         one_insn_gen_ctrl(asm_mov_inst, INSERT_AFTER);
     }
     if(opndsize >= BITS64){
         char * mem_address_end = mem_address + strlen(mem_address);
         sprintf(mem_address_end -1, "%s", " + 0x4]");
-        sprintf(asm_mov_inst, "mov %s, 0x%x", mem_address, fp_number[1]);
+        sprintf(asm_mov_inst, "  mov %s, 0x%x", mem_address, fp_number[1]);
         preappend_mem_size(asm_mov_inst + 4, BITS32);
         one_insn_gen_ctrl(asm_mov_inst, INSERT_AFTER);
     }
     if(opndsize >= BITS80){
         char * mem_address_end = mem_address + strlen(mem_address);
         sprintf(mem_address_end -1, "%s", " + 0x4]");
-        sprintf(asm_mov_inst, "mov %s, 0x%x", mem_address, fp_number[2]);
+        sprintf(asm_mov_inst, "  mov %s, 0x%x", mem_address, fp_number[2]);
         preappend_mem_size(asm_mov_inst + 4, BITS32);
         one_insn_gen_ctrl(asm_mov_inst, INSERT_AFTER);
     }
 }
 
-static void init_memory_opnd_x87status(char *asm_opnd, struct const_node *val_node){
+static void init_memory_opnd_x87env(char *asm_opnd, struct const_node *val_node){
     char asm_mov_inst[128];
     char mem_address[64];
     strcpy(mem_address, asm_opnd);
     char * mem_address_end = mem_address + strlen(mem_address);
-    int *x87status = (int *)&(val_node->fcw);
+    int *x87env = (int *)&(val_node->fcw);
 
-    sprintf(asm_mov_inst, "  mov dword %s, 0x%x", mem_address, x87status[0]);
+    sprintf(asm_mov_inst, "  mov dword %s, 0x%x", mem_address, x87env[0]);
     one_insn_gen_ctrl(asm_mov_inst, INSERT_AFTER);
 
     sprintf(mem_address_end -1, "%s", " + 0x4]");
-    sprintf(asm_mov_inst, "  mov dword %s, 0x%x", mem_address, x87status[1]);
+    sprintf(asm_mov_inst, "  mov dword %s, 0x%x", mem_address, x87env[1]);
     one_insn_gen_ctrl(asm_mov_inst, INSERT_AFTER);
 
     sprintf(mem_address_end -1, "%s", " + 0x8]");
-    sprintf(asm_mov_inst, "  mov dword %s, 0x%x", mem_address, x87status[2]);
+    sprintf(asm_mov_inst, "  mov dword %s, 0x%x", mem_address, x87env[2]);
     one_insn_gen_ctrl(asm_mov_inst, INSERT_AFTER);
 
     sprintf(mem_address_end -1, "%s", " + 0xc]");
-    sprintf(asm_mov_inst, "  mov dword %s, 0x%x", mem_address, x87status[3]);
+    sprintf(asm_mov_inst, "  mov dword %s, 0x%x", mem_address, x87env[3]);
     one_insn_gen_ctrl(asm_mov_inst, INSERT_AFTER);
 
     sprintf(mem_address_end -1, "%s", " + 0x10]");
-    sprintf(asm_mov_inst, "  mov dword %s, 0x%x", mem_address, x87status[4]);
+    sprintf(asm_mov_inst, "  mov dword %s, 0x%x", mem_address, x87env[4]);
     one_insn_gen_ctrl(asm_mov_inst, INSERT_AFTER);
 
     sprintf(mem_address_end -1, "%s", " + 0x14]");
-    sprintf(asm_mov_inst, "  mov dword %s, 0x%x", mem_address, x87status[5]);
+    sprintf(asm_mov_inst, "  mov dword %s, 0x%x", mem_address, x87env[5]);
     one_insn_gen_ctrl(asm_mov_inst, INSERT_AFTER);
 
     sprintf(mem_address_end -1, "%s", " + 0x18]");
-    sprintf(asm_mov_inst, "  mov dword %s, 0x%x", mem_address, x87status[6]);
+    sprintf(asm_mov_inst, "  mov dword %s, 0x%x", mem_address, x87env[6]);
     one_insn_gen_ctrl(asm_mov_inst, INSERT_AFTER);
 }
 
@@ -1008,8 +1008,8 @@ static void init_memory_opnd(char *asm_opnd, operand_seed *opnd_seed)
     }
     if(val_node != NULL && CONST_FLOAT == val_node->type){
         init_memory_opnd_float(asm_opnd, opnd_seed, val_node);
-    }else if(val_node != NULL && CONST_X87STATUS == val_node->type){
-        init_memory_opnd_x87status(asm_opnd, val_node);
+    }else if(val_node != NULL && CONST_X87ENV == val_node->type){
+        init_memory_opnd_x87env(asm_opnd, val_node);
     }else if(val_node != NULL && size_mask(opnd_seed->opndflags) == BITS64){
         init_memory_opnd_imm64(asm_opnd, val_node);
     }else if(val_node != NULL && size_mask(opnd_seed->opndflags) == BITS80){

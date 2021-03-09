@@ -319,6 +319,42 @@ void check_point_x86_state(struct X87LegacyFPUSaveArea x87fpustate,
     point++;
 }
 
+void check_point_x87_env(struct X87LegacyFPUSaveArea x87fpustate,
+     struct X86StandardRegisters x86regs)
+{
+    int diff = 0;
+    if (fsa_get_fcw(&x87fpustate) != output[point].X87.fcw) {
+        printf("diff [fcw]: %x, should be: 0x%x\n", fsa_get_fcw(&x87fpustate), output[point].X87.fcw);
+        diff = 1;
+    }
+    if (fsa_get_fsw(&x87fpustate) != output[point].X87.fsw) {
+        printf("diff [fsw]: %x, should be: 0x%x\n", fsa_get_fsw(&x87fpustate), output[point].X87.fsw);
+        diff = 1;
+    }
+    if (fsa_get_ftw(&x87fpustate) != output[point].X87.ftw) {
+        printf("diff [ftw]: %x, should be: 0x%x\n", fsa_get_ftw(&x87fpustate), output[point].X87.ftw);
+        diff = 1;
+    }
+    if (fsa_get_ffdp(&x87fpustate) != output[point].X87.ffdp) {
+        printf("diff [ffdp]: %x, should be: 0x%x\n", fsa_get_ffdp(&x87fpustate), output[point].X87.ffdp);
+        diff = 1;
+    }
+    if (fsa_get_ffip(&x87fpustate) != output[point].X87.ffip) {
+        printf("diff [ffip]: %x, should be: 0x%x\n", fsa_get_ffip(&x87fpustate), output[point].X87.ffip);
+        diff = 1;
+    }
+    if (fsa_get_ffop(&x87fpustate) != output[point].X87.ffop) {
+        printf("diff [ffop]: %x, should be: 0x%x\n", fsa_get_ffop(&x87fpustate), output[point].X87.ffop);
+        diff = 1;
+    }
+    if (diff == 1)
+        printf("check point: %d fail! [x87_env][fuzzy_pc:0x%x]\n", point + 1, x86regs.pc);
+    else if (verbose == 1)
+        printf("check point: %d pass! [x87_env]\n", point + 1);
+    diffs += diff;
+    point++;
+}
+
 void check_point_end(void)
 {
     if (diffs != 0) {

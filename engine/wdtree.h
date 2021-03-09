@@ -12,7 +12,7 @@ enum const_type {
     CONST_BCD,
     CONST_UNITY,
     CONST_ASM_OP,
-    CONST_X87STATUS
+    CONST_X87ENV
 };
 
 struct const_node {
@@ -29,7 +29,10 @@ struct const_node {
     struct {
         float float32;
         double float64;
-        long double float80;
+        struct {
+            uint64_t low;
+            uint16_t high;
+        }float80;
     };
     struct {
         uint16_t fcw;

@@ -304,7 +304,7 @@
 	</TK>
 
 	<TK inst = "fldenv">
-		<Node name = "x87fpustatus" weight="100"> </Node>
+		<Node name = "x87fpuenv" weight="100"> </Node>
         <Node name = "normal" weight="0"> </Node>
 	</TK>
 
