@@ -12,7 +12,7 @@ enum const_type {
     CONST_BCD,
     CONST_UNITY,
     CONST_ASM_OP,
-    CONST_X87_STATUS
+    CONST_X87STATUS
 };
 
 struct const_node {

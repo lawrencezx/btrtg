@@ -333,6 +333,10 @@
 		<Node name = "status-word" weight="100"> </Node>
         <Node name = "normal" weight="0"> </Node>
 	</TK>
+	<TK inst = "finit">
+		<Node name = "status-word" weight="100"> </Node>
+        <Node name = "normal" weight="0"> </Node>
+	</TK>
 
 
 	<TK inst = "paddb">

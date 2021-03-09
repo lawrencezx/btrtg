@@ -417,12 +417,12 @@ bool init_popf(void)
  */
 char *preappend_mem_size(char *asm_mem, opflags_t opndsize)
 {
-    static const char *memsize[5] = {"byte ", "word ", "dword ", "qword", "tword"};
+    static const char *memsize[6] = {"byte ", "word ", "dword ", "qword", "tword", " "};
     int i = opndsize == BITS8 ? 0 :
             opndsize == BITS16 ? 1 : 
             opndsize == BITS32 ? 2 :
             opndsize == BITS64 ? 3 :
-            opndsize == BITS80? 4 : 2;
+            opndsize == BITS80? 4 : 5;
     return nasm_strrplc(asm_mem, 0, memsize[i], strlen(memsize[i]));
 }
 

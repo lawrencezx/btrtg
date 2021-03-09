@@ -58,7 +58,7 @@ static void parseCGs(xmlNodePtr cgsNode)
                 str2bcd((const char *)cNode->children->content, val_node.bcd);
                 g_array_append_val(cg_tree_node->const_nodes, val_node);
             }else if(0 == strcmp(cNodeName, "X87status")){
-                val_node.type = CONST_X87_STATUS;
+                val_node.type = CONST_X87STATUS;
                 uint32_t x87status[7] = {0};
                 str2x87_status((const char *)cNode->children->content, x87status);
                 memcpy(&(val_node.fcw), x87status, 28);

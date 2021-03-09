@@ -1,0 +1,9 @@
+<Template>
+    <traverse>
+		<V var = "mem" type = "mem"></V>
+        <I type = "fldenv @mem" trv = "true"></I>
+		<I type = "fstenv @mem"></I>
+		<I type = "fldenv @mem"></I>
+        <C type = "fsw"></C>
+    </traverse>
+</Template>
