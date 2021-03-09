@@ -29,4 +29,15 @@
         <I type = "btr @reg, imm32" trv="true"></I>
         <C type = "eflags"></C>
     </traverse>
+
+    <traverse>
+        <V var = "mem" type = "mem16"> </V>
+        <I type = "btr @mem, reg16" trv="true"></I>
+        <C type = "eflags"></C>
+    </traverse>
+    <traverse>
+        <V var = "mem" type = "mem16"> </V>
+        <I type = "btr @mem, imm16" trv="true"></I>
+        <C type = "eflags"></C>
+    </traverse>
 </Template>
