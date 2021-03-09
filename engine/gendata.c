@@ -788,21 +788,21 @@ static void init_memory_opnd_float(char *asm_opnd, operand_seed *opnd_seed, stru
     }
     if(opndsize >= BITS32){
         sprintf(asm_mov_inst, "  mov %s, 0x%x", mem_address, fp_number[0]);
-        preappend_mem_size(asm_mov_inst + 4, BITS32);
+        preappend_mem_size(asm_mov_inst + 6, BITS32);
         one_insn_gen_ctrl(asm_mov_inst, INSERT_AFTER);
     }
     if(opndsize >= BITS64){
         char * mem_address_end = mem_address + strlen(mem_address);
         sprintf(mem_address_end -1, "%s", " + 0x4]");
         sprintf(asm_mov_inst, "  mov %s, 0x%x", mem_address, fp_number[1]);
-        preappend_mem_size(asm_mov_inst + 4, BITS32);
+        preappend_mem_size(asm_mov_inst + 6, BITS32);
         one_insn_gen_ctrl(asm_mov_inst, INSERT_AFTER);
     }
     if(opndsize >= BITS80){
         char * mem_address_end = mem_address + strlen(mem_address);
         sprintf(mem_address_end -1, "%s", " + 0x4]");
         sprintf(asm_mov_inst, "  mov %s, 0x%x", mem_address, fp_number[2]);
-        preappend_mem_size(asm_mov_inst + 4, BITS32);
+        preappend_mem_size(asm_mov_inst + 6, BITS32);
         one_insn_gen_ctrl(asm_mov_inst, INSERT_AFTER);
     }
 }
