@@ -73,6 +73,7 @@ bool likely_happen_w(int w, int total_w);
 int hex2dec(const char *hex);
 int64_t hex2declong(const char *hex);
 void str2bcd(const char *hex, uint32_t bcd[3]);
+void str2x87_status(const char *hex, uint32_t x87status[7]);
 /*
  * Wrappers around malloc, realloc, free and a few more. nasm_malloc
  * will fatal-error and die rather than return NULL; nasm_realloc will

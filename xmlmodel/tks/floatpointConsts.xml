@@ -100,4 +100,36 @@
 		<Imm64> 0x8797979798787894 </Imm64>
 		<Imm64> 0x3482423499383738 </Imm64>
 	</CG>
+
+	<CG name = "x87fpustatus">
+		<X87status> {0x26b, 0x7000, 0x7355, 0x0, 0x0, 0x0, 0x0} </X87status>
+		<X87status> {0x26b, 0x6000, 0x7255, 0x0, 0x0, 0x0, 0x0} </X87status>
+	</CG>
+	<CG name = "control-word">
+		<Imm16> 0x0000 </Imm16>
+		<Imm16> 0x0001 </Imm16>
+		<Imm16> 0x007f </Imm16>
+		<Imm16> 0x0080 </Imm16>
+		<Imm16> 0x0303 </Imm16>
+		<Imm16> 0x4444 </Imm16>
+		<Imm16> 0x7fff </Imm16>
+		<Imm16> 0x8000 </Imm16>
+		<Imm16> 0x0001 </Imm16>
+		<Imm16> 0xcccc </Imm16>
+		<Imm16> 0xf5f5 </Imm16>
+		<Imm16> 0xffff </Imm16>
+	</CG>
+
+
+	<CG name = "status-word">
+		<Imm16> 0x0000 </Imm16>
+		<Imm16> 0x8000 </Imm16>
+		<Imm16> 0x1000 </Imm16>
+		<Imm16> 0x1800 </Imm16>
+		<Imm16> 0x2000 </Imm16>
+		<Imm16> 0x2800 </Imm16>
+		<Imm16> 0x3000 </Imm16>
+		<Imm16> 0x3800 </Imm16>
+	</CG>
+	
 </ConstGroups>

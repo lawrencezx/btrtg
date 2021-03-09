@@ -768,6 +768,11 @@ static void init_memory_opnd_float(char *asm_opnd, operand_seed *opnd_seed, stru
         //random_fp_number(opnd_seed, fp_number);
     }else{
         switch (opndsize) {
+            case BITS16:
+                sprintf(asm_mov_inst, "  mov word %s, 0x%x", mem_address, val_node->imm16);
+                one_insn_gen_ctrl(asm_mov_inst, INSERT_AFTER);
+                return;
+                break;
             case BITS32:
                 memcpy(fp_number, &val_node->float32, 4);
                 break;
@@ -968,6 +973,8 @@ static void init_memory_opnd(char *asm_opnd, operand_seed *opnd_seed)
     }
     if(val_node != NULL && CONST_FLOAT == val_node->type){
         init_memory_opnd_float(asm_opnd, opnd_seed, val_node);
+    }else if(val_node != NULL && CONST_X87_STATUS == val_node->type){
+        ;
     }else if(val_node != NULL && size_mask(opnd_seed->opndflags) == BITS64){
         init_memory_opnd_imm64(asm_opnd, val_node);
     }else if(val_node != NULL && size_mask(opnd_seed->opndflags) == BITS80){

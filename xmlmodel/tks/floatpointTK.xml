@@ -303,6 +303,38 @@
         <Node name = "normal" weight="0"> </Node>
 	</TK>
 
+	<TK inst = "fldenv">
+		<Node name = "x87fpustatus" weight="100"> </Node>
+        <Node name = "normal" weight="0"> </Node>
+	</TK>
+
+	<TK inst = "fstcw">
+		<Node name = "farith" weight="100"> </Node>
+        <Node name = "normal" weight="0"> </Node>
+	</TK>
+	<TK inst = "fnstcw">
+		<Node name = "farith" weight="100"> </Node>
+        <Node name = "normal" weight="0"> </Node>
+	</TK>
+	<TK inst = "fldcw">
+		<Node name = "control-word" weight="100"> </Node>
+        <Node name = "normal" weight="0"> </Node>
+	</TK>
+
+	<TK inst = "fstsw">
+		<Node name = "farith" weight="100"> </Node>
+        <Node name = "normal" weight="0"> </Node>
+	</TK>
+	<TK inst = "fnstsw">
+		<Node name = "farith" weight="100"> </Node>
+        <Node name = "normal" weight="0"> </Node>
+	</TK>
+	<TK inst = "fldsw">
+		<Node name = "status-word" weight="100"> </Node>
+        <Node name = "normal" weight="0"> </Node>
+	</TK>
+
+
 	<TK inst = "paddb">
 		<Node name = "mmxarith" weight="100"> </Node>
         <Node name = "normal" weight="0"> </Node>
