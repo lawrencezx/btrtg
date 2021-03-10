@@ -1,0 +1,7 @@
+<Template>
+    <traverse>
+        <I type = "fldenv mem" trv = "true"></I>
+		<I type = "fnclex"></I>
+        <C type = "fcw"></C>
+    </traverse>
+</Template>

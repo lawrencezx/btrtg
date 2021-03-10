@@ -1,34 +1,42 @@
 <Template>
     <traverse>
-        <I type = "fcmovb st0, fpureg" trv = "true"></I>
+		<I type = "popf" trv = "true"></I>
+        <I type = "fcmovb st0, fpureg" inip = "1.0"></I>
         <C type = "st0"></C>
     </traverse>
     <traverse>
-        <I type = "fcmovbe st0, fpureg" trv = "true"></I>
+		<I type = "popf" trv = "true"></I>
+        <I type = "fcmovbe st0, fpureg" inip = "1.0"></I>
         <C type = "st0"></C>
     </traverse>
     <traverse>
-        <I type = "fcmove st0, fpureg" trv = "true"></I>
+		<I type = "popf" trv = "true"></I>
+        <I type = "fcmove st0, fpureg" inip = "1.0"></I>
         <C type = "st0"></C>
     </traverse>
     <traverse>
-        <I type = "fcmovnb st0, fpureg" trv = "true"></I>
+		<I type = "popf" trv = "true"></I>
+        <I type = "fcmovnb st0, fpureg" inip = "1.0"></I>
         <C type = "st0"></C>
     </traverse>
     <traverse>
-        <I type = "fcmovnbe st0, fpureg" trv = "true"></I>
+		<I type = "popf" trv = "true"></I>
+        <I type = "fcmovnbe st0, fpureg" inip = "1.0"></I>
         <C type = "st0"></C>
     </traverse>
     <traverse>
-        <I type = "fcmovne st0, fpureg" trv = "true"></I>
+		<I type = "popf" trv = "true"></I>
+        <I type = "fcmovne st0, fpureg" inip = "1.0"></I>
         <C type = "st0"></C>
     </traverse>
     <traverse>
-        <I type = "fcmovnu st0, fpureg" trv = "true"></I>
+		<I type = "popf" trv = "true"></I>
+        <I type = "fcmovnu st0, fpureg" inip = "1.0"></I>
         <C type = "st0"></C>
     </traverse>
     <traverse>
-        <I type = "fcmovu st0, fpureg" trv = "true"></I>
+		<I type = "popf" trv = "true"></I>
+        <I type = "fcmovu st0, fpureg" inip = "1.0"></I>
         <C type = "st0"></C>
     </traverse>
 </Template>

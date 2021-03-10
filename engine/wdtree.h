@@ -13,7 +13,8 @@ enum const_type {
     CONST_FLOAT64,
     CONST_BCD,
     CONST_UNITY,
-    CONST_ASM_OP
+    CONST_ASM_OP,
+    CONST_X87ENV
 };
 
 struct const_node {
@@ -23,14 +24,39 @@ struct const_node {
         uint16_t imm16;
         uint32_t imm32;
         uint64_t imm64;
-        uint32_t immf[6];
-        struct {
-            float float32;
-            double float64;
-        };
         uint32_t bcd[3];
         uint8_t unity;
         char *asm_op;
+    };
+    struct {
+        float float32;
+        double float64;
+        struct {
+            uint64_t low;
+            uint16_t high;
+        }float80;
+    };
+    struct {
+        uint16_t fcw;
+        uint16_t fcw_padding;
+        uint16_t fsw;
+        uint16_t fsw_padding;
+        uint16_t ftw;
+        uint16_t ftw_padding;
+        uint16_t ffip_0;
+        uint16_t ffip_padding;
+        struct {
+            uint32_t ffop:12;
+            uint32_t ffip_16:16;
+            uint32_t ffopfip_padding:4;
+        };
+        uint16_t ffdp_0;
+        uint16_t ffdp_padding;
+        struct {
+            uint32_t ffdp_padding_pre:12;
+            uint32_t ffdp_16:16;
+            uint32_t ffdp_padding_after:4;
+        };
     };
 };
 

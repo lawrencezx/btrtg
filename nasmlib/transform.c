@@ -81,3 +81,21 @@ void str2bcd(const char *hex, uint32_t bcd[3]){
     *bcd_ptr = temp;
     ((char *)bcd)[9] = sign == 1 ? 0x00 : 0x80;
 }
+
+void str2x87env(const char *hex, uint32_t x87env[7]){
+    /* skip head */
+    while (*hex != '{')
+        hex++;
+    hex++;
+    char num_buffer[64] = {'\0'};
+    for(int i = 0; i < 7; i++){
+        char *end_of_num = (char *)hex;
+        while(*end_of_num != '}' && *end_of_num != ','){
+            end_of_num ++;
+        }
+        memcpy(num_buffer, hex, end_of_num - hex);
+        num_buffer[end_of_num - hex] = '\0';
+        x87env[i] = hex2dec((const char *)num_buffer);
+        hex = end_of_num + 1;
+    }
+}

@@ -47,9 +47,10 @@ static void parseCGs(xmlNodePtr cgsNode)
 
             if(0 == strcmp(cNodeName, "Immf")){
                 val_node.type = CONST_FLOAT;
-                *(float *)(val_node.immf) = strtof(cNodeContent, NULL);
-                *(double *)(val_node.immf + 1) = strtod(cNodeContent, NULL);
-                *(long double *)(val_node.immf + 3) = strtold(cNodeContent, NULL);
+                val_node.float32 = strtof((const char *)cNode->children->content, NULL);
+                val_node.float64 = strtod((const char *)cNode->children->content, NULL);
+                long double float80 = strtold((const char *)cNode->children->content, NULL);
+                memcpy(&val_node.float80, &float80, 10);
             }else if(0 == strcmp(cNodeName, "Imm64")){
                 val_node.type = CONST_IMM64;
                 val_node.imm64 = hex2declong(cNodeContent);
@@ -62,7 +63,12 @@ static void parseCGs(xmlNodePtr cgsNode)
             } else if (strcmp(cNodeName, "Float64") == 0) {
                 val_node.type = CONST_FLOAT64;
                 val_node.float64 = strtof(cNodeContent, NULL);
-            } else {
+            } else if(0 == strcmp(cNodeName, "X87env")){
+                val_node.type = CONST_X87ENV;
+                uint32_t x87env[7] = {0};
+                str2x87env((const char *)cNode->children->content, x87env);
+                memcpy(&(val_node.fcw), x87env, 28);
+            }else{
                 val_node.type = CONST_IMM32;
                 val_node.imm32 = (uint32_t)hex2dec(cNodeContent);
             }

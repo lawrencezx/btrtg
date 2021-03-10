@@ -79,6 +79,7 @@ static inline uint32_t bytes_to_uint32(char *f)
 {
     return *(uint32_t *)f;
 }
+void str2x87env(const char *hex, uint32_t x87env[7]);
 /*
  * Wrappers around malloc, realloc, free and a few more. nasm_malloc
  * will fatal-error and die rather than return NULL; nasm_realloc will
