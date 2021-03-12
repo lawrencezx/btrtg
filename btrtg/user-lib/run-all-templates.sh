@@ -13,9 +13,9 @@ function print_help() {
 }
 
 function check_tools() {
-    which x86asmpg
+    which btrtg
     if [ `witch` == 1 ]; then
-        echo "Error: please install x86asmpg!"
+        echo "Error: please install btrtg!"
         exit 1
     fi
 }
@@ -27,8 +27,8 @@ function generate_all_tmplt() {
         path=$4/${file%/*}
         testFile=$4/${file%.xml}.test.s
         mkdir -p $path
-        echo -e "\033[31mx86asmpg -k $2 -g $3 -t $1/$file -o $testFile \033[0m"
-        x86asmpg -k $2 -g $3 -t $1/$file -o $testFile
+        echo -e "\033[31mbtrtg -k $2 -g $3 -t $1/$file -o $testFile \033[0m"
+        btrtg -k $2 -g $3 -t $1/$file -o $testFile
     done
 }
 

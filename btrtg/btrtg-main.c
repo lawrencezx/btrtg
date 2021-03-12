@@ -11,14 +11,14 @@
 
 static bool terminate_directly = false;
 static char *template_file_name = NULL;
-static char *output_file_name = "x86asmpg.s";
+static char *output_file_name = "btrtg.s";
 
 char *tk_tmplt_path = "../xmlmodel/tks";
 char *group_tmplt_path = "../xmlmodel/templates/group";
 
 static void help(void)
 {
-    printf("Usage: x86asmpg -k <path> -g <path> -t <file> [options]\n");
+    printf("Usage: btrtg -k <path> -g <path> -t <file> [options]\n");
     printf("Options:\n");
     printf("    --help        show this text and exit (also -h)\n");
     printf("    -h            show this text and exit (also --help)\n");
@@ -90,7 +90,7 @@ int main(int argc, char *argv[])
     parse_tmplts_file(template_file_name);
 
     ofmt->init(output_file_name);
-    dfmt->init("debug_x86asmpg.txt");
+    dfmt->init("debug_btrtg.txt");
 
     gsp_init();
     
