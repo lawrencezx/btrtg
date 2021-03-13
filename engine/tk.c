@@ -71,10 +71,16 @@ static int adjust_operands_num(enum opcode opcode)
         case I_FYL2X:
         case I_FYL2XP1:
         case I_FXCH:
+        case I_FUCOM:
+        case I_FUCOMP:
+        case I_FUCOMPP:
+        case I_FICOM:
+        case I_FICOMP:
             return 2;
         case I_FABS:
         case I_FCHS:
         case I_FCOS:
+        case I_FTST:
         case I_FSIN:
         case I_FSINCOS:
         case I_FPTAN:

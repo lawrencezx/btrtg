@@ -87,19 +87,7 @@
 		<Imm64> 0x8797979798787894 </Imm64>
 		<Imm64> 0x3482423499383738 </Imm64>
 	</CG>
-	<CG name = "mmxarith">
-		<Imm64> 0x1 </Imm64>
-		<Imm64> 0x0 </Imm64>
-		<Imm64> 0x123456789abcdef0 </Imm64>
-		<Imm64> 0xfedcba9876543210 </Imm64>
-		<Imm64> 0xffffffffffffffff </Imm64>
-		<Imm64> 0x8080808080808080 </Imm64>
-		<Imm64> 0x8888888888888888 </Imm64>
-		<Imm64> 0x0101010101010101 </Imm64>
-		<Imm64> 0x3214342342637423 </Imm64>
-		<Imm64> 0x8797979798787894 </Imm64>
-		<Imm64> 0x3482423499383738 </Imm64>
-	</CG>
+
 
 	<CG name = "x87fpuenv">
 		<X87env> {0x26b, 0x7000, 0x7355, 0x0, 0x0, 0x0, 0x0} </X87env>

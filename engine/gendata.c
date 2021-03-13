@@ -634,6 +634,10 @@ void init_implied_operands(insn *result)
     } else {
         int operands = result->operands;
         switch (result->opcode) {
+            case I_FXTRACT:
+                init_specific_register(R_ST0);
+                init_fpu_dest_register(R_ST7);
+                break;
             case I_FBSTP:
             case I_FCHS:
             case I_FCOS:
@@ -654,7 +658,7 @@ void init_implied_operands(insn *result)
             case I_FSQRT:
             case I_FTST:
             
-            case I_FXTRACT:
+            //case I_FXTRACT:
             case I_FABS:
             case I_F2XM1:
                 

@@ -7,13 +7,15 @@
 #include "error.h"
 #include "tk.h"
 
-static const char *xmlfiles[8] =
+static const char *xmlfiles[10] =
 {
     /* must put Consts before TK, so the TK can find relevant constGroup */
     "fixedpointConsts.xml",
     "fixedpointTK.xml",
     "floatpointConsts.xml",
     "floatpointTK.xml",
+    "mmxConsts.xml",
+    "mmxTK.xml",
     "sseConsts.xml",
     "sseTK.xml",
     "sse2Consts.xml",

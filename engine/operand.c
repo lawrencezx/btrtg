@@ -349,15 +349,15 @@ bool init_specific_register(enum reg_enum R_reg)
         char mem_address[64] = "[data0]";
         char *mem_address_end = mem_address + strlen(mem_address);
 
-        sprintf(buffer, "ffree %s", src);
-        one_insn_gen_const(buffer);
+        sprintf(buffer, "  ffree %s", src);
+        one_insn_gen_ctrl(buffer, INSERT_AFTER);
 
-        sprintf(buffer, "fst %s", src);
-        one_insn_gen_const(buffer);
+        sprintf(buffer, "  fst %s", src);
+        one_insn_gen_ctrl(buffer, INSERT_AFTER);
 
-        sprintf(buffer, "fstp st0");    
+        sprintf(buffer, "  fstp st0");    
         //sprintf(asm_fpu_inst, "fincstp");
-        one_insn_gen_const(buffer);
+        one_insn_gen_ctrl(buffer, INSERT_AFTER);
 
         sprintf(buffer, "  mov dword %s, 0x%x", mem_address, ((int *)(&val_node->float64))[0]);
         one_insn_gen_ctrl(buffer, INSERT_AFTER);
@@ -370,8 +370,8 @@ bool init_specific_register(enum reg_enum R_reg)
         sprintf(buffer, "  fld qword %s",mem_address);
         one_insn_gen_ctrl(  buffer, INSERT_AFTER);
 
-        sprintf(buffer, "fxch %s", src);
-        one_insn_gen_const(buffer);
+        sprintf(buffer, "  fxch %s", src);
+        one_insn_gen_ctrl(buffer, INSERT_AFTER);
     }else{
         sprintf(buffer, "mov %s, 0x%x", src, (val_node == NULL) ?
         (uint32_t)nasm_random64(0x100000000) : val_node->imm32);

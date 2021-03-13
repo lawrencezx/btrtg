@@ -1,0 +1,6 @@
+<Template>
+    <traverse>
+        <I type = "ftst" trv = "true"></I>
+        <C type = "fsw"></C>
+    </traverse>
+</Template>
