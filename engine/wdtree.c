@@ -6,6 +6,8 @@
 
 struct hash_table hash_wdtrees;
 
+static struct wd_root **wd_roots_tempstorage = NULL;
+static int wd_roots_tempsize = 0, wd_roots_templen = 0;
 static struct wd_node **wd_nodes_tempstorage = NULL;
 static int wd_nodes_tempsize = 0, wd_nodes_templen = 0;
 #define WDTREES_TEMP_DELTA 128
@@ -16,6 +18,14 @@ struct wd_root *wdtree_create(void)
     tree = (struct wd_root *)nasm_malloc(sizeof(struct wd_root));
     tree->packedn = 1;
     tree->wd_node = NULL;
+
+    if (wd_roots_templen >= wd_roots_tempsize) {
+        wd_roots_tempsize += WDTREES_TEMP_DELTA;
+        wd_roots_tempstorage = nasm_realloc(wd_roots_tempstorage,
+                wd_roots_tempsize * sizeof(struct wd_root *));
+    }
+    wd_roots_tempstorage[wd_roots_templen++] = tree;
+
     return tree;
 }
 
@@ -48,15 +58,14 @@ static void const_node_clear(struct const_node *const_node)
 
 void wdtree_node_clear(struct wd_node *wd_node)
 {
-    g_array_free(wd_node->weights, true);
     if (wd_node->isleaf == true) {
         for (int i = 0; i < wd_node->size; i++) {
             const_node_clear(&g_array_index(wd_node->const_nodes, struct const_node, i));
         }
-        g_array_free(wd_node->const_nodes, true);
-    } else {
-        g_array_free(wd_node->sub_nodes, true);
     }
+    g_array_free(wd_node->weights, true);
+    g_array_free(wd_node->sub_nodes, true);
+    g_array_free(wd_node->const_nodes, true);
 }
 
 static void hash_wdtrees_clear(void)
@@ -79,6 +88,12 @@ void wdtrees_free_all(void)
     }
     free(wd_nodes_tempstorage);
     wd_nodes_tempstorage = NULL;
+
+    for (int i = 0; i < wd_roots_templen; i++) {
+        free(wd_roots_tempstorage[i]);
+    }
+    free(wd_roots_tempstorage);
+    wd_roots_tempstorage = NULL;
 
     hash_wdtrees_clear();
 }

@@ -100,7 +100,20 @@ struct tk_model *tkmodel_create(void)
 
 void tks_free_all(void)
 {
-    hash_free_all(&hash_tks, true);
+    struct hash_iterator it;
+    const struct hash_node *np;
+
+    hash_for_each(&hash_tks, it, np) {
+        if (np->data) {
+            struct tk_model *tkm = (struct tk_model *)np->data;
+            g_array_free(tkm->tk_trees, true);
+            nasm_free(np->data);
+        }
+        if (np->key)
+            nasm_free((void *)np->key);
+    }
+
+    hash_free(&hash_tks);
 }
 
 static struct tk_model *get_tkm_from_hashtbl(const char *asm_op)

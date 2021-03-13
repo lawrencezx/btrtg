@@ -181,6 +181,7 @@ static void preorder_traverse_tk_trees(blk_struct *blk, struct wd_root *tk_tree,
                         next_val_nodes, treei + 1, 0);
 
                 g_array_remove_index(trv_state->trv_nodes, treei + 1);
+                g_array_free(next_val_nodes, true);
             } else {
                 /* during a packed operand's value nodes */
                 preorder_traverse_tk_trees(blk, tk_tree, tk_tree->wd_node,
@@ -207,6 +208,7 @@ static void walkTrvBlk(blk_struct *blk)
         g_array_append_val(trv_state->trv_nodes, val_nodes);
         preorder_traverse_tk_trees(blk, tk_tree, tk_tree->wd_node, val_nodes, 0, 0);
         g_array_remove_index(trv_state->trv_nodes, 0);
+        g_array_free(val_nodes, true);
     }
 }
 
@@ -286,15 +288,26 @@ void walk_tmplt(void)
 
 static void elem_free(elem_struct *elem)
 {
-    if (elem->type == I_ELEM)
+    if (elem->type == I_ELEM) {
         free(elem->asm_inst);
+    } else if (elem->type == C_ELEM) {
+        free(elem->c_type);
+    }
     free(elem);
+}
+
+static void trv_state_free(struct trv_state *trv_state)
+{
+    g_array_free(trv_state->tk_trees, true);
+    g_array_free(trv_state->trv_nodes, true);
+    free(trv_state);
 }
 
 static void blk_free(blk_struct *blk)
 {
     if (blk == NULL)
         return;
+    /* free variables */
     for (guint i = 0; i < blk->vars->len; i++) {
         struct blk_var *var = &g_array_index(blk->vars, struct blk_var, i);
         free(var->name);
@@ -302,6 +315,12 @@ static void blk_free(blk_struct *blk)
         free(var->var_val);
         free(var->init_mem_addr);
     }
+    /* free statement specific items */
+    if (blk->type == TTT_BLK)
+        free(blk->ttt_op);
+    else if (blk->type == TRV_BLK)
+        trv_state_free(blk->trv_state);
+    /* free subblks */
     if (blk->type == SEL_BLK) {
     } else if (blk->type == ELEM_BLK) {
         elem_free(g_array_index(blk->blks, elem_struct *, 0));
@@ -310,7 +329,6 @@ static void blk_free(blk_struct *blk)
             blk_free(g_array_index(blk->blks, void *, i));
         }
     }
-    free(blk->ttt_op);
     g_array_free(blk->vars, true);
     g_array_free(blk->blks, true);
     free(blk);

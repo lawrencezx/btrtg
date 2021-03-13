@@ -113,30 +113,35 @@ static struct wd_node *parseOpndTK(xmlNodePtr tkNode)
 
 static void parseInstTK(xmlNodePtr tkNode, GArray *tk_trees)
 {
-    char *opnd, *packedn;
+    char *prop_opnd, *prop_packedn;
     struct wd_root *tk_tree;
 
     for (xmlNodePtr opndNode = tkNode->children; opndNode != NULL; opndNode = opndNode->next) {
         if (opndNode->type != XML_ELEMENT_NODE)
             continue;
         
-        packedn = (char *)xmlGetProp(opndNode, (const unsigned char*)"packedn");
-        opnd = (char *)xmlGetProp(opndNode, (const unsigned char*)"opnd");
-        if (opnd == NULL)
+        prop_packedn = (char *)xmlGetProp(opndNode, (const unsigned char*)"packedn");
+        prop_opnd = (char *)xmlGetProp(opndNode, (const unsigned char*)"opnd");
+        if (prop_opnd == NULL)
             goto simple_opnd_tk;
 
         tk_tree = wdtree_create();
-        tk_tree->packedn = (packedn == NULL) ? 1 : atoi(packedn);
+        tk_tree->packedn = (prop_packedn == NULL) ? 1 : atoi(prop_packedn);
         tk_tree->wd_node = parseOpndTK(opndNode);
         g_array_append_val(tk_trees, tk_tree);
+
+        free(prop_opnd);
+        free(prop_packedn);
     }
     return;
 
 simple_opnd_tk:
     tk_tree = wdtree_create();
-    tk_tree->packedn = (packedn == NULL) ? 1 : atoi(packedn);
+    tk_tree->packedn = (prop_packedn == NULL) ? 1 : atoi(prop_packedn);
     tk_tree->wd_node = parseOpndTK(tkNode);
     g_array_append_val(tk_trees, tk_tree);
+
+    free(prop_packedn);
 }
 
 static void parseTKs(xmlNodePtr tksNode)

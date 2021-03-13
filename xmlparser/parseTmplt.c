@@ -289,34 +289,34 @@ static void parseBlk(xmlNodePtr blkNodeStart, blk_struct *blk)
             continue;
 
         blk_name = (const char *)blkNode->name;
-        subblk = (blk_struct *)nasm_malloc(sizeof(blk_struct));
-        init_blk_struct(subblk);
-        subblk->parent = blk;
-        if (strcmp(blk_name, "sequence") == 0) {
-            parseSeqBlk(blkNode, subblk);
-        } else if (strcmp(blk_name, "select") == 0) {
-            parseSelBlk(blkNode, subblk);
-        } else if (strcmp(blk_name, "transfer") == 0) {
-            parseTttBlk(blkNode, subblk);
-        } else if (strcmp(blk_name, "repeat") == 0) {
-            parseRptBlk(blkNode, subblk);
-        } else if (strcmp(blk_name, "traverse") == 0) {
-            parseTrvBlk(blkNode, subblk);
-        } else if (strcmp(blk_name, "V") == 0) {
-            parseV(blkNode, blk);
-            nasm_free(subblk);
-            continue;
-        } else if (strcmp(blk_name, "G") == 0) {
-            parseG(blkNode, subblk);
-        } else if (strcmp(blk_name, "C") == 0) {
-            parseC(blkNode, subblk);
-        } else if (strcmp(blk_name, "I") == 0) {
-            parseI(blkNode, subblk);
-        } else {
-            nasm_fatal("Unsupported statement type: %s", blk_name);
-        }
 
-        g_array_append_val(blk->blks, subblk);
+        if (strcmp(blk_name, "V") == 0) {
+            parseV(blkNode, blk);
+        } else {
+            subblk = (blk_struct *)nasm_malloc(sizeof(blk_struct));
+            init_blk_struct(subblk);
+            subblk->parent = blk;
+            if (strcmp(blk_name, "sequence") == 0) {
+                parseSeqBlk(blkNode, subblk);
+            } else if (strcmp(blk_name, "select") == 0) {
+                parseSelBlk(blkNode, subblk);
+            } else if (strcmp(blk_name, "transfer") == 0) {
+                parseTttBlk(blkNode, subblk);
+            } else if (strcmp(blk_name, "repeat") == 0) {
+                parseRptBlk(blkNode, subblk);
+            } else if (strcmp(blk_name, "traverse") == 0) {
+                parseTrvBlk(blkNode, subblk);
+            } else if (strcmp(blk_name, "G") == 0) {
+                parseG(blkNode, subblk);
+            } else if (strcmp(blk_name, "C") == 0) {
+                parseC(blkNode, subblk);
+            } else if (strcmp(blk_name, "I") == 0) {
+                parseI(blkNode, subblk);
+            } else {
+                nasm_fatal("Unsupported statement type: %s", blk_name);
+            }
+            g_array_append_val(blk->blks, subblk);
+        }
     }
 }
 
