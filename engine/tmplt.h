@@ -10,7 +10,8 @@
  * instruction block statement types
  * 1) seq_statement: select instruction statements sequentially
  * 2) sel_statement: select instruction statements randomly
- * 3) xfr_statement: set instruction statements as destination of loopxx/call control transfer instruction
+ * 3) ttt_statement: wrapper of two target destination instructions
+ *                   exp: loopxx, call, jcxz, jecxz
  * 5) rpt_statement: repeat generating instruction statements
  * 5) elem_statement: repeat generating instruction statements
  *
@@ -70,7 +71,7 @@ struct blk_var {
 enum blk_type {
     SEQ_BLK,
     SEL_BLK,
-    XFR_BLK,
+    TTT_BLK,
     RPT_BLK,
     TRV_BLK,
     ELEM_BLK
@@ -79,8 +80,8 @@ enum blk_type {
 typedef struct blk_struct {
     struct blk_struct *parent;
     enum blk_type type;
-    char *xfr_op;                  /* XFR_BLK */
-    int times;                      /* RPT_BLK, XFR_BLK */
+    char *ttt_op;                   /* TTT_BLK */
+    int times;                      /* RPT_BLK, TTT_BLK */
     struct trv_state *trv_state;    /* TRV_BLK */
     GArray *vars;
     GArray *blks;

@@ -1,0 +1,18 @@
+<?xml version = "1.0" ?>
+
+<!--
+@Test: LOOP
+@Description: test loop single instruction
+@Detail:
+@Author: ZouXu
+-->
+
+<Template>
+    <repeat times = "10">
+        <transfer type = "loop" times = "10">
+            <V var = "reg" type = "reg32"> </V>
+            <I type = "mov @reg,imm32"></I>
+            <C type = "@reg"></C>
+        </transfer>
+    </repeat>
+</Template>

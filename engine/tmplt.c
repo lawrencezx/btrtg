@@ -6,6 +6,8 @@
 #include "generator.h"
 #include "tmplt.h"
 #include "x86pg.h"
+#include "asmlib.h"
+#include "ctrl.h"
 
 tmplt_struct tmpltm;
 
@@ -13,7 +15,7 @@ void init_blk_struct(blk_struct *blk)
 {
     blk->parent = NULL;
     blk->type = -1;
-    blk->xfr_op = NULL;
+    blk->ttt_op = NULL;
     blk->times = 0;
     blk->trv_state = NULL;
     blk->blks = g_array_new(FALSE, FALSE, sizeof(void *));
@@ -73,7 +75,7 @@ static void blk_invalid_var_all(blk_struct *blk)
 
 static void walkSeqBlk(blk_struct *blk);
 static void walkSelBlk(blk_struct *blk);
-static void walkXfrBlk(blk_struct *blk);
+static void walkTttBlk(blk_struct *blk);
 static void walkRptBlk(blk_struct *blk);
 static void walkTrvBlk(blk_struct *blk);
 static void walkElemBlk(blk_struct *blk);
@@ -82,7 +84,7 @@ static void (*walkBlkFuncs[])(blk_struct *) =
 {
     walkSeqBlk,
     walkSelBlk,
-    walkXfrBlk,
+    walkTttBlk,
     walkRptBlk,
     walkTrvBlk,
     walkElemBlk
@@ -116,11 +118,20 @@ static void walkSelBlk(blk_struct *blk)
     one_insn_gen(&seed, &inst);
 }
 
-static void walkXfrBlk(blk_struct *blk)
+static void walkTttBlk(blk_struct *blk)
 {
     stat_set_curr_blk(blk);
     blk_invalid_var_all(blk);
-    /* TODO */
+
+    enum opcode opcode = parse_asm_opcode(blk->ttt_op);
+    int next_label = gen_control_transfer_insn(opcode, blk->times);
+    for (guint i = 0; i < blk->blks->len; i++) {
+        blk_struct *subblk = g_array_index(blk->blks, blk_struct *, i);
+        walkBlkFuncs[subblk->type](subblk);
+    }
+    update_insert_pos_to_label(next_label);
+
+    stat_unlock_ctrl();
 }
 
 static void walkRptBlk(blk_struct *blk)
@@ -299,7 +310,7 @@ static void blk_free(blk_struct *blk)
             blk_free(g_array_index(blk->blks, void *, i));
         }
     }
-    free(blk->xfr_op);
+    free(blk->ttt_op);
     g_array_free(blk->vars, true);
     g_array_free(blk->blks, true);
     free(blk);

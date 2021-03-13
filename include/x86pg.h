@@ -117,9 +117,15 @@ struct section *stat_get_data_sec(void);
 /* curr_blk */
 blk_struct *stat_get_curr_blk(void);
 void stat_set_curr_blk(blk_struct *blk);
+/* insertpos */
+insnlist_entry_t *stat_get_insertpos(void);
+void stat_set_insertpos(insnlist_entry_t *insertpos);
 /* labeli */
 int stat_get_labeli(void);
 void stat_inc_labeli(void);
+/* labelspos */
+insnlist_entry_t **stat_get_labelspos(void);
+void stat_set_labelspos(insnlist_entry_t **labelspos);
 /* opcode */
 enum opcode stat_get_opcode(void);
 void stat_set_opcode(enum opcode opcode);

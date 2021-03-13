@@ -60,6 +60,16 @@ void stat_set_curr_blk(blk_struct *blk)
     X86PGState.curr_blk = blk;
 }
 
+insnlist_entry_t *stat_get_insertpos(void)
+{
+    return X86PGState.insertpos;
+}
+
+void stat_set_insertpos(insnlist_entry_t *insertpos)
+{
+    X86PGState.insertpos = insertpos;
+}
+
 int stat_get_labeli(void)
 {
     return X86PGState.labeli;
@@ -68,6 +78,16 @@ int stat_get_labeli(void)
 void stat_inc_labeli(void)
 {
     X86PGState.labeli++;
+}
+
+insnlist_entry_t **stat_get_labelspos(void)
+{
+    return X86PGState.labelspos;
+}
+
+void stat_set_labelspos(insnlist_entry_t **labelspos)
+{
+    X86PGState.labelspos = labelspos;
 }
 
 enum opcode stat_get_opcode(void)

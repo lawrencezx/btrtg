@@ -356,11 +356,8 @@ bool one_insn_gen(const insn_seed *seed, insn *result)
     result->opcode = tokval.t_integer;
     result->condition = tokval.t_inttwo;
 
-    if (gen_control_transfer_insn(result->opcode))
+    if (gen_control_transfer_insn(result->opcode, -1) >= 0)
         return true;
-
-//    if (seed != NULL && X86PGState.seqMode && !bseqi_inc(&X86PGState.bseqi, seed, opnum))
-//        return false;
 
     while (true) {
         expr *value;

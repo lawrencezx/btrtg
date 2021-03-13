@@ -1,0 +1,29 @@
+<?xml version = "1.0" ?>
+
+<!--
+@Test: LOOPZ
+@Description: test loopz single instruction
+@Detail:
+@Author: ZouXu
+-->
+
+<Template>
+    <I type = "mov eax,0x0"></I>
+    <I type = "add eax,0x1"></I>
+    <repeat times = "10">
+        <transfer type = "loopz" times = "10">
+            <V var = "reg" type = "reg32"> </V>
+            <I type = "mov @reg,imm32"></I>
+            <C type = "@reg"></C>
+        </transfer>
+    </repeat>
+    <I type = "mov eax,0x0"></I>
+    <I type = "add eax,0x0"></I>
+    <repeat times = "10">
+        <transfer type = "loopz" times = "10">
+            <V var = "reg" type = "reg32"> </V>
+            <I type = "mov @reg,imm32"></I>
+            <C type = "@reg"></C>
+        </transfer>
+    </repeat>
+</Template>

@@ -102,20 +102,21 @@ static void parseSelBlk(xmlNodePtr selNode, blk_struct *blk)
     g_array_append_val(blk->blks, selblk_tree);
 }
 
-static void parseXfrBlk(xmlNodePtr xfrNode, blk_struct *blk)
+static void parseTttBlk(xmlNodePtr tttNode, blk_struct *blk)
 {
-    char *prop_times, *prop_xfr_op;
+    char *prop_times, *prop_ttt_op;
 
-    prop_times = (char *)xmlGetProp(xfrNode, (const unsigned char*)"times");
-    prop_xfr_op = (char *)xmlGetProp(xfrNode, (const unsigned char*)"type");
+    prop_times = (char *)xmlGetProp(tttNode, (const unsigned char*)"times");
+    prop_ttt_op = (char *)xmlGetProp(tttNode, (const unsigned char*)"type");
 
-    blk->type = XFR_BLK;
-    blk->times = atoi(prop_times);
-    blk->xfr_op = nasm_strdup(nasm_trim(prop_xfr_op));
-    parseBlk(xfrNode->children, blk);
+    blk->type = TTT_BLK;
+    if (prop_times)
+        blk->times = atoi(prop_times);
+    blk->ttt_op = nasm_strdup(nasm_trim(prop_ttt_op));
+    parseBlk(tttNode->children, blk);
 
     free(prop_times);
-    free(prop_xfr_op);
+    free(prop_ttt_op);
 }
 
 static void parseRptBlk(xmlNodePtr rptNode, blk_struct *blk)
@@ -296,7 +297,7 @@ static void parseBlk(xmlNodePtr blkNodeStart, blk_struct *blk)
         } else if (strcmp(blk_name, "select") == 0) {
             parseSelBlk(blkNode, subblk);
         } else if (strcmp(blk_name, "transfer") == 0) {
-            parseXfrBlk(blkNode, subblk);
+            parseTttBlk(blkNode, subblk);
         } else if (strcmp(blk_name, "repeat") == 0) {
             parseRptBlk(blkNode, subblk);
         } else if (strcmp(blk_name, "traverse") == 0) {
