@@ -2,5 +2,6 @@
     <traverse>
         <V var = "reg" type = "xmmreg"></V>
         <I type = "addps @reg, xmmreg" trv = "true"></I>
+        <C type = "eax"></C>
     </traverse>
 </Template>

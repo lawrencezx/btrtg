@@ -147,6 +147,44 @@ static void walkRptBlk(blk_struct *blk)
     }
 }
 
+#define EXPECTED_TRV_NUM (8192)
+static int trv_step = 0;
+static int trv_index = 0;
+
+static int sqrti(int num)
+{
+    int s;
+    for (s=0; num >= (2 * s) + 1; num -= (2 * s++) + 1)
+        ;
+    return s;
+}
+
+static int is_prime(int num) {
+    if (num <= 3)
+        return 1;
+    if ((num % 2) == 0)
+        return 0;
+
+    int divider_limit = sqrti(num);
+
+    for (int i = 3; i <= divider_limit; i += 2) {
+        if ((num % i) == 0)
+            return 0;
+    }
+
+    return 1;
+}
+
+static int greatest_prime(int limit)
+{
+    int i;
+    for (i = limit; i>0; --i) {
+        if (is_prime(i))
+            return i;
+    }
+    return i;
+}
+
 static void preorder_traverse_tk_trees(blk_struct *blk, struct wd_root *tk_tree,
         struct wd_node *tk_node, GArray *val_nodes, int treei, int packedi)
 {
@@ -166,10 +204,12 @@ static void preorder_traverse_tk_trees(blk_struct *blk, struct wd_root *tk_tree,
             if ((size_t)treei + 1 == trv_state->tk_trees->len &&
                 packedi + 1 == tk_tree->packedn) {
                 /* got a complete traverse value nodes */
-                blk_invalid_var_all(blk);
-                for (guint i = 0; i < blk->blks->len; i++) {
-                    blk_struct *subblk = g_array_index(blk->blks, blk_struct *, i);
-                    walkBlkFuncs[subblk->type](subblk);
+                if ((trv_index++) % trv_step == 0) {
+                    blk_invalid_var_all(blk);
+                    for (guint i = 0; i < blk->blks->len; i++) {
+                        blk_struct *subblk = g_array_index(blk->blks, blk_struct *, i);
+                        walkBlkFuncs[subblk->type](subblk);
+                    }
                 }
             } else if (packedi + 1 == tk_tree->packedn) {
                 /* finished a packed operand's value nodes */
@@ -196,13 +236,40 @@ static void preorder_traverse_tk_trees(blk_struct *blk, struct wd_root *tk_tree,
     }
 }
 
+static int get_tk_tree_leaf_num(struct wd_node *tk_node)
+{
+    if (tk_node == NULL || tk_node->size == 0)
+        return 0;
+    if (tk_node->isleaf)
+        return tk_node->size;
+    int num = 0;
+    GArray *sub_nodes = tk_node->sub_nodes;
+    for (size_t i = 0; i < sub_nodes->len; i++) {
+        num += get_tk_tree_leaf_num(g_array_index(sub_nodes, struct wd_node *, i));
+    }
+    return num;
+}
+
 static void walkTrvBlk(blk_struct *blk)
 {
     stat_set_curr_blk(blk);
     
+    struct wd_root *tk_tree;
     struct trv_state *trv_state = blk->trv_state;
     GArray *tk_trees = trv_state->tk_trees;
+
+    int possible_trv_num = 1;
+    for (size_t i = 0; i < tk_trees->len; i++) {
+        tk_tree = g_array_index(tk_trees, struct wd_root *, 0);
+        int tk_tree_leaf_num = get_tk_tree_leaf_num(tk_tree->wd_node);
+        for (int j = 0; j < tk_tree->packedn; j++)
+            possible_trv_num *= tk_tree_leaf_num;
+    }
     if (tk_trees->len != 0) {
+        trv_step = 1;
+        trv_index = 0;
+        if (possible_trv_num / EXPECTED_TRV_NUM > 0)
+            trv_step = greatest_prime(possible_trv_num / EXPECTED_TRV_NUM + 1);
         struct wd_root *tk_tree = g_array_index(tk_trees, struct wd_root *, 0);
         GArray *val_nodes = g_array_new(FALSE, FALSE, sizeof(struct const_node *));
         g_array_append_val(trv_state->trv_nodes, val_nodes);

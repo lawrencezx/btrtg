@@ -85,6 +85,7 @@
 #include <stddef.h>
 #include <stdarg.h>
 #include <stdio.h>
+#include <math.h>
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
