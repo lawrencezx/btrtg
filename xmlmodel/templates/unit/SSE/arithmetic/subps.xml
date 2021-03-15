@@ -1,12 +1,12 @@
 <Template>
     <traverse>
         <V var = "reg" type = "xmmreg"></V>
-        <I type = "addps @reg, xmmreg" trv = "true"></I>
+        <I type = "subps @reg, xmmreg" trv = "true"></I>
         <C type = "eax"></C>
     </traverse>
     <traverse>
         <V var = "reg" type = "xmmreg"></V>
-        <I type = "addps @reg, xmmmem" trv = "true"></I>
+        <I type = "subps @reg, xmmmem" trv = "true"></I>
         <C type = "eax"></C>
     </traverse>
 </Template>
