@@ -6,7 +6,7 @@
     </traverse>
     <traverse>
         <V var = "mmxreg" type = "mmxreg"></V>
-        <I type = "packsswb @mmxreg,mem64" trv = "true"></I>
+        <I type = "packsswb @mmxreg,mmxmem64" trv = "true"></I>
         <C type = "@mmxreg"></C>
     </traverse>
     <traverse>
@@ -16,7 +16,7 @@
     </traverse>
     <traverse>
         <V var = "mmxreg" type = "mmxreg"></V>
-        <I type = "packssdw @mmxreg,mem64" trv = "true"></I>
+        <I type = "packssdw @mmxreg,mmxmem64" trv = "true"></I>
         <C type = "@mmxreg"></C>
     </traverse>
 </Template>

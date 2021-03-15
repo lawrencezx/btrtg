@@ -1,7 +1,7 @@
 <Template>
     <traverse>
         <V var = "mmxreg" type = "mmxreg"></V>
-        <I type = "psubd @mmxreg,mem64" trv = "true"></I>
+        <I type = "psubd @mmxreg,mmxmem64" trv = "true"></I>
         <C type = "@mmxreg"></C>
     </traverse>
     <traverse>

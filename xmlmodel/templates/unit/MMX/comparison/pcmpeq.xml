@@ -6,7 +6,7 @@
     </traverse>
     <traverse>
         <V var = "mmxreg" type = "mmxreg"></V>
-        <I type = "pcmpeqb @mmxreg,mem64" trv = "true"></I>
+        <I type = "pcmpeqb @mmxreg,mmxmem64" trv = "true"></I>
         <C type = "@mmxreg"></C>
     </traverse>
     <traverse>
@@ -16,7 +16,7 @@
     </traverse>
     <traverse>
         <V var = "mmxreg" type = "mmxreg"></V>
-        <I type = "pcmpeqw @mmxreg,mem64" trv = "true"></I>
+        <I type = "pcmpeqw @mmxreg,mmxmem64" trv = "true"></I>
         <C type = "@mmxreg"></C>
     </traverse>
     <traverse>
@@ -26,7 +26,7 @@
     </traverse>
     <traverse>
         <V var = "mmxreg" type = "mmxreg"></V>
-        <I type = "pcmpeqd @mmxreg,mem64" trv = "true"></I>
+        <I type = "pcmpeqd @mmxreg,mmxmem64" trv = "true"></I>
         <C type = "@mmxreg"></C>
     </traverse>
 </Template>

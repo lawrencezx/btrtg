@@ -6,7 +6,7 @@
     </traverse>
     <traverse>
         <V var = "mmxreg" type = "mmxreg"></V>
-        <I type = "punpcklbw @mmxreg,mem64" trv = "true"></I>
+        <I type = "punpcklbw @mmxreg,mmxmem64" trv = "true"></I>
         <C type = "@mmxreg"></C>
     </traverse>
 
@@ -17,7 +17,7 @@
     </traverse>
     <traverse>
         <V var = "mmxreg" type = "mmxreg"></V>
-        <I type = "punpcklwd @mmxreg,mem64" trv = "true"></I>
+        <I type = "punpcklwd @mmxreg,mmxmem64" trv = "true"></I>
         <C type = "@mmxreg"></C>
     </traverse>
 
@@ -28,7 +28,7 @@
     </traverse>
     <traverse>
         <V var = "mmxreg" type = "mmxreg"></V>
-        <I type = "punpckldq @mmxreg,mem64" trv = "true"></I>
+        <I type = "punpckldq @mmxreg,mmxmem64" trv = "true"></I>
         <C type = "@mmxreg"></C>
     </traverse>
 </Template>

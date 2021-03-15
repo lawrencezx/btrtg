@@ -35,6 +35,7 @@ opflags_t parse_asm_opnd_type_opflags(const char *asm_opnd)
         {"fpureg", FPUREG},
         {"fpu", FPU0},
         {"mmxreg", MMXREG},
+        {"mmxmem", MEMORY|REG_CLASS_RM_MMX},
         {"mmxrm", RM_MMX},
         {"xmmreg", XMMREG},
         {"xmmmem", MEMORY|REG_CLASS_RM_XMM}

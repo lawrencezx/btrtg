@@ -937,7 +937,6 @@ static void init_memory_opnd_mmx(char *asm_opnd, operand_seed *opnd_seed)
     } else if(val_nodes->len == 1){
         struct const_node *val_node0;
         val_node0 = g_array_index(val_nodes, struct const_node *, 0);
-        if()  
         sprintf(asm_mov_inst, init_mmxmem2dword_format,
                 mem_address, ((int *)(&val_node0->imm64))[0], mem_address, ((int *)(&val_node0->imm64))[1]); 
     }
@@ -1291,7 +1290,7 @@ static void init_memory_opnd(char *asm_opnd, operand_seed *opnd_seed)
         init_memory_opnd_float(asm_opnd, opnd_seed, val_node);
     }else if(val_node != NULL && CONST_X87ENV == val_node->type){
         init_memory_opnd_x87env(asm_opnd, val_node);
-    }else if(val_node != NULL && CONST_MMX == val_node->type){
+    }else if(is_class(REG_CLASS_RM_MMX, opnd_seed->opndflags)){
         init_memory_opnd_mmx(asm_opnd, opnd_seed);
     }else if(val_node != NULL && size_mask(opnd_seed->opndflags) == BITS64){
         init_memory_opnd_imm64(asm_opnd, val_node);
