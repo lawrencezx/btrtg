@@ -1,20 +1,28 @@
 <TestingKnowledges>
     <!--  data transfer instructions  -->
-	<TK inst = "paddb">
-		<Node name = "mmxarith" weight="100"> </Node>
-        <Node name = "normal" weight="0"> </Node>
-	</TK>
+    <TK inst = "paddb">
+        <Node opnd = "all" packedn = "8">
+            <Node name = "mmx-byte" weight="100"> </Node>
+            <Node name = "normal" weight="0"> </Node>
+        </Node>
+    </TK>
 	<TK inst = "paddw">
-		<Node name = "mmxarith" weight="100"> </Node>
-        <Node name = "normal" weight="0"> </Node>
+        <Node opnd = "all" packedn = "4">
+            <Node name = "mmx-word" weight="100"> </Node>
+            <Node name = "normal" weight="0"> </Node>
+        </Node>
 	</TK>
 	<TK inst = "paddd">
-		<Node name = "mmxarith" weight="100"> </Node>
-        <Node name = "normal" weight="0"> </Node>
+        <Node opnd = "all" packedn = "2">
+            <Node name = "mmx-dword" weight="100"> </Node>
+            <Node name = "normal" weight="0"> </Node>
+        </Node>
 	</TK>
 	<TK inst = "paddq">
-		<Node name = "mmxarith" weight="100"> </Node>
-        <Node name = "normal" weight="0"> </Node>
+        <Node opnd = "all" packedn = "1">
+            <Node name = "mmx-qword" weight="100"> </Node>
+            <Node name = "normal" weight="0"> </Node>
+        </Node>
 	</TK>
 
 	<TK inst = "movd">
@@ -27,35 +35,49 @@
 	</TK>
 
 	<TK inst = "packsswb">
-		<Node name = "mmxarith" weight="100"> </Node>
-        <Node name = "normal" weight="0"> </Node>
+        <Node opnd = "all" packedn = "4">
+            <Node name = "mmx-word" weight="100"> </Node>
+            <Node name = "normal" weight="0"> </Node>
+        </Node>
 	</TK>
 	<TK inst = "packssdw">
-		<Node name = "mmxarith" weight="100"> </Node>
-        <Node name = "normal" weight="0"> </Node>
+        <Node opnd = "all" packedn = "2">
+            <Node name = "mmx-dword" weight="100"> </Node>
+            <Node name = "normal" weight="0"> </Node>
+        </Node>
 	</TK>
 
 	<TK inst = "packuswb">
-		<Node name = "mmxarith" weight="100"> </Node>
-        <Node name = "normal" weight="0"> </Node>
+        <Node opnd = "all" packedn = "4">
+            <Node name = "mmx-word" weight="100"> </Node>
+            <Node name = "normal" weight="0"> </Node>
+        </Node>
 	</TK>
 
 	<TK inst = "paddsb">
-		<Node name = "mmxarith" weight="100"> </Node>
-        <Node name = "normal" weight="0"> </Node>
+        <Node opnd = "all" packedn = "8">
+            <Node name = "mmx-byte" weight="100"> </Node>
+            <Node name = "normal" weight="0"> </Node>
+        </Node>
 	</TK>
 	<TK inst = "paddsw">
-		<Node name = "mmxarith" weight="100"> </Node>
-        <Node name = "normal" weight="0"> </Node>
+        <Node opnd = "all" packedn = "4">
+            <Node name = "mmx-word" weight="100"> </Node>
+            <Node name = "normal" weight="0"> </Node>
+        </Node>
 	</TK>
 
 	<TK inst = "paddusb">
-		<Node name = "mmxarith" weight="100"> </Node>
-        <Node name = "normal" weight="0"> </Node>
+        <Node opnd = "all" packedn = "8">
+            <Node name = "mmx-byte" weight="100"> </Node>
+            <Node name = "normal" weight="0"> </Node>
+        </Node>
 	</TK>
 	<TK inst = "paddusw">
-		<Node name = "mmxarith" weight="100"> </Node>
-        <Node name = "normal" weight="0"> </Node>
+        <Node opnd = "all" packedn = "4">
+            <Node name = "mmx-word" weight="100"> </Node>
+            <Node name = "normal" weight="0"> </Node>
+        </Node>
 	</TK>
 
 	<TK inst = "pand">
@@ -69,34 +91,48 @@
 	</TK>
 
 	<TK inst = "pcmpeqb">
-		<Node name = "mmxarith" weight="100"> </Node>
-        <Node name = "normal" weight="0"> </Node>
+        <Node opnd = "all" packedn = "8">
+            <Node name = "mmx-byte" weight="100"> </Node>
+            <Node name = "normal" weight="0"> </Node>
+        </Node>
 	</TK>
 	<TK inst = "pcmpeqw">
-		<Node name = "mmxarith" weight="100"> </Node>
-        <Node name = "normal" weight="0"> </Node>
+        <Node opnd = "all" packedn = "4">
+            <Node name = "mmx-word" weight="100"> </Node>
+            <Node name = "normal" weight="0"> </Node>
+        </Node>
 	</TK>
 	<TK inst = "pcmpeqd">
-		<Node name = "mmxarith" weight="100"> </Node>
-        <Node name = "normal" weight="0"> </Node>
+        <Node opnd = "all" packedn = "2">
+            <Node name = "mmx-dword" weight="100"> </Node>
+            <Node name = "normal" weight="0"> </Node>
+        </Node>
 	</TK>
 
 	<TK inst = "pcmpgtb">
-		<Node name = "mmxarith" weight="100"> </Node>
-        <Node name = "normal" weight="0"> </Node>
+        <Node opnd = "all" packedn = "8">
+            <Node name = "mmx-byte" weight="100"> </Node>
+            <Node name = "normal" weight="0"> </Node>
+        </Node>
 	</TK>
 	<TK inst = "pcmpgtw">
-		<Node name = "mmxarith" weight="100"> </Node>
-        <Node name = "normal" weight="0"> </Node>
+        <Node opnd = "all" packedn = "4">
+            <Node name = "mmx-word" weight="100"> </Node>
+            <Node name = "normal" weight="0"> </Node>
+        </Node>
 	</TK>
 	<TK inst = "pcmpgtd">
-		<Node name = "mmxarith" weight="100"> </Node>
-        <Node name = "normal" weight="0"> </Node>
+        <Node opnd = "all" packedn = "2">
+            <Node name = "mmx-dword" weight="100"> </Node>
+            <Node name = "normal" weight="0"> </Node>
+        </Node>
 	</TK>
 
 	<TK inst = "pmaddwd">
-		<Node name = "mmxarith" weight="100"> </Node>
-        <Node name = "normal" weight="0"> </Node>
+        <Node opnd = "all" packedn = "4">
+            <Node name = "mmx-word" weight="100"> </Node>
+            <Node name = "normal" weight="0"> </Node>
+        </Node>
 	</TK>
 
 	<TK inst = "pmaddubsw">
@@ -105,8 +141,16 @@
 	</TK>
 
 	<TK inst = "pmulhw">
-		<Node name = "mmxarith" weight="100"> </Node>
-        <Node name = "normal" weight="0"> </Node>
+        <Node opnd = "all" packedn = "4">
+            <Node name = "mmx-word" weight="100"> </Node>
+            <Node name = "normal" weight="0"> </Node>
+        </Node>
+	</TK>
+	<TK inst = "pmullw">
+        <Node opnd = "all" packedn = "4">
+            <Node name = "mmx-word" weight="100"> </Node>
+            <Node name = "normal" weight="0"> </Node>
+        </Node>
 	</TK>
 
 	<TK inst = "por">
@@ -115,99 +159,143 @@
 	</TK>
 
 	<TK inst = "psllw">
-		<Node name = "mmxarith" weight="100"> </Node>
-        <Node name = "normal" weight="0"> </Node>
+        <Node opnd = "all" packedn = "4">
+            <Node name = "mmx-word" weight="100"> </Node>
+            <Node name = "normal" weight="0"> </Node>
+        </Node>
 	</TK>
 	<TK inst = "pslld">
-		<Node name = "mmxarith" weight="100"> </Node>
-        <Node name = "normal" weight="0"> </Node>
+        <Node opnd = "all" packedn = "2">
+            <Node name = "mmx-dword" weight="100"> </Node>
+            <Node name = "normal" weight="0"> </Node>
+        </Node>
 	</TK>
 	<TK inst = "psllq">
-		<Node name = "mmxarith" weight="100"> </Node>
-        <Node name = "normal" weight="0"> </Node>
+        <Node opnd = "all" packedn = "1">
+            <Node name = "mmx-qword" weight="100"> </Node>
+            <Node name = "normal" weight="0"> </Node>
+        </Node>
 	</TK>
 
 	<TK inst = "psraw">
-		<Node name = "mmxarith" weight="100"> </Node>
-        <Node name = "normal" weight="0"> </Node>
+        <Node opnd = "all" packedn = "4">
+            <Node name = "mmx-word" weight="100"> </Node>
+            <Node name = "normal" weight="0"> </Node>
+        </Node>
 	</TK>
 	<TK inst = "psrad">
-		<Node name = "mmxarith" weight="100"> </Node>
-        <Node name = "normal" weight="0"> </Node>
+        <Node opnd = "all" packedn = "2">
+            <Node name = "mmx-dword" weight="100"> </Node>
+            <Node name = "normal" weight="0"> </Node>
+        </Node>
 	</TK>
 
 	<TK inst = "psrlw">
-		<Node name = "mmxarith" weight="100"> </Node>
-        <Node name = "normal" weight="0"> </Node>
+        <Node opnd = "all" packedn = "4">
+            <Node name = "mmx-word" weight="100"> </Node>
+            <Node name = "normal" weight="0"> </Node>
+        </Node>
 	</TK>
 	<TK inst = "psrld">
-		<Node name = "mmxarith" weight="100"> </Node>
-        <Node name = "normal" weight="0"> </Node>
+        <Node opnd = "all" packedn = "2">
+            <Node name = "mmx-dword" weight="100"> </Node>
+            <Node name = "normal" weight="0"> </Node>
+        </Node>
 	</TK>
 	<TK inst = "psrlq">
-		<Node name = "mmxarith" weight="100"> </Node>
-        <Node name = "normal" weight="0"> </Node>
+        <Node opnd = "all" packedn = "1">
+            <Node name = "mmx-qword" weight="100"> </Node>
+            <Node name = "normal" weight="0"> </Node>
+        </Node>
 	</TK>
 
 	<TK inst = "psubb">
-		<Node name = "mmxarith" weight="100"> </Node>
-        <Node name = "normal" weight="0"> </Node>
+        <Node opnd = "all" packedn = "8">
+            <Node name = "mmx-byte" weight="100"> </Node>
+            <Node name = "normal" weight="0"> </Node>
+        </Node>
 	</TK>
 	<TK inst = "psubw">
-		<Node name = "mmxarith" weight="100"> </Node>
-        <Node name = "normal" weight="0"> </Node>
+        <Node opnd = "all" packedn = "4">
+            <Node name = "mmx-word" weight="100"> </Node>
+            <Node name = "normal" weight="0"> </Node>
+        </Node>
 	</TK>
 	<TK inst = "psubd">
-		<Node name = "mmxarith" weight="100"> </Node>
-        <Node name = "normal" weight="0"> </Node>
+        <Node opnd = "all" packedn = "2">
+            <Node name = "mmx-dword" weight="100"> </Node>
+            <Node name = "normal" weight="0"> </Node>
+        </Node>
 	</TK>
 	<TK inst = "psubq">
-		<Node name = "mmxarith" weight="100"> </Node>
-        <Node name = "normal" weight="0"> </Node>
+        <Node opnd = "all" packedn = "1">
+            <Node name = "mmx-qword" weight="100"> </Node>
+            <Node name = "normal" weight="0"> </Node>
+        </Node>
 	</TK>
 
 	<TK inst = "psubsb">
-		<Node name = "mmxarith" weight="100"> </Node>
-        <Node name = "normal" weight="0"> </Node>
+        <Node opnd = "all" packedn = "8">
+            <Node name = "mmx-byte" weight="100"> </Node>
+            <Node name = "normal" weight="0"> </Node>
+        </Node>
 	</TK>
 	<TK inst = "psubsw">
-		<Node name = "mmxarith" weight="100"> </Node>
-        <Node name = "normal" weight="0"> </Node>
+        <Node opnd = "all" packedn = "4">
+            <Node name = "mmx-word" weight="100"> </Node>
+            <Node name = "normal" weight="0"> </Node>
+        </Node>
 	</TK>
 
 	<TK inst = "psubusb">
-		<Node name = "mmxarith" weight="100"> </Node>
-        <Node name = "normal" weight="0"> </Node>
+        <Node opnd = "all" packedn = "8">
+            <Node name = "mmx-byte" weight="100"> </Node>
+            <Node name = "normal" weight="0"> </Node>
+        </Node>
 	</TK>
 	<TK inst = "psubusw">
-		<Node name = "mmxarith" weight="100"> </Node>
-        <Node name = "normal" weight="0"> </Node>
+        <Node opnd = "all" packedn = "4">
+            <Node name = "mmx-word" weight="100"> </Node>
+            <Node name = "normal" weight="0"> </Node>
+        </Node>
 	</TK>
 
 	<TK inst = "punpckhbw">
-		<Node name = "mmxarith" weight="100"> </Node>
-        <Node name = "normal" weight="0"> </Node>
+        <Node opnd = "all" packedn = "8">
+            <Node name = "mmx-byte" weight="100"> </Node>
+            <Node name = "normal" weight="0"> </Node>
+        </Node>
 	</TK>
 	<TK inst = "punpckhwd">
-		<Node name = "mmxarith" weight="100"> </Node>
-        <Node name = "normal" weight="0"> </Node>
+        <Node opnd = "all" packedn = "4">
+            <Node name = "mmx-word" weight="100"> </Node>
+            <Node name = "normal" weight="0"> </Node>
+        </Node>
 	</TK>
 	<TK inst = "punpckhdq">
-		<Node name = "mmxarith" weight="100"> </Node>
-        <Node name = "normal" weight="0"> </Node>
+        <Node opnd = "all" packedn = "2">
+            <Node name = "mmx-dword" weight="100"> </Node>
+            <Node name = "normal" weight="0"> </Node>
+        </Node>
 	</TK>
 
 	<TK inst = "punpcklbw">
-		<Node name = "mmxarith" weight="100"> </Node>
-        <Node name = "normal" weight="0"> </Node>
+        <Node opnd = "all" packedn = "8">
+            <Node name = "mmx-byte" weight="100"> </Node>
+            <Node name = "normal" weight="0"> </Node>
+        </Node>
 	</TK>
 	<TK inst = "punpcklwd">
-		<Node name = "mmxarith" weight="100"> </Node>
-        <Node name = "normal" weight="0"> </Node>
+        <Node opnd = "all" packedn = "4">
+            <Node name = "mmx-word" weight="100"> </Node>
+            <Node name = "normal" weight="0"> </Node>
+        </Node>
 	</TK>
 	<TK inst = "punpckldq">
-		<Node name = "mmxarith" weight="100"> </Node>
-        <Node name = "normal" weight="0"> </Node>
+        <Node opnd = "all" packedn = "2">
+            <Node name = "mmx-dword" weight="100"> </Node>
+            <Node name = "normal" weight="0"> </Node>
+        </Node>
 	</TK>
 
 	<TK inst = "pxor">

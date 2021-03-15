@@ -857,6 +857,26 @@ static void init_memory_opnd_bcd80(char *asm_opnd, struct const_node *val_node){
     one_insn_gen_ctrl(asm_mov_inst, INSERT_AFTER);
 }
 
+#define init_mmxmem8byte_format "\
+  mov byte [%s], 0x%x\n\
+  mov byte [%s + 0x1], 0x%x\n\
+  mov byte [%s + 0x2], 0x%x\n\
+  mov byte [%s + 0x3], 0x%x\n\
+  mov byte [%s + 0x4], 0x%x\n\
+  mov byte [%s + 0x5], 0x%x\n\
+  mov byte [%s + 0x6], 0x%x\n\
+  mov byte [%s + 0x7], 0x%x"
+
+#define init_mmxmem4word_format "\
+  mov word [%s], 0x%x\n\
+  mov word [%s + 0x2], 0x%x\n\
+  mov word [%s + 0x4], 0x%x\n\
+  mov word [%s + 0x6], 0x%x"
+
+#define init_mmxmem2dword_format "\
+  mov dword [%s], 0x%x\n\
+  mov dword [%s + 0x4], 0x%x"
+
 static void init_memory_opnd_imm64(char *asm_opnd, struct const_node *val_node)
 {
     char asm_mov_inst[512];
@@ -867,6 +887,60 @@ static void init_memory_opnd_imm64(char *asm_opnd, struct const_node *val_node)
     sprintf(asm_mov_inst, init_mem64_format, 
             mem_address, imm64[0],
             mem_address, imm64[1]);
+    one_insn_gen_ctrl(asm_mov_inst, INSERT_AFTER);
+}
+
+static void init_memory_opnd_mmx(char *asm_opnd, operand_seed *opnd_seed)
+{
+    char asm_mov_inst[512];
+    char mem_address[64];
+    GArray *val_nodes;
+
+    val_nodes = request_packed_trv_node(stat_get_opi());
+    if (val_nodes == NULL)
+        val_nodes = request_packed_val_node(nasm_insn_names[stat_get_opcode()],
+                stat_get_opi());
+
+    strcpy(mem_address, asm_opnd + 1);
+    mem_address[strlen(mem_address) - 1] = '\0';
+    if(val_nodes->len == 8){
+        struct const_node *val_node0, *val_node1, *val_node2, *val_node3;
+        struct const_node *val_node4, *val_node5, *val_node6, *val_node7;
+        val_node0 = g_array_index(val_nodes, struct const_node *, 0);
+        val_node1 = g_array_index(val_nodes, struct const_node *, 1);
+        val_node2 = g_array_index(val_nodes, struct const_node *, 2);
+        val_node3 = g_array_index(val_nodes, struct const_node *, 3);
+        val_node4 = g_array_index(val_nodes, struct const_node *, 4);
+        val_node5 = g_array_index(val_nodes, struct const_node *, 5);
+        val_node6 = g_array_index(val_nodes, struct const_node *, 6);
+        val_node7 = g_array_index(val_nodes, struct const_node *, 7);
+        sprintf(asm_mov_inst, init_mmxmem8byte_format,
+                mem_address, ((int *)(&val_node0->imm64))[0], mem_address, ((int *)(&val_node1->imm64))[0], 
+                mem_address, ((int *)(&val_node2->imm64))[0], mem_address, ((int *)(&val_node3->imm64))[0],
+                mem_address, ((int *)(&val_node4->imm64))[0], mem_address, ((int *)(&val_node5->imm64))[0], 
+                mem_address, ((int *)(&val_node6->imm64))[0], mem_address, ((int *)(&val_node7->imm64))[0]);
+    } else if(val_nodes->len == 4){
+        struct const_node *val_node0, *val_node1, *val_node2, *val_node3;
+        val_node0 = g_array_index(val_nodes, struct const_node *, 0);
+        val_node1 = g_array_index(val_nodes, struct const_node *, 1);
+        val_node2 = g_array_index(val_nodes, struct const_node *, 2);
+        val_node3 = g_array_index(val_nodes, struct const_node *, 3);
+        sprintf(asm_mov_inst, init_mmxmem4word_format,
+                mem_address, ((int *)(&val_node0->imm64))[0], mem_address, ((int *)(&val_node1->imm64))[0], 
+                mem_address, ((int *)(&val_node2->imm64))[0], mem_address, ((int *)(&val_node3->imm64))[0]);
+    } else if(val_nodes->len == 2){
+        struct const_node *val_node0, *val_node1;
+        val_node0 = g_array_index(val_nodes, struct const_node *, 0);
+        val_node1 = g_array_index(val_nodes, struct const_node *, 1);
+        sprintf(asm_mov_inst, init_mmxmem2dword_format,
+                mem_address, ((int *)(&val_node0->imm64))[0], mem_address, ((int *)(&val_node1->imm64))[0]);
+    } else if(val_nodes->len == 1){
+        struct const_node *val_node0;
+        val_node0 = g_array_index(val_nodes, struct const_node *, 0);
+        if()  
+        sprintf(asm_mov_inst, init_mmxmem2dword_format,
+                mem_address, ((int *)(&val_node0->imm64))[0], mem_address, ((int *)(&val_node0->imm64))[1]); 
+    }
     one_insn_gen_ctrl(asm_mov_inst, INSERT_AFTER);
 }
 
@@ -902,27 +976,106 @@ static void init_fpu_register_opnd(char *asm_opnd, operand_seed *opnd_seed)
   mov dword [data0 + 0x4], 0x%x\n\
   movq qword %s, [data0]"
 
+/* movq [byte1, byte2, byte3, byte4, byte5, byte6, byte7, byte8] to mmx_reg
+ */
+#define init_mmx_8byte_format "\
+  mov byte [data0], 0x%x\n\
+  mov byte [data0 + 0x1], 0x%x\n\
+  mov byte [data0 + 0x2], 0x%x\n\
+  mov byte [data0 + 0x3], 0x%x\n\
+  mov byte [data0 + 0x4], 0x%x\n\
+  mov byte [data0 + 0x5], 0x%x\n\
+  mov byte [data0 + 0x6], 0x%x\n\
+  mov byte [data0 + 0x7], 0x%x\n\
+  movq qword %s, [data0]"
+/* movq [word1, word2, word3, word4] to mmx_reg
+ */
+#define init_mmx_4word_format "\
+  mov word [data0], 0x%x\n\
+  mov word [data0 + 0x2], 0x%x\n\
+  mov word [data0 + 0x4], 0x%x\n\
+  mov word [data0 + 0x6], 0x%x\n\
+  movq qword %s, [data0]"
+/* movq [dword1, dword2] to mmx_reg
+ */
+#define init_mmx_2dword_format "\
+  mov dword [data0], 0x%x\n\
+  mov dword [data0 + 0x4], 0x%x\n\
+  movq qword %s, [data0]"
+/* movq [qword] to mmx_reg
+ */
+#define init_mmx_1qword_format "\
+  mov dword [data0], 0x%x\n\
+  mov dword [data0 + 0x4], 0x%x\n\
+  movq qword %s, [data0]"
+
 static void init_mmx_register_opnd(char *asm_opnd, operand_seed *opnd_seed)
 {
     (void)opnd_seed;
     char asm_mmx_inst[512];
+    GArray *val_nodes;
+
+    val_nodes = request_packed_trv_node(stat_get_opi());
+    if (val_nodes == NULL)
+        val_nodes = request_packed_val_node(nasm_insn_names[stat_get_opcode()],
+                stat_get_opi());
     //char mem_address[64] = "[data0]";
 
-    struct const_node *val_node;
+    // struct const_node *val_node;
 
-    val_node = request_trv_node(stat_get_opi());
-    if (val_node == NULL)
-        val_node = request_val_node(nasm_insn_names[stat_get_opcode()],
-                stat_get_opi());
+    // val_node = request_trv_node(stat_get_opi());
+    // if (val_node == NULL)
+    //     val_node = request_val_node(nasm_insn_names[stat_get_opcode()],
+    //             stat_get_opi());
     
-    if(val_node->type == CONST_IMM32){
-        ((int *)&(val_node->imm64))[1] = 0x0;
+    // if(val_node->type == CONST_IMM32){
+    //     ((int *)&(val_node->imm64))[1] = 0x0;
+    // }
+    if(val_nodes->len == 8){
+        struct const_node *val_node0, *val_node1, *val_node2, *val_node3;
+        struct const_node *val_node4, *val_node5, *val_node6, *val_node7;
+        val_node0 = g_array_index(val_nodes, struct const_node *, 0);
+        val_node1 = g_array_index(val_nodes, struct const_node *, 1);
+        val_node2 = g_array_index(val_nodes, struct const_node *, 2);
+        val_node3 = g_array_index(val_nodes, struct const_node *, 3);
+        val_node4 = g_array_index(val_nodes, struct const_node *, 4);
+        val_node5 = g_array_index(val_nodes, struct const_node *, 5);
+        val_node6 = g_array_index(val_nodes, struct const_node *, 6);
+        val_node7 = g_array_index(val_nodes, struct const_node *, 7);
+        sprintf(asm_mmx_inst, init_mmx_8byte_format,
+                ((int *)(&val_node0->imm64))[0], ((int *)(&val_node1->imm64))[0], 
+                ((int *)(&val_node2->imm64))[0], ((int *)(&val_node3->imm64))[0],
+                ((int *)(&val_node4->imm64))[0], ((int *)(&val_node5->imm64))[0], 
+                ((int *)(&val_node6->imm64))[0], ((int *)(&val_node7->imm64))[0], 
+                asm_opnd);
+    } else if(val_nodes->len == 4){
+        struct const_node *val_node0, *val_node1, *val_node2, *val_node3;
+        val_node0 = g_array_index(val_nodes, struct const_node *, 0);
+        val_node1 = g_array_index(val_nodes, struct const_node *, 1);
+        val_node2 = g_array_index(val_nodes, struct const_node *, 2);
+        val_node3 = g_array_index(val_nodes, struct const_node *, 3);
+        sprintf(asm_mmx_inst, init_mmx_4word_format,
+                ((int *)(&val_node0->imm64))[0], ((int *)(&val_node1->imm64))[0], 
+                ((int *)(&val_node2->imm64))[0], ((int *)(&val_node3->imm64))[0],
+                asm_opnd);
+    } else if(val_nodes->len == 2){
+        struct const_node *val_node0, *val_node1;
+        val_node0 = g_array_index(val_nodes, struct const_node *, 0);
+        val_node1 = g_array_index(val_nodes, struct const_node *, 1);
+        sprintf(asm_mmx_inst, init_mmx_2dword_format,
+                ((int *)(&val_node0->imm64))[0], ((int *)(&val_node1->imm64))[0],
+                asm_opnd);      
+    } else if(val_nodes ->len == 1){
+        struct const_node *val_node0;
+        val_node0 = g_array_index(val_nodes, struct const_node *, 0);
+        sprintf(asm_mmx_inst, init_mmx_1qword_format,
+                ((int *)(&val_node0->imm64))[0], ((int *)(&val_node0->imm64))[1],
+                asm_opnd);   
     }
-
-    sprintf(asm_mmx_inst, init_mmx_imm64_format, 
-            ((int *)&(val_node->imm64))[0],
-            ((int *)&(val_node->imm64))[1],
-            asm_opnd);
+    // sprintf(asm_mmx_inst, init_mmx_imm64_format, 
+    //         ((int *)&(val_node->imm64))[0],
+    //         ((int *)&(val_node->imm64))[1],
+    //         asm_opnd);
     one_insn_gen_ctrl(asm_mmx_inst, INSERT_AFTER);
 }
 
@@ -1138,6 +1291,8 @@ static void init_memory_opnd(char *asm_opnd, operand_seed *opnd_seed)
         init_memory_opnd_float(asm_opnd, opnd_seed, val_node);
     }else if(val_node != NULL && CONST_X87ENV == val_node->type){
         init_memory_opnd_x87env(asm_opnd, val_node);
+    }else if(val_node != NULL && CONST_MMX == val_node->type){
+        init_memory_opnd_mmx(asm_opnd, opnd_seed);
     }else if(val_node != NULL && size_mask(opnd_seed->opndflags) == BITS64){
         init_memory_opnd_imm64(asm_opnd, val_node);
     }else if(val_node != NULL && size_mask(opnd_seed->opndflags) == BITS80){

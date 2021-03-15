@@ -56,6 +56,9 @@ static void parseCGs(xmlNodePtr cgsNode)
             }else if(0 == strcmp(cNodeName, "Imm64")){
                 val_node.type = CONST_IMM64;
                 val_node.imm64 = hex2declong(cNodeContent);
+            } else if(0 == strcmp(cNodeName, "Mmx")){
+                val_node.type = CONST_MMX;
+                val_node.imm64 = hex2declong(cNodeContent);
             }else if(0 == strcmp(cNodeName, "Bcd")){
                 val_node.type = CONST_BCD;
                 str2bcd(cNodeContent, val_node.bcd);

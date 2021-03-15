@@ -12,4 +12,35 @@
 		<Imm64> 0x8797979798787894 </Imm64>
 		<Imm64> 0x3482423499383738 </Imm64>
 	</CG>
+	<CG name = "mmx-byte">
+        <Mmx> 0x81 </Mmx>
+	</CG>
+	<CG name = "mmx-word">
+        <Mmx> 0x00ff </Mmx>
+        <Mmx> 0x8000 </Mmx>
+        <Mmx> 0x8001 </Mmx>
+	</CG>
+	<CG name = "mmx-dword">
+        <Mmx> 0x03030303 </Mmx>
+        <Mmx> 0x44444444 </Mmx>
+        <Mmx> 0x7fffffff </Mmx>
+        <Mmx> 0x80000000 </Mmx>
+        <Mmx> 0x80000001 </Mmx>
+        <Mmx> 0xcccccccc </Mmx>
+        <Mmx> 0xf5f5f5f5 </Mmx>
+        <Mmx> 0xffffffff </Mmx>
+        <Mmx> 0x12345678 </Mmx>
+        <Mmx> 0xabcdef01 </Mmx>
+	</CG>
+	<CG name = "mmx-qword">
+        <Mmx> 0x123456789abcdef0 </Mmx>
+        <Mmx> 0xfedcba9876543210 </Mmx>
+        <Mmx> 0xffffffffffffffff </Mmx>
+        <Mmx> 0x8080808080808080 </Mmx>
+        <Mmx> 0x8888888888888888 </Mmx>
+        <Mmx> 0x0101010101010101 </Mmx>
+        <Mmx> 0x3214342342637423 </Mmx>
+        <Mmx> 0x8797979798787894 </Mmx>
+        <Mmx> 0x3482423499383738 </Mmx>
+	</CG>
 </ConstGroups>

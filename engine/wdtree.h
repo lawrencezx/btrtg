@@ -14,7 +14,8 @@ enum const_type {
     CONST_BCD,
     CONST_UNITY,
     CONST_ASM_OP,
-    CONST_X87ENV
+    CONST_X87ENV,
+    CONST_MMX
 };
 
 struct const_node {
