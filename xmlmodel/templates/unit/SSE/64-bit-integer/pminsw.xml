@@ -1,0 +1,12 @@
+<Template>
+    <traverse>
+        <V var = "reg" type = "mmxreg"></V>
+        <I type = "pminsw @reg, mmxreg" trv = "true"></I>
+        <C type = "@reg"></C>
+    </traverse>
+    <traverse>
+        <V var = "reg" type = "mmxreg"></V>
+        <I type = "pminsw @reg, mmxmem" trv = "true"></I>
+        <C type = "@reg"></C>
+    </traverse>
+</Template>

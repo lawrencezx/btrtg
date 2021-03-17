@@ -1,0 +1,12 @@
+<Template>
+    <traverse>
+        <V var = "reg" type = "mmxreg"></V>
+        <I type = "cvtss2si reg32, xmmreg" trv = "true"></I>
+        <C type = "eax"></C>
+    </traverse>
+    <traverse>
+        <V var = "reg" type = "mmxreg"></V>
+        <I type = "cvtss2si reg32, xmmmem" trv = "true"></I>
+        <C type = "eax"></C>
+    </traverse>
+</Template>

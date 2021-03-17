@@ -1,0 +1,6 @@
+<Template>
+    <traverse>
+        <I type = "ldmxcsr mem32" trv = "true"></I>
+        <C type = "eax"></C>
+    </traverse>
+</Template>

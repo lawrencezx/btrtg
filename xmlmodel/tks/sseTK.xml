@@ -48,7 +48,7 @@
             <Node name = "normal" weight="0"> </Node>
         </Node>
         <Node opnd = "1" packedn = "4">
-            <Node name = "sse-arith-cut" weight="100"> </Node>
+            <Node name = "sse-arith" weight="100"> </Node>
             <Node name = "normal" weight="0"> </Node>
         </Node>
     </TK>
@@ -144,7 +144,7 @@
 
     <TK inst = "minps">
         <Node opnd = "all" packedn = "4">
-            <Node name = "sse-arith-cut1" weight="100"> </Node>
+            <Node name = "sse-arith" weight="100"> </Node>
             <Node name = "normal" weight="0"> </Node>
         </Node>
     </TK>
@@ -340,6 +340,50 @@
         </Node>
     </TK>
 
+    <TK inst = "cvtps2pi">
+        <Node opnd = "0" packedn = "2">
+            <Node name = "mmx-dword" weight="100"> </Node>
+            <Node name = "normal" weight="0"> </Node>
+        </Node>
+        <Node opnd = "1" packedn = "4">
+            <Node name = "sse-arith" weight="100"> </Node>
+            <Node name = "normal" weight="0"> </Node>
+        </Node>
+    </TK>
+
+    <TK inst = "cvttps2pi">
+        <Node opnd = "0" packedn = "2">
+            <Node name = "mmx-dword" weight="100"> </Node>
+            <Node name = "normal" weight="0"> </Node>
+        </Node>
+        <Node opnd = "1" packedn = "4">
+            <Node name = "sse-arith" weight="100"> </Node>
+            <Node name = "normal" weight="0"> </Node>
+        </Node>
+    </TK>
+
+    <TK inst = "cvtss2si">
+        <Node opnd = "0" packedn = "1">
+            <Node name = "arith" weight="100"> </Node>
+            <Node name = "normal" weight="0"> </Node>
+        </Node>
+        <Node opnd = "1" packedn = "1">
+            <Node name = "sse-arith" weight="100"> </Node>
+            <Node name = "normal" weight="0"> </Node>
+        </Node>
+    </TK>
+
+    <TK inst = "cvttss2si">
+        <Node opnd = "0" packedn = "1">
+            <Node name = "arith" weight="100"> </Node>
+            <Node name = "normal" weight="0"> </Node>
+        </Node>
+        <Node opnd = "1" packedn = "1">
+            <Node name = "sse-arith" weight="100"> </Node>
+            <Node name = "normal" weight="0"> </Node>
+        </Node>
+    </TK>
+
     <!--  SSE 64-Bit SIMD integer instructions -->
     <TK inst = "pavgb">
         <Node opnd = "all" packedn = "8">
@@ -355,12 +399,16 @@
 	</TK>
 
 	<TK inst = "pextrw">
-        <Node opnd = "0" packedn = "4">
+        <Node opnd = "0" packedn = "1">
+            <Node name = "arith" weight="100"> </Node>
+            <Node name = "normal" weight="0"> </Node>
+        </Node>
+        <Node opnd = "1" packedn = "4">
             <Node name = "mmx-word" weight="100"> </Node>
             <Node name = "normal" weight="0"> </Node>
         </Node>
-        <Node opnd = "1" packedn = "1">
-            <Node name = "arith" weight="100"> </Node>
+        <Node opnd = "2" packedn = "1">
+            <Node name = "sse-imm8" weight="100"> </Node>
             <Node name = "normal" weight="0"> </Node>
         </Node>
 	</TK>
@@ -375,7 +423,7 @@
             <Node name = "normal" weight="0"> </Node>
         </Node>
         <Node opnd = "2" packedn = "1">
-            <Node name = "arith" weight="100"> </Node>
+            <Node name = "sse-imm8" weight="100"> </Node>
             <Node name = "normal" weight="0"> </Node>
         </Node>
 	</TK>
@@ -411,8 +459,8 @@
             <Node name = "arith" weight="100"> </Node>
             <Node name = "normal" weight="0"> </Node>
         </Node>
-        <Node opnd = "all" packedn = "4">
-            <Node name = "mmx-word" weight="100"> </Node>
+        <Node opnd = "all" packedn = "8">
+            <Node name = "mmx-byte" weight="100"> </Node>
             <Node name = "normal" weight="0"> </Node>
         </Node>
 	</TK>
@@ -425,7 +473,7 @@
 	</TK>
 
 	<TK inst = "psadbw">
-        <Node opnd = "all" packedn = "4">
+        <Node opnd = "all" packedn = "8">
             <Node name = "mmx-word" weight="100"> </Node>
             <Node name = "normal" weight="0"> </Node>
         </Node>
@@ -441,10 +489,18 @@
             <Node name = "normal" weight="0"> </Node>
         </Node>
         <Node opnd = "2" packedn = "1">
-            <Node name = "arith" weight="100"> </Node>
+            <Node name = "sse-imm8" weight="100"> </Node>
             <Node name = "normal" weight="0"> </Node>
         </Node>
 	</TK>
 
-
+    <!--  MXCSR state management -->
+	<TK inst = "ldmxcsr">
+        <Node name = "arith" weight="100"> </Node>
+        <Node name = "normal" weight="0"> </Node>
+	</TK>
+	<TK inst = "stmxcsr">
+        <Node name = "arith" weight="100"> </Node>
+        <Node name = "normal" weight="0"> </Node>
+	</TK>
 </TestingKnowledges>

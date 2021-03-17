@@ -1,0 +1,9 @@
+<Template>
+    <traverse>
+		<V var = "mem" type = "mem32"></V>
+		<I type = "ldmxcsr @mem" trv = "true"></I>
+        <I type = "stmxcsr @mem"></I>
+		<I type = "mov eax, @mem"></I>
+        <C type = "eax"></C>
+    </traverse>
+</Template>
