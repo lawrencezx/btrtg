@@ -66,7 +66,7 @@ static void parseCGs(xmlNodePtr cgsNode)
                 val_node.float32 = strtof(cNodeContent, NULL);
             } else if (strcmp(cNodeName, "Float64") == 0) {
                 val_node.type = CONST_FLOAT64;
-                val_node.float64 = strtof(cNodeContent, NULL);
+                val_node.float64 = strtod(cNodeContent, NULL);
             } else if(0 == strcmp(cNodeName, "X87env")){
                 val_node.type = CONST_X87ENV;
                 uint32_t x87env[7] = {0};

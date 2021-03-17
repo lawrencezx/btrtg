@@ -1,0 +1,13 @@
+<Template>
+    <traverse>
+        <V var = "reg" type = "xmmreg"></V>
+        <I type = "movlpd @reg, xmmmem" trv = "true"></I>
+        <C type = "eax"></C>
+    </traverse>
+    <traverse>
+        <V var = "mem" type = "xmmmem"></V>
+        <I type = "movlpd @mem, xmmreg" trv = "true"></I>
+        <I type = "movlpd xmm0, @mem"></I>
+        <C type = "eax"></C>
+    </traverse>
+</Template>

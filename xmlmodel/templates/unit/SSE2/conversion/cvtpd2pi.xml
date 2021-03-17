@@ -1,0 +1,12 @@
+<Template>
+    <traverse>
+        <V var = "reg" type = "mmxreg"></V>
+        <I type = "cvtpd2pi @reg, xmmreg" trv = "true"></I>
+        <C type = "@reg"></C>
+    </traverse>
+    <traverse>
+        <V var = "reg" type = "mmxreg"></V>
+        <I type = "cvtpd2pi @reg, xmmmem" trv = "true"></I>
+        <C type = "@reg"></C>
+    </traverse>
+</Template>
