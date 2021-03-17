@@ -217,7 +217,7 @@ static void preorder_traverse_tk_trees(blk_struct *blk, struct wd_root *tk_tree,
                 g_array_append_val(trv_state->trv_nodes, next_val_nodes);
 
                 next_tk_tree = g_array_index(trv_state->tk_trees, struct wd_root *, treei + 1);
-                preorder_traverse_tk_trees(blk, next_tk_tree, tk_tree->wd_node,
+                preorder_traverse_tk_trees(blk, next_tk_tree, next_tk_tree->wd_node,
                         next_val_nodes, treei + 1, 0);
 
                 g_array_remove_index(trv_state->trv_nodes, treei + 1);
@@ -258,9 +258,9 @@ static void walkTrvBlk(blk_struct *blk)
     struct trv_state *trv_state = blk->trv_state;
     GArray *tk_trees = trv_state->tk_trees;
 
-    int possible_trv_num = 1;
+    long int possible_trv_num = 1;
     for (size_t i = 0; i < tk_trees->len; i++) {
-        tk_tree = g_array_index(tk_trees, struct wd_root *, 0);
+        tk_tree = g_array_index(tk_trees, struct wd_root *, i);
         int tk_tree_leaf_num = get_tk_tree_leaf_num(tk_tree->wd_node);
         for (int j = 0; j < tk_tree->packedn; j++)
             possible_trv_num *= tk_tree_leaf_num;
