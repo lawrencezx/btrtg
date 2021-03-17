@@ -13,8 +13,18 @@
 		<Float32> 2.7182818284590452354 </Float32>
 		<Float32> 1520.6005859375 </Float32>
 	</CG>
-	<CG name = "sse-imm">
-		<Imm32> 0x11111111 </Imm32>
-		<Imm32> 0x22222222 </Imm32>
+	<CG name = "sse-arith-cut1">
+		<Float32> 1.0 </Float32>
+		<Float32> 2.0 </Float32>
+	</CG>
+	<CG name = "sse-arith-cut2">
+		<Float32> -1.0 </Float32>
+		<Float32> -2.0</Float32>
+	</CG>
+	<CG name = "sse-imm8">
+		<Imm32> 0x00 </Imm32>
+		<Imm32> 0x01 </Imm32>
+		<Imm32> 0x02 </Imm32>
+		<Imm32> 0x03 </Imm32>
 	</CG>
 </ConstGroups>
