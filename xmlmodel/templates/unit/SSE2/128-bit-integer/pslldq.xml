@@ -1,0 +1,9 @@
+<Template>
+    <!--using xmm register-->
+    <traverse>
+        <V var = "reg" type = "xmmreg"></V>
+        <I type = "pslldq @reg, imm8" trv = "true"></I>
+        <C type = "eax"></C>
+    </traverse>
+
+</Template>

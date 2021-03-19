@@ -7,7 +7,7 @@
     <traverse>
         <V var = "mem" type = "xmmmem"></V>
         <I type = "movhps @mem, xmmreg" trv = "true"></I>
-		<I type = "movhps xmm0, @mem"></I>
+        <I type = "movhps xmm0, @mem"></I>
         <C type = "eax"></C>
     </traverse>
 </Template>

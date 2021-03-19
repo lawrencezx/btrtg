@@ -1,0 +1,13 @@
+<Template>
+    <!--using xmm register-->
+    <traverse>
+        <V var = "reg" type = "xmmreg"></V>
+        <I type = "pshufhw @reg, xmmreg, imm8" trv = "true"></I>
+        <C type = "eax"></C>
+    </traverse>
+    <traverse>
+        <V var = "reg" type = "xmmreg"></V>
+        <I type = "pshufhw @reg, xmmmem, imm8" trv = "true"></I>
+        <C type = "eax"></C>
+    </traverse>
+</Template>
