@@ -39,4 +39,7 @@
         <Imm32> 0x12345678 </Imm32>
         <Imm32> 0xabcdef01 </Imm32>
 	</CG>
+	<CG name = "mxcsr">
+        <Imm32> 0x1f80 </Imm32>
+	</CG>
 </ConstGroups>

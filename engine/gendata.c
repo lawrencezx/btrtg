@@ -15,14 +15,14 @@
 #include "generator.h"
 
 
-static srcdestflags_t calSrcDestFlags(enum opcode op, int operands, int opi)
+static srcdestflags_t calSrcDestFlags(const insn_seed *seed, int opi)
 {
     srcdestflags_t srcdestflags = 0;
-    // enum opcode op = seed->opcode;
-    // int operands = 0;
-    // while (seed->opd[operands]) {
-    //     operands++;
-    // }
+    enum opcode op = seed->opcode;
+    int operands = 0;
+    while (seed->opd[operands]) {
+        operands++;
+    }
 
     switch (op) {
     case I_AAD:
@@ -1162,12 +1162,19 @@ static void init_xmm_register_opnd(char *asm_opnd, operand_seed *opnd_seed)
                     bytes_to_uint32((char *)(&val_node1->float64)),
                     bytes_to_uint32((char *)(&val_node1->float64) + 4),
                     asm_opnd);
-        }else if(val_node0->type == CONST_FLOAT32){
+        } else if(val_node0->type == CONST_IMM64){
+            sprintf(asm_xmm_insts, init_xmm_2float64_format,
+                    bytes_to_uint32((char *)(&val_node0->imm64)),
+                    bytes_to_uint32((char *)(&val_node0->imm64) + 4),
+                    bytes_to_uint32((char *)(&val_node1->imm64)),
+                    bytes_to_uint32((char *)(&val_node1->imm64) + 4),
+                    asm_opnd);
+        } else if(val_node0->type == CONST_FLOAT32){
             sprintf(asm_xmm_insts, init_xmm_2dword_format,
                     bytes_to_uint32((char *)(&val_node0->float32)),
                     bytes_to_uint32((char *)(&val_node0->float32)),
                     asm_opnd);
-        }else if(val_node0->type == CONST_IMM32){
+        } else if(val_node0->type == CONST_IMM32){
             sprintf(asm_xmm_insts, init_xmm_2dword_format,
                     bytes_to_uint32((char *)(&val_node0->imm32)),
                     bytes_to_uint32((char *)(&val_node0->imm32)),
@@ -1311,11 +1318,17 @@ static void init_memory_opnd_xmm(char *asm_opnd, operand_seed *opnd_seed)
                     mem_addr, bytes_to_uint32((char *)(&val_node0->float64) + 4),
                     mem_addr, bytes_to_uint32((char *)(&val_node1->float64)),
                     mem_addr, bytes_to_uint32((char *)(&val_node1->float64) + 4));
-        }else if(val_node0->type == CONST_FLOAT32){
+        } else if(val_node0->type == CONST_IMM64){
+            sprintf(asm_xmm_insts, init_xmmmem_2float64_format,
+                    mem_addr, bytes_to_uint32((char *)(&val_node0->imm64)),
+                    mem_addr, bytes_to_uint32((char *)(&val_node0->imm64) + 4),
+                    mem_addr, bytes_to_uint32((char *)(&val_node1->imm64)),
+                    mem_addr, bytes_to_uint32((char *)(&val_node1->imm64) + 4));
+        } else if(val_node0->type == CONST_FLOAT32){
             sprintf(asm_xmm_insts, init_xmmmem_2dword_format,
                     mem_addr, bytes_to_uint32((char *)(&val_node0->float32)),
                     mem_addr, bytes_to_uint32((char *)(&val_node0->float32)));
-        }else if(val_node0->type == CONST_IMM32){
+        } else if(val_node0->type == CONST_IMM32){
             sprintf(asm_xmm_insts, init_xmmmem_2dword_format,
                     mem_addr, bytes_to_uint32((char *)(&val_node0->imm32)),
                     mem_addr, bytes_to_uint32((char *)(&val_node0->imm32)));
@@ -1649,12 +1662,7 @@ static bool gen_operand_insn_seed(const insn_seed *seed, operand_seed *opnd_seed
         return true;
 
     opnd_seed->opndflags = (seed->opd[opi] | calOperandSize(seed, opi));
-
-    int operands;
-    while (seed->opd[operands]) {
-        operands++;
-    }
-    opnd_seed->srcdestflags = calSrcDestFlags(seed->opcode, operands, opi);
+    opnd_seed->srcdestflags = calSrcDestFlags(seed, opi);
 
     bufptr = get_token_bufptr();
 

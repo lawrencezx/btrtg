@@ -33,6 +33,16 @@
 		<Node name = "mmxarith" weight="100"> </Node>
         <Node name = "normal" weight="0"> </Node>
 	</TK>
+	<TK inst = "movntq">
+		<Node name = "mmxarith" weight="100"> </Node>
+        <Node name = "normal" weight="0"> </Node>
+	</TK>
+	<TK inst = "maskmovq">
+        <Node opnd = "all" packedn = "8">
+            <Node name = "mmx-byte" weight="100"> </Node>
+            <Node name = "normal" weight="0"> </Node>
+        </Node>
+	</TK>
 
 	<TK inst = "packsswb">
         <Node opnd = "all" packedn = "4">

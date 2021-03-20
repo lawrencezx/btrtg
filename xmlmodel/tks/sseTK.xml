@@ -52,6 +52,12 @@
             <Node name = "normal" weight="0"> </Node>
         </Node>
     </TK>
+    <TK inst = "movntps">
+        <Node opnd = "all" packedn = "4">
+            <Node name = "sse-arith" weight="100"> </Node>
+            <Node name = "normal" weight="0"> </Node>
+        </Node>
+    </TK>
 
     <!--  SSE packed arithmetic instructions  -->
     <TK inst = "addps">
@@ -496,11 +502,11 @@
 
     <!--  MXCSR state management -->
 	<TK inst = "ldmxcsr">
-        <Node name = "arith" weight="100"> </Node>
+        <Node name = "mxcsr" weight="100"> </Node>
         <Node name = "normal" weight="0"> </Node>
 	</TK>
 	<TK inst = "stmxcsr">
-        <Node name = "arith" weight="100"> </Node>
+        <Node name = "mxcsr" weight="100"> </Node>
         <Node name = "normal" weight="0"> </Node>
 	</TK>
 </TestingKnowledges>
