@@ -26,7 +26,19 @@ static const char init_regs[] = "\
   mov ecx,0x0\n\
   mov edx,0x0\n\
   mov esi,0x0\n\
-  mov edi,0x0\n";
+  mov edi,0x0\n\
+  push eax\n\
+  popf \n\
+  fninit \n\
+  fldz\n\
+  fldz\n\
+  fldz\n\
+  fldz\n\
+  fldz\n\
+  fldz\n\
+  fldz\n\
+  fldz\n\
+  fninit\n";
 
 static const char check_macro[] = "\
 %macro check 1\n\
