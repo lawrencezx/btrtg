@@ -40,6 +40,8 @@ static void asm_out_sec(struct section *sec)
             for (int i = 0; i < sec->datanum; i++) {
                 fprintf(asmfp, "  data%d:  times %d db 0\n", i, sec->datasizes[i]);
             }
+            fprintf(asmfp, "SECTION .DATA write align = 512\n");
+            fprintf(asmfp, "  fxstate:  times %d db 0\n",  512);
             fprintf(asmfp, "\n");
             break;
         case BSS_SEC:
