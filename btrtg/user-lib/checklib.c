@@ -313,8 +313,22 @@ check_point_xmmreg(xmm7, 7)
     diffs += diff; \
     point++; \
 }
+void check_point_mxcsr(struct X87LegacyFPUSaveArea *x87fpustate, struct X86StandardRegisters x86regs){
+    int diff = 0;
+    uint32_t check_mxcsr = fsa_get_mxcsr(x87fpustate);
+    uint32_t std_mxcsr = output[point].SSE.mxcsr;
+    if (std_mxcsr != check_mxcsr) { 
+        printf("diff [mxcsr]: 0x%x, should be: 0x%x\n", check_mxcsr, std_mxcsr); 
+        diff = 1; 
+    } 
+    if (diff == 1) 
+        printf("check point: %d fail! [mxcsr][fuzzy_pc:0x%x]\n", point + 1, x86regs.pc); 
+    else if (verbose == 1) 
+        printf("check point: %d pass! [mxcsr]\n", point + 1); 
+    diffs += diff; 
+    point++; 
+}
 
-check_point_ssereg(mxcsr)
 
 void check_point_x86_state(struct X87LegacyFPUSaveArea x87fpustate,
      struct X86StandardRegisters x86regs)

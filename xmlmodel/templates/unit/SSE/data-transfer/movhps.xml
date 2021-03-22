@@ -2,12 +2,12 @@
     <traverse>
         <V var = "reg" type = "xmmreg"></V>
         <I type = "movhps @reg, xmmmem" trv = "true"></I>
-        <C type = "eax"></C>
+        <C type = "@reg"></C>
     </traverse>
     <traverse>
         <V var = "mem" type = "xmmmem"></V>
         <I type = "movhps @mem, xmmreg" trv = "true"></I>
         <I type = "movhps xmm0, @mem"></I>
-        <C type = "eax"></C>
+        <C type = "xmm0"></C>
     </traverse>
 </Template>
