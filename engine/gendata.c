@@ -892,7 +892,8 @@ static void init_memory_opnd_imm64(char *asm_opnd, struct const_node *val_node)
 
 static void init_memory_opnd_mmx(char *asm_opnd, operand_seed *opnd_seed)
 {
-    char asm_mov_inst[512];
+    (void)opnd_seed;
+    char asm_mov_inst[768];
     char mem_address[64];
     GArray *val_nodes;
 
