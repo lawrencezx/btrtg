@@ -52,10 +52,23 @@ static const char check_macro[] = "\
   push es\n\
   push fs\n\
   push gs\n\
-  fxsave [fxstate]\n\
+  sub esp,0x6c\n\
+  fsave [esp]\n\
+  movupd [fxstate],xmm0\n\
+  movupd [fxstate + 0x10],xmm1\n\
+  movupd [fxstate + 0x20],xmm2\n\
+  movupd [fxstate + 0x30],xmm3\n\
+  movupd [fxstate + 0x40],xmm4\n\
+  movupd [fxstate + 0x50],xmm5\n\
+  movupd [fxstate + 0x60],xmm6\n\
+  movupd [fxstate + 0x70],xmm7\n\
+  stmxcsr [fxstate + 0x80]\n\
   lea eax,fxstate\n\
   push eax\n\
   call check_point_%1\n\
+  pop eax\n\
+  add esp,0x6c\n\
+  frstor [esp]\n\
   pop eax\n\
   pop eax\n\
   pop eax\n\
@@ -65,7 +78,6 @@ static const char check_macro[] = "\
   popf\n\
   pop eax\n\
   popa\n\
-  pop eax\n\
 %endmacro\n";
 
 static const char safe_exit[] = "\n\

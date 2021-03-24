@@ -136,7 +136,7 @@ extern char * fxstate;
 
 
 #define check_point_reg32(reg32) void check_point_##reg32\
-    (struct X87LegacyFPUSaveArea *x87fpustate, \
+    (struct SSEStateSaveArea* ssestate, struct X87LegacyFPUSaveArea x87fpustate, \
      struct X86StandardRegisters x86regs) \
 { \
     extern unsigned int phone_num;\
@@ -153,6 +153,7 @@ extern char * fxstate;
         printf("check point: %d pass! ["#reg32"]\n", point + 1); \
     diffs += diff; \
     point++; \
+    printf("lalala:%x\n", ssestate);\
 }
 
 check_point_reg32(eax)
@@ -268,11 +269,12 @@ check_point_x87status16(ftw)
 check_point_x87status16(ffop)
 
 #define check_point_xmmreg(one_xmmreg, index) void check_point_##one_xmmreg\
-    (struct X87LegacyFPUSaveArea *x87fpustate, \
+    (struct SSEStateSaveArea* ssestate,\
+     struct X87LegacyFPUSaveArea x87fpustate, \
      struct X86StandardRegisters x86regs) \
 { \
     int diff = 0; \
-    xmmreg check_##one_xmmreg = fsa_get_xmm(x87fpustate, index); \
+    xmmreg check_##one_xmmreg = fsa_get_xmm(ssestate, index); \
     xmmreg std_##one_xmmreg = output[point].SSE.xmmregs[index]; \
     if (std_##one_xmmreg.low != check_##one_xmmreg.low || std_##one_xmmreg.high != check_##one_xmmreg.high) { \
         printf("diff ["#one_xmmreg"]: 0x%x, should be: 0x%x\n", check_##one_xmmreg, std_##one_xmmreg); \
@@ -294,41 +296,6 @@ check_point_xmmreg(xmm4, 4)
 check_point_xmmreg(xmm5, 5)
 check_point_xmmreg(xmm6, 6)
 check_point_xmmreg(xmm7, 7)
-
-#define check_point_ssereg(ssereg) void check_point_##ssereg\
-    (struct X87LegacyFPUSaveArea *x87fpustate, \
-     struct X86StandardRegisters x86regs) \
-{ \
-    int diff = 0; \
-    uint32_t check_##ssereg = fsa_get_##ssereg(x87fpustate); \
-    uint32_t std_##ssereg = output[point].SSE.##ssereg; \
-    if (std_##ssereg != check_##ssereg) { \
-        printf("diff ["#ssereg"]: 0x%x, should be: 0x%x\n", check_##ssereg, std_##ssereg); \
-        diff = 1; \
-    } \
-    if (diff == 1) \
-        printf("check point: %d fail! ["#ssereg"][fuzzy_pc:0x%x]\n", point + 1, x86regs.pc); \
-    else if (verbose == 1) \
-        printf("check point: %d pass! ["#ssereg"]\n", point + 1); \
-    diffs += diff; \
-    point++; \
-}
-void check_point_mxcsr(struct X87LegacyFPUSaveArea *x87fpustate, struct X86StandardRegisters x86regs){
-    int diff = 0;
-    uint32_t check_mxcsr = fsa_get_mxcsr(x87fpustate);
-    uint32_t std_mxcsr = output[point].SSE.mxcsr;
-    if (std_mxcsr != check_mxcsr) { 
-        printf("diff [mxcsr]: 0x%x, should be: 0x%x\n", check_mxcsr, std_mxcsr); 
-        diff = 1; 
-    } 
-    if (diff == 1) 
-        printf("check point: %d fail! [mxcsr][fuzzy_pc:0x%x]\n", point + 1, x86regs.pc); 
-    else if (verbose == 1) 
-        printf("check point: %d pass! [mxcsr]\n", point + 1); 
-    diffs += diff; 
-    point++; 
-}
-
 
 void check_point_x86_state(struct X87LegacyFPUSaveArea x87fpustate,
      struct X86StandardRegisters x86regs)
