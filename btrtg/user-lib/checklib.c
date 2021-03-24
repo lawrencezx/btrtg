@@ -49,7 +49,8 @@ void parse_argv(void *main_addr, int argc, char const *argv[])
 }
 
 #define check_point_gprhi(gprhi) void check_point_##gprhi\
-    (struct X87LegacyFPUSaveArea x87fpustate, \
+    (struct SSEStateSaveArea* ssestate, \
+     struct X87LegacyFPUSaveArea x87fpustate, \
      struct X86StandardRegisters x86regs) \
 { \
     int diff = 0; \
@@ -73,7 +74,8 @@ check_point_gprhi(ch)
 check_point_gprhi(dh)
 
 #define check_point_gprlo(gprlo) void check_point_##gprlo\
-    (struct X87LegacyFPUSaveArea x87fpustate, \
+    (struct SSEStateSaveArea* ssestate, \
+     struct X87LegacyFPUSaveArea x87fpustate, \
      struct X86StandardRegisters x86regs) \
 { \
     int diff = 0; \
@@ -97,7 +99,8 @@ check_point_gprlo(cl)
 check_point_gprlo(dl)
 
 #define check_point_reg16(reg16) void check_point_##reg16\
-    (struct X87LegacyFPUSaveArea x87fpustate, \
+    (struct SSEStateSaveArea* ssestate, \
+     struct X87LegacyFPUSaveArea x87fpustate, \
      struct X86StandardRegisters x86regs) \
 { \
     int diff = 0; \
@@ -136,7 +139,8 @@ extern char * fxstate;
 
 
 #define check_point_reg32(reg32) void check_point_##reg32\
-    (struct SSEStateSaveArea* ssestate, struct X87LegacyFPUSaveArea x87fpustate, \
+    (struct SSEStateSaveArea* ssestate, \
+     struct X87LegacyFPUSaveArea x87fpustate, \
      struct X86StandardRegisters x86regs) \
 { \
     extern unsigned int phone_num;\
@@ -153,7 +157,6 @@ extern char * fxstate;
         printf("check point: %d pass! ["#reg32"]\n", point + 1); \
     diffs += diff; \
     point++; \
-    printf("lalala:%x\n", ssestate);\
 }
 
 check_point_reg32(eax)
@@ -167,11 +170,12 @@ check_point_reg32(ebp)
 check_point_reg32(eflags)
 
 #define check_point_fpureg(fpureg, index) void check_point_##fpureg\
-    (struct X87LegacyFPUSaveArea *x87fpustate, \
+    (struct SSEStateSaveArea* ssestate, \
+     struct X87LegacyFPUSaveArea x87fpustate, \
      struct X86StandardRegisters x86regs) \
 { \
     int diff = 0; \
-    floatx80 check_##fpureg = fsa_get_st(x87fpustate, index); \
+    floatx80 check_##fpureg = fsa_get_st(&x87fpustate, index); \
     floatx80 std_##fpureg = output[point].X87.fpregs[index]; \
     if (std_##fpureg.low != check_##fpureg.low || std_##fpureg.high != check_##fpureg.high) { \
         printf("diff ["#fpureg"]: 0x%x, should be: 0x%x\n", check_##fpureg, std_##fpureg); \
@@ -195,14 +199,17 @@ check_point_fpureg(st6, 6)
 check_point_fpureg(st7, 7)
 
 #define check_point_mmxreg(mmxreg, index) void check_point_##mmxreg\
-    (struct X87LegacyFPUSaveArea *x87fpustate, \
+    (struct SSEStateSaveArea* ssestate, \
+     struct X87LegacyFPUSaveArea x87fpustate, \
      struct X86StandardRegisters x86regs) \
 { \
     int diff = 0; \
-    floatx80 check_##mmxreg = fsa_get_st(x87fpustate, index); \
+    floatx80 check_##mmxreg = fsa_get_st(&x87fpustate, index); \
     floatx80 std_##mmxreg = output[point].X87.fpregs[index]; \
     if (std_##mmxreg.low != check_##mmxreg.low || std_##mmxreg.high != check_##mmxreg.high) { \
-        printf("diff ["#mmxreg"]: 0x%x, should be: 0x%x\n", check_##mmxreg, std_##mmxreg); \
+        printf("diff ["#mmxreg"]: 0x%08x %08x %04x, should be: 0x%08x %08x %04x\n", \
+        ((int *)&check_##mmxreg)[0], ((int *)&check_##mmxreg)[1], check_##mmxreg.high, \
+        ((int*)&std_##mmxreg)[0], ((int*)&std_##mmxreg)[1], std_##mmxreg.high); \
         diff = 1; \
     } \
     if (diff == 1) \
@@ -223,11 +230,12 @@ check_point_mmxreg(mm6, 6)
 check_point_mmxreg(mm7, 7)
 
 #define check_point_x87status32(x87status) void check_point_##x87status\
-    (struct X87LegacyFPUSaveArea *x87fpustate, \
+    (struct SSEStateSaveArea* ssestate, \
+     struct X87LegacyFPUSaveArea x87fpustate, \
      struct X86StandardRegisters x86regs) \
 { \
     int diff = 0; \
-    uint32_t check_##x87status = fsa_get_##x87status(x87fpustate); \
+    uint32_t check_##x87status = fsa_get_##x87status(&x87fpustate); \
     uint32_t std_##x87status = output[point].X87.x87status; \
     if (std_##x87status != check_##x87status) { \
         printf("diff ["#x87status"]: 0x%x, should be: 0x%x\n", check_##x87status, std_##x87status); \
@@ -245,11 +253,12 @@ check_point_x87status32(ffdp)
 check_point_x87status32(ffip)
 
 #define check_point_x87status16(x87status) void check_point_##x87status\
-    (struct X87LegacyFPUSaveArea *x87fpustate, \
+    (struct SSEStateSaveArea* ssestate, \
+     struct X87LegacyFPUSaveArea x87fpustate, \
      struct X86StandardRegisters x86regs) \
 { \
     int diff = 0; \
-    uint16_t check_##x87status = fsa_get_##x87status(x87fpustate); \
+    uint16_t check_##x87status = fsa_get_##x87status(&x87fpustate); \
     uint16_t std_##x87status = output[point].X87.x87status; \
     if (std_##x87status != check_##x87status) { \
         printf("diff ["#x87status"]: 0x%x, should be: 0x%x\n", check_##x87status, std_##x87status); \
@@ -277,7 +286,11 @@ check_point_x87status16(ffop)
     xmmreg check_##one_xmmreg = fsa_get_xmm(ssestate, index); \
     xmmreg std_##one_xmmreg = output[point].SSE.xmmregs[index]; \
     if (std_##one_xmmreg.low != check_##one_xmmreg.low || std_##one_xmmreg.high != check_##one_xmmreg.high) { \
-        printf("diff ["#one_xmmreg"]: 0x%x, should be: 0x%x\n", check_##one_xmmreg, std_##one_xmmreg); \
+        printf("diff ["#one_xmmreg"]: 0x%x%x %x%x, \nshould be: 0x%x%x %x%x\n", \
+            ((int *)&check_##one_xmmreg)[0], ((int *)&check_##one_xmmreg)[1], \
+            ((int *)&check_##one_xmmreg)[2], ((int *)&check_##one_xmmreg)[3], \
+            ((int *)&std_##one_xmmreg)[0], ((int *)&std_##one_xmmreg)[1], \
+            ((int *)&std_##one_xmmreg)[2], ((int *)&std_##one_xmmreg)[3]);\
         diff = 1; \
     } \
     if (diff == 1) \
@@ -297,8 +310,28 @@ check_point_xmmreg(xmm5, 5)
 check_point_xmmreg(xmm6, 6)
 check_point_xmmreg(xmm7, 7)
 
-void check_point_x86_state(struct X87LegacyFPUSaveArea x87fpustate,
-     struct X86StandardRegisters x86regs)
+void check_point_mxcsr(struct SSEStateSaveArea* ssestate, 
+                           struct X87LegacyFPUSaveArea x87fpustate,
+                           struct X86StandardRegisters x86regs)
+{
+    int diff = 0; 
+    uint32_t check_mxcsr = fsa_get_mxcsr(ssestate); 
+    uint32_t std_mxcsr = output[point].SSE.mxcsr; 
+    if (check_mxcsr != std_mxcsr) { 
+        printf("diff [mxcsr]: 0x%x, should be: 0x%x\n", check_mxcsr, std_mxcsr); 
+        diff = 1; 
+    } 
+    if (diff == 1) 
+        printf("check point: %d fail! [mxcsr][fuzzy_pc:0x%x]\n", point + 1, x86regs.pc); 
+    else if (verbose == 1) 
+        printf("check point: %d pass! [mxcsr]\n", point + 1); 
+    diffs += diff; 
+    point++; 
+}
+
+void check_point_x86_state(struct SSEStateSaveArea* ssestate, 
+                           struct X87LegacyFPUSaveArea x87fpustate,
+                           struct X86StandardRegisters x86regs)
 {
     int diff = 0;
     //if (x86regs.gs != output[point].X86.gs) {
@@ -361,32 +394,33 @@ void check_point_x86_state(struct X87LegacyFPUSaveArea x87fpustate,
     point++;
 }
 
-void check_point_x87_env(struct X87LegacyFPUSaveArea *x87fpustate,
-     struct X86StandardRegisters x86regs)
+void check_point_x87_env(struct SSEStateSaveArea* ssestate, \
+                         struct X87LegacyFPUSaveArea x87fpustate,
+                         struct X86StandardRegisters x86regs)
 {
     int diff = 0;
-    if (fsa_get_fcw(x87fpustate) != output[point].X87.fcw) {
-        printf("diff [fcw]: %x, should be: 0x%x\n", fsa_get_fcw(x87fpustate), output[point].X87.fcw);
+    if (fsa_get_fcw(&x87fpustate) != output[point].X87.fcw) {
+        printf("diff [fcw]: %x, should be: 0x%x\n", fsa_get_fcw(&x87fpustate), output[point].X87.fcw);
         diff = 1;
     }
-    if (fsa_get_fsw(x87fpustate) != output[point].X87.fsw) {
-        printf("diff [fsw]: %x, should be: 0x%x\n", fsa_get_fsw(x87fpustate), output[point].X87.fsw);
+    if (fsa_get_fsw(&x87fpustate) != output[point].X87.fsw) {
+        printf("diff [fsw]: %x, should be: 0x%x\n", fsa_get_fsw(&x87fpustate), output[point].X87.fsw);
         diff = 1;
     }
-    if (fsa_get_ftw(x87fpustate) != output[point].X87.ftw) {
-        printf("diff [ftw]: %x, should be: 0x%x\n", fsa_get_ftw(x87fpustate), output[point].X87.ftw);
+    if (fsa_get_ftw(&x87fpustate) != output[point].X87.ftw) {
+        printf("diff [ftw]: %x, should be: 0x%x\n", fsa_get_ftw(&x87fpustate), output[point].X87.ftw);
         diff = 1;
     }
-    if (fsa_get_ffdp(x87fpustate) != output[point].X87.ffdp) {
-        printf("diff [ffdp]: %x, should be: 0x%x\n", fsa_get_ffdp(x87fpustate), output[point].X87.ffdp);
+    if (fsa_get_ffdp(&x87fpustate) != output[point].X87.ffdp) {
+        printf("diff [ffdp]: %x, should be: 0x%x\n", fsa_get_ffdp(&x87fpustate), output[point].X87.ffdp);
         diff = 1;
     }
-    if (fsa_get_ffip(x87fpustate) != output[point].X87.ffip) {
-        printf("diff [ffip]: %x, should be: 0x%x\n", fsa_get_ffip(x87fpustate), output[point].X87.ffip);
+    if (fsa_get_ffip(&x87fpustate) != output[point].X87.ffip) {
+        printf("diff [ffip]: %x, should be: 0x%x\n", fsa_get_ffip(&x87fpustate), output[point].X87.ffip);
         diff = 1;
     }
-    if (fsa_get_ffop(x87fpustate) != output[point].X87.ffop) {
-        printf("diff [ffop]: %x, should be: 0x%x\n", fsa_get_ffop(x87fpustate), output[point].X87.ffop);
+    if (fsa_get_ffop(&x87fpustate) != output[point].X87.ffop) {
+        printf("diff [ffop]: %x, should be: 0x%x\n", fsa_get_ffop(&x87fpustate), output[point].X87.ffop);
         diff = 1;
     }
     if (diff == 1)
