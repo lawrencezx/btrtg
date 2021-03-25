@@ -53,7 +53,7 @@ static const char check_macro[] = "\
   push fs\n\
   push gs\n\
   sub esp,0x6c\n\
-  fsave [esp]\n\
+  fnsave [esp]\n\
   movupd [fxstate],xmm0\n\
   movupd [fxstate + 0x10],xmm1\n\
   movupd [fxstate + 0x20],xmm2\n\

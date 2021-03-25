@@ -34,7 +34,8 @@ struct output  output[] =
 // #include "stdoutput.rst"
 //     {}
 // };
-
+#define ERROR "1.08420217248550443400745280086994171e-19"
+//#define ERROR "1.19209289550781250000000000000000000e-7F"
 static int diffs = 0;
 static int point = 0;
 
@@ -177,8 +178,12 @@ check_point_reg32(eflags)
     int diff = 0; \
     floatx80 check_##fpureg = fsa_get_st(&x87fpustate, index); \
     floatx80 std_##fpureg = output[point].X87.fpregs[index]; \
-    if (std_##fpureg.low != check_##fpureg.low || std_##fpureg.high != check_##fpureg.high) { \
-        printf("diff ["#fpureg"]: 0x%x, should be: 0x%x\n", check_##fpureg, std_##fpureg); \
+    long double check_float_num = *(long double*)&check_##fpureg; \
+    long double std_float_num = *(long double*)&std_##fpureg; \
+    if (abs(check_float_num - std_float_num) > strtold( ERROR, NULL)) { \
+        printf("diff ["#fpureg"]: 0x%08x %08x %04x, should be: 0x%08x %08x %04x\n", \
+        ((int *)&check_##fpureg)[0], ((int *)&check_##fpureg)[1], check_##fpureg.high,\
+        ((int *)&std_##fpureg)[0], ((int *)&std_##fpureg)[1], std_##fpureg.high); \
         diff = 1; \
     } \
     if (diff == 1) \

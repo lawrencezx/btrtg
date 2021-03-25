@@ -19,6 +19,7 @@
     <traverse>
 		<V var = "fpureg" type = "fpureg"></V>
         <I type = "fdivp @fpureg, st0" trv = "true"></I>
+        <I type = "fldz" trv = "true"></I>
         <C type = "@fpureg"></C>
     </traverse>
     <traverse>

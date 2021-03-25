@@ -164,27 +164,38 @@
 
 	<TK inst = "fdiv">
         <Node opnd = "0">
-            <Node name = "fdivs" weight="100"> </Node>
+            <Node name = "fdivd" weight="100"> </Node>
             <Node name = "normal" weight="0"> </Node>
         </Node>
         <Node opnd = "1">
-            <Node name = "fdivd" weight="100"> </Node>
+            <Node name = "fdivs" weight="100"> </Node>
             <Node name = "normal" weight="0"> </Node>
         </Node>
 	</TK>
 	<TK inst = "fdivp">
         <Node opnd = "0">
-            <Node name = "fdivs" weight="100"> </Node>
+            <Node name = "fdivd" weight="100"> </Node>
             <Node name = "normal" weight="0"> </Node>
         </Node>
         <Node opnd = "1">
-            <Node name = "fdivd" weight="100"> </Node>
+            <Node name = "fdivs" weight="100"> </Node>
             <Node name = "normal" weight="0"> </Node>
         </Node>
 	</TK>
 	<TK inst = "fidiv">
         <Node opnd = "0">
-            <Node name = "arith" weight="100"> </Node>
+            <Node name = "fidivd" weight="100"> </Node>
+            <Node name = "normal" weight="0"> </Node>
+        </Node>
+        <Node opnd = "1">
+            <Node name = "fdivs" weight="100"> </Node>
+            <Node name = "normal" weight="0"> </Node>
+        </Node>
+	</TK>
+
+	<TK inst = "fdivr">
+        <Node opnd = "0">
+            <Node name = "farith" weight="100"> </Node>
             <Node name = "normal" weight="0"> </Node>
         </Node>
         <Node opnd = "1">
@@ -192,24 +203,13 @@
             <Node name = "normal" weight="0"> </Node>
         </Node>
 	</TK>
-
-	<TK inst = "fdivr">
-        <Node opnd = "0">
-            <Node name = "fdivd" weight="100"> </Node>
-            <Node name = "normal" weight="0"> </Node>
-        </Node>
-        <Node opnd = "1">
-            <Node name = "fdivs" weight="100"> </Node>
-            <Node name = "normal" weight="0"> </Node>
-        </Node>
-	</TK>
 	<TK inst = "fdivrp">
         <Node opnd = "0">
-            <Node name = "fdivd" weight="100"> </Node>
+            <Node name = "farith" weight="100"> </Node>
             <Node name = "normal" weight="0"> </Node>
         </Node>
         <Node opnd = "1">
-            <Node name = "fdivs" weight="100"> </Node>
+            <Node name = "farith" weight="100"> </Node>
             <Node name = "normal" weight="0"> </Node>
         </Node>
 	</TK>
