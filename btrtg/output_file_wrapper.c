@@ -6,8 +6,8 @@
 #include "insnlist.h"
 #include "ofmt.h"
 #include "opflags.h"
-#include "insn-test.h"
 #include "x86pg.h"
+#include "output_file_wrapper.h"
 
 static const char funcs[] = "\
 \n\
@@ -83,9 +83,11 @@ static char *check_function_names[] =
 #undef DEFINE_CHECK_FUNCTION
 };
 
-void gsp_init(void)
+void open_output_file(const char *fname)
 {
     struct output_data data;
+
+    ofmt->init(fname);
 
     data.type = OUTPUT_EXTERN;
     for (size_t i = 0; i < ARRAY_SIZE(check_function_names); i++) {
@@ -118,7 +120,7 @@ void gsp_init(void)
     reset_x86pgstate();
 }
 
-void gsp_finish(void)
+void close_output_file(void)
 {
     end_insn_gen();
 
@@ -129,4 +131,6 @@ void gsp_finish(void)
     data.type = OUTPUT_RAWDATA;
     data.buf = (const void *)safe_exit;
     ofmt->output(&data);
+
+    ofmt->cleanup();
 }

@@ -4,9 +4,8 @@
 #include "seed.h"
 #include "generator.h"
 #include "tmplt.h"
-#include "ofmt.h"
 #include "dfmt.h"
-#include "insn-test.h"
+#include "output_file_wrapper.h"
 #include "parseXML.h"
 
 static bool terminate_directly = false;
@@ -89,16 +88,14 @@ int main(int argc, char *argv[])
 
     parse_tmplts_file(template_file_name);
 
-    ofmt->init(output_file_name);
     dfmt->init("debug_btrtg.txt");
 
-    gsp_init();
+    open_output_file(output_file_name);
     
     walk_tmplt();
 
-    gsp_finish();
+    close_output_file();
 
-    ofmt->cleanup();
     dfmt->cleanup();
 
     generator_exit();
