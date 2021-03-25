@@ -115,7 +115,7 @@ static void increment_offset(int64_t delta)
     set_curr_offs(location.offset);
 }
 
-void generator_init(bool set_sequence)
+void generator_init(void)
 {
     error_file = stderr;
 
@@ -128,7 +128,6 @@ void generator_init(bool set_sequence)
     init_warnings();
 
     init_x86pgstate();
-    X86PGState.seqMode = set_sequence;
 
     init_tks();
 

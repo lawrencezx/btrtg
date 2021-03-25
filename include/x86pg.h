@@ -73,7 +73,6 @@ enum lock_reg_case {
 /* global program generator state
  */
 struct X86PGState {
-    bool seqMode;
     big_sequence_index bseqi;
 
     struct section text_sec;

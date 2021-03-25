@@ -85,7 +85,7 @@ int main(int argc, char *argv[])
         return 0;
     }
 
-    generator_init(false);
+    generator_init();
 
     parse_tmplts_file(template_file_name);
 

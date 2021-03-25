@@ -5,7 +5,7 @@
 #include "insns.h"
 #include "seed.h"
 
-void generator_init(bool set_sequence);
+void generator_init(void);
 void generator_exit(void);
 bool one_insn_gen(const insn_seed *seed, insn *result);
 bool one_insn_gen_const(char *asm_buffer);
