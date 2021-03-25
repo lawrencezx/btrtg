@@ -17,9 +17,8 @@
 
 bool create_specific_register(enum reg_enum R_reg, operand_seed *opnd_seed, char *buffer)
 {
+    (void)opnd_seed;
     dfmt->print("    try> create specific register\n");
-    if (is_class(REG_CLASS_SREG, opnd_seed->opndflags) && (opnd_seed->srcdestflags & OPDEST))
-        return false;
 
     const char *src = nasm_reg_names[R_reg - EXPR_REG_START];
     sprintf(buffer, "%s", src);
@@ -52,9 +51,6 @@ bool create_segment_register(operand_seed *opnd_seed, char *buffer)
     int sregi, sregn;
     enum reg_enum sreg;
     const char *src;
-    if (opnd_seed->srcdestflags & OPDEST) {
-        return false;
-    }
 
     sregn = reg_random_range(REG_SREG);
     sregi = nasm_random32(sregn);
