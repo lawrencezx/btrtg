@@ -282,6 +282,27 @@ check_point_x87status16(fsw)
 check_point_x87status16(ftw)
 check_point_x87status16(ffop)
 
+void check_point_ccode(struct SSEStateSaveArea* ssestate, 
+                           struct X87LegacyFPUSaveArea x87fpustate,
+                           struct X86StandardRegisters x86regs)
+{
+    int diff = 0; 
+    uint32_t check_fsw = fsa_get_fsw(&x87fpustate); 
+    uint32_t std_fsw = output[point].X87.fsw;
+    uint32_t check_ccode = (check_fsw >> 8) & 0x0007;
+    uint32_t std_ccode = (check_fsw >> 8) & 0x0007;
+    if (check_ccode != std_ccode) { 
+        printf("diff [ccode]: 0x%x, should be: 0x%x\n", check_ccode, std_ccode); 
+        diff = 1; 
+    } 
+    if (diff == 1) 
+        printf("check point: %d fail! [ccode][fuzzy_pc:0x%x]\n", point + 1, x86regs.pc); 
+    else if (verbose == 1) 
+        printf("check point: %d pass! [ccode]\n", point + 1); 
+    diffs += diff; 
+    point++; 
+}
+
 #define check_point_xmmreg(one_xmmreg, index) void check_point_##one_xmmreg\
     (struct SSEStateSaveArea* ssestate,\
      struct X87LegacyFPUSaveArea x87fpustate, \

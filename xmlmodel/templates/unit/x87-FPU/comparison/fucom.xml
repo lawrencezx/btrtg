@@ -1,22 +1,22 @@
 <Template>
     <traverse>
         <I type = "fucom fpureg" trv = "true"></I>
-        <C type = "fsw"></C>
+        <C type = "ccode"></C>
     </traverse>
     <traverse>
         <I type = "fucom" trv = "true"></I>
-        <C type = "fsw"></C>
+        <C type = "ccode"></C>
     </traverse>
     <traverse>
         <I type = "fucomp fpureg" trv = "true"></I>
-        <C type = "fsw"></C>
+        <C type = "ccode"></C>
     </traverse>
     <traverse>
         <I type = "fucomp" trv = "true"></I>
-        <C type = "fsw"></C>
+        <C type = "ccode"></C>
     </traverse>
     <traverse>
         <I type = "fucompp" trv = "true"></I>
-        <C type = "fsw"></C>
+        <C type = "ccode"></C>
     </traverse>
 </Template>

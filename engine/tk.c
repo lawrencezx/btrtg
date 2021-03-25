@@ -88,6 +88,7 @@ static int adjust_operands_num(enum opcode opcode)
         case I_FXTRACT:
         case I_FILD:
         case I_F2XM1:
+        case I_FSQRT:
         //case I_FIST:
         //case I_FISTP:
             return 1;

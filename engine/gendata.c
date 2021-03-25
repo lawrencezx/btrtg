@@ -728,7 +728,8 @@ void init_implied_operands(insn *result)
                 if(operands == 0){
                     init_specific_register(R_ST1);
                 }
-                init_fpu_dest_register(R_ST7);
+                if(result->oprs[0].basereg != R_ST7)
+                    init_fpu_dest_register(R_ST7);
                 break;
             case I_FPATAN:
             case I_FPREM:
