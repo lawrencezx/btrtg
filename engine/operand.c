@@ -13,6 +13,7 @@
 #include "tk.h"
 #include "generator.h"
 #include "mem.h"
+#include "reg.h"
 
 bool create_specific_register(enum reg_enum R_reg, operand_seed *opnd_seed, char *buffer)
 {
@@ -35,8 +36,7 @@ bool create_control_register(operand_seed *opnd_seed, char *buffer)
     enum reg_enum creg;
     const char *src;
 
-    bseqiflags_t bseqiflags = bseqi_flags(REG_CREG);
-    cregn = BSEQIFLAG_INDEXSIZE(bseqiflags);
+    cregn = reg_random_range(REG_CREG);
     cregi = nasm_random32(cregn);
     creg = nasm_rd_creg[cregi];
     src = nasm_reg_names[creg - EXPR_REG_START];
@@ -56,8 +56,7 @@ bool create_segment_register(operand_seed *opnd_seed, char *buffer)
         return false;
     }
 
-    bseqiflags_t bseqiflags = bseqi_flags(REG_SREG);
-    sregn = BSEQIFLAG_INDEXSIZE(bseqiflags);
+    sregn = reg_random_range(REG_SREG);
     sregi = nasm_random32(sregn);
     sreg = nasm_rd_sreg[sregi];
     src = nasm_reg_names[sreg - EXPR_REG_START];
@@ -73,9 +72,7 @@ bool create_fpu_register(operand_seed *opnd_seed, char *buffer)
     enum reg_enum fpureg;
     const char *src;
 
-    bseqiflags_t bseqiflags = bseqi_flags(opnd_seed->opndflags);
-
-    fpuregn = BSEQIFLAG_INDEXSIZE(bseqiflags);
+    fpuregn = reg_random_range(opnd_seed->opndflags);
     fpuregi = nasm_random32(fpuregn);
     fpureg = nasm_rd_fpureg[fpuregi];
     src = nasm_reg_names[fpureg - EXPR_REG_START];
@@ -95,8 +92,7 @@ bool create_mmx_register(operand_seed *opnd_seed, char *buffer)
     enum reg_enum mmxreg;
     const char *src;
 
-    bseqiflags_t bseqiflags = bseqi_flags(opnd_seed->opndflags);
-    mmxregn = BSEQIFLAG_INDEXSIZE(bseqiflags);
+    mmxregn = reg_random_range(opnd_seed->opndflags);
     mmxregi = nasm_random32(mmxregn);
     mmxreg = nasm_rd_mmxreg[mmxregi];
     src = nasm_reg_names[mmxreg - EXPR_REG_START];
@@ -112,8 +108,7 @@ bool create_xmm_register(operand_seed *opnd_seed, char *buffer)
     enum reg_enum xmmreg;
     const char *src;
 
-    bseqiflags_t bseqiflags = bseqi_flags(opnd_seed->opndflags);
-    xmmregn = BSEQIFLAG_INDEXSIZE(bseqiflags);
+    xmmregn = reg_random_range(opnd_seed->opndflags);
     xmmregi = nasm_random32(xmmregn);
     xmmreg = nasm_rd_xmmreg[xmmregi];
     src = nasm_reg_names[xmmreg - EXPR_REG_START];
@@ -178,10 +173,9 @@ bool create_gpr_register(operand_seed *opnd_seed, char *buffer)
     enum reg_enum gpr;
     const char *src;
 
-    bseqiflags_t bseqiflags = bseqi_flags(opnd_seed->opndflags);
+    gprn = reg_random_range(opnd_seed->opndflags);
 
 gen_gpr:
-    gprn = BSEQIFLAG_INDEXSIZE(bseqiflags);
     gpri = nasm_random32(gprn);
 
     switch (size_mask(opnd_seed->opndflags)) {

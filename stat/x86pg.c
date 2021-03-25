@@ -11,7 +11,6 @@ struct X86PGState X86PGState;
 
 void init_x86pgstate(void)
 {
-    bseqi_init(&X86PGState.bseqi);
     init_text_sec(&X86PGState.text_sec);
     init_data_sec(&X86PGState.data_sec);
     X86PGState.labeli = 0;
@@ -29,7 +28,6 @@ void init_x86pgstate(void)
 
 void reset_x86pgstate(void)
 {
-    bseqi_init(&X86PGState.bseqi);
     init_text_sec(&X86PGState.text_sec);
     init_data_sec(&X86PGState.data_sec);
     X86PGState.labeli = 0;

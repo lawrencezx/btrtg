@@ -33,4 +33,33 @@ static inline bool is_reg_di(enum reg_enum reg)
     return reg == R_DI || reg == R_EDI;
 }
 
+static inline int reg_random_range(opflags_t opflags)
+{
+    int index = -1;
+    switch (opflags) {
+        case REG_SREG:
+            index =  (globalbits == 16) ? 4 : 6;
+            break;
+        case REG_CREG:
+        case (REG_GPR|BITS16):
+        case (RM_GPR|BITS16):
+        case (REG_GPR|BITS32):
+        case (RM_GPR|BITS32):
+            index = 4;
+            break;
+        case (REG_GPR|BITS8):
+        case (RM_GPR|BITS8):
+        case FPUREG:
+        case MMXREG:
+        case (REG_CLASS_RM_MMX | REGISTER):
+        case XMMREG:
+            index = 8;
+            break;
+        default:
+            nasm_fatal("No register random range found!");
+            break;
+    }
+    return index;
+}
+
 #endif
