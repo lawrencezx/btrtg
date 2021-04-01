@@ -19,8 +19,11 @@ static const char *xmlfiles[10] =
     "sseConsts.xml",
     "sseTK.xml",
     "sse2Consts.xml",
-    "sse2TK.xml"
+    "sse2TK.xml",
+    //"sse2-mmxTK.xml",
+    //"sse2-sseTK.xml"
 };
+
 
 extern char *tk_tmplt_path;
 

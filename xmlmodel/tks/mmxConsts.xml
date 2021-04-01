@@ -13,36 +13,36 @@
 		<Imm64> 0x3482423499383738 </Imm64>
 	</CG>
 	<CG name = "mmx-byte">
-        <Mmx> 0x81 </Mmx>
-        <Mmx> 0x01 </Mmx>
+        <Imm8> 0x81 </Imm8>
+        <Imm8> 0x01 </Imm8>
 	</CG>
 	<CG name = "mmx-word">
-        <Mmx> 0x00ff </Mmx>
-        <Mmx> 0x8000 </Mmx>
-        <Mmx> 0x8001 </Mmx>
+        <Imm16> 0x00ff </Imm16>
+        <Imm16> 0x8000 </Imm16>
+        <Imm16> 0x8001 </Imm16>
 	</CG>
 	<CG name = "mmx-dword">
-        <Mmx> 0x03030303 </Mmx>
-        <Mmx> 0x44444444 </Mmx>
-        <Mmx> 0x7fffffff </Mmx>
-        <Mmx> 0x80000000 </Mmx>
-        <Mmx> 0x80000001 </Mmx>
-        <Mmx> 0xcccccccc </Mmx>
-        <Mmx> 0xf5f5f5f5 </Mmx>
-        <Mmx> 0xffffffff </Mmx>
-        <Mmx> 0x12345678 </Mmx>
-        <Mmx> 0xabcdef01 </Mmx>
+        <Imm32> 0x03030303 </Imm32>
+        <Imm32> 0x44444444 </Imm32>
+        <Imm32> 0x7fffffff </Imm32>
+        <Imm32> 0x80000000 </Imm32>
+        <Imm32> 0x80000001 </Imm32>
+        <Imm32> 0xcccccccc </Imm32>
+        <Imm32> 0xf5f5f5f5 </Imm32>
+        <Imm32> 0xffffffff </Imm32>
+        <Imm32> 0x12345678 </Imm32>
+        <Imm32> 0xabcdef01 </Imm32>
 	</CG>
     <CG name = "mmx-qword">
-        <Mmx> 0x123456789abcdef0 </Mmx>
-        <Mmx> 0xfedcba9876543210 </Mmx>
-        <Mmx> 0xffffffffffffffff </Mmx>
-        <Mmx> 0x8080808080808080 </Mmx>
-        <Mmx> 0x8888888888888888 </Mmx>
-        <Mmx> 0x0101010101010101 </Mmx>
-        <Mmx> 0x3214342342637423 </Mmx>
-        <Mmx> 0x8797979798787894 </Mmx>
-        <Mmx> 0x3482423499383738 </Mmx>
+        <Imm64> 0x123456789abcdef0 </Imm64>
+        <Imm64> 0xfedcba9876543210 </Imm64>
+        <Imm64> 0xffffffffffffffff </Imm64>
+        <Imm64> 0x8080808080808080 </Imm64>
+        <Imm64> 0x8888888888888888 </Imm64>
+        <Imm64> 0x0101010101010101 </Imm64>
+        <Imm64> 0x3214342342637423 </Imm64>
+        <Imm64> 0x8797979798787894 </Imm64>
+        <Imm64> 0x3482423499383738 </Imm64>
     </CG>
     <CG name = "mmx-zero-dword">
         <Mmx> 0x0 </Mmx>
