@@ -1,0 +1,12 @@
+<Template>
+    <traverse>
+        <V var = "reg" type = "xmmreg"></V>
+        <I type = "pmaddwd @reg,xmmmem" trv = "true"></I>
+        <C type = "@reg"></C>
+    </traverse>
+    <traverse>
+        <V var = "reg" type = "xmmreg"></V>
+        <I type = "pmaddwd @reg,xmmreg" trv = "true"></I>
+        <C type = "@reg"></C>
+    </traverse>
+</Template>

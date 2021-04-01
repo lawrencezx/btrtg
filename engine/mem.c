@@ -7,12 +7,16 @@
 
 static bool is_sse(enum opcode opcode)
 {
-    return opcode >= I_ADDPS && opcode <= I_FXSAVE;
+    return (opcode >= I_ADDPS && opcode <= I_FXSAVE) || \
+           (opcode >= I_PAVGB && opcode <= I_PSHUFW);
 }
 
 static bool is_sse2(enum opcode opcode)
 {
-    return opcode >= I_MASKMOVDQU && opcode <= I_XORPD;
+    return (opcode >= I_MASKMOVDQU && opcode <= I_XORPD) ||  \
+           (opcode >= I_PACKSSDW && opcode <= I_PMULLW) || \
+           (opcode >= I_POR && opcode <= I_PUNPCKLWD) || \
+           (opcode == I_PXOR );
 }
 
 #define XMM_MEM_ALIGN_MASK 0xffffff80

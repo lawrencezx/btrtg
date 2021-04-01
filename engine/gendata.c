@@ -1129,7 +1129,6 @@ static void init_xmm_register_opnd(char *asm_opnd, operand_seed *opnd_seed)
     if (val_nodes == NULL)
         val_nodes = request_packed_val_node(nasm_insn_names[stat_get_opcode()],
                 stat_get_opi());
-
     if (val_nodes->len == 4) {
         /* four float */
         struct const_node *val_node0, *val_node1, *val_node2, *val_node3;
@@ -1193,6 +1192,16 @@ static void init_xmm_register_opnd(char *asm_opnd, operand_seed *opnd_seed)
             //         asm_opnd);
             sprintf(asm_xmm_insts, init_xmm_4float32_format,
                     bytes_to_uint32((char *)(&val_node->float32)),
+                    0,
+                    0,
+                    0,
+                    asm_opnd);
+        } else if (val_node->type == CONST_IMM32) {
+            // sprintf(asm_xmm_insts, init_xmm_float32_format,
+            //         bytes_to_uint32((char *)(&val_node->float32)),
+            //         asm_opnd);
+            sprintf(asm_xmm_insts, init_xmm_4float32_format,
+                    bytes_to_uint32((char *)(&val_node->imm32)),
                     0,
                     0,
                     0,
@@ -1350,6 +1359,14 @@ static void init_memory_opnd_xmm(char *asm_opnd, operand_seed *opnd_seed)
             //         mem_addr, bytes_to_uint32((char *)(&val_node->float32)));
             sprintf(asm_xmm_insts, init_xmmmem_4float32_format,
                     mem_addr, bytes_to_uint32((char *)(&val_node->float32)),
+                    mem_addr, 0,
+                    mem_addr, 0,
+                    mem_addr, 0);
+        } else if (val_node->type == CONST_IMM32) {
+            // sprintf(asm_xmm_insts, init_xmmmem_float32_format,
+            //         mem_addr, bytes_to_uint32((char *)(&val_node->float32)));
+            sprintf(asm_xmm_insts, init_xmmmem_4float32_format,
+                    mem_addr, bytes_to_uint32((char *)(&val_node->imm32)),
                     mem_addr, 0,
                     mem_addr, 0,
                     mem_addr, 0);

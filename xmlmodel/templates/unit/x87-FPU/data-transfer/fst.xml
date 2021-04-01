@@ -3,6 +3,7 @@
         <V var = "mem" type = "mem32"></V>
 		<I type = "fld @mem" trv = "true"></I>
         <I type = "fst @mem"></I>
+        <I type = "fstp st0"></I>
 		<I type = "fld @mem"></I>
 		<C type = "st0"></C>
     </traverse>
@@ -10,6 +11,7 @@
         <V var = "mem" type = "mem64"></V>
 		<I type = "fld @mem" trv = "true"></I>
         <I type = "fst @mem"></I>
+        <I type = "fstp st0"></I>
 		<I type = "fld @mem"></I>
 		<C type = "st0"></C>
     </traverse>

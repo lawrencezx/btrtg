@@ -1,0 +1,32 @@
+<Template>
+    <traverse>
+        <V var = "reg" type = "xmmreg"></V>
+        <I type = "pcmpeqb @reg,xmmreg" trv = "true"></I>
+        <C type = "@reg"></C>
+    </traverse>
+    <traverse>
+        <V var = "reg" type = "xmmreg"></V>
+        <I type = "pcmpeqb @reg,xmmmem" trv = "true"></I>
+        <C type = "@reg"></C>
+    </traverse>
+    <traverse>
+        <V var = "reg" type = "xmmreg"></V>
+        <I type = "pcmpeqw @reg,xmmreg" trv = "true"></I>
+        <C type = "@reg"></C>
+    </traverse>
+    <traverse>
+        <V var = "reg" type = "xmmreg"></V>
+        <I type = "pcmpeqw @reg,xmmmem" trv = "true"></I>
+        <C type = "@reg"></C>
+    </traverse>
+    <traverse>
+        <V var = "reg" type = "xmmreg"></V>
+        <I type = "pcmpeqd @reg,xmmreg" trv = "true"></I>
+        <C type = "@reg"></C>
+    </traverse>
+    <traverse>
+        <V var = "reg" type = "xmmreg"></V>
+        <I type = "pcmpeqd @reg,xmmmem" trv = "true"></I>
+        <C type = "@reg"></C>
+    </traverse>
+</Template>

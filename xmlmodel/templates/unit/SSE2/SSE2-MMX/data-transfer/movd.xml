@@ -1,0 +1,23 @@
+<Template>
+    <traverse>
+        <V var = "reg" type = "xmmreg"></V>
+        <I type = "movd @reg,reg32" trv = "true"></I>
+        <C type = "@reg"></C>
+    </traverse>
+    <traverse>
+        <V var = "reg" type = "xmmreg"></V>
+        <I type = "movd @reg,mem32" trv = "true"></I>
+        <C type = "@reg"></C>
+    </traverse>
+    <traverse>
+        <V var = "mem" type = "mem32"></V>
+        <I type = "movd @mem,xmmreg" trv = "true"></I>
+		<I type = "movd xmm0,@mem"></I>
+		<C type = "xmm0"></C>
+    </traverse>
+    <traverse>
+        <V var = "reg" type = "reg32"></V>
+        <I type = "movd @reg,xmmreg" trv = "true"></I>
+        <C type = "@reg"></C>
+    </traverse>
+</Template>

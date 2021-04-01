@@ -27,10 +27,12 @@
         <C type = "st0"></C>
     </traverse>
     <traverse>
+        <I type = "finit"></I>
         <I type = "fidivr mem32" trv = "true"></I>
         <C type = "st0"></C>
     </traverse>
     <traverse>
+        <I type = "finit"></I>
         <I type = "fidivr mem16" trv = "true"></I>
         <C type = "st0"></C>
     </traverse>

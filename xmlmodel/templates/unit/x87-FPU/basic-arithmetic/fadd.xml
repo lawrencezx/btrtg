@@ -1,7 +1,6 @@
 <Template>
     <traverse>
         <V var = "mem" type = "mem32"></V>
-        <I type = "finit"></I>
         <I type = "fadd @mem" trv = "true"></I>
         <C type = "st0"></C>
     </traverse>

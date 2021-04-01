@@ -33,7 +33,7 @@
         <Mmx> 0x12345678 </Mmx>
         <Mmx> 0xabcdef01 </Mmx>
 	</CG>
-	<CG name = "mmx-qword">
+    <CG name = "mmx-qword">
         <Mmx> 0x123456789abcdef0 </Mmx>
         <Mmx> 0xfedcba9876543210 </Mmx>
         <Mmx> 0xffffffffffffffff </Mmx>
@@ -43,5 +43,8 @@
         <Mmx> 0x3214342342637423 </Mmx>
         <Mmx> 0x8797979798787894 </Mmx>
         <Mmx> 0x3482423499383738 </Mmx>
-	</CG>
+    </CG>
+    <CG name = "mmx-zero-dword">
+        <Mmx> 0x0 </Mmx>
+    </CG>
 </ConstGroups>

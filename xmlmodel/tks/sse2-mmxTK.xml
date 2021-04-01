@@ -1,0 +1,322 @@
+<TestingKnowledges>
+    <!--common instructions in MMX and SSE instruction sets-->
+    <TK inst = "paddb">
+        <Node opnd = "all" packedn = "4">
+            <Node name = "sse2-imm32" weight="100"> </Node>
+            <Node name = "normal" weight="0"> </Node>
+        </Node>
+    </TK>
+	<TK inst = "paddw">
+        <Node opnd = "all" packedn = "4">
+            <Node name = "sse2-imm32" weight="100"> </Node>
+            <Node name = "normal" weight="0"> </Node>
+        </Node>
+	</TK>
+	<TK inst = "paddd">
+        <Node opnd = "all" packedn = "4">
+            <Node name = "sse2-imm32" weight="100"> </Node>
+            <Node name = "normal" weight="0"> </Node>
+        </Node>
+	</TK>
+	<TK inst = "paddq">
+        <Node opnd = "all" packedn = "2">
+            <Node name = "sse2-imm64" weight="100"> </Node>
+            <Node name = "normal" weight="0"> </Node>
+        </Node>
+	</TK>
+
+	<TK inst = "movd">
+        <Node opnd = "0" packedn = "2">
+            <Node name = "sse2-zero-imm64" weight="100"> </Node>
+            <Node name = "normal" weight="0"> </Node>
+        </Node>
+        <Node opnd = "1" packedn = "1">
+            <Node name = "arith" weight="100"> </Node>
+            <Node name = "normal" weight="0"> </Node>
+        </Node>
+	</TK>
+	<TK inst = "movq">
+        <Node opnd = "0" packedn = "2">
+            <Node name = "sse2-zero-imm64" weight="100"> </Node>
+            <Node name = "normal" weight="0"> </Node>
+        </Node>
+        <Node opnd = "1" packedn = "1">
+            <Node name = "sse2-imm64" weight="100"> </Node>
+            <Node name = "normal" weight="0"> </Node>
+        </Node>
+	</TK>
+
+	<TK inst = "packsswb">
+        <Node opnd = "all" packedn = "4">
+            <Node name = "sse2-imm32" weight="100"> </Node>
+            <Node name = "normal" weight="0"> </Node>
+        </Node>
+	</TK>
+	<TK inst = "packssdw">
+        <Node opnd = "all" packedn = "4">
+            <Node name = "sse2-imm32" weight="100"> </Node>
+            <Node name = "normal" weight="0"> </Node>
+        </Node>
+	</TK>
+
+	<TK inst = "packuswb">
+        <Node opnd = "all" packedn = "4">
+            <Node name = "sse2-imm32" weight="100"> </Node>
+            <Node name = "normal" weight="0"> </Node>
+        </Node>
+	</TK>
+
+	<TK inst = "paddsb">
+        <Node opnd = "all" packedn = "4">
+            <Node name = "sse2-imm32" weight="100"> </Node>
+            <Node name = "normal" weight="0"> </Node>
+        </Node>
+	</TK>
+	<TK inst = "paddsw">
+        <Node opnd = "all" packedn = "4">
+            <Node name = "sse2-imm32" weight="100"> </Node>
+            <Node name = "normal" weight="0"> </Node>
+        </Node>
+	</TK>
+
+	<TK inst = "paddusb">
+        <Node opnd = "all" packedn = "4">
+            <Node name = "sse2-imm32" weight="100"> </Node>
+            <Node name = "normal" weight="0"> </Node>
+        </Node>
+	</TK>
+	<TK inst = "paddusw">
+        <Node opnd = "all" packedn = "4">
+            <Node name = "sse2-imm32" weight="100"> </Node>
+            <Node name = "normal" weight="0"> </Node>
+        </Node>
+	</TK>
+
+	<TK inst = "pand">
+        <Node opnd = "all" packedn = "2">
+            <Node name = "sse2-imm64" weight="100"> </Node>
+            <Node name = "normal" weight="0"> </Node>
+        </Node>
+	</TK>
+
+	<TK inst = "pandn">
+        <Node opnd = "all" packedn = "2">
+            <Node name = "sse2-imm64" weight="100"> </Node>
+            <Node name = "normal" weight="0"> </Node>
+        </Node>
+	</TK>
+
+	<TK inst = "pcmpeqb">
+        <Node opnd = "all" packedn = "4">
+            <Node name = "sse2-imm32" weight="100"> </Node>
+            <Node name = "normal" weight="0"> </Node>
+        </Node>
+	</TK>
+	<TK inst = "pcmpeqw">
+        <Node opnd = "all" packedn = "4">
+            <Node name = "sse2-imm32" weight="100"> </Node>
+            <Node name = "normal" weight="0"> </Node>
+        </Node>
+	</TK>
+	<TK inst = "pcmpeqd">
+        <Node opnd = "all" packedn = "4">
+            <Node name = "sse2-imm32" weight="100"> </Node>
+            <Node name = "normal" weight="0"> </Node>
+        </Node>
+	</TK>
+
+	<TK inst = "pcmpgtb">
+        <Node opnd = "all" packedn = "4">
+            <Node name = "sse2-imm32" weight="100"> </Node>
+            <Node name = "normal" weight="0"> </Node>
+        </Node>
+	</TK>
+	<TK inst = "pcmpgtw">
+        <Node opnd = "all" packedn = "4">
+            <Node name = "sse2-imm32" weight="100"> </Node>
+            <Node name = "normal" weight="0"> </Node>
+        </Node>
+	</TK>
+	<TK inst = "pcmpgtd">
+        <Node opnd = "all" packedn = "4">
+            <Node name = "sse2-imm32" weight="100"> </Node>
+            <Node name = "normal" weight="0"> </Node>
+        </Node>
+	</TK>
+
+	<TK inst = "pmaddwd">
+        <Node opnd = "all" packedn = "4">
+            <Node name = "sse2-imm32" weight="100"> </Node>
+            <Node name = "normal" weight="0"> </Node>
+        </Node>
+	</TK>
+
+	<TK inst = "pmulhw">
+        <Node opnd = "all" packedn = "4">
+            <Node name = "sse2-imm32" weight="100"> </Node>
+            <Node name = "normal" weight="0"> </Node>
+        </Node>
+	</TK>
+	<TK inst = "pmullw">
+        <Node opnd = "all" packedn = "4">
+            <Node name = "sse2-imm32" weight="100"> </Node>
+            <Node name = "normal" weight="0"> </Node>
+        </Node>
+	</TK>
+
+	<TK inst = "por">
+        <Node opnd = "all" packedn = "2">
+            <Node name = "sse2-imm64" weight="100"> </Node>
+            <Node name = "normal" weight="0"> </Node>
+        </Node>
+	</TK>
+
+	<TK inst = "psllw">
+        <Node opnd = "all" packedn = "4">
+            <Node name = "sse2-imm32" weight="100"> </Node>
+            <Node name = "normal" weight="0"> </Node>
+        </Node>
+	</TK>
+	<TK inst = "pslld">
+        <Node opnd = "all" packedn = "4">
+            <Node name = "sse2-imm32" weight="100"> </Node>
+            <Node name = "normal" weight="0"> </Node>
+        </Node>
+	</TK>
+	<TK inst = "psllq">
+        <Node opnd = "all" packedn = "2">
+            <Node name = "sse2-imm64" weight="100"> </Node>
+            <Node name = "normal" weight="0"> </Node>
+        </Node>
+	</TK>
+
+	<TK inst = "psraw">
+        <Node opnd = "all" packedn = "4">
+            <Node name = "sse2-imm32" weight="100"> </Node>
+            <Node name = "normal" weight="0"> </Node>
+        </Node>
+	</TK>
+	<TK inst = "psrad">
+        <Node opnd = "all" packedn = "4">
+            <Node name = "sse2-imm32" weight="100"> </Node>
+            <Node name = "normal" weight="0"> </Node>
+        </Node>
+	</TK>
+
+	<TK inst = "psrlw">
+        <Node opnd = "all" packedn = "4">
+            <Node name = "sse2-imm32" weight="100"> </Node>
+            <Node name = "normal" weight="0"> </Node>
+        </Node>
+	</TK>
+	<TK inst = "psrld">
+        <Node opnd = "all" packedn = "4">
+            <Node name = "sse2-imm32" weight="100"> </Node>
+            <Node name = "normal" weight="0"> </Node>
+        </Node>
+	</TK>
+	<TK inst = "psrlq">
+        <Node opnd = "all" packedn = "2">
+            <Node name = "sse2-imm64" weight="100"> </Node>
+            <Node name = "normal" weight="0"> </Node>
+        </Node>
+	</TK>
+
+	<TK inst = "psubb">
+        <Node opnd = "all" packedn = "4">
+            <Node name = "sse2-imm32" weight="100"> </Node>
+            <Node name = "normal" weight="0"> </Node>
+        </Node>
+	</TK>
+	<TK inst = "psubw">
+        <Node opnd = "all" packedn = "4">
+            <Node name = "sse2-imm32" weight="100"> </Node>
+            <Node name = "normal" weight="0"> </Node>
+        </Node>
+	</TK>
+	<TK inst = "psubd">
+        <Node opnd = "all" packedn = "4">
+            <Node name = "sse2-imm32" weight="100"> </Node>
+            <Node name = "normal" weight="0"> </Node>
+        </Node>
+	</TK>
+	<TK inst = "psubq">
+        <Node opnd = "all" packedn = "2">
+            <Node name = "sse2-imm64" weight="100"> </Node>
+            <Node name = "normal" weight="0"> </Node>
+        </Node>
+	</TK>
+
+	<TK inst = "psubsb">
+        <Node opnd = "all" packedn = "4">
+            <Node name = "sse2-imm32" weight="100"> </Node>
+            <Node name = "normal" weight="0"> </Node>
+        </Node>
+	</TK>
+	<TK inst = "psubsw">
+        <Node opnd = "all" packedn = "4">
+            <Node name = "sse2-imm32" weight="100"> </Node>
+            <Node name = "normal" weight="0"> </Node>
+        </Node>
+	</TK>
+
+	<TK inst = "psubusb">
+        <Node opnd = "all" packedn = "4">
+            <Node name = "sse2-imm32" weight="100"> </Node>
+            <Node name = "normal" weight="0"> </Node>
+        </Node>
+	</TK>
+	<TK inst = "psubusw">
+        <Node opnd = "all" packedn = "4">
+            <Node name = "sse2-imm32" weight="100"> </Node>
+            <Node name = "normal" weight="0"> </Node>
+        </Node>
+	</TK>
+
+	<TK inst = "punpckhbw">
+        <Node opnd = "all" packedn = "4">
+            <Node name = "sse2-imm32" weight="100"> </Node>
+            <Node name = "normal" weight="0"> </Node>
+        </Node>
+	</TK>
+	<TK inst = "punpckhwd">
+        <Node opnd = "all" packedn = "4">
+            <Node name = "sse2-imm32" weight="100"> </Node>
+            <Node name = "normal" weight="0"> </Node>
+        </Node>
+	</TK>
+	<TK inst = "punpckhdq">
+        <Node opnd = "all" packedn = "4">
+            <Node name = "sse2-imm32" weight="100"> </Node>
+            <Node name = "normal" weight="0"> </Node>
+        </Node>
+	</TK>
+
+	<TK inst = "punpcklbw">
+        <Node opnd = "all" packedn = "4">
+            <Node name = "sse2-imm32" weight="100"> </Node>
+            <Node name = "normal" weight="0"> </Node>
+        </Node>
+	</TK>
+	<TK inst = "punpcklwd">
+        <Node opnd = "all" packedn = "4">
+            <Node name = "sse2-imm32" weight="100"> </Node>
+            <Node name = "normal" weight="0"> </Node>
+        </Node>
+	</TK>
+	<TK inst = "punpckldq">
+        <Node opnd = "all" packedn = "4">
+            <Node name = "sse2-imm32" weight="100"> </Node>
+            <Node name = "normal" weight="0"> </Node>
+        </Node>
+	</TK>
+
+	<TK inst = "pxor">
+        <Node opnd = "all" packedn = "2">
+            <Node name = "sse2-imm64" weight="100"> </Node>
+            <Node name = "normal" weight="0"> </Node>
+        </Node>
+	</TK>
+
+
+</TestingKnowledges>

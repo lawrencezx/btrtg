@@ -1,0 +1,49 @@
+<Template>
+    <traverse>
+        <V var = "reg" type = "xmmreg"></V>
+        <I type = "psllw @reg,xmmreg" trv = "true"></I>
+        <C type = "@reg"></C>
+    </traverse>
+    <traverse>
+        <V var = "reg" type = "xmmreg"></V>
+        <I type = "psllw @reg,xmmmem" trv = "true"></I>
+        <C type = "@reg"></C>
+    </traverse>
+    <traverse>
+        <V var = "reg" type = "xmmreg"></V>
+        <I type = "psllw @reg,imm8" trv = "true"></I>
+        <C type = "@reg"></C>
+    </traverse>
+
+    <traverse>
+        <V var = "reg" type = "xmmreg"></V>
+        <I type = "pslld @reg,xmmreg" trv = "true"></I>
+        <C type = "@reg"></C>
+    </traverse>
+    <traverse>
+        <V var = "reg" type = "xmmreg"></V>
+        <I type = "pslld @reg,xmmmem" trv = "true"></I>
+        <C type = "@reg"></C>
+    </traverse>
+    <traverse>
+        <V var = "reg" type = "xmmreg"></V>
+        <I type = "pslld @reg,imm8" trv = "true"></I>
+        <C type = "@reg"></C>
+    </traverse>
+
+    <traverse>
+        <V var = "reg" type = "xmmreg"></V>
+        <I type = "psllq @reg,xmmreg" trv = "true"></I>
+        <C type = "@reg"></C>
+    </traverse>
+    <traverse>
+        <V var = "reg" type = "xmmreg"></V>
+        <I type = "psllq @reg,xmmmem" trv = "true"></I>
+        <C type = "@reg"></C>
+    </traverse>
+    <traverse>
+        <V var = "reg" type = "xmmreg"></V>
+        <I type = "psllq @reg,imm8" trv = "true"></I>
+        <C type = "@reg"></C>
+    </traverse>
+</Template>
