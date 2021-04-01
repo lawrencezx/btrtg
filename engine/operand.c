@@ -330,6 +330,27 @@ bool create_memory(operand_seed *opnd_seed, char *buffer)
     return true;
 }
 
+void create_random_fp_number(opflags_t opndflags, int *fp_number){
+    if(BITS32 == size_mask(opndflags)){
+        int mantissa = nasm_random32(1<<23);
+        //Normalized number
+        int exponent = nasm_random32((1<<8)-2) + 1;
+        int sign = nasm_random32(2);
+        *fp_number = mantissa | exponent<<23 | sign<<31;
+    }else if(BITS64 == size_mask(opndflags)){
+        long int mantissa = nasm_random64(1L<<52);
+        //Normalized number
+        long int exponent = nasm_random32((1<<11)-2) + 1;
+        long int sign = nasm_random32(2);
+        *(long int *)fp_number = mantissa | exponent<<52 | sign<<63;  
+    }else if(BITS80 == size_mask(opndflags)){
+        fp_number[0] = rand();
+        fp_number[1] = rand() | 0x80000000;
+        //fp_num[2] = 0x00004000;
+        fp_number[2] = 0x0000ffff & (nasm_random32((1<<16)-2) + 1);
+    }
+}
+
 bool init_specific_register(enum reg_enum R_reg)
 {
     char buffer[128];
@@ -346,6 +367,12 @@ bool init_specific_register(enum reg_enum R_reg)
     stat_set_has_mem_opnd(false);
 
     if((R_reg >= R_ST0) && (R_reg <= R_ST7)){
+        int float64[2] = {0};
+        if(val_node == NULL){
+            create_random_fp_number(BITS64, float64);
+        }else{
+            memcpy(float64, &(val_node->float64), 8);
+        }
         char mem_address[64] = "[data0]";
         char *mem_address_end = mem_address + strlen(mem_address);
 
@@ -359,11 +386,11 @@ bool init_specific_register(enum reg_enum R_reg)
         //sprintf(asm_fpu_inst, "fincstp");
         one_insn_gen_ctrl(buffer, INSERT_AFTER);
 
-        sprintf(buffer, "  mov dword %s, 0x%x", mem_address, ((int *)(&val_node->float64))[0]);
+        sprintf(buffer, "  mov dword %s, 0x%x", mem_address, float64[0]);
         one_insn_gen_ctrl(buffer, INSERT_AFTER);
 
         sprintf(mem_address_end - 1, " + 0x4]");
-        sprintf(buffer, "  mov dword %s, 0x%x", mem_address, ((int *)(&val_node->float64))[1]);
+        sprintf(buffer, "  mov dword %s, 0x%x", mem_address, float64[1]);
         one_insn_gen_ctrl(buffer, INSERT_AFTER); 
 
         sprintf(mem_address_end - 1 , "]");

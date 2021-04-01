@@ -1,10 +1,10 @@
 <Template>
     <traverse>
-        <I type = "fdiv mem32" trv = "true"></I>
+        <I type = "fdiv fpumem32" trv = "true"></I>
         <C type = "st0"></C>
     </traverse>
     <traverse>
-        <I type = "fdiv mem64" trv = "true"></I>
+        <I type = "fdiv fpumem64" trv = "true"></I>
         <C type = "st0"></C>
     </traverse>
     <traverse>

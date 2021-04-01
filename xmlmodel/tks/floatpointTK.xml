@@ -1,8 +1,8 @@
 <TestingKnowledges>
     <!--  data transfer instructions  -->
     <TK inst = "fadd">
-        <Node name = "farith" weight="100"> </Node>
-        <Node name = "normal" weight="0"> </Node>
+        <Node name = "farith" weight="50"> </Node>
+        <Node name = "normal" weight="50"> </Node>
     </TK>
     <TK inst = "faddp">
         <Node name = "farith" weight="100"> </Node>

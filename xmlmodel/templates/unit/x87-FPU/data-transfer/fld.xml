@@ -1,14 +1,14 @@
 <Template>
     <traverse>
-		<I type = "fld mem32" trv = "true"></I>
+		<I type = "fld fpumem32" trv = "true"></I>
 		<C type = "st0"></C>
     </traverse>
     <traverse>
-		<I type = "fld mem64" trv = "true"></I>
+		<I type = "fld fpumem64" trv = "true"></I>
 		<C type = "st0"></C>
     </traverse>
     <traverse>
-		<I type = "fld mem80" trv = "true"></I>
+		<I type = "fld fpumem80" trv = "true"></I>
 		<C type = "st0"></C>
     </traverse>
     <traverse>

@@ -794,7 +794,7 @@ static void init_memory_opnd_float(char *asm_opnd, operand_seed *opnd_seed, stru
     opflags_t opndsize = size_mask(opnd_seed->opndflags);
 
     if(val_node == NULL){
-        //random_fp_number(opnd_seed, fp_number);
+        create_random_fp_number(opnd_seed->opndflags, (int *)fp_number);
     }else{
         switch (opndsize) {
             case BITS32:
@@ -964,10 +964,16 @@ static void init_fpu_register_opnd(char *asm_opnd, operand_seed *opnd_seed)
     if (val_node == NULL)
         val_node = request_val_node(nasm_insn_names[stat_get_opcode()],
                 stat_get_opi());
+    int float64[2] = {0};
+    if(val_node == NULL){
+        create_random_fp_number(BITS64, float64);
+    }else{
+        memcpy(float64, &(val_node->float64), 8);
+    }
     sprintf(asm_fpu_inst, init_fpu_float64_format, 
             asm_opnd, asm_opnd, 
-            ((int *)(&val_node->float64))[0],
-            ((int *)(&val_node->float64))[1],
+            float64[0],
+            float64[1],
             asm_opnd);
     one_insn_gen_ctrl(asm_fpu_inst, INSERT_AFTER);
 }
@@ -1393,7 +1399,8 @@ static void init_memory_opnd(char *asm_opnd, operand_seed *opnd_seed)
         val_node = request_val_node(nasm_insn_names[stat_get_opcode()],
                 stat_get_opi());
 
-    if(val_node != NULL && CONST_FLOAT == val_node->type){
+    //if(val_node != NULL && CONST_FLOAT == val_node->type){
+    if(is_class(REG_CLASS_FPUREG, opnd_seed->opndflags)){
         init_memory_opnd_float(asm_opnd, opnd_seed, val_node);
     }else if(val_node != NULL && CONST_X87ENV == val_node->type){
         init_memory_opnd_x87env(asm_opnd, val_node);

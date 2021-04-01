@@ -27,5 +27,5 @@ bool create_mmx_register(operand_seed *opnd_seed, char *buffer);
 bool create_xmm_register(operand_seed *opnd_seed, char *buffer);
 
 char *preappend_mem_size(char *asm_mem, opflags_t opndsize);
-
+void create_random_fp_number(opflags_t opndflags, int *fp_number);
 #endif
