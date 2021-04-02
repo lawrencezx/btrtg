@@ -36,6 +36,8 @@ struct output  output[] =
 // };
 #define ERROR "1.08420217248550443400745280086994171e-19"
 //#define ERROR "1.19209289550781250000000000000000000e-7F"
+#define PRINT_ERROR_INFO 0
+
 static int diffs = 0;
 static int point = 0;
 
@@ -149,10 +151,11 @@ extern char * fxstate;
     Reg32 check_##reg32 = x86regs.reg32; \
     Reg32 std_##reg32 = output[point].X86.reg32; \
     if (std_##reg32 != check_##reg32) { \
-        printf("diff ["#reg32"]: 0x%x, should be: 0x%x\n", check_##reg32, std_##reg32); \
-        diff = 1; \
+        if(PRINT_ERROR_INFO) \
+            printf("diff ["#reg32"]: 0x%x, should be: 0x%x\n", check_##reg32, std_##reg32); \
+            diff = 1; \
     } \
-    if (diff == 1) \
+    if (diff == 1 && PRINT_ERROR_INFO) \
         printf("check point: %d fail! ["#reg32"][fuzzy_pc:0x%x]\n", point + 1, x86regs.pc); \
     else if (verbose == 1) \
         printf("check point: %d pass! ["#reg32"]\n", point + 1); \
@@ -212,12 +215,13 @@ check_point_fpureg(st7, 7)
     floatx80 check_##mmxreg = fsa_get_st(&x87fpustate, index); \
     floatx80 std_##mmxreg = output[point].X87.fpregs[index]; \
     if (std_##mmxreg.low != check_##mmxreg.low || std_##mmxreg.high != check_##mmxreg.high) { \
-        printf("diff ["#mmxreg"]: 0x%08x %08x %04x, should be: 0x%08x %08x %04x\n", \
-        ((int *)&check_##mmxreg)[0], ((int *)&check_##mmxreg)[1], check_##mmxreg.high, \
-        ((int*)&std_##mmxreg)[0], ((int*)&std_##mmxreg)[1], std_##mmxreg.high); \
+        if(PRINT_ERROR_INFO) \
+            printf("diff ["#mmxreg"]: 0x%08x %08x %04x, should be: 0x%08x %08x %04x\n", \
+            ((int *)&check_##mmxreg)[0], ((int *)&check_##mmxreg)[1], check_##mmxreg.high, \
+            ((int*)&std_##mmxreg)[0], ((int*)&std_##mmxreg)[1], std_##mmxreg.high); \
         diff = 1; \
     } \
-    if (diff == 1) \
+    if (diff == 1 && PRINT_ERROR_INFO) \
         printf("check point: %d fail! ["#mmxreg"][fuzzy_pc:0x%x]\n", point + 1, x86regs.pc); \
     else if (verbose == 1) \
         printf("check point: %d pass! ["#mmxreg"]\n", point + 1); \
@@ -312,14 +316,15 @@ void check_point_ccode(struct SSEStateSaveArea* ssestate,
     xmmreg check_##one_xmmreg = fsa_get_xmm(ssestate, index); \
     xmmreg std_##one_xmmreg = output[point].SSE.xmmregs[index]; \
     if (std_##one_xmmreg.low != check_##one_xmmreg.low || std_##one_xmmreg.high != check_##one_xmmreg.high) { \
-        printf("diff ["#one_xmmreg"]: 0x%x%x %x%x, \nshould be: 0x%x%x %x%x\n", \
-            ((int *)&check_##one_xmmreg)[0], ((int *)&check_##one_xmmreg)[1], \
-            ((int *)&check_##one_xmmreg)[2], ((int *)&check_##one_xmmreg)[3], \
-            ((int *)&std_##one_xmmreg)[0], ((int *)&std_##one_xmmreg)[1], \
-            ((int *)&std_##one_xmmreg)[2], ((int *)&std_##one_xmmreg)[3]);\
+        if(PRINT_ERROR_INFO) \
+            printf("diff ["#one_xmmreg"]: 0x%x%x %x%x, \nshould be: 0x%x%x %x%x\n", \
+                ((int *)&check_##one_xmmreg)[0], ((int *)&check_##one_xmmreg)[1], \
+                ((int *)&check_##one_xmmreg)[2], ((int *)&check_##one_xmmreg)[3], \
+                ((int *)&std_##one_xmmreg)[0], ((int *)&std_##one_xmmreg)[1], \
+                ((int *)&std_##one_xmmreg)[2], ((int *)&std_##one_xmmreg)[3]);\
         diff = 1; \
     } \
-    if (diff == 1) \
+    if (diff == 1 && PRINT_ERROR_INFO) \
         printf("check point: %d fail! ["#one_xmmreg"][fuzzy_pc:0x%x]\n", point + 1, x86regs.pc); \
     else if (verbose == 1) \
         printf("check point: %d pass! ["#one_xmmreg"]\n", point + 1); \

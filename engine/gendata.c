@@ -917,10 +917,14 @@ static void init_memory_opnd_mmx(char *asm_opnd, operand_seed *opnd_seed)
         val_node6 = g_array_index(val_nodes, struct const_node *, 6);
         val_node7 = g_array_index(val_nodes, struct const_node *, 7);
         sprintf(asm_mov_inst, init_mmxmem8byte_format,
-                mem_address, val_node0->imm32, mem_address, val_node1->imm32, 
-                mem_address, val_node2->imm32, mem_address, val_node3->imm32,
-                mem_address, val_node4->imm32, mem_address, val_node5->imm32, 
-                mem_address, val_node6->imm32, mem_address, val_node7->imm32);
+                mem_address, (val_node0 == NULL)? (uint32_t)nasm_random64(RAND_BITS8_BND) : val_node0->imm32,
+                mem_address, (val_node1 == NULL)? (uint32_t)nasm_random64(RAND_BITS8_BND) : val_node1->imm32, 
+                mem_address, (val_node2 == NULL)? (uint32_t)nasm_random64(RAND_BITS8_BND) : val_node2->imm32,
+                mem_address, (val_node3 == NULL)? (uint32_t)nasm_random64(RAND_BITS8_BND) : val_node3->imm32,
+                mem_address, (val_node4 == NULL)? (uint32_t)nasm_random64(RAND_BITS8_BND) : val_node4->imm32,
+                mem_address, (val_node5 == NULL)? (uint32_t)nasm_random64(RAND_BITS8_BND) : val_node5->imm32, 
+                mem_address, (val_node6 == NULL)? (uint32_t)nasm_random64(RAND_BITS8_BND) : val_node6->imm32,
+                mem_address, (val_node7 == NULL)? (uint32_t)nasm_random64(RAND_BITS8_BND) : val_node7->imm32);
     } else if(val_nodes->len == 4){
         struct const_node *val_node0, *val_node1, *val_node2, *val_node3;
         val_node0 = g_array_index(val_nodes, struct const_node *, 0);
@@ -928,19 +932,23 @@ static void init_memory_opnd_mmx(char *asm_opnd, operand_seed *opnd_seed)
         val_node2 = g_array_index(val_nodes, struct const_node *, 2);
         val_node3 = g_array_index(val_nodes, struct const_node *, 3);
         sprintf(asm_mov_inst, init_mmxmem4word_format,
-                mem_address, val_node0->imm32, mem_address, val_node1->imm32, 
-                mem_address, val_node2->imm32, mem_address, val_node3->imm32);
+                mem_address, (val_node0 == NULL)? (uint32_t)nasm_random64(RAND_BITS16_BND) : val_node0->imm32,
+                mem_address, (val_node1 == NULL)? (uint32_t)nasm_random64(RAND_BITS16_BND) : val_node1->imm32, 
+                mem_address, (val_node2 == NULL)? (uint32_t)nasm_random64(RAND_BITS16_BND) : val_node2->imm32,
+                mem_address, (val_node3 == NULL)? (uint32_t)nasm_random64(RAND_BITS16_BND) : val_node3->imm32);
     } else if(val_nodes->len == 2){
         struct const_node *val_node0, *val_node1;
         val_node0 = g_array_index(val_nodes, struct const_node *, 0);
         val_node1 = g_array_index(val_nodes, struct const_node *, 1);
         sprintf(asm_mov_inst, init_mmxmem2dword_format,
-                mem_address, val_node0->imm32, mem_address, val_node1->imm32);
+                mem_address, (val_node0 == NULL)? (uint32_t)nasm_random64(RAND_BITS32_BND) : val_node0->imm32,
+                mem_address, (val_node1 == NULL)? (uint32_t)nasm_random64(RAND_BITS32_BND) : val_node1->imm32);
     } else if(val_nodes->len == 1){
         struct const_node *val_node0;
         val_node0 = g_array_index(val_nodes, struct const_node *, 0);
         sprintf(asm_mov_inst, init_mmxmem2dword_format,
-                mem_address, ((int *)(&val_node0->imm64))[0], mem_address, ((int *)(&val_node0->imm64))[1]); 
+                mem_address, (val_node0 == NULL)? (uint32_t)nasm_random64(RAND_BITS32_BND) : ((uint32_t *)(&val_node0->imm64))[0],
+                mem_address, (val_node0 == NULL)? (uint32_t)nasm_random64(RAND_BITS32_BND) : ((uint32_t *)(&val_node0->imm64))[1]); 
     }
     one_insn_gen_ctrl(asm_mov_inst, INSERT_AFTER);
 }
@@ -1050,10 +1058,14 @@ static void init_mmx_register_opnd(char *asm_opnd, operand_seed *opnd_seed)
         val_node6 = g_array_index(val_nodes, struct const_node *, 6);
         val_node7 = g_array_index(val_nodes, struct const_node *, 7);
         sprintf(asm_mmx_inst, init_mmx_8byte_format,
-                val_node0->imm32 , val_node1->imm32, 
-                val_node2->imm32 , val_node3->imm32,
-                val_node4->imm32 , val_node5->imm32, 
-                val_node6->imm32 , val_node7->imm32,
+                (val_node0 == NULL)? (uint32_t)nasm_random64(RAND_BITS8_BND) : val_node0->imm32, 
+                (val_node1 == NULL)? (uint32_t)nasm_random64(RAND_BITS8_BND) : val_node1->imm32, 
+                (val_node2 == NULL)? (uint32_t)nasm_random64(RAND_BITS8_BND) : val_node2->imm32,
+                (val_node3 == NULL)? (uint32_t)nasm_random64(RAND_BITS8_BND) : val_node3->imm32,
+                (val_node4 == NULL)? (uint32_t)nasm_random64(RAND_BITS8_BND) : val_node4->imm32,
+                (val_node5 == NULL)? (uint32_t)nasm_random64(RAND_BITS8_BND) : val_node5->imm32, 
+                (val_node6 == NULL)? (uint32_t)nasm_random64(RAND_BITS8_BND) : val_node6->imm32,
+                (val_node7 == NULL)? (uint32_t)nasm_random64(RAND_BITS8_BND) : val_node7->imm32,
                 asm_opnd);
     } else if(val_nodes->len == 4){
         struct const_node *val_node0, *val_node1, *val_node2, *val_node3;
@@ -1062,21 +1074,25 @@ static void init_mmx_register_opnd(char *asm_opnd, operand_seed *opnd_seed)
         val_node2 = g_array_index(val_nodes, struct const_node *, 2);
         val_node3 = g_array_index(val_nodes, struct const_node *, 3);
         sprintf(asm_mmx_inst, init_mmx_4word_format,
-                val_node0->imm32 , val_node1->imm32, 
-                val_node2->imm32 , val_node3->imm32,
+                (val_node0 == NULL)? (uint32_t)nasm_random64(RAND_BITS16_BND) : val_node0->imm32, 
+                (val_node1 == NULL)? (uint32_t)nasm_random64(RAND_BITS16_BND) : val_node1->imm32, 
+                (val_node2 == NULL)? (uint32_t)nasm_random64(RAND_BITS16_BND) : val_node2->imm32,
+                (val_node3 == NULL)? (uint32_t)nasm_random64(RAND_BITS16_BND) : val_node3->imm32,
                 asm_opnd);
     } else if(val_nodes->len == 2){
         struct const_node *val_node0, *val_node1;
         val_node0 = g_array_index(val_nodes, struct const_node *, 0);
         val_node1 = g_array_index(val_nodes, struct const_node *, 1);
         sprintf(asm_mmx_inst, init_mmx_2dword_format,
-                val_node0->imm32 , val_node1->imm32, 
+                (val_node0 == NULL)? (uint32_t)nasm_random64(RAND_BITS32_BND) : val_node0->imm32, 
+                (val_node1 == NULL)? (uint32_t)nasm_random64(RAND_BITS32_BND) : val_node1->imm32,
                 asm_opnd);      
     } else if(val_nodes ->len == 1){
         struct const_node *val_node0;
         val_node0 = g_array_index(val_nodes, struct const_node *, 0);
         sprintf(asm_mmx_inst, init_mmx_1qword_format,
-                ((int *)(&val_node0->imm64))[0], ((int *)(&val_node0->imm64))[1],
+                (val_node0 == NULL)? (uint32_t)nasm_random64(RAND_BITS32_BND) : ((uint32_t *)(&val_node0->imm64))[0],
+                (val_node0 == NULL)? (uint32_t)nasm_random64(RAND_BITS32_BND) : ((uint32_t *)(&val_node0->imm64))[1],
                 asm_opnd);
     }
     // sprintf(asm_mmx_inst, init_mmx_imm64_format, 

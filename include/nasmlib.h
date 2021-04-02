@@ -58,7 +58,7 @@ typedef union intorptr intorptr;
  * 32bit: RAND_MAX = 0x7fffffff
  * 64bit: RAND_MAX = 0x7fffffffffffffff
  */
-#define RAND_BITS8_BND 0x10000
+#define RAND_BITS8_BND 0x100
 #define RAND_BITS16_BND 0x10000
 #define RAND_BITS32_BND 0x100000000
 
