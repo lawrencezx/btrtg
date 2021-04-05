@@ -466,16 +466,6 @@
             <Node name = "normal" weight="0"> </Node>
         </Node>
     </TK>
-    <TK inst = "cvtps2dq">
-        <Node opnd = "0" packedn = "4">
-            <Node name = "arith" weight="100"> </Node>
-            <Node name = "normal" weight="0"> </Node>
-        </Node>
-        <Node opnd = "1" packedn = "4">
-            <Node name = "sse-arith" weight="100"> </Node>
-            <Node name = "normal" weight="0"> </Node>
-        </Node>
-    </TK>
     <TK inst = "cvttps2dq">
         <Node opnd = "0" packedn = "4">
             <Node name = "arith" weight="100"> </Node>
@@ -486,6 +476,17 @@
             <Node name = "normal" weight="0"> </Node>
         </Node>
     </TK>
+    <TK inst = "cvtps2dq">
+        <Node opnd = "0" packedn = "4">
+            <Node name = "arith" weight="100"> </Node>
+            <Node name = "normal" weight="0"> </Node>
+        </Node>
+        <Node opnd = "1" packedn = "4">
+            <Node name = "sse-arith" weight="100"> </Node>
+            <Node name = "normal" weight="0"> </Node>
+        </Node>
+    </TK>
+
     <!--  SSE2 128-bit SIMD integer instructions  -->
 
 

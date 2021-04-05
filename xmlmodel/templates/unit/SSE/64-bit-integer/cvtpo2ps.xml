@@ -1,7 +1,0 @@
-<Template>
-    <traverse>
-        <V var = "reg" type = "xmmreg"></V>
-        <I type = "cvtpo2ps @reg, mmxreg" trv = "true"></I>
-        <C type = "eax"></C>
-    </traverse>
-</Template>

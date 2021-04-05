@@ -3,11 +3,11 @@
     <traverse>
         <V var = "reg" type = "xmmreg"></V>
         <I type = "pshuflw @reg, xmmreg, imm8" trv = "true"></I>
-        <C type = "eax"></C>
+        <C type = "@reg"></C>
     </traverse>
     <traverse>
         <V var = "reg" type = "xmmreg"></V>
         <I type = "pshuflw @reg, xmmmem, imm8" trv = "true"></I>
-        <C type = "eax"></C>
+        <C type = "@reg"></C>
     </traverse>
 </Template>

@@ -3,6 +3,6 @@
         <V var = "mem" type = "xmmmem"></V>
         <I type = "movntps @mem, xmmreg" trv = "true"></I>
 		<I type = "movaps xmm0, @mem"></I>
-        <C type = "eax"></C>
+        <C type = "xmm0"></C>
     </traverse>
 </Template>

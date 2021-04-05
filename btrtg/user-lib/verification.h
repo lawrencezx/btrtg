@@ -9,6 +9,11 @@ typedef struct {
     uint16_t high;
 } floatx80;
 
+typedef struct {
+    uint64_t low;
+    uint64_t high;
+} xmmreg;
+
 struct X87LegacyFPUSaveArea {
     uint16_t fcw;
     uint16_t fcw_padding;
@@ -33,6 +38,31 @@ struct X87LegacyFPUSaveArea {
     uint8_t st80[80];
 };
 
+// struct X87LegacyFPUSaveArea {
+//     uint16_t fcw;
+//     uint16_t fsw;
+//     uint8_t ftw;
+//     uint8_t reserved0_5;
+//     uint16_t fpop;
+//     uint32_t fpip;
+//     uint16_t fpcs;
+//     uint16_t reserved0_14;
+//     uint32_t fpdp;
+//     uint16_t fpds;
+//     uint16_t reserved16_6;
+//     uint32_t mxcsr;
+//     uint32_t mxcsr_mask;
+//     uint8_t st80[128];
+//     uint8_t xmm_regs[128];
+//     uint8_t reverved[11][16];
+//     uint8_t available[3][16];
+// };
+
+struct SSEStateSaveArea {
+    xmmreg xmm_regs[8];
+    uint32_t mxcsr;
+};
+
 static inline uint16_t fsa_get_fcw(struct X87LegacyFPUSaveArea *x87fpustate)
 {
     return x87fpustate->fcw;
@@ -52,21 +82,56 @@ static inline uint32_t fsa_get_ffdp(struct X87LegacyFPUSaveArea *x87fpustate)
 {
     return ((uint32_t)x87fpustate->ffdp_0 | ((uint32_t)x87fpustate->ffdp_16 << 16));
 }
+// static inline uint32_t fsa_get_ffdp(struct X87LegacyFPUSaveArea *x87fpustate)
+// {
+//     return x87fpustate->fpdp;
+// }
 
 static inline uint32_t fsa_get_ffip(struct X87LegacyFPUSaveArea *x87fpustate)
 {
     return ((uint32_t)x87fpustate->ffip_0 | ((uint32_t)x87fpustate->ffip_16 << 16));
 }
+// static inline uint32_t fsa_get_ffip(struct X87LegacyFPUSaveArea *x87fpustate)
+// {
+//     return x87fpustate->fpip;
+// }
 
 static inline uint16_t fsa_get_ffop(struct X87LegacyFPUSaveArea *x87fpustate)
 {
     return x87fpustate->ffop;
 }
+// static inline uint16_t fsa_get_ffop(struct X87LegacyFPUSaveArea *x87fpustate)
+// {
+//     return x87fpustate->fpop;
+// }
 
 static inline floatx80 fsa_get_st(struct X87LegacyFPUSaveArea *x87fpustate, int i)
 {
     return *((floatx80 *)&(x87fpustate->st80[i * 10]));
 }
+
+static inline uint32_t fsa_get_mxcsr(struct SSEStateSaveArea *ssestate)
+{
+    return ssestate->mxcsr;
+}
+// static inline uint32_t fsa_get_mxcsr(struct X87LegacyFPUSaveArea *x87fpustate)
+// {
+//     return x87fpustate->mxcsr;
+// }
+
+// static inline uint32_t fsa_get_mxcsr_mask(struct X87LegacyFPUSaveArea *x87fpustate)
+// {
+//     return x87fpustate->mxcsr_mask;
+// }
+
+static inline xmmreg fsa_get_xmm(struct SSEStateSaveArea *ssestate, int i)
+{
+    return *((xmmreg *)&(ssestate->xmm_regs[i]));
+}
+// static inline xmmreg fsa_get_xmm(struct X87LegacyFPUSaveArea *x87fpustate, int i)
+// {
+//     return *((xmmreg *)&(x87fpustate->xmm_regs[i * 16]));
+// }
 
 typedef uint8_t Reg8;
 typedef uint16_t Reg16;
