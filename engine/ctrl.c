@@ -111,8 +111,9 @@ int gen_control_transfer_insn(enum opcode opcode, int times)
          *   jmp label2
          * label1:
          *   ... <- next insert position
-         *   jmp label1 <- the generated jmp
          * label2:
+         *   ...
+         *   jmp label1 <- the generated jmp
          *   ...
          */
         sprintf(buffer, "  %s label%d", nasm_insn_names[opcode], stat_get_labeli());
