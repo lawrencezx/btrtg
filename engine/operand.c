@@ -320,9 +320,30 @@ bool create_memory(operand_seed *opnd_seed, char *buffer)
     return true;
 }
 
+/* fld float32 to st reg
+ */
+#define init_st_float32_format "\
+  ffree %s\n\
+  fst %s\n\
+  fstp st0\n\
+  mov dword [%s], 0x%x\n\
+  fld dword [%s]\n\
+  fxch %s"
+
+/* fld float64 to st reg
+ */
+#define init_st_float64_format "\
+  ffree %s\n\
+  fst %s\n\
+  fstp st0\n\
+  mov dword [%s], 0x%x\n\
+  mov dword [%s + 0x4], 0x%x\n\
+  fld qword [%s]\n\
+  fxch %s"
+
 bool init_specific_register(enum reg_enum R_reg)
 {
-    char buffer[128];
+    char buffer[512];
     const char *src;
     src = nasm_reg_names[R_reg - EXPR_REG_START];
     struct const_node *val_node;
@@ -336,31 +357,21 @@ bool init_specific_register(enum reg_enum R_reg)
     stat_set_has_mem_opnd(false);
 
     if((R_reg >= R_ST0) && (R_reg <= R_ST7)){
-        char mem_address[64] = "[data0]";
-        char *mem_address_end = mem_address + strlen(mem_address);
+        char mem_address[32] = "data0";
 
-        sprintf(buffer, "  ffree %s", src);
-        one_insn_gen_ctrl(buffer, INSERT_AFTER);
+        if (val_node->type == CONST_FLOAT32I) {
+            sprintf(buffer, init_st_float32_format,
+                    src, src,
+                    mem_address, val_node->imm32,
+                    mem_address, src);
+        } else {
+            sprintf(buffer, init_st_float64_format,
+                    src, src,
+                    mem_address, ((int *)(&val_node->float64))[0],
+                    mem_address, ((int *)(&val_node->float64))[1],
+                    mem_address, src);
+        }
 
-        sprintf(buffer, "  fst %s", src);
-        one_insn_gen_ctrl(buffer, INSERT_AFTER);
-
-        sprintf(buffer, "  fstp st0");    
-        //sprintf(asm_fpu_inst, "fincstp");
-        one_insn_gen_ctrl(buffer, INSERT_AFTER);
-
-        sprintf(buffer, "  mov dword %s, 0x%x", mem_address, ((int *)(&val_node->float64))[0]);
-        one_insn_gen_ctrl(buffer, INSERT_AFTER);
-
-        sprintf(mem_address_end - 1, " + 0x4]");
-        sprintf(buffer, "  mov dword %s, 0x%x", mem_address, ((int *)(&val_node->float64))[1]);
-        one_insn_gen_ctrl(buffer, INSERT_AFTER); 
-
-        sprintf(mem_address_end - 1 , "]");
-        sprintf(buffer, "  fld qword %s",mem_address);
-        one_insn_gen_ctrl(  buffer, INSERT_AFTER);
-
-        sprintf(buffer, "  fxch %s", src);
         one_insn_gen_ctrl(buffer, INSERT_AFTER);
     }else{
         sprintf(buffer, "mov %s, 0x%x", src, (val_node == NULL) ?

@@ -1,4 +1,35 @@
 <ConstGroups>
+	<CG name = "farith-test">
+        <Float32i> 0x00000000 </Float32i>
+        <Float32i> 0x80000000 </Float32i>
+
+        <Float32i> 0x3f800000 </Float32i>
+        <Float32i> 0xbf800000 </Float32i>
+
+        <Float32i> 0x00000001 </Float32i>
+        <Float32i> 0x80000001 </Float32i>
+
+        <Float32i> 0x00400000 </Float32i>
+        <Float32i> 0x80400000 </Float32i>
+
+        <Float32i> 0x007fffff </Float32i>
+        <Float32i> 0x807fffff </Float32i>
+
+        <Float32i> 0x00800000 </Float32i>
+        <Float32i> 0x80800000 </Float32i>
+
+        <Float32i> 0x7f7fffff </Float32i>
+        <Float32i> 0xff7fffff </Float32i>
+
+        <Float32i> 0x7f800000 </Float32i>
+        <Float32i> 0xff800000 </Float32i>
+
+        <Float32i> 0x7f800001 </Float32i>
+        <Float32i> 0xff800001 </Float32i>
+
+        <Float32i> 0x7fc00001 </Float32i>
+        <Float32i> 0xffc00001 </Float32i>
+	</CG>
 	<CG name = "farith">
 		<Immf> 2.718281828459045235360287471352662498 </Immf>
 
