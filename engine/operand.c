@@ -357,7 +357,7 @@ bool init_specific_register(enum reg_enum R_reg)
     stat_set_has_mem_opnd(false);
 
     if((R_reg >= R_ST0) && (R_reg <= R_ST7)){
-        char mem_address[32] = "data0";
+        char mem_address[32] = "float_data";
 
         if (val_node->type == CONST_FLOAT32I) {
             sprintf(buffer, init_st_float32_format,

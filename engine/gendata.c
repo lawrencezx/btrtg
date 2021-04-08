@@ -468,9 +468,9 @@ static void init_memory_opnd_mmx(char *asm_opnd, operand_seed *opnd_seed)
   ffree %s\n\
   fst %s\n\
   fstp st0\n\
-  mov dword [data0], 0x%x\n\
-  mov dword [data0 + 0x4], 0x%x\n\
-  fld qword [data0]\n\
+  mov dword [float_data], 0x%x\n\
+  mov dword [float_data + 0x4], 0x%x\n\
+  fld qword [float_data]\n\
   fxch %s"
 
 static void init_fpu_register_opnd(char *asm_opnd, operand_seed *opnd_seed)
@@ -492,42 +492,42 @@ static void init_fpu_register_opnd(char *asm_opnd, operand_seed *opnd_seed)
 }
 
 #define init_mmx_imm64_format "\
-  mov dword [data0], 0x%x\n\
-  mov dword [data0 + 0x4], 0x%x\n\
-  movq qword %s, [data0]"
+  mov dword [float_data], 0x%x\n\
+  mov dword [float_data + 0x4], 0x%x\n\
+  movq qword %s, [float_data]"
 
 /* movq [byte1, byte2, byte3, byte4, byte5, byte6, byte7, byte8] to mmx_reg
  */
 #define init_mmx_8byte_format "\
-  mov byte [data0], 0x%x\n\
-  mov byte [data0 + 0x1], 0x%x\n\
-  mov byte [data0 + 0x2], 0x%x\n\
-  mov byte [data0 + 0x3], 0x%x\n\
-  mov byte [data0 + 0x4], 0x%x\n\
-  mov byte [data0 + 0x5], 0x%x\n\
-  mov byte [data0 + 0x6], 0x%x\n\
-  mov byte [data0 + 0x7], 0x%x\n\
-  movq qword %s, [data0]"
+  mov byte [float_data], 0x%x\n\
+  mov byte [float_data + 0x1], 0x%x\n\
+  mov byte [float_data + 0x2], 0x%x\n\
+  mov byte [float_data + 0x3], 0x%x\n\
+  mov byte [float_data + 0x4], 0x%x\n\
+  mov byte [float_data + 0x5], 0x%x\n\
+  mov byte [float_data + 0x6], 0x%x\n\
+  mov byte [float_data + 0x7], 0x%x\n\
+  movq qword %s, [float_data]"
 /* movq [word1, word2, word3, word4] to mmx_reg
  */
 #define init_mmx_4word_format "\
-  mov word [data0], 0x%x\n\
-  mov word [data0 + 0x2], 0x%x\n\
-  mov word [data0 + 0x4], 0x%x\n\
-  mov word [data0 + 0x6], 0x%x\n\
-  movq qword %s, [data0]"
+  mov word [float_data], 0x%x\n\
+  mov word [float_data + 0x2], 0x%x\n\
+  mov word [float_data + 0x4], 0x%x\n\
+  mov word [float_data + 0x6], 0x%x\n\
+  movq qword %s, [float_data]"
 /* movq [dword1, dword2] to mmx_reg
  */
 #define init_mmx_2dword_format "\
-  mov dword [data0], 0x%x\n\
-  mov dword [data0 + 0x4], 0x%x\n\
-  movq qword %s, [data0]"
+  mov dword [float_data], 0x%x\n\
+  mov dword [float_data + 0x4], 0x%x\n\
+  movq qword %s, [float_data]"
 /* movq [qword] to mmx_reg
  */
 #define init_mmx_1qword_format "\
-  mov dword [data0], 0x%x\n\
-  mov dword [data0 + 0x4], 0x%x\n\
-  movq qword %s, [data0]"
+  mov dword [float_data], 0x%x\n\
+  mov dword [float_data + 0x4], 0x%x\n\
+  movq qword %s, [float_data]"
 
 static void init_mmx_register_opnd(char *asm_opnd, operand_seed *opnd_seed)
 {
@@ -539,7 +539,7 @@ static void init_mmx_register_opnd(char *asm_opnd, operand_seed *opnd_seed)
     if (val_nodes == NULL)
         val_nodes = request_packed_val_node(nasm_insn_names[stat_get_opcode()],
                 stat_get_opi());
-    //char mem_address[64] = "[data0]";
+    //char mem_address[64] = "[float_data]";
 
     // struct const_node *val_node;
 
@@ -602,40 +602,40 @@ static void init_mmx_register_opnd(char *asm_opnd, operand_seed *opnd_seed)
 /* movups [float, -, -, -] to xmm_reg
  */
 #define init_xmm_float32_format "\
-  mov dword [data0], 0x%x\n\
-  movups %s, [data0]"
+  mov dword [float_data], 0x%x\n\
+  movups %s, [float_data]"
 
 /* movupd [double, -, -, -] to xmm_reg
  */
 #define init_xmm_float64_format "\
-  mov dword [data0], 0x%x\n\
-  mov dword [data0 + 0x4], 0x%x\n\
-  movupd %s, [data0]"
+  mov dword [float_data], 0x%x\n\
+  mov dword [float_data + 0x4], 0x%x\n\
+  movupd %s, [float_data]"
 
 /* movups [float1, float2, float3, float4] to xmm_reg
  */
 #define init_xmm_4float32_format "\
-  mov dword [data0], 0x%x\n\
-  mov dword [data0 + 0x4], 0x%x\n\
-  mov dword [data0 + 0x8], 0x%x\n\
-  mov dword [data0 + 0xc], 0x%x\n\
-  movups %s, [data0]"
+  mov dword [float_data], 0x%x\n\
+  mov dword [float_data + 0x4], 0x%x\n\
+  mov dword [float_data + 0x8], 0x%x\n\
+  mov dword [float_data + 0xc], 0x%x\n\
+  movups %s, [float_data]"
 
 /* movups [dword1, dword2] to xmm_reg
  */
 #define init_xmm_2dword_format "\
-  mov dword [data0], 0x%x\n\
-  mov dword [data0 + 0x4], 0x%x\n\
-  movups %s, [data0]"
+  mov dword [float_data], 0x%x\n\
+  mov dword [float_data + 0x4], 0x%x\n\
+  movups %s, [float_data]"
 
 /* movupd [double1, double2] to xmm_reg
  */
 #define init_xmm_2float64_format "\
-  mov dword [data0], 0x%x\n\
-  mov dword [data0 + 0x4], 0x%x\n\
-  mov dword [data0 + 0x8], 0x%x\n\
-  mov dword [data0 + 0xc], 0x%x\n\
-  movupd %s, [data0]"
+  mov dword [float_data], 0x%x\n\
+  mov dword [float_data + 0x4], 0x%x\n\
+  mov dword [float_data + 0x8], 0x%x\n\
+  mov dword [float_data + 0xc], 0x%x\n\
+  movupd %s, [float_data]"
 
 static void init_xmm_register_opnd(char *asm_opnd, operand_seed *opnd_seed)
 {
