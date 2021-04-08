@@ -4,10 +4,10 @@
 typedef uint32_t float32;
 typedef uint64_t float64;
 
-typedef struct {
+struct floatx80 {
     uint64_t low;
     uint16_t high;
-} floatx80;
+};
 
 typedef struct {
     uint64_t low;
@@ -105,9 +105,9 @@ static inline uint16_t fsa_get_ffop(struct X87LegacyFPUSaveArea *x87fpustate)
 //     return x87fpustate->fpop;
 // }
 
-static inline floatx80 fsa_get_st(struct X87LegacyFPUSaveArea *x87fpustate, int i)
+static inline struct floatx80 fsa_get_st(struct X87LegacyFPUSaveArea *x87fpustate, int i)
 {
-    return *((floatx80 *)&(x87fpustate->st80[i * 10]));
+    return *((struct floatx80 *)&(x87fpustate->st80[i * 10]));
 }
 
 static inline uint32_t fsa_get_mxcsr(struct SSEStateSaveArea *ssestate)

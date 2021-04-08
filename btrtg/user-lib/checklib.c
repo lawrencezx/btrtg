@@ -11,7 +11,7 @@ struct X87Regs{
     uint32_t ffdp;
     uint32_t ffip;
     uint16_t ffop;
-    floatx80 fpregs[8];
+    struct floatx80 fpregs[8];
 };
 struct SSERegs{
     uint32_t mxcsr;
@@ -175,10 +175,12 @@ check_point_reg32(eflags)
      struct X86StandardRegisters x86regs) \
 { \
     int diff = 0; \
-    floatx80 check_##fpureg = fsa_get_st(&x87fpustate, index); \
-    floatx80 std_##fpureg = output[point].X87.fpregs[index]; \
+    struct floatx80 check_##fpureg = fsa_get_st(&x87fpustate, index); \
+    struct floatx80 std_##fpureg = output[point].X87.fpregs[index]; \
     if (std_##fpureg.low != check_##fpureg.low || std_##fpureg.high != check_##fpureg.high) { \
-        printf("diff ["#fpureg"]: 0x%x, should be: 0x%x\n", check_##fpureg, std_##fpureg); \
+        printf("diff ["#fpureg"]: high[0x%04x] low[0x%016lx], should be: high[0x%04x] low[0x%016lx]\n", \
+                check_##fpureg.high, check_##fpureg.low, \
+                std_##fpureg.high, std_##fpureg.low); \
         diff = 1; \
     } \
     if (diff == 1) \
@@ -204,8 +206,8 @@ check_point_fpureg(st7, 7)
      struct X86StandardRegisters x86regs) \
 { \
     int diff = 0; \
-    floatx80 check_##mmxreg = fsa_get_st(&x87fpustate, index); \
-    floatx80 std_##mmxreg = output[point].X87.fpregs[index]; \
+    struct floatx80 check_##mmxreg = fsa_get_st(&x87fpustate, index); \
+    struct floatx80 std_##mmxreg = output[point].X87.fpregs[index]; \
     if (std_##mmxreg.low != check_##mmxreg.low || std_##mmxreg.high != check_##mmxreg.high) { \
         printf("diff ["#mmxreg"]: 0x%08x %08x %04x, should be: 0x%08x %08x %04x\n", \
         ((int *)&check_##mmxreg)[0], ((int *)&check_##mmxreg)[1], check_##mmxreg.high, \
