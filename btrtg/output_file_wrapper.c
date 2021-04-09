@@ -67,8 +67,8 @@ static const char check_macro[] = "\
   push eax\n\
   call check_point_%1\n\
   pop eax\n\
-  add esp,0x6c\n\
   frstor [esp]\n\
+  add esp,0x6c\n\
   pop eax\n\
   pop eax\n\
   pop eax\n\
