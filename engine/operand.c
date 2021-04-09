@@ -341,6 +341,21 @@ bool create_memory(operand_seed *opnd_seed, char *buffer)
   fld qword [%s]\n\
   fxch %s"
 
+/* fld float32 to st reg
+ */
+#define init_st0_float32_format "\
+  fstp st0\n\
+  mov dword [%s], 0x%x\n\
+  fld dword [%s]"
+
+/* fld float64 to st reg
+ */
+#define init_st0_float64_format "\
+  fstp st0\n\
+  mov dword [%s], 0x%x\n\
+  mov dword [%s + 0x4], 0x%x\n\
+  fld qword [%s]"
+
 bool init_specific_register(enum reg_enum R_reg)
 {
     char buffer[512];
@@ -360,16 +375,27 @@ bool init_specific_register(enum reg_enum R_reg)
         char mem_address[32] = "float_data";
 
         if (val_node->type == CONST_FLOAT32I) {
-            sprintf(buffer, init_st_float32_format,
-                    src, src,
-                    mem_address, val_node->imm32,
-                    mem_address, src);
+            if (R_reg == R_ST0)
+                sprintf(buffer, init_st0_float32_format,
+                        mem_address, val_node->imm32,
+                        mem_address);
+            else
+                sprintf(buffer, init_st_float32_format,
+                        src, src,
+                        mem_address, val_node->imm32,
+                        mem_address, src);
         } else {
-            sprintf(buffer, init_st_float64_format,
-                    src, src,
-                    mem_address, ((int *)(&val_node->float64))[0],
-                    mem_address, ((int *)(&val_node->float64))[1],
-                    mem_address, src);
+            if (R_reg == R_ST0)
+                sprintf(buffer, init_st0_float64_format,
+                        mem_address, ((int *)(&val_node->float64))[0],
+                        mem_address, ((int *)(&val_node->float64))[1],
+                        mem_address);
+            else
+                sprintf(buffer, init_st_float64_format,
+                        src, src,
+                        mem_address, ((int *)(&val_node->float64))[0],
+                        mem_address, ((int *)(&val_node->float64))[1],
+                        mem_address, src);
         }
 
         one_insn_gen_ctrl(buffer, INSERT_AFTER);
