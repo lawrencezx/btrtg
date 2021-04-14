@@ -558,6 +558,8 @@ static opflags_t calOperandSize(const insn_seed *seed, int opdi)
                 opndsize = (globalbits == 16) ? BITS16 : BITS32;
                 break;
         }
+        if(seed->opcode >= I_F2XM1 && seed->opcode <= I_FYL2XP1)
+            opndsize = BITS80;
         /*TODO: Instructions whose name end with B/W/D. */
     }
     return opndsize;
@@ -724,6 +726,10 @@ void init_implied_operands(insn *result)
             //         init_specific_register(R_ST1);
             //     }
             //     break;
+            case I_FILD:
+            case I_FBLD:
+                init_fpu_dest_register(R_ST7);
+                break;      
             case I_FLD:
                 if(operands == 0){
                     init_specific_register(R_ST1);
@@ -794,7 +800,7 @@ static void init_memory_opnd_float(char *asm_opnd, operand_seed *opnd_seed, stru
     opflags_t opndsize = size_mask(opnd_seed->opndflags);
 
     if(val_node == NULL){
-        create_random_fp_number(opnd_seed->opndflags, (int *)fp_number);
+        create_random_fp_number(opnd_seed->opndflags, (uint32_t *)fp_number);
     }else{
         switch (opndsize) {
             case BITS32:
@@ -974,12 +980,23 @@ static void init_fpu_register_opnd(char *asm_opnd, operand_seed *opnd_seed)
                 stat_get_opi());
     int float64[2] = {0};
     if(val_node == NULL){
-        create_random_fp_number(BITS64, float64);
+        create_random_fp_number(BITS64, (uint32_t *)float64);
     }else{
+        /* TODO */
+        // switch(val_node->type){
+        //     case CONST_FLOAT32:
+        //         break;
+        //     case CONST_FLAOT:
+        //     case CONST_FLOAT64:
+        //         break;
+        //     case CONST_FLOAT80:
+        //         break:
+        //     default:
+        // }
         memcpy(float64, &(val_node->float64), 8);
     }
     sprintf(asm_fpu_inst, init_fpu_float64_format, 
-            asm_opnd, asm_opnd, 
+            asm_opnd, 
             float64[0],
             float64[1],
             asm_opnd);

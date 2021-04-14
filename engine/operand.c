@@ -330,24 +330,24 @@ bool create_memory(operand_seed *opnd_seed, char *buffer)
     return true;
 }
 
-void create_random_fp_number(opflags_t opndflags, int *fp_number){
+void create_random_fp_number(opflags_t opndflags, uint32_t *fp_number){
     if(BITS32 == size_mask(opndflags)){
-        int mantissa = nasm_random32(1<<23);
+        uint32_t mantissa = nasm_random32(1<<23);
         //Normalized number
-        int exponent = nasm_random32((1<<8)-2) + 1;
-        int sign = nasm_random32(2);
+        uint32_t exponent = nasm_random32((1<<8)-2) + 1;
+        uint32_t sign = nasm_random32(2);
         *fp_number = mantissa | exponent<<23 | sign<<31;
     }else if(BITS64 == size_mask(opndflags)){
-        long int mantissa = nasm_random64(1L<<52);
+        uint64_t mantissa = nasm_random64(1L<<52);
         //Normalized number
-        long int exponent = nasm_random32((1<<11)-2) + 1;
-        long int sign = nasm_random32(2);
-        *(long int *)fp_number = mantissa | exponent<<52 | sign<<63;  
+        uint64_t exponent = (uint32_t)nasm_random32((1<<11)-2) + 1;
+        uint64_t sign = (uint32_t)nasm_random32(2);
+        *(uint64_t *)fp_number = mantissa | exponent<<52 | sign<<63;  
     }else if(BITS80 == size_mask(opndflags)){
-        fp_number[0] = rand();
-        fp_number[1] = rand() | 0x80000000;
+        fp_number[0] = (uint32_t)nasm_random64(RAND_BITS32_BND);
+        fp_number[1] = (uint32_t)nasm_random64(RAND_BITS32_BND) | 0x80000000;
         //fp_num[2] = 0x00004000;
-        fp_number[2] = 0x0000ffff & (nasm_random32((1<<16)-2) + 1);
+        fp_number[2] = 0x0000ffff & ((uint32_t)nasm_random32((1<<16)-2) + 1);
     }
 }
 
@@ -369,7 +369,7 @@ bool init_specific_register(enum reg_enum R_reg)
     if((R_reg >= R_ST0) && (R_reg <= R_ST7)){
         int float64[2] = {0};
         if(val_node == NULL){
-            create_random_fp_number(BITS64, float64);
+            create_random_fp_number(BITS64, (uint32_t *)float64);
         }else{
             memcpy(float64, &(val_node->float64), 8);
         }
