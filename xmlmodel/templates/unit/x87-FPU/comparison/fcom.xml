@@ -1,38 +1,38 @@
 <Template>
     <traverse>
-        <I type = "fcom mem32" trv = "true"></I>
-        <C type = "fsw"></C>
+        <I type = "fcom fpumem32" trv = "true"></I>
+        <C type = "ccode"></C>
     </traverse>
     <traverse>
-        <I type = "fcom mem64" trv = "true"></I>
-        <C type = "fsw"></C>
+        <I type = "fcom fpumem64" trv = "true"></I>
+        <C type = "ccode"></C>
     </traverse>
     <traverse>
         <I type = "fcom fpureg" trv = "true"></I>
-        <C type = "fsw"></C>
+        <C type = "ccode"></C>
     </traverse>
     <traverse>
         <I type = "fcom" trv = "true"></I>
-        <C type = "fsw"></C>
+        <C type = "ccode"></C>
     </traverse>
     <traverse>
-        <I type = "fcomp mem32" trv = "true"></I>
-        <C type = "fsw"></C>
+        <I type = "fcomp fpumem32" trv = "true"></I>
+        <C type = "ccode"></C>
     </traverse>
     <traverse>
-        <I type = "fcomp mem64" trv = "true"></I>
-        <C type = "fsw"></C>
+        <I type = "fcomp fpumem64" trv = "true"></I>
+        <C type = "ccode"></C>
     </traverse>
     <traverse>
         <I type = "fcomp fpureg" trv = "true"></I>
-        <C type = "fsw"></C>
+        <C type = "ccode"></C>
     </traverse>
     <traverse>
         <I type = "fcomp" trv = "true"></I>
-        <C type = "fsw"></C>
+        <C type = "ccode"></C>
     </traverse>
     <traverse>
         <I type = "fcompp" trv = "true"></I>
-        <C type = "fsw"></C>
+        <C type = "ccode"></C>
     </traverse>
 </Template>

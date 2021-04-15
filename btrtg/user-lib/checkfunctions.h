@@ -72,3 +72,4 @@ DEFINE_CHECK_FUNCTION(xmm6, 61, check_point_xmm6)
 DEFINE_CHECK_FUNCTION(xmm7, 62, check_point_xmm7)
 
 DEFINE_CHECK_FUNCTION(mxcsr, 63, check_point_mxcsr)
+DEFINE_CHECK_FUNCTION(ccode, 64, check_point_ccode)

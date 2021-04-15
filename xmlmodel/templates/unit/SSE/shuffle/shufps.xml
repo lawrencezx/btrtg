@@ -4,9 +4,4 @@
         <I type = "shufps @reg, xmmreg, imm8" trv = "true"></I>
         <C type = "@reg"></C>
     </traverse>
-    <traverse>
-        <V var = "reg" type = "xmmreg"></V>
-        <I type = "shufps @reg, xmmmem, imm8" trv = "true"></I>
-        <C type = "@reg"></C>
-    </traverse>
 </Template>

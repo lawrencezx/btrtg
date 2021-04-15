@@ -50,14 +50,25 @@ static inline int reg_random_range(opflags_t opflags)
         case (REG_GPR|BITS8):
         case (RM_GPR|BITS8):
         case FPUREG:
+        case FPUREG|TO:
+        case FPUREG|BITS80:
+        case FPUREG|BITS80|TO:
         case MMXREG:
         case (REG_CLASS_RM_MMX | REGISTER):
         case XMMREG:
             index = 8;
             break;
         default:
-            nasm_fatal("No register random range found!");
+            //nasm_fatal("No register random range found!");
             break;
+    }
+    if((~(opflags^FPUREG) & FPUREG) == FPUREG ||
+       (~(opflags^MMXREG) & MMXREG) == MMXREG ||
+       (~(opflags^XMMREG) & XMMREG) == XMMREG){
+        index = 8;
+    }
+    if(index == -1){
+        nasm_fatal("No register random range found!");
     }
     return index;
 }

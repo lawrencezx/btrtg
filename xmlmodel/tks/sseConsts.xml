@@ -9,23 +9,44 @@
 		<Float32f> -340282346638528859811704183484516925440.0 </Float32f>
 		<Float32f> 340282346638528859811704183484516925440.0 </Float32f>
 	</CG>
-	<CG name = "sse-arith-cut">
+	<CG name = "sse-nneg-arith">
 		<Float32f> 2.7182818284590452354 </Float32f>
 		<Float32f> 1520.6005859375 </Float32f>
+		<Float32f> 0.0 </Float32f>
+		<Float32f> 3.14159274101257324219 </Float32f>
+		<Float32f> 289363.65625 </Float32f>
+		<Float32f> 340282346638528859811704183484516925440.0 </Float32f>
 	</CG>
-	<CG name = "sse-arith-cut1">
-		<Float32f> 1.0 </Float32f>
-		<Float32f> 2.0 </Float32f>
+	<CG name = "sse-pos-arith">
+		<Float32f> 2.7182818284590452354 </Float32f>
+		<Float32f> 1520.6005859375 </Float32f>
+		<Float32f> 3.14159274101257324219 </Float32f>
+		<Float32f> 289363.65625 </Float32f>
+		<Float32f> 340282346638528859811704183484516925440.0 </Float32f>
 	</CG>
-	<CG name = "sse-arith-cut2">
-		<Float32f> -1.0 </Float32f>
-		<Float32f> -2.0</Float32f>
+	<CG name = "sse-nz-arith">
+		<Float32f> 2.7182818284590452354 </Float32f>
+		<Float32f> 1520.6005859375 </Float32f>
+		<Float32f> -4342.55078125000000000000 </Float32f>
+		<Float32f> 3.14159274101257324219 </Float32f>
+		<Float32f> 289363.65625 </Float32f>
+		<Float32f> -340282346638528859811704183484516925440.0 </Float32f>
+		<Float32f> 340282346638528859811704183484516925440.0 </Float32f>
 	</CG>
 	<CG name = "sse-imm8">
 		<Imm32> 0x00 </Imm32>
 		<Imm32> 0x01 </Imm32>
 		<Imm32> 0x02 </Imm32>
 		<Imm32> 0x03 </Imm32>
+		<Imm32> 0x04 </Imm32>
+		<Imm32> 0x08 </Imm32>
+		<Imm32> 0x0c </Imm32>
+		<Imm32> 0x10 </Imm32>
+		<Imm32> 0x20 </Imm32>
+		<Imm32> 0x30 </Imm32>
+		<Imm32> 0x40 </Imm32>
+		<Imm32> 0x80 </Imm32>
+		<Imm32> 0xc0 </Imm32>
 	</CG>
 	<CG name = "sse-imm32">
         <Imm32> 0x03030303 </Imm32>
@@ -41,5 +62,11 @@
 	</CG>
 	<CG name = "mxcsr">
         <Imm32> 0x1f80 </Imm32>
+	</CG>
+	<CG name = "sse-zero-float">
+		<Float32> 0.0 </Float32>
+	</CG>
+	<CG name = "sse-zero-imm32">
+        <Imm32> 0x0 </Imm32>
 	</CG>
 </ConstGroups>

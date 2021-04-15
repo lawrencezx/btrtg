@@ -253,4 +253,16 @@
 	<IG name = "AddForTest">
 		<I> add </I>
 	</IG>
+	<IG name = "FaddForTest">
+		<I> fadd </I>
+	</IG>
+	<IG name = "PaddForTest">
+		<I> paddb </I>
+		<I> paddw </I>
+		<I> paddd </I>
+	</IG>
+	<IG name = "AddpForTest">
+		<I> Addps </I>
+		<I> Addpd </I>
+	</IG>
 </InsnGroups>

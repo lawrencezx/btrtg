@@ -355,6 +355,26 @@ bool create_memory(operand_seed *opnd_seed, char *buffer)
   mov dword [%s], 0x%x\n\
   mov dword [%s + 0x4], 0x%x\n\
   fld qword [%s]"
+void create_random_fp_number(opflags_t opndflags, uint32_t *fp_number){
+    if(BITS32 == size_mask(opndflags)){
+        uint32_t mantissa = nasm_random32(1<<23);
+        //Normalized number
+        uint32_t exponent = nasm_random32((1<<8)-2) + 1;
+        uint32_t sign = nasm_random32(2);
+        *fp_number = mantissa | exponent<<23 | sign<<31;
+    }else if(BITS64 == size_mask(opndflags)){
+        uint64_t mantissa = nasm_random64(1L<<52);
+        //Normalized number
+        uint64_t exponent = (uint32_t)nasm_random32((1<<11)-2) + 1;
+        uint64_t sign = (uint32_t)nasm_random32(2);
+        *(uint64_t *)fp_number = mantissa | exponent<<52 | sign<<63;  
+    }else if(BITS80 == size_mask(opndflags)){
+        fp_number[0] = (uint32_t)nasm_random64(RAND_BITS32_BND);
+        fp_number[1] = (uint32_t)nasm_random64(RAND_BITS32_BND) | 0x80000000;
+        //fp_num[2] = 0x00004000;
+        fp_number[2] = 0x0000ffff & ((uint32_t)nasm_random32((1<<16)-2) + 1);
+    }
+}
 
 bool init_specific_register(enum reg_enum R_reg)
 {
@@ -373,30 +393,25 @@ bool init_specific_register(enum reg_enum R_reg)
 
     if((R_reg >= R_ST0) && (R_reg <= R_ST7)){
         char mem_address[32] = "float_data";
-
-        if (val_node->type == CONST_FLOAT32I) {
-            if (R_reg == R_ST0)
-                sprintf(buffer, init_st0_float32_format,
-                        mem_address, val_node->imm32,
-                        mem_address);
-            else
-                sprintf(buffer, init_st_float32_format,
-                        src, src,
-                        mem_address, val_node->imm32,
-                        mem_address, src);
+        int float64[2] = {0};
+        if(val_node == NULL){
+            create_random_fp_number(BITS64, (uint32_t *)float64);
+        } else if (val_node->type == CONST_FLOAT32I){
+            memcpy(float64, &(val_node->imm32), 4);
         } else {
-            if (R_reg == R_ST0)
-                sprintf(buffer, init_st0_float64_format,
-                        mem_address, ((int *)(&val_node->float64))[0],
-                        mem_address, ((int *)(&val_node->float64))[1],
-                        mem_address);
-            else
-                sprintf(buffer, init_st_float64_format,
-                        src, src,
-                        mem_address, ((int *)(&val_node->float64))[0],
-                        mem_address, ((int *)(&val_node->float64))[1],
-                        mem_address, src);
+            memcpy(float64, &(val_node->float64), 8);
         }
+        if(R_reg == R_ST0)                
+            sprintf(buffer, init_st0_float64_format,
+                    mem_address, float64[0],
+                    mem_address, float64[1],
+                    mem_address);
+        else 
+            sprintf(buffer, init_st_float64_format,
+                    src, src,
+                    mem_address, float64[0],
+                    mem_address, float64[1],
+                    mem_address, src);
 
         one_insn_gen_ctrl(buffer, INSERT_AFTER);
     }else{

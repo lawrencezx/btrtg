@@ -1,0 +1,7 @@
+<Template>
+    <traverse>
+        <V var = "reg" type = "mmxreg"></V>
+        <I type = "movdq2q @reg, xmmreg" trv = "true"></I>
+        <C type = "@reg"></C>
+    </traverse>
+</Template>

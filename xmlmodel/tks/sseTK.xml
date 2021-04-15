@@ -1,42 +1,72 @@
 <TestingKnowledges>
     <!--  SSE data transfer instructions -->
     <TK inst = "movaps">
-        <Node opnd = "all" packedn = "4">
+        <Node opnd = "0" packedn = "4">
+            <Node name = "sse-zero-float" weight="100"> </Node>
+            <Node name = "normal" weight="0"> </Node>
+        </Node>
+        <Node opnd = "1" packedn = "4">
             <Node name = "sse-arith" weight="100"> </Node>
             <Node name = "normal" weight="0"> </Node>
         </Node>
     </TK>
     <TK inst = "movups">
-        <Node opnd = "all" packedn = "4">
+        <Node opnd = "0" packedn = "4">
+            <Node name = "sse-zero-float" weight="100"> </Node>
+            <Node name = "normal" weight="0"> </Node>
+        </Node>
+        <Node opnd = "1" packedn = "4">
             <Node name = "sse-arith" weight="100"> </Node>
             <Node name = "normal" weight="0"> </Node>
         </Node>
     </TK>
     <TK inst = "movss">
-        <Node name = "sse-arith" weight="100"> </Node>
-        <Node name = "normal" weight="0"> </Node>
+        <Node opnd = "0" packedn = "1">
+            <Node name = "sse-zero-float" weight="100"> </Node>
+            <Node name = "normal" weight="0"> </Node>
+        </Node>
+        <Node opnd = "1" packedn = "1">
+            <Node name = "sse-arith" weight="100"> </Node>
+            <Node name = "normal" weight="0"> </Node>
+        </Node>
     </TK>
 
     <TK inst = "movlps">
-        <Node opnd = "all" packedn = "4">
+        <Node opnd = "0" packedn = "4">
+            <Node name = "sse-zero-float" weight="100"> </Node>
+            <Node name = "normal" weight="0"> </Node>
+        </Node>
+        <Node opnd = "1" packedn = "4">
             <Node name = "sse-arith" weight="100"> </Node>
             <Node name = "normal" weight="0"> </Node>
         </Node>
     </TK>
     <TK inst = "movhps">
-        <Node opnd = "all" packedn = "4">
+        <Node opnd = "0" packedn = "4">
+            <Node name = "sse-zero-float" weight="100"> </Node>
+            <Node name = "normal" weight="0"> </Node>
+        </Node>
+        <Node opnd = "1" packedn = "4">
             <Node name = "sse-arith" weight="100"> </Node>
             <Node name = "normal" weight="0"> </Node>
         </Node>
     </TK>
     <TK inst = "movlhps">
-        <Node opnd = "all" packedn = "4">
+        <Node opnd = "0" packedn = "4">
+            <Node name = "sse-zero-float" weight="100"> </Node>
+            <Node name = "normal" weight="0"> </Node>
+        </Node>
+        <Node opnd = "1" packedn = "4">
             <Node name = "sse-arith" weight="100"> </Node>
             <Node name = "normal" weight="0"> </Node>
         </Node>
     </TK>
     <TK inst = "movhlps">
-        <Node opnd = "all" packedn = "4">
+        <Node opnd = "0" packedn = "4">
+            <Node name = "sse-zero-float" weight="100"> </Node>
+            <Node name = "normal" weight="0"> </Node>
+        </Node>
+        <Node opnd = "1" packedn = "4">
             <Node name = "sse-arith" weight="100"> </Node>
             <Node name = "normal" weight="0"> </Node>
         </Node>
@@ -44,7 +74,7 @@
 
     <TK inst = "movmskps">
         <Node opnd = "0" packedn = "1">
-            <Node name = "arith" weight="100"> </Node>
+            <Node name = "sse-zero-imm32" weight="100"> </Node>
             <Node name = "normal" weight="0"> </Node>
         </Node>
         <Node opnd = "1" packedn = "4">
@@ -53,7 +83,11 @@
         </Node>
     </TK>
     <TK inst = "movntps">
-        <Node opnd = "all" packedn = "4">
+        <Node opnd = "0" packedn = "4">
+            <Node name = "sse-zero-float" weight="100"> </Node>
+            <Node name = "normal" weight="0"> </Node>
+        </Node>
+        <Node opnd = "1" packedn = "4">
             <Node name = "sse-arith" weight="100"> </Node>
             <Node name = "normal" weight="0"> </Node>
         </Node>
@@ -105,36 +139,66 @@
     </TK>
 
     <TK inst = "rcpps">
-        <Node opnd = "all" packedn = "4">
+        <Node opnd = "0" packedn = "4">
+            <Node name = "sse-zero-float" weight="100"> </Node>
+            <Node name = "normal" weight="0"> </Node>
+        </Node>
+        <Node opnd = "1" packedn = "4">
             <Node name = "sse-arith" weight="100"> </Node>
             <Node name = "normal" weight="0"> </Node>
         </Node>
     </TK>
     <TK inst = "rcpss">
-        <Node name = "sse-arith" weight="100"> </Node>
-        <Node name = "normal" weight="0"> </Node>
+        <Node opnd = "0" packedn = "1">
+            <Node name = "sse-zero-float" weight="100"> </Node>
+            <Node name = "normal" weight="0"> </Node>
+        </Node>
+        <Node opnd = "1" packedn = "1">
+            <Node name = "sse-arith" weight="100"> </Node>
+            <Node name = "normal" weight="0"> </Node>
+        </Node>
     </TK>
 
     <TK inst = "sqrtps">
-        <Node opnd = "all" packedn = "4">
+        <Node opnd = "0" packedn = "4">
+            <Node name = "sse-zero-float" weight="100"> </Node>
+            <Node name = "normal" weight="0"> </Node>
+        </Node>
+        <Node opnd = "1" packedn = "4">
             <Node name = "sse-arith" weight="100"> </Node>
             <Node name = "normal" weight="0"> </Node>
         </Node>
     </TK>
     <TK inst = "sqrtss">
-        <Node name = "sse-arith" weight="100"> </Node>
-        <Node name = "normal" weight="0"> </Node>
+        <Node opnd = "0" packedn = "1">
+            <Node name = "sse-zero-float" weight="100"> </Node>
+            <Node name = "normal" weight="0"> </Node>
+        </Node>
+        <Node opnd = "1" packedn = "1">
+            <Node name = "sse-arith" weight="100"> </Node>
+            <Node name = "normal" weight="0"> </Node>
+        </Node>
     </TK>
 
     <TK inst = "rsqrtps">
-        <Node opnd = "all" packedn = "4">
+        <Node opnd = "0" packedn = "4">
+            <Node name = "sse-zero-float" weight="100"> </Node>
+            <Node name = "normal" weight="0"> </Node>
+        </Node>
+        <Node opnd = "1" packedn = "4">
             <Node name = "sse-arith" weight="100"> </Node>
             <Node name = "normal" weight="0"> </Node>
         </Node>
     </TK>
     <TK inst = "rsqrtss">
-        <Node name = "sse-arith" weight="100"> </Node>
-        <Node name = "normal" weight="0"> </Node>
+        <Node opnd = "0" packedn = "1">
+            <Node name = "sse-zero-float" weight="100"> </Node>
+            <Node name = "normal" weight="0"> </Node>
+        </Node>
+        <Node opnd = "1" packedn = "1">
+            <Node name = "sse-arith" weight="100"> </Node>
+            <Node name = "normal" weight="0"> </Node>
+        </Node>
     </TK>
 
     <TK inst = "maxps">
@@ -296,7 +360,7 @@
     <!--  SSE shuffle and unpack instructions  -->
     <TK inst = "shufps">
         <Node opnd = "0" packedn = "4">
-            <Node name = "sse-arith" weight="100"> </Node>
+            <Node name = "sse-zero-float" weight="100"> </Node>
             <Node name = "normal" weight="0"> </Node>
         </Node>
         <Node opnd = "1" packedn = "4">
@@ -310,14 +374,22 @@
     </TK>
 
     <TK inst = "unpckhps">
-        <Node opnd = "all" packedn = "4">
+        <Node opnd = "0" packedn = "4">
+            <Node name = "sse-zero-float" weight="100"> </Node>
+            <Node name = "normal" weight="0"> </Node>
+        </Node>
+        <Node opnd = "1" packedn = "4">
             <Node name = "sse-arith" weight="100"> </Node>
             <Node name = "normal" weight="0"> </Node>
         </Node>
     </TK>
 
     <TK inst = "unpcklps">
-        <Node opnd = "all" packedn = "4">
+        <Node opnd = "0" packedn = "4">
+            <Node name = "sse-zero-float" weight="100"> </Node>
+            <Node name = "normal" weight="0"> </Node>
+        </Node>
+        <Node opnd = "1" packedn = "4">
             <Node name = "sse-arith" weight="100"> </Node>
             <Node name = "normal" weight="0"> </Node>
         </Node>
@@ -326,7 +398,7 @@
     <!--  SSE shuffle and unpack instructions  -->
     <TK inst = "cvtpi2ps">
         <Node opnd = "0" packedn = "4">
-            <Node name = "sse-arith" weight="100"> </Node>
+            <Node name = "sse-zero-float" weight="100"> </Node>
             <Node name = "normal" weight="0"> </Node>
         </Node>
         <Node opnd = "1" packedn = "2">
@@ -337,7 +409,7 @@
 
     <TK inst = "cvtsi2ss">
         <Node opnd = "0" packedn = "4">
-            <Node name = "sse-arith" weight="100"> </Node>
+            <Node name = "sse-zero-float" weight="100"> </Node>
             <Node name = "normal" weight="0"> </Node>
         </Node>
         <Node opnd = "1" packedn = "1">
@@ -348,7 +420,7 @@
 
     <TK inst = "cvtps2pi">
         <Node opnd = "0" packedn = "2">
-            <Node name = "mmx-dword" weight="100"> </Node>
+            <Node name = "mmx-zero-dword" weight="100"> </Node>
             <Node name = "normal" weight="0"> </Node>
         </Node>
         <Node opnd = "1" packedn = "4">
@@ -359,7 +431,7 @@
 
     <TK inst = "cvttps2pi">
         <Node opnd = "0" packedn = "2">
-            <Node name = "mmx-dword" weight="100"> </Node>
+            <Node name = "mmx-zero-dword" weight="100"> </Node>
             <Node name = "normal" weight="0"> </Node>
         </Node>
         <Node opnd = "1" packedn = "4">
@@ -370,7 +442,7 @@
 
     <TK inst = "cvtss2si">
         <Node opnd = "0" packedn = "1">
-            <Node name = "arith" weight="100"> </Node>
+            <Node name = "sse-zero-imm32" weight="100"> </Node>
             <Node name = "normal" weight="0"> </Node>
         </Node>
         <Node opnd = "1" packedn = "1">
@@ -381,7 +453,7 @@
 
     <TK inst = "cvttss2si">
         <Node opnd = "0" packedn = "1">
-            <Node name = "arith" weight="100"> </Node>
+            <Node name = "sse-zero-imm32" weight="100"> </Node>
             <Node name = "normal" weight="0"> </Node>
         </Node>
         <Node opnd = "1" packedn = "1">
@@ -406,7 +478,7 @@
 
 	<TK inst = "pextrw">
         <Node opnd = "0" packedn = "1">
-            <Node name = "arith" weight="100"> </Node>
+            <Node name = "sse-zero-imm32" weight="100"> </Node>
             <Node name = "normal" weight="0"> </Node>
         </Node>
         <Node opnd = "1" packedn = "4">
@@ -420,8 +492,8 @@
 	</TK>
 
 	<TK inst = "pinsrw">
-        <Node opnd = "0" packedn = "4">
-            <Node name = "mmx-word" weight="100"> </Node>
+        <Node opnd = "0" packedn = "2">
+            <Node name = "mmx-zero-dword" weight="100"> </Node>
             <Node name = "normal" weight="0"> </Node>
         </Node>
         <Node opnd = "1" packedn = "1">
@@ -461,11 +533,11 @@
 	</TK>
 
 	<TK inst = "pmovmskb">
-        <Node opnd = "all" packedn = "1">
-            <Node name = "arith" weight="100"> </Node>
+        <Node opnd = "0" packedn = "1">
+            <Node name = "sse-zero-imm32" weight="100"> </Node>
             <Node name = "normal" weight="0"> </Node>
         </Node>
-        <Node opnd = "all" packedn = "8">
+        <Node opnd = "1" packedn = "8">
             <Node name = "mmx-byte" weight="100"> </Node>
             <Node name = "normal" weight="0"> </Node>
         </Node>
@@ -479,15 +551,19 @@
 	</TK>
 
 	<TK inst = "psadbw">
-        <Node opnd = "all" packedn = "8">
+        <Node opnd = "0" packedn = "2">
+            <Node name = "mmx-zero-dword" weight="100"> </Node>
+            <Node name = "normal" weight="0"> </Node>
+        </Node>
+        <Node opnd = "1" packedn = "8">
             <Node name = "mmx-byte" weight="100"> </Node>
             <Node name = "normal" weight="0"> </Node>
         </Node>
 	</TK>
 
 	<TK inst = "pshufw">
-        <Node opnd = "0" packedn = "4">
-            <Node name = "mmx-word" weight="100"> </Node>
+        <Node opnd = "0" packedn = "2">
+            <Node name = "mmx-zero-dword" weight="100"> </Node>
             <Node name = "normal" weight="0"> </Node>
         </Node>
         <Node opnd = "1" packedn = "4">

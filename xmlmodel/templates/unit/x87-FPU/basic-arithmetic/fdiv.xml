@@ -1,10 +1,10 @@
 <Template>
     <traverse>
-        <I type = "fdiv mem32" trv = "true"></I>
+        <I type = "fdiv fpumem32" trv = "true"></I>
         <C type = "st0"></C>
     </traverse>
     <traverse>
-        <I type = "fdiv mem64" trv = "true"></I>
+        <I type = "fdiv fpumem64" trv = "true"></I>
         <C type = "st0"></C>
     </traverse>
     <traverse>
@@ -19,6 +19,7 @@
     <traverse>
 		<V var = "fpureg" type = "fpureg"></V>
         <I type = "fdivp @fpureg, st0" trv = "true"></I>
+        <I type = "fldz" trv = "true"></I>
         <C type = "@fpureg"></C>
     </traverse>
     <traverse>
@@ -26,10 +27,12 @@
         <C type = "st0"></C>
     </traverse>
     <traverse>
+        <I type = "finit"></I>
         <I type = "fidiv mem32" trv = "true"></I>
         <C type = "st0"></C>
     </traverse>
     <traverse>
+        <I type = "finit"></I>
         <I type = "fidiv mem16" trv = "true"></I>
         <C type = "st0"></C>
     </traverse>

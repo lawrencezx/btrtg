@@ -34,6 +34,9 @@ struct output  output[] =
 // #include "stdoutput.rst"
 //     {}
 // };
+#define ERROR "1.08420217248550443400745280086994171e-19"
+//#define ERROR "1.19209289550781250000000000000000000e-7F"
+#define PRINT_ERROR_INFO 0
 
 static int diffs = 0;
 static int point = 0;
@@ -148,10 +151,11 @@ extern char * fxstate;
     Reg32 check_##reg32 = x86regs.reg32; \
     Reg32 std_##reg32 = output[point].X86.reg32; \
     if (std_##reg32 != check_##reg32) { \
-        printf("diff ["#reg32"]: 0x%x, should be: 0x%x\n", check_##reg32, std_##reg32); \
-        diff = 1; \
+        if(PRINT_ERROR_INFO) \
+            printf("diff ["#reg32"]: 0x%x, should be: 0x%x\n", check_##reg32, std_##reg32); \
+            diff = 1; \
     } \
-    if (diff == 1) \
+    if (diff == 1 && PRINT_ERROR_INFO) \
         printf("check point: %d fail! ["#reg32"][fuzzy_pc:0x%x]\n", point + 1, x86regs.pc); \
     else if (verbose == 1) \
         printf("check point: %d pass! ["#reg32"]\n", point + 1); \
@@ -169,6 +173,17 @@ check_point_reg32(esp)
 check_point_reg32(ebp)
 check_point_reg32(eflags)
 
+void display_fpustack(struct X87LegacyFPUSaveArea *x87fpustate)
+{
+    for(int i = 0; i < 8; i++){
+        struct floatx80 check_fpureg = fsa_get_st(x87fpustate, i);
+        struct floatx80 std_fpureg = output[point].X87.fpregs[i];
+        printf("diff [st%d]: 0x%08x %08x %04x, should be: 0x%08x %08x %04x\n", i,
+        ((int *)&check_fpureg)[0], ((int *)&check_fpureg)[1], check_fpureg.high,
+        ((int *)&std_fpureg)[0], ((int *)&std_fpureg)[1], std_fpureg.high);
+    }
+    printf("\n");
+}
 #define check_point_fpureg(fpureg, index) void check_point_##fpureg\
     (struct SSEStateSaveArea* ssestate, \
      struct X87LegacyFPUSaveArea x87fpustate, \
@@ -177,6 +192,9 @@ check_point_reg32(eflags)
     int diff = 0; \
     struct floatx80 check_##fpureg = fsa_get_st(&x87fpustate, index); \
     struct floatx80 std_##fpureg = output[point].X87.fpregs[index]; \
+    long double check_float_num = *(long double*)&check_##fpureg; \
+    long double std_float_num = *(long double*)&std_##fpureg; \
+    /*if (abs(check_float_num - std_float_num) > strtold( ERROR, NULL)) { */\
     if (std_##fpureg.low != check_##fpureg.low || std_##fpureg.high != check_##fpureg.high) { \
         printf("diff ["#fpureg"]: high[0x%04x] low[0x%016lx], should be: high[0x%04x] low[0x%016lx]\n", \
                 check_##fpureg.high, check_##fpureg.low, \
@@ -214,7 +232,7 @@ check_point_fpureg(st7, 7)
         ((int*)&std_##mmxreg)[0], ((int*)&std_##mmxreg)[1], std_##mmxreg.high); \
         diff = 1; \
     } \
-    if (diff == 1) \
+    if (diff == 1 && PRINT_ERROR_INFO) \
         printf("check point: %d fail! ["#mmxreg"][fuzzy_pc:0x%x]\n", point + 1, x86regs.pc); \
     else if (verbose == 1) \
         printf("check point: %d pass! ["#mmxreg"]\n", point + 1); \
@@ -254,7 +272,7 @@ check_point_mmxreg(mm7, 7)
 check_point_x87status32(ffdp)
 check_point_x87status32(ffip)
 
-#define check_point_x87status16(x87status) void check_point_##x87status\
+#define check_point_x87status16(x87status, mask) void check_point_##x87status\
     (struct SSEStateSaveArea* ssestate, \
      struct X87LegacyFPUSaveArea x87fpustate, \
      struct X86StandardRegisters x86regs) \
@@ -262,7 +280,7 @@ check_point_x87status32(ffip)
     int diff = 0; \
     uint16_t check_##x87status = fsa_get_##x87status(&x87fpustate); \
     uint16_t std_##x87status = output[point].X87.x87status; \
-    if (std_##x87status != check_##x87status) { \
+    if (std_##x87status & mask != check_##x87status & mask) { \
         printf("diff ["#x87status"]: 0x%x, should be: 0x%x\n", check_##x87status, std_##x87status); \
         diff = 1; \
     } \
@@ -274,10 +292,31 @@ check_point_x87status32(ffip)
     point++; \
 }
 
-check_point_x87status16(fcw)
-check_point_x87status16(fsw)
-check_point_x87status16(ftw)
-check_point_x87status16(ffop)
+check_point_x87status16(fcw, 0x1f3f)
+check_point_x87status16(fsw, 0xffff)
+check_point_x87status16(ftw, 0xffff)
+check_point_x87status16(ffop, 0xffff)
+
+void check_point_ccode(struct SSEStateSaveArea* ssestate, 
+                           struct X87LegacyFPUSaveArea x87fpustate,
+                           struct X86StandardRegisters x86regs)
+{
+    int diff = 0; 
+    uint32_t check_fsw = fsa_get_fsw(&x87fpustate); 
+    uint32_t std_fsw = output[point].X87.fsw;
+    uint32_t check_ccode = (check_fsw >> 8) & 0x0007;
+    uint32_t std_ccode = (check_fsw >> 8) & 0x0007;
+    if (check_ccode != std_ccode) { 
+        printf("diff [ccode]: 0x%x, should be: 0x%x\n", check_ccode, std_ccode); 
+        diff = 1; 
+    } 
+    if (diff == 1) 
+        printf("check point: %d fail! [ccode][fuzzy_pc:0x%x]\n", point + 1, x86regs.pc); 
+    else if (verbose == 1) 
+        printf("check point: %d pass! [ccode]\n", point + 1); 
+    diffs += diff; 
+    point++; 
+}
 
 #define check_point_xmmreg(one_xmmreg, index) void check_point_##one_xmmreg\
     (struct SSEStateSaveArea* ssestate,\
@@ -288,14 +327,15 @@ check_point_x87status16(ffop)
     xmmreg check_##one_xmmreg = fsa_get_xmm(ssestate, index); \
     xmmreg std_##one_xmmreg = output[point].SSE.xmmregs[index]; \
     if (std_##one_xmmreg.low != check_##one_xmmreg.low || std_##one_xmmreg.high != check_##one_xmmreg.high) { \
-        printf("diff ["#one_xmmreg"]: 0x%x%x %x%x, \nshould be: 0x%x%x %x%x\n", \
-            ((int *)&check_##one_xmmreg)[0], ((int *)&check_##one_xmmreg)[1], \
-            ((int *)&check_##one_xmmreg)[2], ((int *)&check_##one_xmmreg)[3], \
-            ((int *)&std_##one_xmmreg)[0], ((int *)&std_##one_xmmreg)[1], \
-            ((int *)&std_##one_xmmreg)[2], ((int *)&std_##one_xmmreg)[3]);\
+        if(PRINT_ERROR_INFO) \
+            printf("diff ["#one_xmmreg"]: 0x%08x %08x %08x %08x, \nshould be: 0x%08x %08x %08x %08x\n", \
+                ((int *)&check_##one_xmmreg)[0], ((int *)&check_##one_xmmreg)[1], \
+                ((int *)&check_##one_xmmreg)[2], ((int *)&check_##one_xmmreg)[3], \
+                ((int *)&std_##one_xmmreg)[0], ((int *)&std_##one_xmmreg)[1], \
+                ((int *)&std_##one_xmmreg)[2], ((int *)&std_##one_xmmreg)[3]);\
         diff = 1; \
     } \
-    if (diff == 1) \
+    if (diff == 1 && PRINT_ERROR_INFO) \
         printf("check point: %d fail! ["#one_xmmreg"][fuzzy_pc:0x%x]\n", point + 1, x86regs.pc); \
     else if (verbose == 1) \
         printf("check point: %d pass! ["#one_xmmreg"]\n", point + 1); \
@@ -401,7 +441,7 @@ void check_point_x87_env(struct SSEStateSaveArea* ssestate, \
                          struct X86StandardRegisters x86regs)
 {
     int diff = 0;
-    if (fsa_get_fcw(&x87fpustate) != output[point].X87.fcw) {
+    if (fsa_get_fcw(&x87fpustate) & 0x1f3f != output[point].X87.fcw & 0x1f3f) {
         printf("diff [fcw]: %x, should be: 0x%x\n", fsa_get_fcw(&x87fpustate), output[point].X87.fcw);
         diff = 1;
     }
