@@ -178,8 +178,9 @@ check_point_reg32(eflags)
     struct floatx80 check_##fpureg = fsa_get_st(&x87fpustate, index); \
     struct floatx80 std_##fpureg = output[point].X87.fpregs[index]; \
     if (std_##fpureg.low != check_##fpureg.low || std_##fpureg.high != check_##fpureg.high) { \
-        printf("diff ["#fpureg"]: high[0x%04x] low[0x%016lx], should be: high[0x%04x] low[0x%016lx]\n", \
-                check_##fpureg.high, check_##fpureg.low, \
+        printf("diff ["#fpureg"]: high[0x%04x] low[0x%016lx]\n", \
+                check_##fpureg.high, check_##fpureg.low);\
+        printf("  should be: high[0x%04x] low[0x%016lx]\n", \
                 std_##fpureg.high, std_##fpureg.low); \
         diff = 1; \
     } \
@@ -208,10 +209,11 @@ check_point_fpureg(st7, 7)
     int diff = 0; \
     struct floatx80 check_##mmxreg = fsa_get_st(&x87fpustate, index); \
     struct floatx80 std_##mmxreg = output[point].X87.fpregs[index]; \
-    if (std_##mmxreg.low != check_##mmxreg.low || std_##mmxreg.high != check_##mmxreg.high) { \
-        printf("diff ["#mmxreg"]: 0x%08x %08x %04x, should be: 0x%08x %08x %04x\n", \
-        ((int *)&check_##mmxreg)[0], ((int *)&check_##mmxreg)[1], check_##mmxreg.high, \
-        ((int*)&std_##mmxreg)[0], ((int*)&std_##mmxreg)[1], std_##mmxreg.high); \
+    if (std_##mmxreg.low != check_##mmxreg.low) { \
+        printf("diff ["#mmxreg"]: 0x%016lx\n", \
+                check_##mmxreg.low);\
+        printf("  should be: 0x%016lx\n", \
+                std_##mmxreg.low); \
         diff = 1; \
     } \
     if (diff == 1) \
