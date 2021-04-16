@@ -790,7 +790,7 @@ static void init_xmm_register_opnd(char *asm_opnd, operand_seed *opnd_seed)
                     bytes_to_uint32((char *)(&val_node2->float32)),
                     bytes_to_uint32((char *)(&val_node3->float32)),
                     asm_opnd);
-        }else if(val_node0->type == CONST_IMM32){
+        }else if(val_node0->type == CONST_IMM32 || val_node0->type == CONST_FLOAT32I){
             sprintf(asm_xmm_insts, init_xmm_4float32_format,
                     bytes_to_uint32((char *)(&val_node0->imm32)),
                     bytes_to_uint32((char *)(&val_node1->imm32)),
@@ -810,7 +810,7 @@ static void init_xmm_register_opnd(char *asm_opnd, operand_seed *opnd_seed)
                     bytes_to_uint32((char *)(&val_node1->float64)),
                     bytes_to_uint32((char *)(&val_node1->float64) + 4),
                     asm_opnd);
-        } else if(val_node0->type == CONST_IMM64){
+        } else if(val_node0->type == CONST_IMM64 || val_node0->type == CONST_FLOAT64I){
             sprintf(asm_xmm_insts, init_xmm_2float64_format,
                     bytes_to_uint32((char *)(&val_node0->imm64)),
                     bytes_to_uint32((char *)(&val_node0->imm64) + 4),
@@ -822,7 +822,7 @@ static void init_xmm_register_opnd(char *asm_opnd, operand_seed *opnd_seed)
                     bytes_to_uint32((char *)(&val_node0->float32)),
                     bytes_to_uint32((char *)(&val_node0->float32)),
                     asm_opnd);
-        } else if(val_node0->type == CONST_IMM32){
+        } else if(val_node0->type == CONST_IMM32 || val_node0->type == CONST_FLOAT32I){
             sprintf(asm_xmm_insts, init_xmm_2dword_format,
                     bytes_to_uint32((char *)(&val_node0->imm32)),
                     bytes_to_uint32((char *)(&val_node0->imm32)),
@@ -843,7 +843,7 @@ static void init_xmm_register_opnd(char *asm_opnd, operand_seed *opnd_seed)
                     0,
                     0,
                     asm_opnd);
-        } else if (val_node->type == CONST_IMM32) {
+        } else if (val_node->type == CONST_IMM32 || val_node->type == CONST_FLOAT32I) {
             // sprintf(asm_xmm_insts, init_xmm_float32_format,
             //         bytes_to_uint32((char *)(&val_node->float32)),
             //         asm_opnd);
@@ -858,7 +858,7 @@ static void init_xmm_register_opnd(char *asm_opnd, operand_seed *opnd_seed)
                     bytes_to_uint32((char *)(&val_node->float64)),
                     bytes_to_uint32((char *)(&val_node->float64) + 4),
                     asm_opnd);
-        } else if (val_node->type == CONST_IMM64) {
+        } else if (val_node->type == CONST_IMM64 || val_node == CONST_FLOAT64I) {
             sprintf(asm_xmm_insts, init_xmm_float64_format,
                     bytes_to_uint32((char *)(&val_node->imm64)),
                     bytes_to_uint32((char *)(&val_node->imm64) + 4),
@@ -964,7 +964,7 @@ static void init_memory_opnd_xmm(char *asm_opnd, operand_seed *opnd_seed)
                     mem_addr, bytes_to_uint32((char *)(&val_node1->float32)),
                     mem_addr, bytes_to_uint32((char *)(&val_node2->float32)),
                     mem_addr, bytes_to_uint32((char *)(&val_node3->float32)));
-        }else if(val_node0->type == CONST_IMM32){
+        }else if(val_node0->type == CONST_IMM32 || val_node0->type == CONST_FLOAT32I){
             sprintf(asm_xmm_insts, init_xmmmem_4float32_format,
                     mem_addr, bytes_to_uint32((char *)(&val_node0->imm32)),
                     mem_addr, bytes_to_uint32((char *)(&val_node1->imm32)),
@@ -982,7 +982,7 @@ static void init_memory_opnd_xmm(char *asm_opnd, operand_seed *opnd_seed)
                     mem_addr, bytes_to_uint32((char *)(&val_node0->float64) + 4),
                     mem_addr, bytes_to_uint32((char *)(&val_node1->float64)),
                     mem_addr, bytes_to_uint32((char *)(&val_node1->float64) + 4));
-        } else if(val_node0->type == CONST_IMM64){
+        } else if(val_node0->type == CONST_IMM64 || val_node0->type == CONST_FLOAT64I){
             sprintf(asm_xmm_insts, init_xmmmem_2float64_format,
                     mem_addr, bytes_to_uint32((char *)(&val_node0->imm64)),
                     mem_addr, bytes_to_uint32((char *)(&val_node0->imm64) + 4),
@@ -992,7 +992,7 @@ static void init_memory_opnd_xmm(char *asm_opnd, operand_seed *opnd_seed)
             sprintf(asm_xmm_insts, init_xmmmem_2dword_format,
                     mem_addr, bytes_to_uint32((char *)(&val_node0->float32)),
                     mem_addr, bytes_to_uint32((char *)(&val_node0->float32)));
-        } else if(val_node0->type == CONST_IMM32){
+        } else if(val_node0->type == CONST_IMM32 || val_node0->type == CONST_FLOAT32I){
             sprintf(asm_xmm_insts, init_xmmmem_2dword_format,
                     mem_addr, bytes_to_uint32((char *)(&val_node0->imm32)),
                     mem_addr, bytes_to_uint32((char *)(&val_node0->imm32)));
@@ -1009,7 +1009,7 @@ static void init_memory_opnd_xmm(char *asm_opnd, operand_seed *opnd_seed)
                     mem_addr, 0,
                     mem_addr, 0,
                     mem_addr, 0);
-        } else if (val_node->type == CONST_IMM32) {
+        } else if (val_node->type == CONST_IMM32 || val_node == CONST_FLOAT32I) {
             // sprintf(asm_xmm_insts, init_xmmmem_float32_format,
             //         mem_addr, bytes_to_uint32((char *)(&val_node->float32)));
             sprintf(asm_xmm_insts, init_xmmmem_4float32_format,
@@ -1021,7 +1021,7 @@ static void init_memory_opnd_xmm(char *asm_opnd, operand_seed *opnd_seed)
             sprintf(asm_xmm_insts, init_xmmmem_float64_format,
                     mem_addr, bytes_to_uint32((char *)(&val_node->float64)),
                     mem_addr, bytes_to_uint32((char *)(&val_node->float64) + 4));
-        } else if (val_node->type == CONST_IMM64) {
+        } else if (val_node->type == CONST_IMM64 || val_node == CONST_FLOAT64I) {
             sprintf(asm_xmm_insts, init_xmmmem_float64_format,
                     mem_addr, bytes_to_uint32((char *)(&val_node->imm64)),
                     mem_addr, bytes_to_uint32((char *)(&val_node->imm64) + 4));
