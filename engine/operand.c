@@ -340,6 +340,17 @@ bool create_memory(operand_seed *opnd_seed, char *buffer)
   mov dword [%s + 0x4], 0x%x\n\
   fld qword [%s]\n\
   fxch %s"
+/* fld float80 to st reg
+*/
+#define init_st_float80_format "\
+  ffree %s\n\
+  fst %s\n\
+  fstp st0\n\
+  mov dword [%s], 0x%x\n\
+  mov dword [%s + 0x4], 0x%x\n\
+  mov dword [%s + 0x8], 0x%x\n\
+  fld tword [%s]\n\
+  fxch %s"
 
 /* fld float32 to st reg
  */
@@ -355,6 +366,15 @@ bool create_memory(operand_seed *opnd_seed, char *buffer)
   mov dword [%s], 0x%x\n\
   mov dword [%s + 0x4], 0x%x\n\
   fld qword [%s]"
+/* fld float64 to st reg
+ */
+#define init_st0_float80_format "\
+  fstp st0\n\
+  mov dword [%s], 0x%x\n\
+  mov dword [%s + 0x4], 0x%x\n\
+  mov dword [%s + 0x8], 0x%x\n\
+  fld tword [%s]"
+
 void create_random_fp_number(opflags_t opndflags, uint32_t *fp_number){
     if(BITS32 == size_mask(opndflags)){
         uint32_t mantissa = nasm_random32(1<<23);
@@ -393,25 +413,78 @@ bool init_specific_register(enum reg_enum R_reg)
 
     if((R_reg >= R_ST0) && (R_reg <= R_ST7)){
         char mem_address[32] = "float_data";
-        int float64[2] = {0};
+        int float_num_length = 0;
+        uint32_t float_num_buf[3] = {0};
         if(val_node == NULL){
-            create_random_fp_number(BITS64, (uint32_t *)float64);
-        } else if (val_node->type == CONST_FLOAT32I){
-            memcpy(float64, &(val_node->imm32), 4);
-        } else {
-            memcpy(float64, &(val_node->float64), 8);
+            float_num_length = nasm_random32(0x3) + 1;
+            uint64_t sizeflags = float_num_length == 1? BITS32:
+                                float_num_length == 2? BITS64: BITS80;
+            create_random_fp_number(sizeflags, (uint32_t *)float_num_buf);
+        } else if(val_node->type == CONST_FLOAT32I){
+            memcpy(float_num_buf, &val_node->imm32, 4);
+            float_num_length = 1;
+        } else if(val_node->type == CONST_FLOAT32F){
+            memcpy(float_num_buf, &val_node->float32, 4);
+            float_num_length = 1;
+        } else if(val_node->type == CONST_FLOAT64I){
+            memcpy(float_num_buf, &val_node->imm64, 8);
+            float_num_length = 2;
+        } else if(val_node->type == CONST_FLOAT64F || 
+                val_node->type == CONST_FLOAT){
+            memcpy(float_num_buf, &val_node->float64, 8);
+            float_num_length = 2;
+        } 
+        /* TODO */
+        // else if(val_node->type == CONST_FLAOT80I){
+        //     memcpy(float_num_buf, val_node->imm80, 10);
+        //     float_num_length = 3;
+        // } else if(val_node->type == CONST_FLOAT80F){
+        //     memcpy(float_num_buf, val_node->imm80, 10);
+        //     float_num_length = 3;
+        // }
+        switch(float_num_length){
+            case 1:
+                if(R_reg == R_ST0)
+                    sprintf(buffer, init_st0_float32_format, 
+                            mem_address, float_num_buf[0], 
+                            mem_address);
+                else 
+                    sprintf(buffer, init_st_float32_format, 
+                            mem_address, mem_address,
+                            mem_address, float_num_buf[0], 
+                            mem_address, mem_address);
+                break;
+            case 2:
+                if(R_reg == R_ST0)
+                     sprintf(buffer, init_st0_float64_format, 
+                            mem_address, float_num_buf[0], 
+                            mem_address, float_num_buf[1], 
+                            mem_address);               
+                else
+                    sprintf(buffer, init_st_float64_format, 
+                            mem_address, mem_address, 
+                            mem_address, float_num_buf[0], 
+                            mem_address, float_num_buf[1], 
+                            mem_address, mem_address);   
+                break;
+            case 3:
+                if(R_reg == R_ST0)
+                    sprintf(buffer, init_st0_float80_format, 
+                            mem_address, float_num_buf[0], 
+                            mem_address, float_num_buf[1], 
+                            mem_address, float_num_buf[2], 
+                            mem_address);
+                else
+                     sprintf(buffer, init_st_float80_format, 
+                            mem_address, mem_address, 
+                            mem_address, float_num_buf[0], 
+                            mem_address, float_num_buf[1], 
+                            mem_address, float_num_buf[2], 
+                            mem_address, mem_address);                   
+                break;
+            default:
+                break;
         }
-        if(R_reg == R_ST0)                
-            sprintf(buffer, init_st0_float64_format,
-                    mem_address, float64[0],
-                    mem_address, float64[1],
-                    mem_address);
-        else 
-            sprintf(buffer, init_st_float64_format,
-                    src, src,
-                    mem_address, float64[0],
-                    mem_address, float64[1],
-                    mem_address, src);
 
         one_insn_gen_ctrl(buffer, INSERT_AFTER);
     }else{

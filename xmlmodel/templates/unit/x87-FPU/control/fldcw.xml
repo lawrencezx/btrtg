@@ -1,6 +1,6 @@
 <Template>
     <traverse>
-        <I type = "fldcw mem16" trv = "true"></I>
+        <I type = "fldcw fpumem16" trv = "true"></I>
         <C type = "fcw"></C>
     </traverse>
 </Template>

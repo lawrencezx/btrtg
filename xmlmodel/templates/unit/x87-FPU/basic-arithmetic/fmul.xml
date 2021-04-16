@@ -27,12 +27,12 @@
     </traverse>
     <traverse>
         <I type = "finit"></I>
-        <I type = "fimul mem32" trv = "true"></I>
+        <I type = "fimul fpumem32" trv = "true"></I>
         <C type = "st0"></C>
     </traverse>
     <traverse>
         <I type = "finit"></I>
-        <I type = "fimul mem16" trv = "true"></I>
+        <I type = "fimul fpumem16" trv = "true"></I>
         <C type = "st0"></C>
     </traverse>
 </Template>

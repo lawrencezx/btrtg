@@ -72,7 +72,7 @@ static void parseCGs(xmlNodePtr cgsNode)
                 val_node.float32 = strtof(cNodeContent, NULL);
             } else if (strcmp(cNodeName, "Float64i") == 0) {
                 val_node.type = CONST_FLOAT64I;
-                val_node.imm64 = (uint32_t)hex2dec(cNodeContent);
+                val_node.imm64 = (uint64_t)hex2declong(cNodeContent);
             } else if (strcmp(cNodeName, "Float64f") == 0) {
                 val_node.type = CONST_FLOAT64F;
                 val_node.float64 = strtod(cNodeContent, NULL);

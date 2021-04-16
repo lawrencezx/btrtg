@@ -30,13 +30,13 @@
         <C type = "st1"></C>
     </traverse>
     <traverse>
-        <V var = "mem" type = "mem16"></V>
+        <V var = "mem" type = "fpumem16"></V>
         <I type = "finit"></I>
         <I type = "fisub @mem" trv = "true"></I>
         <C type = "st0"></C>
     </traverse>
     <traverse>
-        <V var = "mem" type = "mem32"></V>
+        <V var = "mem" type = "fpumem32"></V>
         <I type = "finit"></I>
         <I type = "fisub @mem" trv = "true"></I>
         <C type = "st0"></C>

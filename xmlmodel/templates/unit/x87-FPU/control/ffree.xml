@@ -1,6 +1,6 @@
 <Template>
     <traverse>
-		<V var = "mem" type = "mem"></V>
+		<V var = "mem" type = "fpumem"></V>
         <I type = "fldenv @mem" trv = "true"></I>
 		<I type = "ffree fpureg"></I>
         <C type = "ftw"></C>

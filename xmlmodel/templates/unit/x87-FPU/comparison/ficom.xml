@@ -1,18 +1,18 @@
 <Template>
     <traverse>
-        <I type = "ficom mem16" trv = "true"></I>
+        <I type = "ficom fpumem16" trv = "true"></I>
         <C type = "ccode"></C>
     </traverse>
     <traverse>
-        <I type = "ficom mem32" trv = "true"></I>
+        <I type = "ficom fpumem32" trv = "true"></I>
         <C type = "ccode"></C>
     </traverse>
     <traverse>
-        <I type = "ficomp mem16" trv = "true"></I>
+        <I type = "ficomp fpumem16" trv = "true"></I>
         <C type = "ccode"></C>
     </traverse>
     <traverse>
-        <I type = "ficomp mem32" trv = "true"></I>
+        <I type = "ficomp fpumem32" trv = "true"></I>
         <C type = "ccode"></C>
     </traverse>
 </Template>

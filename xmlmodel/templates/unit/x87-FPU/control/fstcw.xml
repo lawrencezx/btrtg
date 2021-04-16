@@ -1,6 +1,6 @@
 <Template>
     <traverse>
-		 <V var = "mem" type = "mem16"></V>
+		 <V var = "mem" type = "fpumem16"></V>
 		<I type = "fldcw @mem" trv = "true"></I>
         <I type = "fstcw @mem" ></I>
 		<I type = "mov ax, @mem" ></I>

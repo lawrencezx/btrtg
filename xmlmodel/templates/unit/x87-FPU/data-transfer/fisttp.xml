@@ -3,7 +3,7 @@
         <V var = "mem" type = "fpumem16"></V>
 		<I type = "fstp st0"></I>
 		<I type = "fild @mem" trv = "true"></I>
-        <I type = "fist @mem"></I>
+        <I type = "fisttp @mem"></I>
 		<I type = "fstp st0"></I>
 		<I type = "fild @mem"></I>
 		<C type = "st0"></C>
@@ -12,25 +12,7 @@
         <V var = "mem" type = "fpumem32"></V>
 		<I type = "fstp st0"></I>
 		<I type = "fild @mem" trv = "true"></I>
-        <I type = "fist @mem"></I>
-		<I type = "fstp st0"></I>
-		<I type = "fild @mem"></I>
-		<C type = "st0"></C>
-    </traverse>
-    <traverse>
-        <V var = "mem" type = "fpumem16"></V>
-		<I type = "fstp st0"></I>
-		<I type = "fild @mem" trv = "true"></I>
-        <I type = "fistp @mem"></I>
-		<I type = "fstp st0"></I>
-		<I type = "fild @mem"></I>
-		<C type = "st0"></C>
-    </traverse>
-    <traverse>
-        <V var = "mem" type = "fpumem32"></V>
-		<I type = "fstp st0"></I>
-		<I type = "fild @mem" trv = "true"></I>
-        <I type = "fistp @mem"></I>
+        <I type = "fisttp @mem"></I>
 		<I type = "fstp st0"></I>
 		<I type = "fild @mem"></I>
 		<C type = "st0"></C>
@@ -39,7 +21,7 @@
         <V var = "mem" type = "fpumem64"></V>
 		<I type = "fstp st0"></I>
 		<I type = "fild @mem" trv = "true"></I>
-        <I type = "fistp @mem"></I>
+        <I type = "fisttp @mem"></I>
 		<I type = "fstp st0"></I>
 		<I type = "fild @mem"></I>
 		<C type = "st0"></C>

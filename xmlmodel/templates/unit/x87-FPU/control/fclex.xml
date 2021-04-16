@@ -1,6 +1,6 @@
 <Template>
     <traverse>
-        <I type = "fldenv mem" trv = "true"></I>
+        <I type = "fldenv fpumem" trv = "true"></I>
 		<I type = "fclex"></I>
         <C type = "fcw"></C>
     </traverse>

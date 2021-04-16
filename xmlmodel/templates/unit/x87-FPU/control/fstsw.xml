@@ -1,7 +1,7 @@
 <Template>
     <traverse>
-		 <V var = "mem" type = "mem16"></V>
-		<I type = "fldenv mem" trv = "true"></I>
+		 <V var = "mem" type = "fpumem16"></V>
+		<I type = "fldenv fpumem" trv = "true"></I>
         <I type = "fstsw @mem" ></I>
 		<I type = "mov ax, @mem" ></I>
         <C type = "ax"></C>

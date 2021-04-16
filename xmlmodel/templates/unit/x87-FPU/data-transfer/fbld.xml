@@ -1,6 +1,6 @@
 <Template>
     <traverse>
-		<I type = "fbld mem80" trv = "true"></I>
+		<I type = "fbld fpumem80" trv = "true"></I>
 		<C type = "st0"></C>
     </traverse>
 </Template>

@@ -62,9 +62,7 @@ static inline int reg_random_range(opflags_t opflags)
             //nasm_fatal("No register random range found!");
             break;
     }
-    if((~(opflags^FPUREG) & FPUREG) == FPUREG ||
-       (~(opflags^MMXREG) & MMXREG) == MMXREG ||
-       (~(opflags^XMMREG) & XMMREG) == XMMREG){
+    if(is_class(FPUREG ,opflags) || is_class(MMXREG ,opflags) || is_class(XMMREG, opflags)){
         index = 8;
     }
     if(index == -1){

@@ -324,12 +324,21 @@ static void init_memory_opnd_float(char *asm_opnd, operand_seed *opnd_seed, stru
     }else{
         switch (opndsize) {
             case BITS32:
-                memcpy(fp_number, &val_node->float32, 4);
+                if(val_node->type == CONST_FLOAT32I)
+                    memcpy(fp_number, &val_node->imm32, 4);
+                else
+                    memcpy(fp_number, &val_node->float32, 4);
                 break;
             case BITS64:
-                memcpy(fp_number, &val_node->float64, 8);
+                if(val_node->type == CONST_FLOAT64I)
+                    memcpy(fp_number, &val_node->imm64, 8);
+                else
+                    memcpy(fp_number, &val_node->float64, 8);
                 break;
             case BITS80:
+                // if(val_node->type == CONST_FLOAT80I)
+                //     memcpy(fp_number, &val_node->imm64, 10);
+                // else
                 memcpy(fp_number, &val_node->float80, 10);
                 break;
             default:
@@ -410,11 +419,45 @@ static void init_memory_opnd_imm64(char *asm_opnd, struct const_node *val_node)
     char mem_address[64];
     strcpy(mem_address, asm_opnd + 1);
     mem_address[strlen(mem_address) - 1] = '\0';
-    int *imm64 = (int *)&(val_node->imm64);
+    int imm64[2];
+    if(val_node == NULL){
+        imm64[0] = nasm_random64(RAND_BITS32_BND);
+        imm64[1] = nasm_random64(RAND_BITS32_BND);
+    }else{
+        memcpy(imm64, &val_node->imm64, 8);
+    }
     sprintf(asm_mov_inst, init_mem64_format, 
             mem_address, imm64[0],
             mem_address, imm64[1]);
     one_insn_gen_ctrl(asm_mov_inst, INSERT_AFTER);
+}
+
+static void init_memory_opnd_fpu(char *asm_opnd, operand_seed *opnd_seed, struct const_node *val_node)
+{
+    enum opcode opcode = stat_get_opcode();
+    if(val_node != NULL && CONST_X87ENV == val_node->type){
+        init_memory_opnd_x87env(asm_opnd, val_node);
+    } else if(val_node != NULL && val_node->type == CONST_BCD){
+        init_memory_opnd_bcd80(asm_opnd, val_node);
+    } else if(opcode >= I_FIADD && opcode <= I_FISUBR){
+        if(size_mask(opnd_seed->opndflags) == BITS64){
+            init_memory_opnd_imm64(asm_opnd, val_node);
+        }else {
+            char asm_mov_inst[128];
+            opflags_t size;
+            uint32_t val;
+            size = opnd_seed->opndflags & SIZE_MASK;
+            val = (val_node == NULL) ? (uint32_t)nasm_random64(RAND_BITS32_BND) :
+                                    val_node->imm32;
+            val = (size == BITS8) ? (uint8_t)val :
+                    (size == BITS16) ? (uint16_t)val : (uint32_t)val;
+            sprintf(asm_mov_inst, "  mov %s, 0x%x", asm_opnd, val);
+            preappend_mem_size(asm_mov_inst + 6, size_mask(opnd_seed->opndflags));
+            one_insn_gen_ctrl(asm_mov_inst, INSERT_AFTER);
+        }
+    } else {
+        init_memory_opnd_float(asm_opnd, opnd_seed, val_node);
+    }
 }
 
 static void init_memory_opnd_mmx(char *asm_opnd, operand_seed *opnd_seed)
@@ -479,6 +522,14 @@ static void init_memory_opnd_mmx(char *asm_opnd, operand_seed *opnd_seed)
     one_insn_gen_ctrl(asm_mov_inst, INSERT_AFTER);
 }
 
+#define init_fpu_float32_format "\
+  ffree %s\n\
+  fst %s\n\
+  fstp st0\n\
+  mov dword [float_data], 0x%x\n\
+  fld dword [float_data]\n\
+  fxch %s"
+
 #define init_fpu_float64_format "\
   ffree %s\n\
   fst %s\n\
@@ -486,6 +537,16 @@ static void init_memory_opnd_mmx(char *asm_opnd, operand_seed *opnd_seed)
   mov dword [float_data], 0x%x\n\
   mov dword [float_data + 0x4], 0x%x\n\
   fld qword [float_data]\n\
+  fxch %s"
+
+#define init_fpu_float80_format "\
+  ffree %s\n\
+  fst %s\n\
+  fstp st0\n\
+  mov dword [float_data], 0x%x\n\
+  mov dword [float_data + 0x4], 0x%x\n\
+  mov dword [float_data + 0x8], 0x%x\n\
+  fld tword [float_data]\n\
   fxch %s"
 
 static void init_fpu_register_opnd(char *asm_opnd, operand_seed *opnd_seed)
@@ -498,28 +559,55 @@ static void init_fpu_register_opnd(char *asm_opnd, operand_seed *opnd_seed)
     if (val_node == NULL)
         val_node = request_val_node(nasm_insn_names[stat_get_opcode()],
                 stat_get_opi());
-    int float64[2] = {0};
+
+    int float_num_length = 0;
+    uint32_t float_num_buf[3] = {0};
     if(val_node == NULL){
-        create_random_fp_number(BITS64, (uint32_t *)float64);
-    }else{
-        /* TODO */
-        // switch(val_node->type){
-        //     case CONST_FLOAT32:
-        //         break;
-        //     case CONST_FLAOT:
-        //     case CONST_FLOAT64:
-        //         break;
-        //     case CONST_FLOAT80:
-        //         break:
-        //     default:
-        // }
-        memcpy(float64, &(val_node->float64), 8);
+        float_num_length = nasm_random32(0x3) + 1;
+        uint64_t sizeflags = float_num_length == 1? BITS32:
+                             float_num_length == 2? BITS64: BITS80;
+        create_random_fp_number(sizeflags, (uint32_t *)float_num_buf);
+    } else if(val_node->type == CONST_FLOAT32I){
+        memcpy(float_num_buf, &val_node->imm32, 4);
+        float_num_length = 1;
+    } else if(val_node->type == CONST_FLOAT32F){
+        memcpy(float_num_buf, &val_node->float32, 4);
+        float_num_length = 1;
+    } else if(val_node->type == CONST_FLOAT64I){
+        memcpy(float_num_buf, &val_node->imm64, 8);
+        float_num_length = 2;
+    } else if(val_node->type == CONST_FLOAT64F || 
+              val_node->type == CONST_FLOAT){
+        memcpy(float_num_buf, &val_node->float64, 8);
+        float_num_length = 2;
+    } 
+    /* TODO */
+    // else if(val_node->type == CONST_FLAOT80I){
+    //     memcpy(float_num_buf, val_node->imm80, 10);
+    //     float_num_length = 3;
+    // } else if(val_node->type == CONST_FLOAT80F){
+    //     memcpy(float_num_buf, val_node->imm80, 10);
+    //     float_num_length = 3;
+    // }
+    switch(float_num_length){
+        case 1:
+            sprintf(asm_fpu_inst, init_fpu_float32_format, 
+                    asm_opnd, asm_opnd, 
+                    float_num_buf[0], asm_opnd);
+            break;
+        case 2:
+            sprintf(asm_fpu_inst, init_fpu_float64_format, 
+                    asm_opnd, asm_opnd, 
+                    float_num_buf[0], float_num_buf[1], asm_opnd);
+            break;
+        case 3:
+            sprintf(asm_fpu_inst, init_fpu_float80_format, 
+                    asm_opnd, asm_opnd, 
+                    float_num_buf[0], float_num_buf[1], float_num_buf[2], asm_opnd);
+            break;
+        default:
+            break;
     }
-    sprintf(asm_fpu_inst, init_fpu_float64_format, 
-            asm_opnd, asm_opnd, 
-            float64[0],
-            float64[1],
-            asm_opnd);
     one_insn_gen_ctrl(asm_fpu_inst, INSERT_AFTER);
 }
 
@@ -954,15 +1042,9 @@ static void init_memory_opnd(char *asm_opnd, operand_seed *opnd_seed)
 
     //if(val_node != NULL && CONST_FLOAT == val_node->type){
     if(is_class(REG_CLASS_FPUREG, opnd_seed->opndflags)){
-        init_memory_opnd_float(asm_opnd, opnd_seed, val_node);
-    }else if(val_node != NULL && CONST_X87ENV == val_node->type){
-        init_memory_opnd_x87env(asm_opnd, val_node);
-    }else if(is_class(REG_CLASS_RM_MMX, opnd_seed->opndflags)){
+        init_memory_opnd_fpu(asm_opnd, opnd_seed, val_node);
+    } else if(is_class(REG_CLASS_RM_MMX, opnd_seed->opndflags)){
         init_memory_opnd_mmx(asm_opnd, opnd_seed);
-    }else if(val_node != NULL && size_mask(opnd_seed->opndflags) == BITS64){
-        init_memory_opnd_imm64(asm_opnd, val_node);
-    }else if(val_node != NULL && val_node->type == CONST_BCD){
-        init_memory_opnd_bcd80(asm_opnd, val_node);
     } else if (is_class(REG_CLASS_RM_XMM, opnd_seed->opndflags)) {
         init_memory_opnd_xmm(asm_opnd, opnd_seed);
     } else {
@@ -1252,6 +1334,16 @@ static bool gen_operand_insn_seed(const insn_seed *seed, operand_seed *opnd_seed
         return true;
 
     opnd_seed->opndflags = (seed->opd[opi] | calOperandSize(seed, opi));
+    if(seed->opcode >= I_F2XM1 && seed->opcode <= I_FYL2XP1 && is_class(MEMORY, opnd_seed->opndflags)){
+            opnd_seed->opndflags |= REG_CLASS_FPUREG;
+    }
+    // if((~(opflags^MEMORY) & MEMORY) == MEMORY){
+    //     if(seed->opcode >= I_F2XM1 && seed->opcode <= I_FYL2XP1){
+    //         opnd_seed->opndflags |= REG_CLASS_FPUREG;
+    //     } else if(){
+
+    //     }
+    // }
 
     bufptr = get_token_bufptr();
 
