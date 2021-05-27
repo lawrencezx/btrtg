@@ -226,7 +226,7 @@ check_point_fpureg(st7, 7)
     int diff = 0; \
     struct floatx80 check_##mmxreg = fsa_get_st(&x87fpustate, index); \
     struct floatx80 std_##mmxreg = output[point].X87.fpregs[index]; \
-    if (std_##mmxreg.low != check_##mmxreg.low || std_##mmxreg.high != check_##mmxreg.high) { \
+    if (std_##mmxreg.low != check_##mmxreg.low) { \
         printf("diff ["#mmxreg"]: 0x%08x %08x %04x, should be: 0x%08x %08x %04x\n", \
         ((int *)&check_##mmxreg)[0], ((int *)&check_##mmxreg)[1], check_##mmxreg.high, \
         ((int*)&std_##mmxreg)[0], ((int*)&std_##mmxreg)[1], std_##mmxreg.high); \

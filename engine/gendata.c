@@ -439,7 +439,10 @@ static void init_memory_opnd_fpu(char *asm_opnd, operand_seed *opnd_seed, struct
         init_memory_opnd_x87env(asm_opnd, val_node);
     } else if(val_node != NULL && val_node->type == CONST_BCD){
         init_memory_opnd_bcd80(asm_opnd, val_node);
-    } else if(opcode >= I_FIADD && opcode <= I_FISUBR){
+    } else if((opcode >= I_FIADD && opcode <= I_FISUBR) || 
+              opcode == I_FLDCW || opcode == I_FNSTCW ||
+              opcode == I_FNSTSW || opcode == I_FSTCW ||
+              opcode == I_FSTSW){
         if(size_mask(opnd_seed->opndflags) == BITS64){
             init_memory_opnd_imm64(asm_opnd, val_node);
         }else {
@@ -858,7 +861,7 @@ static void init_xmm_register_opnd(char *asm_opnd, operand_seed *opnd_seed)
                     bytes_to_uint32((char *)(&val_node->float64)),
                     bytes_to_uint32((char *)(&val_node->float64) + 4),
                     asm_opnd);
-        } else if (val_node->type == CONST_IMM64 || val_node == CONST_FLOAT64I) {
+        } else if (val_node->type == CONST_IMM64 || val_node->type == CONST_FLOAT64I) {
             sprintf(asm_xmm_insts, init_xmm_float64_format,
                     bytes_to_uint32((char *)(&val_node->imm64)),
                     bytes_to_uint32((char *)(&val_node->imm64) + 4),
@@ -1009,7 +1012,7 @@ static void init_memory_opnd_xmm(char *asm_opnd, operand_seed *opnd_seed)
                     mem_addr, 0,
                     mem_addr, 0,
                     mem_addr, 0);
-        } else if (val_node->type == CONST_IMM32 || val_node == CONST_FLOAT32I) {
+        } else if (val_node->type == CONST_IMM32 || val_node->type == CONST_FLOAT32I) {
             // sprintf(asm_xmm_insts, init_xmmmem_float32_format,
             //         mem_addr, bytes_to_uint32((char *)(&val_node->float32)));
             sprintf(asm_xmm_insts, init_xmmmem_4float32_format,
@@ -1021,7 +1024,7 @@ static void init_memory_opnd_xmm(char *asm_opnd, operand_seed *opnd_seed)
             sprintf(asm_xmm_insts, init_xmmmem_float64_format,
                     mem_addr, bytes_to_uint32((char *)(&val_node->float64)),
                     mem_addr, bytes_to_uint32((char *)(&val_node->float64) + 4));
-        } else if (val_node->type == CONST_IMM64 || val_node == CONST_FLOAT64I) {
+        } else if (val_node->type == CONST_IMM64 || val_node->type == CONST_FLOAT64I) {
             sprintf(asm_xmm_insts, init_xmmmem_float64_format,
                     mem_addr, bytes_to_uint32((char *)(&val_node->imm64)),
                     mem_addr, bytes_to_uint32((char *)(&val_node->imm64) + 4));
